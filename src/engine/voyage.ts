@@ -153,6 +153,7 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   learnNeighbours(state, content, v.to);
   const place = content.places[v.to]!;
   lines.push(how ?? `Landfall at ${place.name} after ${plural(v.daysAtSea, 'day')} at sea.`);
+  journal(state, `Landfall at ${place.name}.`);
   const d = dateOf(state.day);
   if ((d.month >= 9 || d.month <= 1) && state.flags._late_sail !== d.year) {
     state.flags._late_sail = d.year;

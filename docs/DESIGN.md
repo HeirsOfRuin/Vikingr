@@ -1,6 +1,6 @@
 # DESIGN — Vikingr
 
-Status: **Phase 0 (proposal).** Start year, slavery and tone are confirmed (2026-10-11). Awaiting go-ahead for Phase 1. Decisions log at the bottom.
+Status: **Phase 1 built (2026-10-11):** engine, map, instruments and placeholder UI. See "Phase 1 as built" before the decisions log. Next: Phase 2, the one-year vertical slice.
 
 ## Context
 This is an RPG about one man's life in the 9th century. He starts with nothing, builds fame and renown, becomes a sea king, and tries to earn his way into Valhalla. The aim is to be the greatest living legend of the 800s.
@@ -358,13 +358,13 @@ Used for holmgang, duels, champion fights, killings at feasts, and the first man
 
   | Action | Beats | Loses to |
   |---|---|---|
-  | **Strike** (high or low) | Feint | Guard |
-  | **Guard** | Strike | Bind, Bash |
-  | **Bind** (hook the shield or blade) | Guard | Strike |
-  | **Feint** | Guard, Bind | Strike |
-  | **Shield-bash** | Guard | Feint, Strike |
+  | **Strike** | Feint, Shield-bash | Guard, Bind |
+  | **Guard** | Strike, Bind | Feint, Shield-bash |
+  | **Feint** | Guard, Shield-bash | Strike, Bind |
+  | **Bind** (hook the shield or blade) | Strike, Feint | Guard, Shield-bash |
+  | **Shield-bash** | Guard, Bind | Strike, Feint |
 
-  The cycle is provisional; `measure-duel` balances it.
+  Rebalanced in Phase 1 so each move beats two and loses to two (the first draft was lopsided: Strike beat three). A test enforces it. Wins are not equal: a won Strike wounds, a won Guard mostly tires the attacker.
 - **Resources:** stamina, **shield integrity** (shields break, and holmgang allows a fixed number, three by the customary rules), and wounds.
 - **Reading the opponent.** Each opponent has habits, such as favouring the strike or tiring after round 4. Wits + Cunning reveals them over the exchanges. A lost eye reduces this.
 - **Holmgang rules as custom tells them:** fought on a cloak, three shields each, and the first to bleed on the cloak may yield and pay the *holmlausn* (three marks of silver). Yielding costs fame and honour. Fighting on risks death.
@@ -662,8 +662,61 @@ Each step follows the Adalia rhythm: frame, approval, build, playtest, revise.
 
 ---
 
+## Phase 1 as built (2026-10-11)
+
+### What exists
+- **Stack:** Vite + Preact + TypeScript (strict), YAML content compiled to `src/content/bundle.json`, Zod schema, Vitest. PWA files and the Pages workflow (one-time setup: Settings > Pages > Source: GitHub Actions).
+- **Map:** `tools/build-map.ts` turns Natural Earth land, lakes and rivers into a 468 × 360 tile grid (about 6.6 km a tile) from 16°W to 34°E, 45°N to 66.5°N. Biomes come from coarse zone polygons with domain warping. The output (`src/content/map.json`, 51 KB) is committed with its generator. Iceland, Iberia, the Mediterranean and Constantinople are outside the grid: they need a wider grid or regional insets later.
+- **Places:** 30 real locations on the map; the 6 slice places are active and joined by 7 sea legs. Arriving somewhere teaches you the places next to it.
+- **Engine (`src/engine/`):** calendar, conditions and effects (Adalia grammar), director (queued, arrival, sea, phase and hall triggers), voyage (daily wind, food, storms, foundering, encounters), duel, battle, raid (Phase 1 form: one surprise roll, then a shield-wall, then plunder), fame (deeds, telling, fading, verses, the legends table), share-out, the winter hall, the turn of the year, saves and `VIKR1.` save codes.
+- **Instruments:** `validate` (links, references, lethal choices without `danger: true`, places off the map, unreachable places and scenes), `lint:style` (the lists in the style guide), `bot` (five policies, progress assertions), `measure:duel`, `measure:battle`, `smoke` (Chromium at 390 px, 18 screenshots), 34 unit tests.
+- **UI:** title and new game, scene, report, muster, place with a mini map, voyage, duel, shield-wall, share-out, winter hall, death; tabs for the map, the hero, the crew and the saga.
+
+### Measurements (all provisional)
+**Shield-wall** (`measure:battle`, 1,000 battles a cell, "let the men handle it"):
+
+| Scenario | Win | Lost | Broken off |
+|---|---|---|---|
+| Iona, 26 green men against 15 alert defenders | 100% | 0% | 0% |
+| Bangor, surprised (15 levy) | 99% | 1% | 0% |
+| Bangor, alert (29 levy) | 11% | 36% | 53% |
+| Rival crew at sea, 26 against 20 | 97% | 3% | 0% |
+| Equal crews, equal quality | 90% | 10% | 0% |
+
+The hero went down in 8% of hard battles in the front rank, about 1% in the wall, and almost never behind it.
+
+**Duels** (`measure:duel`, 3,000 holmgangs a cell, fighting on instinct): the hero at 16 wins 72% against Thorgils, 46% against an Irish champion and 83% against a farmer's boy. At 25 he wins 78–98%. Reading the opponent adds about 2–4 points: real, but small.
+
+**Lives** (`bot`, 50 lives × 3 backgrounds, 10 years):
+
+| Policy | Alive at 10 years | Fame | Raids | Battles won | Valhalla |
+|---|---|---|---|---|---|
+| Front rank (reckless) | 57% | 60 | 5.3 | 49% | 8% |
+| In the wall (raider) | 85% | 47 | 5.6 | 44% | 1% |
+| Behind the wall (coward) | 94% | 36 | 4.5 | 35% | 0% |
+| Stays home | 98% | 11 | 0 | — | 0% |
+
+The front rank buys fame with risk, as §1 intends.
+
+### Found and fixed by the instruments
+- **The year skipped:** after a winter in the hall the calendar jumped a whole year. Found by a unit test. It had also halved the bot's real play time.
+- **Drowning:** about a quarter of lives drowned, so storm frequency and damage were cut and winter repairs added.
+- **Order choice:** veterans lost to an equal levy, and "let the men handle it" always picked the wedge. Crew quality now also reduces blows taken, and the auto-picker scores morale, not raw losses.
+- **Reading the opponent did nothing:** unread opponents were already 40% known. Unread is now a guess.
+- **Instinct was too good:** it beat careful play. It now acts randomly 30% of the time, and skilled foes counter the hero's favourite move.
+- **Instinct fought to the death in a holmgang:** it now stops once, when the hero is badly hurt, to offer the yield.
+
+### Known gaps to carry into Phase 2
+1. **The economy is thin:** about 3–6 marks of plunder a year, and battles in raids are won less than half the time across a life. Raid targets are too few and Bangor is a trap. Needs the full raid approach (§11.3), more targets, trade, and an economy pass (`docs/ECONOMY.md`).
+2. **"Let the men handle it" is stronger than random play in the wall**, so fighting by hand needs a reason. Phase 2 should show a by-hand player beating the auto-picker.
+3. **Duel deaths come mostly from the placeholder hall quarrel.** Its frequency and lethality are placeholder.
+4. **Judgment** is a one-line formula (§14). The saga screen is a stub.
+5. **Missing systems:** wounds on named men, nicknames, flyting, boasts, omens, feuds, marriage and rank are designed but not built.
+6. **All 9 scenes are placeholders**, marked as such.
+
 ## Decisions log
 | Date | Decision |
 |---|---|
+| 2026-10-11 | Phase 1 built. Duel cycle rebalanced so each move beats two and loses to two. Bangor's defenders cut from 32 to 28. Map grid 16°W–34°E, 45°–66.5°N; the far reaches come later. |
 | 2026-10-11 | Start year 830 at age 16 confirmed. Slavery included as a player choice with consequences, confirmed. Tone set: brutal, realistic, gory, with humour, glory, brotherhood, love and comedy (*Vikings*, *The Last Kingdom*, the sagas). Content lines, nicknames, flyting and boasts added (§1a). |
 | 2026-10-11 | HTML/PWA; a sea map you travel freely, with the story through scenes; one long life; deeper than two phases a year; combat central, in three layers; mythology present and ambiguous; real 9th-century history; 3 backgrounds; full single-combat layer. Stack and process from Knight of Adalia; combat code-path rule from Free Company. |
