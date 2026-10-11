@@ -1,0 +1,5 @@
+# Sworn men. Phase 1 placeholders: names and temperaments only; their arcs are Phase 2.
+- { id: ketill, name: "Ketill", temperament: steady, weapons: 3, loyalty: 6, desc: "Older than the rest. Has rowed with your father. Says little and is usually right." }
+- { id: ulf, name: "Ulf", temperament: hot, weapons: 4, loyalty: 5, desc: "First into anything. Laughs too loud and fights too soon." }
+- { id: hallvard, name: "Hallvard", temperament: pious, weapons: 2, loyalty: 6, desc: "Watches for signs. Will not sail past a raven without remarking on it." }
+- { id: bersi, name: "Bersi", temperament: greedy, weapons: 3, loyalty: 4, desc: "Counts his share before the fight and again after." }

@@ -1,0 +1,5 @@
+placeholder_start: { description: Started from the Phase 1 placeholder (a borrowed karvi) }
+outlawed: { description: Outlawed from the home district }
+leysingi: { description: A freedman's son }
+skald: { description: A skald in your household }
+owes_jarl: { description: Owes the jarl a share of this season's plunder for the loan of a ship }

@@ -1,0 +1,38 @@
+# PLACEHOLDER hall scenes for the Phase 1 engine build.
+- id: p1_winter_quarrel
+  kind: pool
+  placeholder: true
+  trigger: hall
+  chance: 0.25
+  cooldown_days: 300
+  title: A quarrel at the benches
+  text: |
+    [Placeholder.] Thorgils Hrappsson has been drinking since noon. He says, loud enough for the hall, that your summer was a fishing trip with swords.
+  choices:
+    - id: holmgang
+      text: Challenge him to the holmgang.
+      danger: true
+      effects: [ { fight: { foe: thorgils, kind: holmgang, lethal: true, win: p1_holm_won, lose: p1_holm_lost } } ]
+    - id: laugh
+      text: Laugh it off.
+      effects: [ { add: { honour: -1 } } ]
+      result: The hall laughs with you, mostly. Ulf does not laugh at all.
+- id: p1_holm_won
+  kind: spine
+  placeholder: true
+  title: After the holmgang
+  text: |
+    [Placeholder.] Thorgils is carried off the cloak. The hall finds it has always liked you.
+  choices:
+    - id: ok
+      text: Go back to the benches.
+      effects: [ { add: { honour: 1 } } ]
+- id: p1_holm_lost
+  kind: spine
+  placeholder: true
+  title: After the holmgang
+  text: |
+    [Placeholder.] You wake on a bench with your head bound. Thorgils is telling it again, and it gets better every time.
+  choices:
+    - id: ok
+      text: Lie still.

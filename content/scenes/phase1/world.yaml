@@ -1,0 +1,60 @@
+# PLACEHOLDER world scenes for the Phase 1 engine build.
+- id: p1_orkney_hall
+  kind: place
+  placeholder: true
+  trigger: arrive
+  at: [orkney]
+  title: The hall at Birsay
+  cooldown_days: 300
+  text: |
+    [Placeholder.] The chieftain's hall is warm and smells of peat smoke and wet dogs. A skald sits near the fire, eyeing your arm-rings, or the lack of them.
+  choices:
+    - id: hire_skald
+      text: Offer the skald a place in your household.
+      requires: [ "silver >= 48", "!flag.skald" ]
+      effects: [ { add: { silver: -48 } }, { set: flag.skald }, { journal: "A skald joined your household at Birsay." } ]
+      result: He bites the silver, then grins. "Give me something to make verses about."
+    - id: ask_south
+      text: Ask the hall about the islands to the south.
+      effects: [ { know: iona }, { know: bangor } ]
+      result: Men talk of Iona, picked over but never quite empty, and of Bangor on its lough, rich, and close to an Irish king.
+    - id: drink
+      text: Drink, listen, and leave in the morning.
+      effects: [ { add: { crew.morale: 1 } } ]
+- id: p1_sea_wreckage
+  kind: pool
+  placeholder: true
+  trigger: sea
+  chance: 0.03
+  cooldown_days: 200
+  title: Wreckage
+  text: |
+    [Placeholder.] Planks and a sea-chest riding the swell, and a drowned man tangled in a line.
+  choices:
+    - id: salvage
+      text: Haul the chest aboard.
+      effects: [ { add: { silver: 6 } }, { days: 1 } ]
+      result: A little hacksilver and a good knife. Hallvard will not touch either.
+    - id: leave
+      text: Leave the dead to Rán.
+      effects: [ { add: { hamingja: 1 } } ]
+- id: p1_sea_rivals
+  kind: pool
+  placeholder: true
+  trigger: sea
+  chance: 0.015
+  cooldown_days: 120
+  title: Sails astern
+  text: |
+    [Placeholder.] A ship has been closing on you since dawn. Shields along her side, and no answer to your hail.
+  choices:
+    - id: fight
+      text: Turn and fight.
+      danger: true
+      effects: [ { battle: { foe: rival_crew, men: 20, terrain: ship } } ]
+    - id: run
+      text: Run for it.
+      danger: true
+      check: { skill: seamanship, attr: wit, difficulty: 4 }
+      success: { text: "You crowd on sail and lose them in a squall by evening." }
+      failure: { text: "They have the faster ship. You fight anyway, tired from the oars.", effects: [ { add: { crew.morale: -1 } }, { battle: { foe: rival_crew, men: 22, terrain: ship } } ] }

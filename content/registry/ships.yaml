@@ -1,0 +1,6 @@
+# Ship types. crew = men she carries to fight; speed multiplies leg days (higher is faster). Cost in ørtugar (24 = 1 mark). All provisional.
+- { id: faering, name: "Færing", oars: 4, crew: 6, cargo: 1, speed: 0.8, cost: 48, desc: "A four-oared boat for fishing and the fjord." }
+- { id: karvi, name: "Karvi", oars: 28, crew: 30, cargo: 3, speed: 1.0, cost: 192, desc: "A chieftain's working ship. Shallow enough for rivers." }
+- { id: snekkja, name: "Snekkja", oars: 40, crew: 48, cargo: 3, speed: 1.05, cost: 480, desc: "The longship. Built to carry a crew to a fight and home again." }
+- { id: skeid, name: "Skeið", oars: 60, crew: 72, cargo: 4, speed: 1.0, cost: 1200, desc: "A great warship. Slow to build, ruinous to keep, and seen from far off." }
+- { id: knarr, name: "Knarr", oars: 6, crew: 10, cargo: 10, speed: 0.85, cost: 240, desc: "A deep cargo ship. Seaworthy, poor in a fight." }

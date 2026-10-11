@@ -1,0 +1,95 @@
+# Places and sea legs. lon/lat are real coordinates; the validator checks each
+# place sits on land (or on the coast) of the generated map.
+# active: false = on the map for later phases, not yet reachable.
+places:
+  - id: home_fjord
+    name: Hordaland
+    lon: 5.55
+    lat: 60.15
+    kind: home
+    region: West Norway
+    desc: The home fjord. Steep sides, thin fields, good timber, and too many sons for the land.
+    known: true
+    active: true
+  - id: karmoy
+    name: Avaldsnes
+    lon: 5.28
+    lat: 59.35
+    kind: hall
+    region: West Norway
+    desc: A king's seat on Karmøy, above the strait every ship going north has to pass.
+    known: true
+    active: true
+    market: true
+  - id: shetland
+    name: Hjaltland
+    lon: -1.28
+    lat: 60.14
+    kind: island
+    region: The Northern Isles
+    desc: Shetland. Wind, peat, sheep, and Norse farms on the old Pictish ones. Two days west with a fair wind.
+    known: true
+    active: true
+  - id: orkney
+    name: Orkneyjar
+    lon: -3.27
+    lat: 59.13
+    kind: hall
+    region: The Northern Isles
+    desc: Orkney. Green islands, a chieftain's hall, and men who know the way south to the monasteries.
+    known: true
+    active: true
+  - id: iona
+    name: Iona
+    lon: -6.41
+    lat: 56.33
+    kind: monastery
+    region: The Hebrides
+    desc: Colum Cille's island. Raided before your father's time and again since, and still the monks come back.
+    known: false
+    active: true
+    raid: { wealth: 288, defenders: 14, foe: monks_tenants, terrain: beach }
+  - id: bangor
+    name: Bangor
+    lon: -5.67
+    lat: 54.66
+    kind: monastery
+    region: Ulster
+    desc: A great house of the Irish monks on Belfast Lough, with a king's levy close enough to come.
+    known: false
+    active: true
+    raid: { wealth: 480, defenders: 28, foe: ulster_levy, terrain: field }
+  # ---- later phases ----
+  - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
+  - { id: kaupang, name: "Kaupang", lon: 10.05, lat: 59.0, kind: market, region: Vík, desc: "The market at Skíringssalr." }
+  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland." }
+  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, kind: market, region: Denmark, desc: "A market on the west coast of Jutland." }
+  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren." }
+  - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings." }
+  - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea." }
+  - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, kind: market, region: The Baltic, desc: "A market on the amber coast." }
+  - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east." }
+  - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, kind: island, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea." }
+  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain." }
+  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, kind: town, region: Ireland, desc: "The black pool on the Liffey." }
+  - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, kind: monastery, region: Ireland, desc: "The chief church of the Irish." }
+  - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon." }
+  - { id: lindisfarne, name: "Lindisfarne", lon: -1.8, lat: 55.67, kind: monastery, region: Northumbria, desc: "The holy island where it began." }
+  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, kind: town, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse." }
+  - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, kind: island, region: Kent, desc: "An island in the mouth of the Thames." }
+  - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, kind: market, region: Mercia, desc: "The market on the Thames." }
+  - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, kind: market, region: Frisia, desc: "The richest market of the Frankish north." }
+  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, kind: island, region: Frisia, desc: "An island in the Scheldt mouth." }
+  - { id: noirmoutier, name: "Noirmoutier", lon: -2.25, lat: 47.0, kind: monastery, region: Frankia, desc: "A monastery island off the Loire." }
+  - { id: nantes, name: "Nantes", lon: -1.55, lat: 47.22, kind: town, region: Frankia, desc: "A city on the Loire." }
+  - { id: rouen, name: "Rouen", lon: 1.1, lat: 49.44, kind: town, region: Frankia, desc: "A city on the Seine." }
+  - { id: paris, name: "Paris", lon: 2.35, lat: 48.85, kind: town, region: Frankia, desc: "The Franks' city on the Seine." }
+
+legs:
+  - { a: home_fjord, b: karmoy, days: 1, kind: coastal }
+  - { a: home_fjord, b: shetland, days: 1.5, kind: open }
+  - { a: karmoy, b: shetland, days: 2, kind: open }
+  - { a: shetland, b: orkney, days: 1, kind: open }
+  - { a: orkney, b: home_fjord, days: 2.5, kind: open }
+  - { a: orkney, b: iona, days: 3, kind: coastal }
+  - { a: iona, b: bangor, days: 1.5, kind: coastal }

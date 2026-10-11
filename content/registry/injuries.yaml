@@ -1,0 +1,10 @@
+# Wounds. days = time to heal; no days = permanent. attrs = penalties while it lasts.
+- { id: gashed_arm, name: "A gashed arm", desc: "Sewn with thread and hope. It weeps for a week.", days: 40, attrs: { str: -1 } }
+- { id: cracked_ribs, name: "Cracked ribs", desc: "Every breath is a knife.", days: 50, attrs: { end: -1 } }
+- { id: gashed_leg, name: "A gashed leg", desc: "You walk like an old man for a month.", days: 40, attrs: { agi: -1 } }
+- { id: broken_nose, name: "A broken nose", desc: "It heals crooked. Ulf says it improves you.", days: 30 }
+- { id: broken_hand, name: "A broken hand", desc: "Two fingers set badly. The grip comes back slowly.", days: 90, attrs: { str: -1 } }
+- { id: lost_eye, name: "A lost eye", desc: "The world is flatter now. Men look away from the empty socket.", attrs: { wit: -1, pre: 1 }, deed: true }
+- { id: bad_knee, name: "A ruined knee", desc: "It will tell you about the weather for the rest of your life.", attrs: { agi: -1 }, deed: true }
+- { id: face_scar, name: "A scar across the face", desc: "From brow to jaw. Women look twice; so do men deciding whether to fight you.", attrs: { pre: 1 }, deed: true }
+- { id: lost_fingers, name: "Lost fingers", desc: "Two fingers of the shield hand, left on someone's beach.", attrs: { str: -1 }, deed: true }

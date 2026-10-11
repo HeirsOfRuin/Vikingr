@@ -1,0 +1,37 @@
+# Single-combat opponents. habits = how often he chooses each move (the hero can read them).
+- id: thorgils
+  name: Thorgils Hrappsson
+  attrs: { str: 3, agi: 2, end: 3, wit: 2, pre: 2 }
+  weapons: 3
+  shield: 2
+  armour: 1
+  weapon: 2
+  habits: { strike: 4, bash: 2, guard: 1, feint: 1, bind: 1 }
+  desc: A big man with a loud mouth and a heavy arm. He swings first and keeps swinging.
+- id: eyvind
+  name: Eyvind the Quiet
+  attrs: { str: 2, agi: 3, end: 2, wit: 3, pre: 1 }
+  weapons: 4
+  shield: 3
+  armour: 1
+  weapon: 2
+  habits: { guard: 3, feint: 3, bind: 2, strike: 1 }
+  desc: Thin, patient, and hard to hit. He waits for you to make the mistake.
+- id: irish_champion
+  name: An Irish champion
+  attrs: { str: 3, agi: 3, end: 3, wit: 2, pre: 3 }
+  weapons: 5
+  shield: 4
+  armour: 2
+  weapon: 2
+  habits: { strike: 2, feint: 2, bind: 2, guard: 2, bash: 1 }
+  desc: A king's man with a gilded spear and no fear in him.
+- id: green_boy
+  name: A farmer's boy
+  attrs: { str: 2, agi: 2, end: 2, wit: 1, pre: 1 }
+  weapons: 1
+  shield: 1
+  armour: 0
+  weapon: 1
+  habits: { guard: 4, strike: 2 }
+  desc: He holds the shield like a door and hopes.

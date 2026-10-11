@@ -1,0 +1,17 @@
+# Deed types and their base weight in fame (DESIGN §7).
+- { id: raid, name: "A raid", weight: 3 }
+- { id: raid_failed, name: "A raid beaten off", weight: 0.5 }
+- { id: first_over, name: "First over the wall", weight: 5 }
+- { id: front_deed, name: "A deed in the front rank", weight: 4 }
+- { id: battle_won, name: "A fight won", weight: 3 }
+- { id: sea_fight_won, name: "A fight at sea", weight: 4 }
+- { id: duel_won, name: "A man killed in single combat", weight: 3 }
+- { id: holmgang_won, name: "A holmgang won", weight: 5 }
+- { id: killed_champion, name: "A champion killed", weight: 6 }
+- { id: storm_survived, name: "A storm outlived", weight: 2 }
+- { id: late_sailing, name: "Sailing in the dark of the year", weight: 2 }
+- { id: scar, name: "A wound worth showing", weight: 1 }
+- { id: ring_giving, name: "A ring given", weight: 1 }
+- { id: open_handed, name: "An open-handed share", weight: 2 }
+- { id: man_deed, name: "A sworn man's deed", weight: 1 }
+- { id: deed, name: "A deed", weight: 2 }

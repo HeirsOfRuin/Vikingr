@@ -1,0 +1,21 @@
+# Battle foes: quality 0 green .. 3 picked men; doctrine = how often they choose each order.
+- id: monks_tenants
+  name: Monks and their tenants
+  quality: 0
+  doctrine: { hold: 3, give: 2, missiles: 1 }
+  desc: Lay brothers, herdsmen and tenants with spears and stones. Brave enough until the wall breaks.
+- id: ulster_levy
+  name: The Ulster levy
+  quality: 1
+  doctrine: { missiles: 3, give: 2, flank: 1, hold: 1, push: 1 }
+  desc: An Irish king's men. Javelins, light shields, and a habit of falling back to draw you on.
+- id: rival_crew
+  name: A rival crew
+  quality: 1
+  doctrine: { push: 3, wedge: 2, hold: 2, missiles: 1 }
+  desc: Northmen like yourselves, after the same silver.
+- id: island_men
+  name: Islanders
+  quality: 0
+  doctrine: { hold: 2, missiles: 2, give: 2 }
+  desc: Farmers and fishermen who would rather you took the sheep and left.
