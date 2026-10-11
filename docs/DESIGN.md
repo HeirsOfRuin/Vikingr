@@ -1,6 +1,6 @@
 # DESIGN — Vikingr
 
-Status: **Phase 0 (proposal).** Nothing gets built until this is approved. Decisions log at the bottom.
+Status: **Phase 0 (proposal).** Start year, slavery and tone are confirmed (2026-10-11). Awaiting go-ahead for Phase 1. Decisions log at the bottom.
 
 ## Context
 This is an RPG about one man's life in the 9th century. He starts with nothing, builds fame and renown, becomes a sea king, and tries to earn his way into Valhalla. The aim is to be the greatest living legend of the 800s.
@@ -22,6 +22,9 @@ It is the fifth game in the HeirsOfRuin set. It reuses the tooling and process o
 | Setting | The real 9th-century world: real geography and real historical events and figures |
 | Starts | 3 backgrounds with distinct first years that merge into one shared life |
 | Personal combat | A full layer of its own, not occasional |
+| Start | 830, aged 16. He grew up on the stories of the first raids and the silver they brought home. |
+| Slavery | Present, as a player choice, never required, never glorified, with consequences |
+| Tone | Brutal, realistic and gory, cut with humour, glory, valour, brotherhood, love and comedy. Touchstones: *Vikings*, *The Last Kingdom*, and the sagas themselves. See §1a and `content/style-guide.md`. |
 
 ---
 
@@ -34,6 +37,35 @@ It is the fifth game in the HeirsOfRuin set. It reuses the tooling and process o
 5. **The men have names.** The sworn men are people with temperaments, oaths, grudges and ambitions. Most stories come from them.
 6. **The gods are in the weather.** Every omen has an explanation without the gods. The game never says which reading is true until the very end.
 7. **The century moves without him.** Dublin is founded, Paris burns and the Great Army lands whether he is there or not. Historical figures compete with him for fame.
+
+## 1a. Tone
+
+**Brutal and funny in the same breath.** The touchstones are *Vikings* and *The Last Kingdom* for energy and the Icelandic sagas for voice. The sagas are the model for the mix: men die mid-sentence with a joke. Atli in *Grettis saga*, run through with a spear, remarks that broad spears are in fashion these days, and falls dead.
+
+| Element | How it shows up |
+|---|---|
+| **Brutality and gore** | Wounds are anatomical and specific. Fights are short, ugly and decided by small things. The aftermath is shown: the smell, the flies, the wound that goes bad a week later. |
+| **Humour** | Comes from people, not from the narrator: banter at the oars, insults, drink, bad luck, the crew's running jokes, the hero's own failures. Never anachronistic. |
+| **Glory and valour** | Earned by cost. A scene earns its glory by showing what was risked. |
+| **Brotherhood** | Shown in acts: the last water shared, a wounded man carried to the ship, an oath kept when breaking it would pay. |
+| **Love** | The wife, the children, a lover, a blood-brother. Physical, unsentimental, real, and with real stakes: they can be lost. |
+| **Comedy** | Allowed to be broad at the feast and in the hall. A drunk boast that must then be honoured is a classic engine. |
+
+### Systems that carry the tone
+- **Nicknames.** The hero and his named men earn nicknames from what they do, the way history gave us Ironside, the Boneless and Hairy-breeches. Some are glorious and some are humiliating, and the player does not choose. The nickname appears in the saga and in how others address him.
+- **Flyting and man-matching** (*senna*, *mannjafnaðr*). A hall contest of insults and boasts, played as a short exchange in the duel style with words instead of stances. Winning gives fame and laughter; losing can start a real fight.
+- **Boasts** (*heitstrenging*). A drunk vow at the feast becomes a queued obligation. Keep it and it is a deed. Break it and the hall remembers.
+- **Crew banter.** Short lines from named men between legs and after fights, chosen by temperament and recent events. This is the cheapest and most frequent source of warmth and humour.
+
+### Content lines
+- **Sexual violence** was part of raiding. It is **acknowledged** in implication and aftermath, **never depicted**, and **never a player action**.
+- **Killing children** is never shown or offered.
+- **Torture** happens and is shown with its weight. The **blood eagle** is treated as the sources leave it: possibly real, possibly a skald's image, which suits the ambiguity pillar.
+- **Thralls** are people with names when the story meets them. Their treatment is shown honestly. Freeing them is possible and has its own consequences.
+- A single **content note** on the title screen. No gore slider, so there is one text to write and test.
+
+### Where the touchstones are not followed
+The shows compress and invent history. This game does not: no horned helmets, no Ragnar as a farmer in the 790s, no Lindisfarne and Paris in the same decade. The energy is borrowed; the history is not.
 
 ---
 
@@ -469,6 +501,13 @@ At death the game assembles **his saga** from the deed record: chapters by decad
 
 All three start in west Norway in 830, aged 16, with nothing of their own. They differ in the first year (the prologue) and in starting stats, relationships and problems. After the first year they share one life.
 
+**Shared childhood.** He grew up on the stories. Each background's prologue opens with a remembered scene from boyhood, before the game proper starts:
+- the ship that came home with silver when he was small;
+- an old raider at the hearth with one hand and an arm-ring, telling it differently every winter;
+- the names of Iona and the Frankish coast said like the names of rich farms.
+
+That longing for what lies beyond the horizon is the first want the game gives him.
+
 | Background | Start | Edge | Burden |
 |---|---|---|---|
 | **The younger son** | A bóndi's second son; the farm goes to his brother | Balanced stats, a family, a father's name that means something locally | A brother who resents him, no inheritance |
@@ -481,8 +520,8 @@ All three start in west Norway in 830, aged 16, with nothing of their own. They 
 
 | # | Topic | Recommendation | Status |
 |---|---|---|---|
-| 1 | Start year | **830 at age 16.** It puts the peak of the century (841–866) in his prime. The cost is that the earliest raids (793–820s) are backstory, not playable. | Recommended, needs your confirmation |
-| 2 | Thralls and slaving | Present, because slave-taking was a central source of raid profit and leaving it out would be dishonest to the period. **A player choice, never required, never glorified.** Taking captives has consequences: unrest, escapes, the freedman's-son background seeing it differently. | Recommended, needs your confirmation |
+| 1 | Start year | **830 at age 16.** It puts the peak of the century (841–866) in his prime. The earliest raids (793–820s) are the stories he grew up on. | **Confirmed** |
+| 2 | Thralls and slaving | Present, because slave-taking was a central source of raid profit and leaving it out would be dishonest to the period. **A player choice, never required, never glorified.** Taking captives has consequences: unrest, escapes, the freedman's-son background seeing it differently. Content lines in §1a. | **Confirmed** |
 | 3 | Hero's sex | Male, per the brief | Assumed |
 | 4 | Hero's name | Player picks from a period name list or types one. Patronymic from the background (e.g. *Hallsson*). | Assumed |
 | 5 | Christianity | Present as the faith of the targets and later of some Norse. Conversion is a possible late-game political choice with real consequences at judgment. | Assumed, expanded later |
@@ -536,7 +575,7 @@ Built alongside the engine from the first commit, not later.
 | Tool | Question it answers | Must assert |
 |---|---|---|
 | `validate.ts` | Is the content well-formed? Broken links, undeclared refs, unset or unread flags, lethal fights without a warning, scenes unreachable from any background. | — |
-| `lint-style.ts` | Banned phrases, modern idioms, confirmed-divine-cause wording (§12) | — |
+| `lint-style.ts` | Banned phrases, modern idioms, confirmed-divine-cause wording (§12), show-history anachronisms (§1a). Lists live in `content/style-guide.md`. | — |
 | `bot.ts` | Can a life be played start to death without dead ends or softlocks? Policies: raider, trader, homebody, reckless, random. | **The year advanced and the hero aged** (failure mode #2) |
 | `measure-duel.ts` / `measure-battle.ts` / `measure-raid.ts` | Combat balance | Exchanges or rounds actually happened. The positions differ measurably. |
 | `measure-economy.ts` | Income share by source over a life | **Composition bands**: no single source above about 60% of lifetime silver (failure mode #11) |
@@ -602,6 +641,7 @@ Built alongside the engine from the first commit, not later.
   - a skald;
   - a völva at a winter feast.
 - **Systems:** the fame loop end to end (deed, telling, verse), ring-giving at the share-out, omens live, and a saga fragment at year end.
+- **Tone:** one flyting at the winter feast, one drunk boast that becomes an obligation, crew banter on every leg, and at least one nickname earned.
 
 **Exit criteria:**
 - A human plays the year and wants to play the next one.
@@ -625,4 +665,5 @@ Each step follows the Adalia rhythm: frame, approval, build, playtest, revise.
 ## Decisions log
 | Date | Decision |
 |---|---|
+| 2026-10-11 | Start year 830 at age 16 confirmed. Slavery included as a player choice with consequences, confirmed. Tone set: brutal, realistic, gory, with humour, glory, brotherhood, love and comedy (*Vikings*, *The Last Kingdom*, the sagas). Content lines, nicknames, flyting and boasts added (§1a). |
 | 2026-10-11 | HTML/PWA; a sea map you travel freely, with the story through scenes; one long life; deeper than two phases a year; combat central, in three layers; mythology present and ambiguous; real 9th-century history; 3 backgrounds; full single-combat layer. Stack and process from Knight of Adalia; combat code-path rule from Free Company. |
