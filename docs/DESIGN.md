@@ -653,9 +653,9 @@ The ratio is mostly stone (about 85%), then bone text, with red used where the e
 ### Hybrid pipeline
 1. **Josh supplies a source image** for each key scene (from an image generator, a photograph or a painting), following the shot list in `docs/ART.md`.
 2. **`tools/art.ts` converts it to fine pixel art:**
-   - crops to 2:1;
-   - downscales to about 384 × 192 (fine enough to read as illustration, coarse enough to read as pixel art at phone width);
-   - quantises to the **fixed master palette** above (about 32 colours made of the tokens and their ramps) rather than a palette per image, so every scene in the game shares one palette;
+   - crops to 2.5:1 (changed from 2:1 on 2026-10-11 to fit the first sources; a wider band also costs less of the phone screen);
+   - scales to 400 × 160 (fine enough to read as illustration, coarse enough to read as pixel art at phone width);
+   - quantises to the **fixed master palette** in `tools/art.ts` (52 colours: the tokens, their ramps, skin, firelight oranges) rather than a palette per image, so every scene in the game shares one palette. A scene uses 20–47 of them;
    - no dithering, a Silk Road lesson: on photographs it turns to checkerboard noise.
 3. **Sources are kept** in `art/src/` and the generator is committed (failure mode #13).
 4. **Missing art:** every key has a code-drawn fallback, so a missing image never blocks the game.

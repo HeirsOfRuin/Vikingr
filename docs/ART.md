@@ -2,13 +2,13 @@
 
 How the art works (DESIGN §19b):
 1. You supply a source image.
-2. `tools/art.ts` crops it to 2:1, reduces it to about 384 × 192 pixels, and redraws it in the game's fixed Runestone palette.
+2. `tools/art.ts` crops it to 2.5:1, reduces it to 400 × 160 pixels, and redraws it in the game's fixed Runestone palette.
 3. Animation (fire, water, figures, weather) is drawn in code on top.
 
 Every scene works without its image, because a code-drawn fallback shows until the source arrives. Anything you send can therefore be replaced later.
 
 ## What makes a good source
-- **Wide:** 2:1 or wider, at least 1536 × 768. The game shows a 2:1 band, slightly cropped top and bottom, so keep the subject in the middle 80%.
+- **Wide:** 2.5:1 or wider, with at least 400 × 160 pixels per image. Bigger is better: shrinking a large image gives cleaner pixels. Keep the subject in the middle; `art/art.json` can shift the crop.
 - **Strong, simple shapes and clear light.** Pixel art at this size keeps silhouettes and big areas of light and dark. Fine texture disappears.
 - **Cold northern light** for outdoor scenes (grey, blue, a low sun). Firelight for indoor scenes. Avoid saturated sunsets and teal-and-orange film grading; the palette will flatten them anyway.
 - **Historically right:**
@@ -56,6 +56,17 @@ Add "**no horned helmets**" to every prompt with people in it.
 | **The shield-wall** | `bangor_field`, or a plain ground for other fights | Two walls of shield sprites whose length follows the men standing. Each round's order plays out: brace (hold), lean in (push), spears in an arc (missiles), a wedge pushing forward, a step back (give ground), a flank sweeping wide. Men fall from the line as they die. The hero's marker shows where he stands. |
 | **The raid** | `iona_dawn`, then `iona_burning` | The landing, the assault (a small shield-wall), and fire spreading through the buildings as the alarm clock runs. |
 | **Storm at sea** | `storm` | Waves, rain and spray, the ship pitching, a lightning flash. |
+
+## Received (2026-10-11)
+All 14 arrived as one contact sheet (`art/src/_sheet-v1.png`), cut into `art/src/<key>.png` and converted. Every one survives conversion.
+
+**Worth regenerating when credits allow** (historical accuracy, not quality):
+- `iona_dawn` and `iona_burning`: a stone abbey with a tower and spire. That is the later medieval abbey. In 830 Iona was timber churches, a small stone chapel at most, beehive huts and high crosses.
+- `birsay`: a stone manor house. In 830 it would be turf and timber halls, with a Pictish settlement and later a Norse one.
+- `bangor_field`: a stone town behind the field. In 830 Bangor was a timber monastery inside an earthwork enclosure.
+- `muster`: several ships appear to have two masts. Viking ships had one.
+
+Prompt add-on for these: *"9th century, timber and turf buildings only, no stone castles, no Gothic towers, single-masted ships."*
 
 ## Delivery
 - Put files in `art/src/` named by key (for example `art/src/hearth_ormr.png`), or send them in the chat. I will run the converter and show a contact sheet before anything goes into the game.
