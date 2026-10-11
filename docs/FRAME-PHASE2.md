@@ -1,6 +1,6 @@
 # Phase 2: The Year 830, a Frame for Approval
 
-**Status:** for approval. Nothing here is built until it is approved. After approval, three calibration scenes are written first, at final quality, for your verdict on voice and length (the Adalia method). The rest of the year is written after that verdict.
+**Status:** approved by the author (2026-10-11), all seven decisions as recommended. The calibration scenes are written (`content/scenes/calibration/`, playable from the title screen). The rest of the year waits for the author's verdict on them.
 
 **Fixed by the author:**
 - The year is 830; the hero is 16.

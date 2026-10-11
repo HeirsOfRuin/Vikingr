@@ -89,7 +89,7 @@ try {
     await snap(`tab-${t.toLowerCase()}`);
   }
   await page.locator('.tabs button', { hasText: 'Now' }).click();
-  await page.locator('button', { hasText: 'Menu' }).click();
+  await page.locator('button[aria-label="Menu"]').click();
   await snap('menu');
   // a reload keeps the life
   await page.reload();

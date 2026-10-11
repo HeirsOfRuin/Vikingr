@@ -1,4 +1,4 @@
-// Converts source images (art/src/<key>.png|jpg|webp) into the game's pixel art (public/art/<key>.png).
+// Converts source images (art/src/<key>.png|jpg|webp) into the game's pixel art (src/art/<key>.png).
 // Usage: npx tsx tools/art.ts [key ...]       (no keys: every source)
 //        npx tsx tools/art.ts --sheet out.png (also writes a contact sheet at phone size)
 //
@@ -11,37 +11,16 @@
 import { chromium } from 'playwright';
 import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, extname } from 'node:path';
+import { MASTER } from '../src/ui/scene/palette';
 
 export const ART_W = 400;
 export const ART_H = 160;
 
-/** The master palette: the Runestone tokens and their ramps. Every scene in the game is drawn from these. */
-export const MASTER = [
-  // stone and iron, dark to light
-  '#111213', '#191b1c', '#222628', '#30363a', '#434a4e', '#5a6266', '#737c80', '#8a9397', '#a9b0b1', '#c9cdca',
-  // bone and light
-  '#8f8574', '#b5ac97', '#e6ddc8', '#f3ecdc',
-  // rune red
-  '#3d1410', '#6b2018', '#8f2a1f', '#b3352a', '#d0573a',
-  // ochre and fire
-  '#7a4a1c', '#a8692a', '#c8913a', '#e3b558', '#f0d79a',
-  // firelight oranges, so hearths stay amber rather than red
-  '#b8582a', '#e08a3c',
-  // wood, turf and earth
-  '#1e1611', '#2a1e16', '#3a2a1e', '#5b4330', '#7d5e3f', '#9c7a55',
-  // sea and sky
-  '#141f26', '#1c2a33', '#24343d', '#34495a', '#4d6773', '#6c8794', '#93abb5', '#bcd0d6',
-  // moss, grass and lichen
-  '#2b3122', '#3f4a2c', '#5c6a3a', '#8a9860', '#a9b47a',
-  // skin
-  '#5e3f30', '#9a6e56', '#c79a7a', '#e0bfa0',
-  // dusk
-  '#c97a6a', '#7a5566',
-] as const;
+export { MASTER } from '../src/ui/scene/palette';
 
 const ROOT = join(import.meta.dirname, '..');
 const SRC = join(ROOT, 'art', 'src');
-const OUT = join(ROOT, 'public', 'art');
+const OUT = join(ROOT, 'src', 'art');
 const MIME: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
 
 const args = process.argv.slice(2);
@@ -99,22 +78,24 @@ for (const s of sources) {
       const d = g.getImageData(0, 0, W, H);
       // OKLab nearest colour
       const lin = (v: number) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
-      const lab = (r: number, gg: number, b: number) => {
+      const lab = (r: number, gg: number, b: number): [number, number, number] => {
         const R = lin(r), G = lin(gg), B = lin(b);
         const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
         const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
         const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
         return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
       };
-      const pal = palette.map((h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
+      const pal = palette.map((h): [number, number, number] => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
       const palLab = pal.map(([r, gg, b]) => lab(r, gg, b));
       const used = new Set<number>();
       const memo = new Map<number, number>();
-      for (let i = 0; i < d.data.length; i += 4) {
-        const key = (d.data[i] >> 2 << 12) | (d.data[i + 1] >> 2 << 6) | (d.data[i + 2] >> 2);
+      const px = d.data;
+      for (let i = 0; i < px.length; i += 4) {
+        const r0 = px[i]!, g0 = px[i + 1]!, b0 = px[i + 2]!;
+        const key = (r0 >> 2 << 12) | (g0 >> 2 << 6) | (b0 >> 2);
         let best = memo.get(key);
         if (best === undefined) {
-          const [L, A, Bb] = lab(d.data[i], d.data[i + 1], d.data[i + 2]);
+          const [L, A, Bb] = lab(r0, g0, b0);
           let bd = Infinity;
           best = 0;
           palLab.forEach(([pl, pa, pb], k) => {
@@ -126,7 +107,7 @@ for (const s of sources) {
         }
         used.add(best);
         const p = pal[best]!;
-        d.data[i] = p[0]; d.data[i + 1] = p[1]; d.data[i + 2] = p[2]; d.data[i + 3] = 255;
+        px[i] = p[0]; px[i + 1] = p[1]; px[i + 2] = p[2]; px[i + 3] = 255;
       }
       g.putImageData(d, 0, 0);
       return { png: cv.toDataURL('image/png'), used: used.size, src: [img.naturalWidth, img.naturalHeight] as [number, number] };

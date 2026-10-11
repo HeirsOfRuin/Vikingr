@@ -7,6 +7,7 @@ places:
     lon: 5.55
     lat: 60.15
     kind: home
+    art: home_fjord
     region: West Norway
     desc: The home fjord. Steep sides, thin fields, good timber, and too many sons for the land.
     known: true
@@ -35,6 +36,7 @@ places:
     lon: -3.27
     lat: 59.13
     kind: hall
+    art: birsay
     region: The Northern Isles
     desc: Orkney. Green islands, a chieftain's hall, and men who know the way south to the monasteries.
     known: true
@@ -44,6 +46,7 @@ places:
     lon: -6.41
     lat: 56.33
     kind: monastery
+    art: iona_dawn
     region: The Hebrides
     desc: Colum Cille's island. Raided before your father's time and again since, and still the monks come back.
     known: false
@@ -54,6 +57,7 @@ places:
     lon: -5.67
     lat: 54.66
     kind: monastery
+    art: bangor_field
     region: Ulster
     desc: A great house of the Irish monks on Belfast Lough, with a king's levy close enough to come.
     known: false

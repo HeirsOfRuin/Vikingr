@@ -35,3 +35,12 @@
   weapon: 1
   habits: { guard: 4, strike: 2 }
   desc: He holds the shield like a door and hopes.
+- id: lay_brother
+  name: A lay brother with a spear
+  attrs: { str: 2, agi: 2, end: 2, wit: 1, pre: 1 }
+  weapons: 1
+  shield: 1
+  armour: 0
+  weapon: 2
+  habits: { strike: 3, guard: 3, bind: 1 }
+  desc: A big man in a brown robe with a hay-spear, standing in the gate because nobody else would.

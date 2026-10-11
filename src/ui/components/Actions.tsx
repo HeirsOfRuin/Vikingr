@@ -2,14 +2,14 @@ import type { ActionOption, Action } from '../../engine/index';
 
 const BANDS: Record<string, string> = { Risky: 'risky', Even: 'even', Favourable: 'favourable' };
 
-/** A list of action buttons, grouped. A disabled action says why. */
+/** A list of action buttons, grouped. Odds and danger are small pills; a disabled action says why. */
 export function Actions({ options, onAct, danger }: { options: ActionOption[]; onAct: (a: Action) => void; danger?: (a: Action) => boolean }) {
   const groups: string[] = [];
   for (const o of options) if (!groups.includes(o.group)) groups.push(o.group);
   return (
     <div>
       {groups.map((g) => (
-        <div key={g} class="group">
+        <div key={g} class={g ? 'group' : ''}>
           {g && <h3>{g}</h3>}
           <div class="choices">
             {options.filter((o) => o.group === g).map((o) => {
@@ -17,11 +17,13 @@ export function Actions({ options, onAct, danger }: { options: ActionOption[]; o
               const lethal = danger?.(o.action);
               return (
                 <button key={JSON.stringify(o.action)} class={`choice${lethal ? ' danger' : ''}`} disabled={!o.enabled} onClick={() => onAct(o.action)}>
-                  {o.label}
-                  {lethal && <span class="tag lethal">Lethal</span>}
-                  {band && <span class={`tag ${band}`}>{o.hint}</span>}
-                  {o.hint && !band && <span class="hint">{o.hint}</span>}
-                  {!o.enabled && o.reason && <span class="reason">{o.reason}</span>}
+                  <span class="txt">
+                    {o.label}
+                    {o.hint && !band && <span class="hint">{o.hint}</span>}
+                    {!o.enabled && o.reason && <span class="reason">{o.reason}</span>}
+                  </span>
+                  {band && <b class={`pill ${band}`}>{o.hint}</b>}
+                  {lethal && <b class="pill lethal">Lethal</b>}
                 </button>
               );
             })}

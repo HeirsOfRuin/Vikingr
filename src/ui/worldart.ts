@@ -4,18 +4,19 @@ import { mapTiles, TERRAIN, type MapData, type Terrain } from '../engine/mapgrid
 
 export const PX = 3;
 
+// Runestone (DESIGN §19a): slate seas, stone uplands, muted greens.
 const BASE: Record<Terrain, [number, number, number]> = {
-  deep: [26, 44, 60],
-  sea: [34, 60, 84],
-  shallows: [48, 86, 110],
-  lake: [56, 96, 122],
-  farm: [132, 128, 74],
-  forest: [52, 76, 46],
-  moor: [112, 104, 74],
-  marsh: [84, 100, 70],
-  mountain: [124, 118, 108],
-  ice: [214, 218, 218],
-  fell: [140, 140, 112],
+  deep: [24, 34, 41],
+  sea: [36, 52, 61],
+  shallows: [52, 73, 90],
+  lake: [70, 96, 108],
+  farm: [116, 112, 76],
+  forest: [50, 62, 44],
+  moor: [100, 94, 76],
+  marsh: [74, 88, 66],
+  mountain: [104, 110, 112],
+  ice: [201, 205, 202],
+  fell: [128, 128, 106],
 };
 
 // 3x3 patterns: 0 = base, 1 = lighter, 2 = darker, 3 = accent
@@ -28,8 +29,8 @@ const PATTERN: Partial<Record<Terrain, number[]>> = {
   fell: [0, 0, 1, 0, 2, 0, 1, 0, 0],
 };
 const ACCENT: Partial<Record<Terrain, [number, number, number]>> = {
-  forest: [36, 56, 34],
-  marsh: [60, 96, 112],
+  forest: [36, 46, 32],
+  marsh: [77, 103, 115],
 };
 
 function hash(x: number, y: number): number {
@@ -83,7 +84,7 @@ export function worldCanvas(map: MapData): HTMLCanvasElement {
   }
   ctx.putImageData(img, 0, 0);
   // rivers
-  ctx.strokeStyle = 'rgb(76, 116, 146)';
+  ctx.strokeStyle = 'rgb(77, 103, 115)';
   ctx.lineWidth = 2;
   ctx.lineJoin = 'round';
   for (const r of map.rivers) {

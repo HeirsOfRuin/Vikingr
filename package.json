@@ -18,7 +18,9 @@
     "measure:duel": "tsx tools/measure-duel.ts",
     "measure:battle": "tsx tools/measure-battle.ts",
     "smoke": "tsx tools/smoke.ts",
-    "check": "npm run typecheck && npm test && npm run validate && npm run lint:style && npm run bot -- --runs 100 --years 10"
+    "check": "npm run typecheck && npm test && npm run validate && npm run lint:style && npm run bot -- --runs 100 --years 10",
+    "build:artifact": "npm run content && tsc --noEmit && VITE_ARTIFACT=1 vite build && tsx tools/build-artifact.ts",
+    "art": "tsx tools/art.ts"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
@@ -30,6 +32,10 @@
     "vitest": "^5.0.3"
   },
   "dependencies": {
+    "@fontsource/alegreya": "^5.3.0",
+    "@fontsource/alegreya-sans": "^5.3.0",
+    "@fontsource/alegreya-sc": "^5.3.0",
+    "@fontsource/noto-sans-runic": "^5.3.0",
     "preact": "^10.29.8",
     "yaml": "^2.9.1",
     "zod": "^4.6.5"

@@ -1,4 +1,5 @@
-import type { ContentBundle } from '../../content/schema';
+import { useEffect, useState } from 'preact/hooks';
+import type { ContentBundle, Scene } from '../../content/schema';
 import type { GameState } from '../../engine/state';
 import { listActions, screenOf, type Action } from '../../engine/index';
 import type { MapData } from '../../engine/mapgrid';
@@ -11,6 +12,8 @@ import { Actions } from './Actions';
 import { DuelView, BattleView } from './Fights';
 import { MapView } from './MapView';
 import { moraleWord } from './Panels';
+import { SceneArt } from '../scene/SceneArt';
+import { getValue } from '../../engine/paths';
 
 const AFTERLIFE: Record<string, { title: string; text: string }> = {
   valhalla: { title: 'Valhalla', text: 'A woman in mail stands over the place where you fell, and you rise to meet her. The hall has five hundred and forty doors. Every one of them is open, and they are shouting your name.' },
@@ -18,6 +21,47 @@ const AFTERLIFE: Record<string, { title: string; text: string }> = {
   ran: { title: "Rán's hall", text: 'Rán draws the drowned down in her net. Her hall is under the sea, lit with gold, and the drowned sit there at her benches, cold, and not unkindly treated.' },
   hel: { title: 'Hel', text: 'The road goes down and north. At the bottom is a hall where those who died in their beds wait for the end of things. It is quiet there.' },
 };
+
+/** A scene's picture and how loud the hall is, if the scene names one. */
+function Art({ content, state, art }: { content: ContentBundle; state: GameState; art: Scene['art'] | { key: string; laughter?: string } | undefined }) {
+  if (!art) return null;
+  const key = typeof art === 'string' ? art : art.key;
+  const entry = content.art[key];
+  if (!entry) return null;
+  let laughter = 0;
+  if (typeof art !== 'string' && art.laughter) {
+    try { laughter = Math.max(0, Math.min(2, Number(getValue(state, content, art.laughter)) || 0)); } catch { laughter = 0; }
+  }
+  return <SceneArt entry={entry} mood={{ laughter }} />;
+}
+
+const paras = (text: string) => text.trim().split(/\n\s*\n/).map((t, i) => <p key={i}>{t}</p>);
+const BREAK = /^\s*\[break\]\s*$/m;
+
+/** A scene read in beats: [break] lines split it into pages; the choices come on the last page. */
+function SceneView({ content, state, scene, onAct }: { content: ContentBundle; state: GameState; scene: Scene; onAct: (a: Action) => void }) {
+  const pages = scene.text.split(BREAK).map((t) => t.trim()).filter(Boolean);
+  const [page, setPage] = useState(0);
+  useEffect(() => setPage(0), [scene.id, state.day]);
+  const last = page >= pages.length - 1;
+  const danger = (a: Action) => a.t === 'choose' && !!scene.choices.find((c) => c.id === a.id)?.danger;
+  return (
+    <>
+      <Art content={content} state={state} art={scene.art} />
+      <div class="screen prose">
+        <h2>{scene.title}</h2>
+        <div class={scene.placeholder ? 'placeholder' : ''}>{paras(pages[Math.min(page, pages.length - 1)] ?? '')}</div>
+        {last ? (
+          <Actions options={listActions(state, content)} onAct={onAct} danger={danger} />
+        ) : (
+          <div class="choices">
+            <button class="choice" onClick={() => { setPage(page + 1); window.scrollTo(0, 0); }}><span class="txt">Continue</span><span class="pagecount">{page + 1} / {pages.length}</span></button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
 
 /** What to do now: the scene, the fight, the place, the hall. */
 export function NowView({ content, map, state, onAct }: { content: ContentBundle; map: MapData; state: GameState; onAct: (a: Action) => void }) {
@@ -29,7 +73,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
     const a = AFTERLIFE[state.death.afterlife]!;
     const rank = legendTable(state, content).findIndex((r) => r.hero) + 1;
     return (
-      <div class="prose">
+      <div class="screen prose">
         <h1>{formatDate(state.death.day)}</h1>
         <p>{state.death.text}</p>
         <h2>{a.title}</h2>
@@ -41,28 +85,21 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
       </div>
     );
   }
-  if (p?.t === 'scene') {
-    const scene = content.scenes[p.id]!;
-    const danger = (a: Action) => a.t === 'choose' && !!scene.choices.find((c) => c.id === a.id)?.danger;
-    return (
-      <div class="prose">
-        <h2>{scene.title}</h2>
-        <div class={scene.placeholder ? 'placeholder' : ''}>{scene.text.trim().split(/\n\s*\n/).map((t, i) => <p key={i}>{t}</p>)}</div>
-        <Actions options={options} onAct={onAct} danger={danger} />
-      </div>
-    );
-  }
+  if (p?.t === 'scene') return <SceneView content={content} state={state} scene={content.scenes[p.id]!} onAct={onAct} />;
   if (p?.t === 'report') {
     return (
-      <div class="prose">
-        <h2>{p.title}</h2>
-        {p.lines.map((l, i) => <p key={i}>{l}</p>)}
-        <Actions options={options} onAct={onAct} />
-      </div>
+      <>
+        <Art content={content} state={state} art={p.art ? { key: p.art, laughter: p.laughter } : undefined} />
+        <div class="screen prose">
+          <h2>{p.title}</h2>
+          {p.lines.map((l, i) => <p key={i}>{l}</p>)}
+          <Actions options={options} onAct={onAct} />
+        </div>
+      </>
     );
   }
-  if (p?.t === 'duel') return <DuelView content={content} d={p.duel} options={options} onAct={onAct} />;
-  if (p?.t === 'battle') return <BattleView content={content} b={p.battle} options={options} onAct={onAct} />;
+  if (p?.t === 'duel') return <div class="screen"><DuelView content={content} d={p.duel} options={options} onAct={onAct} /></div>;
+  if (p?.t === 'battle') return <div class="screen"><BattleView content={content} b={p.battle} options={options} onAct={onAct} /></div>;
 
   const d = dateOf(state.day);
   const food = Math.floor(state.provisions / Math.max(1, mouths(state)));
@@ -89,11 +126,15 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
         );
     }
   })();
+  const art = screen === 'voyage' ? 'open_sea' : screen === 'muster' ? 'muster' : screen === 'hall' ? 'hearth_ormr' : screen === 'return' ? 'ship_home' : place?.art;
   return (
-    <div>
-      {head}
-      {(screen === 'place' || screen === 'voyage') && <MapView content={content} map={map} state={state} mini />}
-      <Actions options={options} onAct={onAct} />
-    </div>
+    <>
+      <Art content={content} state={state} art={art} />
+      <div class={art ? 'screen art-led' : 'screen'}>
+        {head}
+        {(screen === 'place' || screen === 'voyage') && <MapView content={content} map={map} state={state} mini />}
+        <Actions options={options} onAct={onAct} />
+      </div>
+    </>
   );
 }

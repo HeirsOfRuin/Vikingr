@@ -1,0 +1,86 @@
+# CALIBRATION SCENE 1 of 3: boyhood, the winter he is fourteen (FRAME-PHASE2 §2.0, beat 3).
+# Written at final quality for the author's verdict on voice and length.
+- id: cal_ormr
+  kind: spine
+  calibration: true
+  art: hearth_ormr
+  title: Ormr's Night
+  text: |
+    The longhouse is asleep, or pretending. Your brother snores like a saw in wet wood. The dogs have taken the warm end of the bench, and the fire has burned down to a red eye in the ash.
+
+    Ormr One-Hand is awake. He is always awake. He sits on his stool by the hearth with a net across his knees, holding the cord in his teeth and knotting it with the one hand he has left. The stump of the other rests on his thigh, wrapped in old linen.
+
+    "Can't sleep?" he says, without looking up. "Neither can I. When you're old, the night gets long at both ends."
+    [break]
+    Every winter Ormr tells how he lost the hand. When you were six it was a bear. When you were nine it was a Frankish count with a door. Last Yule it was a woman in Dublin, and your mother sent you out to see to the cows before he got to the end.
+
+    You sit down on the other side of the fire. He looks at you a while, the way he looks at weather.
+
+    "You want the true one," he says. "Your brother never asked for the true one."
+
+    He puts the net down.
+    [break]
+    "An island in the west. Monks. Your father was a boy. We came in on the morning tide and they ran, mostly, and the ones who didn't run, prayed. You'll hear men say the monks don't fight. Some of them don't.
+
+    "I found a chest in their kitchen house. Silver on the lid. I put my hand in up to the wrist, and a boy came out of the dark with a cleaver. No older than you. Cooking boy. Thin as a rake.
+
+    "I killed him. Then I sat on the shore with my arm in the sea, watching the water go red, and I thought: so that's what it costs. Nobody tells you that part. They tell you about the silver."
+
+    He spits into the fire. It hisses.
+
+    "There was a cup in that chest. I lost it at dice in Hedeby before the leaves turned."
+
+    He coughs, a long wet cough that bends him double over the net. When he straightens, he wipes his mouth on the linen, and there is a dark spot on it in the firelight. He sees you see it.
+
+    "Well," says Ormr. "Ask your question. It's late, and I'm not getting younger."
+  choices:
+    - id: worth
+      text: Ask him whether it was worth it.
+      effects: [ { set: flag.cal_ormr_worth }, { add: { skill.seamanship: 1 } } ]
+      result: |
+        Ormr thinks about it longer than you expect.
+
+        "The hand? No. The going? Yes." He looks into the fire. "There's a sea out there with no end to it, and on it a man is nobody's second son. Your brother will have the farm, and the cows, and the same field every spring until they bury him in it. You won't."
+
+        He picks the net up again and holds the cord in his teeth.
+
+        "You'll lose things," he says around it. "Go anyway."
+    - id: trick
+      text: Ask what he'd do now, if the boy came out of the dark.
+      effects: [ { set: flag.cal_ormr_trick }, { add: { skill.shield: 1 } } ]
+      result: |
+        Ormr stands, slower than he used to, and takes the poker from the hearth.
+
+        "Shield up. Not like that. Like you mean to keep your face." He knocks your arm into place with the poker. "When he comes, you don't take the cut in the middle of the shield. You take it on the rim and turn it, so. His blade goes past you and he comes with it. Then he's close, and you're not."
+
+        He does it three times. The third time the poker taps you behind the ear before you have seen it move.
+
+        "Again," he says.
+
+        You practise until the fire is ash and your brother throws a boot at the pair of you.
+    - id: tree
+      text: Ask him what the monks' god looked like.
+      effects: [ { set: flag.cal_ormr_tree }, { add: { skill.lore: 1 } } ]
+      result: |
+        "A man hanging on a tree," says Ormr. "They carve him everywhere. On their crosses, on their books, on the lids of their boxes. Hung on a tree with a wound in his side."
+
+        He is quiet a while.
+
+        "Odin hung on the tree nine nights, with a spear in him, to win the runes. I said that to Brand the Priest-Burner on the way home, and he told me to shut my mouth or he'd shut it for me."
+
+        He shrugs with the one shoulder that still shrugs properly.
+
+        "Two gods on two trees. Maybe it's the same tree, and the Irish heard the story wrong. Don't say it in front of your father."
+    - id: log
+      text: Say nothing. Put another log on the fire.
+      effects: [ { set: flag.cal_ormr_seax } ]
+      result: |
+        You put a log on the fire and sit back down. The bark catches, and the light comes up on the old man's face.
+
+        Ormr watches you a while.
+
+        "You listen," he says at last. "That's rarer than courage, and it lasts longer."
+
+        He reaches under his stool and holds something out to you, handle first. A seax, the blade worn thin and bright from fifty winters on the whetstone, the grip bound in new leather.
+
+        "Don't tell your brother. He'll want it, and he'll use it to cut cheese."

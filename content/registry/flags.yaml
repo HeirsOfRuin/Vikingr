@@ -3,3 +3,17 @@ outlawed: { description: Outlawed from the home district }
 leysingi: { description: A freedman's son }
 skald: { description: A skald in your household }
 owes_jarl: { description: Owes the jarl a share of this season's plunder for the loan of a ship }
+# calibration scenes (content/scenes/calibration)
+cal_ormr_worth: { description: Asked Ormr whether it was worth it }
+cal_ormr_trick: { description: Ormr taught you to turn a blade on the shield rim }
+cal_ormr_tree: { description: Asked Ormr about the monks' god on the tree }
+cal_ormr_seax: { description: Ormr gave you his seax }
+cal_iona_straight: { description: Told Ásgeir to go straight in }
+cal_iona_north: { description: Ásgeir took your advice and landed in the north cove }
+cal_iona_rebuffed: { description: Ásgeir laughed off your advice }
+cal_iona_warned: { description: You read the bell as an alarm }
+cal_iona_first: { description: First through the gate at Iona }
+cal_iona_ketill: { description: Went through the gate behind Ketill }
+cal_iona_ship: { description: Stayed with the ship at Iona }
+cal_hall: { description: How loud the hall is (0 to 2) }
+cal_score: { description: Exchanges won in the Yule flyting }

@@ -5,3 +5,5 @@ src/content/bundle.json
 smoke-out
 .map-cache
 *.tmp.ts
+dist-artifact
+dist-artifact-build

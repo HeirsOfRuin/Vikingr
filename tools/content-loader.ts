@@ -63,6 +63,7 @@ export function loadContent(root = ROOT): S.ContentBundle {
     backgrounds: byId(check(z.array(S.background), read(join(root, 'backgrounds.yaml')), 'backgrounds.yaml'), 'background'),
     scenes: byId(scenes, 'scene'),
     names: check(z.array(z.string()), read(reg('names.yaml')), 'registry/names.yaml'),
+    art: byId(check(z.array(S.artEntry), read(reg('art.yaml')), 'registry/art.yaml'), 'art'),
   };
   const hash = createHash('sha1').update(JSON.stringify(bundle)).digest('hex').slice(0, 12);
   return { hash, ...bundle };

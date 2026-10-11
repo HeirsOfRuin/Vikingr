@@ -1,0 +1,10 @@
+/* Self-hosted, OFL-licensed fonts (DESIGN §19a). Latin subset, woff2 only: every browser that runs the game reads woff2. */
+@font-face { font-family: 'Alegreya'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../node_modules/@fontsource/alegreya/files/alegreya-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya'; font-style: italic; font-weight: 400; font-display: swap; src: url('../../node_modules/@fontsource/alegreya/files/alegreya-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../node_modules/@fontsource/alegreya/files/alegreya-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../node_modules/@fontsource/alegreya-sans/files/alegreya-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 500; font-display: swap; src: url('../../node_modules/@fontsource/alegreya-sans/files/alegreya-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../node_modules/@fontsource/alegreya-sans/files/alegreya-sans-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya SC'; font-style: normal; font-weight: 500; font-display: swap; src: url('../../node_modules/@fontsource/alegreya-sc/files/alegreya-sc-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Alegreya SC'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../node_modules/@fontsource/alegreya-sc/files/alegreya-sc-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Sans Runic'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../node_modules/@fontsource/noto-sans-runic/files/noto-sans-runic-runic-400-normal.woff2') format('woff2'); unicode-range: U+16A0-16F8; }

@@ -2,7 +2,7 @@
 // references, lethal fights without a warning, places off the map, unreachable places.
 import type { ContentBundle, Effect, Scene, Choice } from '../src/content/schema';
 import { validateCond, condPaths } from '../src/engine/conditions';
-import { checkAddPath } from '../src/engine/paths';
+import { checkAddPath, checkPath } from '../src/engine/paths';
 import { lonLatToTile, terrainAt, WATER, type MapData } from '../src/engine/mapgrid';
 
 export interface Report {
@@ -11,7 +11,8 @@ export interface Report {
   info: string[];
 }
 
-export function validate(content: ContentBundle, map: MapData): Report {
+/** artFiles: the ids of the pictures in src/art (without .png). Omit to skip the file checks. */
+export function validate(content: ContentBundle, map: MapData, artFiles?: string[]): Report {
   const errors: string[] = [];
   const warnings: string[] = [];
   const info: string[] = [];
@@ -100,7 +101,10 @@ export function validate(content: ContentBundle, map: MapData): Report {
 
   // reachability of linked scenes from starts and triggers
   const reached = new Set<string>();
-  const queue = [...Object.values(content.backgrounds).map((b) => b.start_scene), ...Object.values(content.scenes).filter((s) => s.trigger).map((s) => s.id)];
+  const queue = [
+    ...Object.values(content.backgrounds).map((b) => b.start_scene),
+    ...Object.values(content.scenes).filter((s) => s.trigger || s.calibration).map((s) => s.id),
+  ];
   while (queue.length) {
     const id = queue.pop()!;
     if (reached.has(id) || !content.scenes[id]) continue;
@@ -160,6 +164,28 @@ export function validate(content: ContentBundle, map: MapData): Report {
     const sk = Object.values(b.skills).reduce((a: number, v) => a + (v ?? 0), 0);
     if (sk !== 7) errors.push(`background ${b.id}: skills total ${sk}, expected 7`);
   }
+
+  // art
+  const artRef = (where: string, key: string | undefined) => {
+    if (key && !content.art[key]) errors.push(`${where}: no art "${key}" (declare it in content/registry/art.yaml)`);
+  };
+  for (const s of Object.values(content.scenes)) {
+    artRef(`scene ${s.id}`, typeof s.art === 'string' ? s.art : s.art?.key);
+    if (s.art && typeof s.art !== 'string' && s.art.laughter) {
+      const e = checkPath(content, s.art.laughter);
+      if (e) errors.push(`scene ${s.id} art laughter: ${e}`);
+    }
+    if (s.calibration && s.trigger) errors.push(`scene ${s.id}: calibration scenes are opened from the title screen, not triggers`);
+  }
+  for (const p of Object.values(content.places)) artRef(`place ${p.id}`, p.art);
+  for (const a of Object.values(content.art)) {
+    if (artFiles && !artFiles.includes(a.id)) errors.push(`art ${a.id}: no picture src/art/${a.id}.png (run tools/art.ts)`);
+    for (const f of a.fx ?? []) {
+      const pts: [number, number][] = 'rect' in f ? [[f.rect[0], f.rect[1]], [f.rect[0] + f.rect[2], f.rect[1] + f.rect[3]]] : [f.at];
+      for (const [x, y] of pts) if (x < 0 || y < 0 || x > 400 || y > 160) errors.push(`art ${a.id}: ${f.kind} reaches outside the 400 × 160 picture`);
+    }
+  }
+  for (const f of artFiles ?? []) if (!content.art[f]) warnings.push(`src/art/${f}.png is not in content/registry/art.yaml`);
 
   // rivals
   for (const r of Object.values(content.rivals)) {

@@ -91,23 +91,23 @@ export function MapView({ content, map, state, mini }: Props) {
             {legs.map((l) => {
               const a = content.places[l.a]!, b = content.places[l.b]!;
               const [x1, y1] = lonLatToTile(a.lon, a.lat), [x2, y2] = lonLatToTile(b.lon, b.lat);
-              return <line key={l.a + l.b} x1={x1 * PX} y1={y1 * PX} x2={x2 * PX} y2={y2 * PX} stroke="#d8cfb8" stroke-opacity="0.45" stroke-width={1.2 / scale} stroke-dasharray={`${4 / scale} ${4 / scale}`} />;
+              return <line key={l.a + l.b} x1={x1 * PX} y1={y1 * PX} x2={x2 * PX} y2={y2 * PX} stroke="#b5ac97" stroke-opacity="0.5" stroke-width={1.2 / scale} stroke-dasharray={`${4 / scale} ${4 / scale}`} />;
             })}
             {places.map((p) => {
               const [x, y] = lonLatToTile(p.lon, p.lat);
               const here = state.at === p.id;
               const r = (here ? 5 : 3.5) / scale;
-              const fill = p.kind === 'monastery' ? '#c39a54' : p.kind === 'home' ? '#7f9a5a' : '#ddd5c2';
+              const fill = p.kind === 'monastery' ? '#b3352a' : p.kind === 'home' ? '#8a9860' : '#e6ddc8';
               return (
                 <g key={p.id} onClick={() => !drag.current?.moved && setPicked(p.id)} style={{ cursor: 'pointer' }}>
                   <circle cx={x * PX} cy={y * PX} r={r * 2.5} fill="transparent" />
-                  <circle cx={x * PX} cy={y * PX} r={r} fill={fill} stroke="#14171a" stroke-width={1 / scale} opacity={p.active ? 1 : 0.5} />
-                  {reachable.includes(p.id) && <circle cx={x * PX} cy={y * PX} r={r * 1.9} fill="none" stroke="#c39a54" stroke-width={1 / scale} />}
-                  <text x={x * PX + r * 1.6} y={y * PX + label * 0.35} font-size={label} fill="#f2ead6" stroke="#14171a" stroke-width={label * 0.25} paint-order="stroke" font-family="Georgia, serif">{p.name}</text>
+                  <circle cx={x * PX} cy={y * PX} r={r} fill={fill} stroke="#111213" stroke-width={1 / scale} opacity={p.active ? 1 : 0.5} />
+                  {reachable.includes(p.id) && <circle cx={x * PX} cy={y * PX} r={r * 1.9} fill="none" stroke="#c8913a" stroke-width={1 / scale} />}
+                  <text x={x * PX + r * 1.6} y={y * PX + label * 0.35} font-size={label} fill="#e6ddc8" stroke="#111213" stroke-width={label * 0.25} paint-order="stroke" font-family="Georgia, serif">{p.name}</text>
                 </g>
               );
             })}
-            <path d={`M ${fleet[0] * PX - 6 / scale} ${fleet[1] * PX + 3 / scale} h ${12 / scale} l ${-2 / scale} ${3 / scale} h ${-8 / scale} z M ${fleet[0] * PX} ${fleet[1] * PX + 3 / scale} v ${-9 / scale} l ${5 / scale} ${6 / scale} h ${-5 / scale}`} fill="#9a3b2c" stroke="#f2ead6" stroke-width={0.8 / scale} />
+            <path d={`M ${fleet[0] * PX - 6 / scale} ${fleet[1] * PX + 3 / scale} h ${12 / scale} l ${-2 / scale} ${3 / scale} h ${-8 / scale} z M ${fleet[0] * PX} ${fleet[1] * PX + 3 / scale} v ${-9 / scale} l ${5 / scale} ${6 / scale} h ${-5 / scale}`} fill="#b3352a" stroke="#e6ddc8" stroke-width={0.8 / scale} />
           </svg>
         </div>
         <div class="mapzoom">

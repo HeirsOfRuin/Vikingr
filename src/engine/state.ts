@@ -150,7 +150,7 @@ export type Pending =
   | { t: 'scene'; id: string; result?: string }
   | { t: 'duel'; duel: DuelState }
   | { t: 'battle'; battle: BattleState }
-  | { t: 'report'; title: string; lines: string[]; next?: string };
+  | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string };
 
 export interface PlaceState {
   wealth: number;

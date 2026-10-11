@@ -279,8 +279,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
   if (action.t !== 'slot' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
   const state = structuredClone(input);
   const rng = new RngCursor(state.rng);
-  const report = (title: string, lines: string[], next?: string) => {
-    if (!state.pending && lines.length) state.pending = { t: 'report', title, lines, next };
+  const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
+    if (!state.pending && lines.length) state.pending = { t: 'report', title, lines, next, art: art?.key, laughter: art?.laughter };
   };
 
   switch (action.t) {
@@ -312,7 +312,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       if (pd) {
         if (text && pd.t === 'duel') pd.duel.log.unshift(text);
         if (text && pd.t === 'battle') pd.battle.log.unshift(text);
-      } else if (text) report(scene.title, [text], next);
+      } else if (text) report(scene.title, text.trim().split(/\n\s*\n/), next, typeof scene.art === 'string' ? { key: scene.art } : scene.art);
       else if (next) open(state, next);
       break;
     }

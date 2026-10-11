@@ -64,11 +64,31 @@ export const choice = z.object({
 }).strict();
 export type Choice = z.infer<typeof choice>;
 
+// ---- scene art (DESIGN §19b) ----
+const rect = z.tuple([z.number().int(), z.number().int(), z.number().int(), z.number().int()]);
+const point = z.tuple([z.number().int(), z.number().int()]);
+export const artFx = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('fire'), rect }).strict(),
+  z.object({ kind: z.literal('glow'), at: point, radius: z.number().int() }).strict(),
+  z.object({ kind: z.literal('water'), rect }).strict(),
+  z.object({ kind: z.literal('smoke'), at: point, spread: z.number().int().optional(), rate: z.number().optional() }).strict(),
+  z.object({ kind: z.literal('sparks'), at: point, spread: z.number().int().optional(), rate: z.number().optional() }).strict(),
+  z.object({ kind: z.literal('crowd'), rect }).strict(),
+  z.object({ kind: z.literal('birds'), rect, count: z.number().int() }).strict(),
+]);
+export type ArtFx = z.infer<typeof artFx>;
+export const artEntry = z.object({ id, title: z.string(), fx: z.array(artFx).optional() }).strict();
+export type ArtEntry = z.infer<typeof artEntry>;
+/** A scene's picture: a key, or a key plus a value path that drives the crowd (0 still, 1 murmuring, 2 roaring). */
+export const sceneArt = z.union([id, z.object({ key: id, laughter: z.string().optional() }).strict()]);
+
 export const scene = z.object({
   id,
   kind: z.enum(['spine', 'pool', 'queued', 'place', 'phase']),
   title: z.string(),
   placeholder: z.boolean().optional(),
+  calibration: z.boolean().optional(),
+  art: sceneArt.optional(),
   at: z.array(id).optional(),
   at_kind: z.array(z.enum(PLACE_KINDS)).optional(),
   phase: z.array(z.enum(PHASES)).optional(),
@@ -95,6 +115,7 @@ export const place = z.object({
   known: z.boolean().optional(),
   active: z.boolean().optional(),
   market: z.boolean().optional(),
+  art: id.optional(),
   raid: z.object({ wealth: z.number().int(), defenders: z.number().int(), foe: id, terrain: z.enum(TERRAINS) }).strict().optional(),
 }).strict();
 export type Place = z.infer<typeof place>;
@@ -167,4 +188,5 @@ export interface ContentBundle {
   backgrounds: Record<string, Background>;
   scenes: Record<string, Scene>;
   names: string[];
+  art: Record<string, ArtEntry>;
 }
