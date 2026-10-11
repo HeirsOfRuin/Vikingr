@@ -602,6 +602,77 @@ Built alongside the engine from the first commit, not later.
 
 ---
 
+## 19a. Visual identity: Runestone (decided 2026-10-11)
+
+The look of a painted runestone: cold granite and bone, runes cut and painted red and black, knotwork in the Urnes style, with sea-slate and iron for the cold North Sea. It must look nothing like Knight of Adalia (warm brown and burgundy) or Silk Road, and nothing like the Phase 1 placeholder.
+
+### Palette (CSS tokens; the pixel art uses the same colours)
+| Token | Hex | Use |
+|---|---|---|
+| `--soot` | `#111213` | Deepest shadow; the black paint in the runes |
+| `--granite-900` | `#191b1c` | Page background |
+| `--granite-800` | `#222628` | Panels |
+| `--granite-700` | `#30363a` | Lines and borders |
+| `--granite-500` | `#5a6266` | Quiet text, inactive icons |
+| `--iron` | `#8a9397` | Secondary text, metal |
+| `--bone` | `#e6ddc8` | Body text |
+| `--bone-dim` | `#b5ac97` | Hints |
+| `--rune-red` | `#b3352a` | Primary accent: headings, danger, the selected thing. Red ochre, as painted on the stones. |
+| `--rune-red-dark` | `#6b2018` | Pressed states, blood bars |
+| `--ochre` | `#c8913a` | Used sparingly: silver, fame, gold |
+| `--sea` | `#4d6773` | Sea-slate: sailing, morale, the map's water |
+| `--sea-deep` | `#24343d` | Deep water |
+| `--lichen` | `#8a9860` | Good outcomes, health |
+
+The ratio is mostly stone (about 85%), then bone text, with red used where the eye should go. Gold is rare, which keeps it worth something.
+
+### Typography
+- **Fonts:** Alegreya for prose, Alegreya Sans for the interface, and Alegreya SC (small capitals, widely tracked) for headings, as if cut in stone. All are under the open font licence.
+- **Runes:** Younger Futhark glyphs from Noto Sans Runic, as ornament only: section dividers and the date line. They are never needed to understand anything.
+- **Offline:** the fonts are self-hosted through `@fontsource` and bundled, so the installed app works offline. No font CDN.
+
+### Ornament
+- **Knotwork frames:** Urnes-style ribbon animals (thin and fat strands, snake heads), as SVG components generated in code.
+- **Where they go:** they frame only the important things, which are scene art, the title, chapter cards and the death saga. Everyday UI stays plain.
+- **Divider:** a rune line, for example ᚢᛁᚴᛁᚾᚴᛦ, set in `--granite-500`.
+
+### Sleek and efficient
+- **One column:**
+  - the scene art band at the top;
+  - prose;
+  - choices;
+  - nothing else on the main screen.
+- **Top bar:** a single line (place · date · silver · fame) with the menu as an icon.
+- **Secondary detail** goes into bottom sheets opened on demand, never inline: crew, wounds, the legends table.
+- **Tabs:** five, with pixel icons drawn in the palette and short labels.
+- **Choices:** text with one line of hint. Requirements and odds appear as small pill tags, not sentences. Lethal is a red rune mark.
+- **Motion:** short and purposeful. Screens slide; nothing bounces.
+
+## 19b. Art and animation (decided 2026-10-11)
+
+### Hybrid pipeline
+1. **Josh supplies a source image** for each key scene (from an image generator, a photograph or a painting), following the shot list in `docs/ART.md`.
+2. **`tools/art.ts` converts it to fine pixel art:**
+   - crops to 2:1;
+   - downscales to about 384 × 192 (fine enough to read as illustration, coarse enough to read as pixel art at phone width);
+   - quantises to the **fixed master palette** above (about 32 colours made of the tokens and their ramps) rather than a palette per image, so every scene in the game shares one palette;
+   - no dithering, a Silk Road lesson: on photographs it turns to checkerboard noise.
+3. **Sources are kept** in `art/src/` and the generator is committed (failure mode #13).
+4. **Missing art:** every key has a code-drawn fallback, so a missing image never blocks the game.
+
+### Animation (code, over the stills)
+- **Palette cycling** for fire, torchlight, water and sea spray. Painted masks mark which pixels cycle. This is the classic technique that makes fine pixel art move cheaply.
+- **Sprite loops** for figures, oars, banners, cups and shields: palette-indexed sprite strings authored in code.
+- **Particles** for sparks, snow, rain, spray and ash.
+- **Battle animation is driven by the live battle state:**
+  - each wall's length follows the men standing;
+  - the line leans with morale;
+  - each round's orders play out: the wall braces, pushes, throws, wedges or gives ground;
+  - wounds and falls show as they happen.
+- **Animated events for the slice:** the feast, the shield-wall, the raid with fire, and a storm at sea.
+- **Budget:** a fixed low frame rate (about 12 frames a second, which suits pixel art and battery life); animation stops when the scene is off screen.
+- **Reduced motion:** `prefers-reduced-motion` shows the still with a single static pose.
+
 ## 20. Scope and risks
 
 1. **This is the largest of the five games.** The bottleneck is prose and balance, not code. Adalia's chapters were 30–40 scenes each. This game needs place scenes, sworn-man arcs, winter events, historical set pieces and the saga assembly.
@@ -662,6 +733,34 @@ Each step follows the Adalia rhythm: frame, approval, build, playtest, revise.
 
 ---
 
+## 21a. Campaign variety: goals for later phases (recorded 2026-10-11)
+
+The campaign must offer real options and real variety: two lives should be different stories, not the same route with different numbers. The Phase 2 slice gets its variety from choices inside one route (3–5 approaches to each major beat, and pool events). The rest of the campaign builds these:
+
+1. **Career paths**, each a complete way to gain fame, silver and rank:
+   - **Raider:** the default.
+   - **Trader:** markets, cargo, the knarr, prices that move.
+   - **Mercenary:** in the pay of Irish kings or Frankish counts, with the politics that come with that.
+   - **Settler or jarl-builder:** land, a hall, farms, tenants, defence.
+   - **Explorer:** the Faroes, Iceland and beyond.
+   - **The eastern river road:** Ladoga, the portages, Miklagarðr.
+
+   Paths mix, and a life can change course.
+2. **A yearly ambition.** Each spring the hero states a vow or aim for the year (in the hall, as a boast or in private). It shapes what the director offers and pays fame when met.
+3. **Rival crews with careers of their own:**
+   - they raid the same places;
+   - they compete for the same men and silver;
+   - they grow or die;
+   - they can become allies, sworn men or lifelong enemies.
+4. **Places that change:**
+   - raided places fortify or empty;
+   - markets rise and fall;
+   - history changes what each place is (Dublin from 841; the Seine after 845).
+5. **Regional event pools,** so the Irish Sea, Frisia, the Baltic and the far east each feel different.
+6. **Several routes up each rank** (Adalia's lesson: at least two to three per gate).
+7. **Historical openings that close:** be at Paris in 845 or miss it. The century does not wait.
+8. **Different deaths:** many kinds of good death, many kinds of bad death, and the late-life choice of how to end it.
+
 ## Phase 1 as built (2026-10-11)
 
 ### What exists
@@ -717,6 +816,7 @@ The front rank buys fame with risk, as §1 intends.
 ## Decisions log
 | Date | Decision |
 |---|---|
+| 2026-10-11 | Next-phase direction from the author: the Adalia process (all prose drafted by Claude; frame, then calibration, then build, then playtest). Goals: a sleek UI, a unique Viking visual identity, fine pixel-art scenes, animated battles and feasts, a campaign with real variety. Decided: **Runestone** look (§19a); **hybrid art** (Josh supplies sources, `tools/art.ts` converts them to the master palette, animation in code; §19b); **Phase 2 slice is the western raid route only**, with variety from approaches and pools, and campaign variety recorded as goals (§21a). |
 | 2026-10-11 | Phase 1 built. Duel cycle rebalanced so each move beats two and loses to two. Bangor's defenders cut from 32 to 28. Map grid 16°W–34°E, 45°–66.5°N; the far reaches come later. |
 | 2026-10-11 | Start year 830 at age 16 confirmed. Slavery included as a player choice with consequences, confirmed. Tone set: brutal, realistic, gory, with humour, glory, brotherhood, love and comedy (*Vikings*, *The Last Kingdom*, the sagas). Content lines, nicknames, flyting and boasts added (§1a). |
 | 2026-10-11 | HTML/PWA; a sea map you travel freely, with the story through scenes; one long life; deeper than two phases a year; combat central, in three layers; mythology present and ambiguous; real 9th-century history; 3 backgrounds; full single-combat layer. Stack and process from Knight of Adalia; combat code-path rule from Free Company. |

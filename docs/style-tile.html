@@ -1,0 +1,415 @@
+<title>Vikingr Runestone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Alegreya+Sans:wght@400;500;700&family=Alegreya+SC:wght@500;700&family=Noto+Sans+Runic&display=swap">
+<style>
+/* Layout: one stone column; the phone mockup is the centrepiece, the tokens around it are the record. */
+:root {
+  --soot: #111213;
+  --granite-900: #191b1c;
+  --granite-800: #222628;
+  --granite-700: #30363a;
+  --granite-500: #5a6266;
+  --iron: #8a9397;
+  --bone: #e6ddc8;
+  --bone-dim: #b5ac97;
+  --rune-red: #b3352a;
+  --rune-red-dark: #6b2018;
+  --ochre: #c8913a;
+  --sea: #4d6773;
+  --sea-deep: #24343d;
+  --lichen: #8a9860;
+  --oak: #3a2a1e;
+  --f-display: 'Alegreya SC', 'Alegreya', Georgia, serif;
+  --f-prose: 'Alegreya', Georgia, 'Times New Roman', serif;
+  --f-ui: 'Alegreya Sans', system-ui, -apple-system, sans-serif;
+  --f-rune: 'Noto Sans Runic', 'Segoe UI Historic', serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--granite-900); color: var(--bone); font-family: var(--f-prose); font-size: 17px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; display: flex; flex-direction: column; gap: 44px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 500; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.4rem, 8vw, 4rem); letter-spacing: 0.22em; color: var(--bone); line-height: 1; }
+h2 { font-size: 1.35rem; letter-spacing: 0.14em; color: var(--rune-red); }
+h3 { font-family: var(--f-ui); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--iron); font-weight: 500; }
+p { margin: 0; max-width: 65ch; }
+.runes { font-family: var(--f-rune); color: var(--granite-500); letter-spacing: 0.4em; font-size: 0.95rem; }
+.lede { color: var(--bone-dim); font-style: italic; }
+.ui { font-family: var(--f-ui); }
+section { display: flex; flex-direction: column; gap: 16px; }
+
+/* header */
+.head { display: flex; flex-direction: column; gap: 14px; }
+canvas.knot { width: 100%; height: 48px; display: block; }
+
+/* palette */
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.sw { display: flex; flex-direction: column; gap: 6px; font-family: var(--f-ui); font-size: 0.8rem; min-width: 0; }
+.sw i { display: block; height: 56px; border-radius: 3px; border: 1px solid var(--granite-700); }
+.sw b { font-weight: 500; color: var(--bone); }
+.sw span { color: var(--iron); font-variant-numeric: tabular-nums; }
+.ratio { display: flex; height: 14px; border-radius: 2px; overflow: hidden; border: 1px solid var(--granite-700); }
+.ratio i { display: block; height: 100%; }
+
+/* type */
+.type { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.type > div { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.spec-display { font-family: var(--f-display); font-size: 2rem; letter-spacing: 0.12em; color: var(--bone); }
+.spec-ui { font-family: var(--f-ui); font-size: 0.95rem; color: var(--bone-dim); }
+
+/* the phone */
+.stage { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 760px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.phone { background: var(--granite-900); border: 1px solid var(--granite-700); border-radius: 22px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,0.55); max-width: 380px; width: 100%; justify-self: center; display: flex; flex-direction: column; }
+.bar { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--granite-700); font-family: var(--f-ui); font-size: 0.78rem; color: var(--iron); white-space: nowrap; overflow: hidden; }
+.bar .place { font-family: var(--f-display); font-size: 0.95rem; letter-spacing: 0.08em; color: var(--bone); }
+.bar .silver { color: var(--ochre); }
+.bar .menu { margin-left: auto; width: 26px; height: 18px; display: grid; gap: 4px; align-content: center; }
+.bar .menu i { display: block; height: 2px; background: var(--iron); }
+.art { position: relative; background: var(--soot); }
+.art canvas { width: 100%; aspect-ratio: 2 / 1; display: block; image-rendering: pixelated; }
+.frame-top, .frame-bot { height: 6px; background: repeating-linear-gradient(90deg, var(--rune-red-dark) 0 6px, var(--soot) 6px 9px); }
+.screen { padding: 18px 16px 8px; display: flex; flex-direction: column; gap: 12px; }
+.screen h2 { font-size: 1.15rem; }
+.screen p { font-size: 1rem; }
+.choices { display: flex; flex-direction: column; gap: 8px; padding: 6px 16px 16px; }
+.choice { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; min-height: 48px; padding: 10px 12px; font: inherit; font-family: var(--f-prose); font-size: 1rem; color: var(--bone); background: var(--granite-800); border: 1px solid var(--granite-700); border-left: 3px solid var(--granite-500); border-radius: 2px; cursor: pointer; }
+.choice:hover, .choice:focus-visible { border-left-color: var(--rune-red); background: #262b2e; outline: none; }
+.choice:focus-visible { box-shadow: 0 0 0 2px var(--ochre); }
+.choice span { flex: 1; min-width: 0; }
+.pill { font-family: var(--f-ui); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; white-space: nowrap; }
+.pill.even { background: var(--sea-deep); color: #b9ccd4; }
+.pill.risky { background: #4a3517; color: #e8c38a; }
+.pill.lethal { background: var(--rune-red-dark); color: #f3cfc6; }
+.pill.lethal::before { content: 'ᛦ '; font-family: var(--f-rune); }
+.choice.lethal { border-left-color: var(--rune-red); }
+.choice[disabled] { opacity: 0.5; cursor: default; }
+.choice .why { display: block; font-family: var(--f-ui); font-size: 0.75rem; color: var(--iron); }
+.tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--granite-700); background: var(--soot); }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0 10px; font-family: var(--f-ui); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--granite-500); }
+.tab canvas { width: 24px; height: 24px; image-rendering: pixelated; }
+.tab.on { color: var(--bone); box-shadow: inset 0 2px 0 var(--rune-red); }
+.notes { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.notes ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; max-width: 60ch; }
+.notes li::marker { color: var(--rune-red); }
+.ask { border-left: 3px solid var(--rune-red); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 8px; }
+.ask ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; max-width: 65ch; }
+.small { font-size: 0.85rem; color: var(--iron); font-family: var(--f-ui); }
+@media (prefers-reduced-motion: reduce) { .choice { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <div class="runes" aria-hidden="true">ᚢᛁᚴᛁᚾᚴᛦ · ᛋᛏᛅᛁᚾ</div>
+    <h1>VIKINGR</h1>
+    <canvas class="knot" id="knot" aria-hidden="true"></canvas>
+    <p class="lede">The Runestone look, for approval. Cold granite and bone, runes painted red and black the way the stones were coloured, knotwork kept for the things that matter.</p>
+  </header>
+
+  <section class="stage" aria-label="The game screen">
+    <div class="phone">
+      <div class="bar">
+        <span class="place">Hordaland</span>
+        <span>Yule, 830</span>
+        <span class="silver">2 marks 4 aurar</span>
+        <span>Fame 14</span>
+        <span class="menu" aria-label="Menu"><i></i><i></i><i></i></span>
+      </div>
+      <div class="art">
+        <div class="frame-top"></div>
+        <canvas id="hall" width="192" height="96" aria-label="Pixel art: the hall at Yule, the long fire burning"></canvas>
+        <div class="frame-bot"></div>
+      </div>
+      <div class="screen">
+        <h2>The hall at Yule</h2>
+        <p>Ormr holds the cup in his good hand. The stump rests on his knee like a sleeping dog.</p>
+        <p>"Iona," he says. "The first time, the monks ran. The second time they hid the gold. The third time," he drinks, "they had learned to hide it better."</p>
+      </div>
+      <div class="choices">
+        <button class="choice" id="c1"><span>Ask him about the hand.</span></button>
+        <button class="choice" id="c2"><span>Ask where the gold went.</span><b class="pill even">Even</b></button>
+        <button class="choice lethal" id="c3"><span>Tell Thorgils to say that again, outside.</span><b class="pill lethal">Lethal</b></button>
+        <button class="choice" id="c4" disabled><span>Give Ormr an arm-ring.<span class="why">You need 1 mark</span></span></button>
+      </div>
+      <nav class="tabs" aria-label="Tabs">
+        <div class="tab on"><canvas data-icon="now" width="12" height="12"></canvas>Now</div>
+        <div class="tab"><canvas data-icon="map" width="12" height="12"></canvas>Map</div>
+        <div class="tab"><canvas data-icon="hero" width="12" height="12"></canvas>Hero</div>
+        <div class="tab"><canvas data-icon="crew" width="12" height="12"></canvas>Crew</div>
+        <div class="tab"><canvas data-icon="saga" width="12" height="12"></canvas>Saga</div>
+      </nav>
+    </div>
+
+    <div class="notes">
+      <div>
+        <h3>What changes from Phase 1</h3>
+        <ul>
+          <li>One line of status at the top. Crew, wounds and the legends table move into sheets you pull up when you want them.</li>
+          <li>The scene band leads every important moment. Here it is drawn in code; in the game it will be your source image converted to this palette, with the fire, smoke and figures animated over it.</li>
+          <li>Choices are plain text with a red edge on focus. Odds and requirements are small pills. A lethal choice carries ᛦ, the rune later rune-rows used for death.</li>
+          <li>Tabs get pixel icons in the same palette: a torch, a ship, a helmet, a shield-row, a runestone.</li>
+          <li>Gold appears only where silver and fame are. Red is reserved for headings, danger and what you are about to do.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>The fire</h3>
+        <p class="small">The hall fire is a 192 × 96 pixel scene. The flames are computed each frame, the light around the hearth pulses in three hard bands so the pixels stay clean, and embers and smoke rise to the roof-hole. It runs at 12 frames a second and holds still for anyone who has reduced motion turned on.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pal">
+    <h2 id="pal">Palette</h2>
+    <div class="swatches" id="swatches"></div>
+    <h3>Proportion on a typical screen</h3>
+    <div class="ratio" aria-label="Roughly 85 percent stone, 10 percent bone text, 4 percent red, 1 percent gold">
+      <i style="width:46%;background:var(--granite-900)"></i><i style="width:24%;background:var(--granite-800)"></i><i style="width:15%;background:var(--granite-700)"></i><i style="width:10%;background:var(--bone)"></i><i style="width:4%;background:var(--rune-red)"></i><i style="width:1%;background:var(--ochre)"></i>
+    </div>
+  </section>
+
+  <section aria-labelledby="type">
+    <h2 id="type">Type</h2>
+    <div class="type">
+      <div>
+        <h3>Headings: Alegreya SC</h3>
+        <div class="spec-display">The Holmgang</div>
+        <p class="small">Small capitals, widely spaced, as if cut into stone. Used only for headings and names.</p>
+      </div>
+      <div>
+        <h3>Prose: Alegreya</h3>
+        <p>Atli opened the door and a spear came through it. He looked down at the blade. "Broad spears are in fashion these days," he said, and fell.</p>
+      </div>
+      <div>
+        <h3>Interface: Alegreya Sans</h3>
+        <div class="spec-ui">Sail to Orkneyjar · About 1.5 days, open sea · Food for 19 days</div>
+        <p class="small">All three are open-licence and will be bundled into the app, so it works offline. Runes in Noto Sans Runic, as ornament only.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ask" aria-labelledby="ask">
+    <h2 id="ask">For your verdict</h2>
+    <ol>
+      <li>The palette and the proportion: stone first, bone text, red where the eye should go, gold rarely.</li>
+      <li>The type: Alegreya for prose and headings, Alegreya Sans for the interface.</li>
+      <li>The density of the game screen: one status line, the scene band, prose, choices, tabs.</li>
+      <li>The knotwork at the top is an ornament prototype. Urnes style, two thick strands and one thin. It frames titles, scene art and the saga only.</li>
+    </ol>
+  </section>
+</div>
+
+<script>
+(() => {
+  const css = getComputedStyle(document.documentElement);
+  const tok = (n) => css.getPropertyValue(n).trim();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- swatches ----
+  const SW = [
+    ['--granite-900', 'Page'], ['--granite-800', 'Panels'], ['--granite-700', 'Lines'], ['--granite-500', 'Quiet text'],
+    ['--soot', 'Rune black'], ['--iron', 'Iron'], ['--bone', 'Text'], ['--bone-dim', 'Hints'],
+    ['--rune-red', 'Rune red'], ['--rune-red-dark', 'Blood'], ['--ochre', 'Silver, fame'], ['--sea', 'Sea-slate'],
+    ['--sea-deep', 'Deep water'], ['--lichen', 'Health'],
+  ];
+  const box = document.getElementById('swatches');
+  for (const [t, label] of SW) {
+    const d = document.createElement('div');
+    d.className = 'sw';
+    d.innerHTML = `<i style="background:var(${t})"></i><b>${label}</b><span>${t.slice(2)} ${tok(t)}</span>`;
+    box.appendChild(d);
+  }
+
+  // ---- knotwork: two thick ribbons and one thin, over and under at each crossing, a snake head at the end ----
+  function knot() {
+    const c = document.getElementById('knot');
+    const W = c.clientWidth, H = 48, dpr = Math.min(2, devicePixelRatio || 1);
+    c.width = W * dpr; c.height = H * dpr;
+    const g = c.getContext('2d');
+    g.scale(dpr, dpr);
+    g.lineCap = 'round';
+    const mid = H / 2, amp = 13, wave = 64;
+    const ys = [(x) => mid + amp * Math.sin((x / wave) * Math.PI), (x) => mid - amp * Math.sin((x / wave) * Math.PI)];
+    const thin = (x) => mid + 18 * Math.sin((x / wave) * Math.PI * 1.5 + 1);
+    const seg = (f, x0, x1, w, fill) => {
+      g.beginPath();
+      for (let x = x0; x <= x1; x += 1) g[x === x0 ? 'moveTo' : 'lineTo'](x, f(x));
+      g.strokeStyle = tok('--soot'); g.lineWidth = w + 4; g.stroke();
+      g.strokeStyle = fill; g.lineWidth = w; g.stroke();
+    };
+    // thin strand underneath everything
+    seg(thin, 6, W - 30, 1.6, tok('--bone-dim'));
+    const end = W - 34;
+    const cols = [tok('--rune-red'), tok('--rune-red-dark')];
+    // whole strands first, then at each crossing redraw whichever strand passes over
+    seg(ys[1], 0, end, 5, cols[1]);
+    seg(ys[0], 0, end, 5, cols[0]);
+    for (let k = 1; k * wave < end; k++) {
+      const top = k % 2;
+      const x = k * wave;
+      seg(ys[top], Math.max(0, x - 12), Math.min(end, x + 12), 5, cols[top]);
+    }
+    // the snake head
+    const hx = W - 34, hy = ys[0](hx);
+    g.fillStyle = tok('--rune-red'); g.strokeStyle = tok('--soot'); g.lineWidth = 2;
+    g.beginPath(); g.ellipse(hx + 12, hy, 13, 7, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = tok('--bone'); g.beginPath(); g.arc(hx + 16, hy - 2, 2.2, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = tok('--bone-dim'); g.lineWidth = 1.4;
+    g.beginPath(); g.moveTo(hx + 24, hy + 2); g.quadraticCurveTo(hx + 30, hy + 8, hx + 33, hy + 2); g.stroke();
+  }
+  knot();
+  addEventListener('resize', knot);
+
+  // ---- pixel icons: 12x12, '.' empty, letters index the palette ----
+  const ICONS = {
+    now: ['.....r......', '....rro.....', '....ror.....', '...roor.....', '...rooor....', '....rbr.....', '....kbk.....', '.....k......', '.....k......', '.....k......', '....kkk.....', '............'],
+    map: ['.....b......', '.....bb.....', '.....bbb....', '.....bbbb...', '.....b......', '.r...b...r..', '.rrrrrrrrr..', '..rrrrrrr...', '...rrrrr....', '.sssssssss..', 's.s.s.s.s.s.', '............'],
+    hero: ['............', '....iiii....', '...iiiiii...', '..iiiiiiii..', '..iiiiiiii..', '..iiikkiii..', '..iik..kii..', '..ii.kk.ii..', '..i..ii..i..', '.....ii.....', '............', '............'],
+    crew: ['............', '............', '.rr..bb..rr.', 'rrrrbbbbrrrr', 'rrirbbibrrir', 'rrrrbbbbrrrr', '.rr..bb..rr.', '............', '.k..k..k..k.', '.k..k..k..k.', '............', '............'],
+    saga: ['....bbbb....', '...bbbbbb...', '..bbrbbbbb..', '..bbbrrbbb..', '..bbbbbrbb..', '..bbrrbbbb..', '..bbbbrbbb..', '..bbbrbbbb..', '..bbbbbbbb..', '..bbbbbbbb..', '.kkkkkkkkkk.', '............'],
+  };
+  const IC = { r: tok('--rune-red'), o: tok('--ochre'), b: tok('--bone'), k: tok('--granite-500'), i: tok('--iron'), s: tok('--sea') };
+  for (const cv of document.querySelectorAll('canvas[data-icon]')) {
+    const g = cv.getContext('2d');
+    const on = cv.parentElement.classList.contains('on');
+    ICONS[cv.dataset.icon].forEach((row, y) => [...row].forEach((ch, x) => {
+      if (ch === '.') return;
+      g.fillStyle = on ? IC[ch] : (ch === 'r' || ch === 'o' ? tok('--granite-500') : IC[ch] === IC.b ? tok('--granite-500') : tok('--granite-700'));
+      g.fillRect(x, y, 1, 1);
+    }));
+  }
+
+  // ---- the hall: an indexed-colour pixel scene ----
+  const W = 192, H = 96;
+  const PAL = ['#111213', '#191b1c', '#222628', '#30363a', '#5a6266', '#8a9397', '#b5ac97', '#e6ddc8', '#6b2018', '#b3352a', '#c8913a', '#24343d', '#4d6773', '#2a1e16', '#3a2a1e', '#5b4330', '#7d5e3f', '#f0d79a'];
+  const RGB = PAL.map((h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
+  // light ramps: index -> [dark, normal, lit]
+  const LIGHT = {};
+  const ramp = (a, b, c) => { LIGHT[b] = [a, b, c]; };
+  ramp(0, 0, 13); ramp(0, 13, 14); ramp(13, 14, 15); ramp(14, 15, 16); ramp(15, 16, 10);
+  ramp(1, 2, 3); ramp(2, 3, 4); ramp(3, 4, 5); ramp(4, 5, 6); ramp(5, 6, 7); ramp(6, 7, 7);
+  ramp(8, 9, 10); ramp(0, 8, 9); ramp(9, 10, 17); ramp(0, 11, 12); ramp(1, 1, 2);
+
+  const base = new Uint8Array(W * H);
+  const put = (x, y, v) => { if (x >= 0 && y >= 0 && x < W && y < H) base[y * W + x] = v; };
+  const rect = (x, y, w, h, v) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) put(i, j, v); };
+  const rnd = (() => { let s = 7; return () => ((s = (s * 1103515245 + 12345) >>> 0) / 4294967296); })();
+
+  // back wall and roof
+  rect(0, 0, W, H, 13);
+  for (let y = 0; y < 52; y++) for (let x = 0; x < W; x++) put(x, y, (y % 6 === 0) ? 0 : 14);
+  // roof slopes: darker toward the ridge, rafters
+  for (let y = 0; y < 30; y++) for (let x = 0; x < W; x++) {
+    const d = Math.abs(x - W / 2) - (30 - y) * 3.2;
+    if (d < 0) put(x, y, y < 12 ? 0 : 13);
+  }
+  for (let r = -5; r <= 5; r++) for (let y = 0; y < 30; y++) put(Math.round(W / 2 + r * (30 - y) * 0.62), y, 15);
+  // smoke hole with a star
+  rect(90, 0, 12, 4, 11); put(94, 1, 6);
+  // posts
+  for (const px of [18, 52, 136, 170]) { rect(px, 6, 4, 70, 15); rect(px, 6, 1, 70, 16); }
+  // shields on the back wall
+  const shield = (cx, cy, a, b) => {
+    for (let y = -5; y <= 5; y++) for (let x = -5; x <= 5; x++) {
+      const r = x * x + y * y;
+      if (r > 30) continue;
+      put(cx + x, cy + y, r > 22 ? 0 : (x < 0) === (y < 0) ? a : b);
+    }
+    put(cx, cy, 5); put(cx + 1, cy, 4);
+  };
+  [[32, 34, 9, 7], [44, 34, 12, 7], [148, 34, 9, 10], [160, 34, 7, 12], [70, 30, 12, 9], [122, 30, 9, 7]].forEach(([x, y, a, b]) => shield(x, y, a, b));
+  // benches
+  rect(0, 62, 72, 6, 15); rect(0, 62, 72, 1, 16); rect(120, 62, 72, 6, 15); rect(120, 62, 72, 1, 16);
+  // floor
+  for (let y = 68; y < H; y++) for (let x = 0; x < W; x++) put(x, y, rnd() < 0.12 ? 3 : 2);
+  // figures on the benches: hooded heads and shoulders
+  const figure = (x, y, c) => { rect(x, y + 4, 8, 9, c); rect(x + 2, y, 4, 4, c); rect(x + 1, y + 1, 6, 3, c); };
+  const people = [[6, 50, 3], [24, 49, 4], [40, 50, 3], [58, 51, 4], [126, 50, 4], [142, 49, 3], [160, 50, 4], [176, 51, 3]];
+  people.forEach(([x, y, c]) => figure(x, y, c));
+  // the hearth: a long stone-lined trench
+  for (let x = 74; x < 118; x++) { put(x, 80, 4); put(x, 86, 4); if (x % 3 === 0) { put(x, 81, 5); put(x, 85, 3); } }
+  rect(74, 81, 44, 5, 0);
+
+  // ---- fire: the classic cellular fire, in the rune-red ramp ----
+  const FW = 40, FH = 34, FX = 76, FY = 50;
+  const FIRE = [0, 8, 8, 9, 9, 10, 10, 17, 7];
+  const heat = new Uint8Array(FW * FH);
+  const stepFire = () => {
+    for (let x = 0; x < FW; x++) heat[(FH - 1) * FW + x] = (x > 2 && x < FW - 3) ? (rnd() < 0.85 ? 8 : 6) : 0;
+    for (let y = 0; y < FH - 1; y++) for (let x = 0; x < FW; x++) {
+      const src = (y + 1) * FW + x;
+      const v = heat[src];
+      const drift = Math.round(rnd() * 2) - 1;
+      const dx = Math.min(FW - 1, Math.max(0, x + drift));
+      const cool = rnd() < 0.42 ? 1 : 0;
+      heat[y * FW + dx] = Math.max(0, v - cool);
+    }
+  };
+
+  // ---- embers and smoke ----
+  const parts = [];
+  const spawn = () => {
+    if (rnd() < 0.5) parts.push({ x: FX + 8 + rnd() * 24, y: FY + 18, vx: (rnd() - 0.5) * 0.4, vy: -0.6 - rnd() * 0.6, life: 30 + rnd() * 30, c: rnd() < 0.5 ? 10 : 17 });
+    if (rnd() < 0.35) parts.push({ x: FX + 10 + rnd() * 20, y: FY + 4, vx: (rnd() - 0.5) * 0.2, vy: -0.35, life: 120, c: rnd() < 0.5 ? 3 : 4, smoke: true });
+  };
+
+  // a man raises his horn now and then
+  let horn = 0;
+
+  const cv = document.getElementById('hall');
+  const g = cv.getContext('2d');
+  const img = g.createImageData(W, H);
+  let t = 0;
+  const frame = () => {
+    t++;
+    stepFire();
+    spawn();
+    if (t % 40 === 0) horn = horn ? 0 : 1;
+    // the light pulses in hard bands
+    const flick = Math.round(rnd() * 4);
+    const r1 = 26 + flick, r2 = 52 + flick * 2;
+    const buf = new Uint8Array(base);
+    // horn sprite: the man at x=142 lifts it
+    if (horn) { for (const [dx, dy] of [[9, 52], [10, 51], [11, 50], [11, 49], [12, 48]]) buf[dy * W + 142 + dx] = 16; buf[47 * W + 154] = 7; }
+    for (let i = 0; i < W * H; i++) {
+      const x = i % W, y = (i / W) | 0;
+      const dx = (x - 96) * 0.8, dy = (y - 72) * 1.6;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      const lvl = d < r1 ? 2 : d < r2 ? 1 : 0;
+      const v = buf[i];
+      const ramped = LIGHT[v] ? LIGHT[v][lvl] : v;
+      const p = RGB[ramped];
+      img.data[i * 4] = p[0]; img.data[i * 4 + 1] = p[1]; img.data[i * 4 + 2] = p[2]; img.data[i * 4 + 3] = 255;
+    }
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
+      const h = heat[y * FW + x];
+      if (h < 2) continue;
+      const i = ((FY + y) * W + FX + x) * 4;
+      const p = RGB[FIRE[h]];
+      img.data[i] = p[0]; img.data[i + 1] = p[1]; img.data[i + 2] = p[2];
+    }
+    for (let k = parts.length - 1; k >= 0; k--) {
+      const q = parts[k];
+      q.x += q.vx; q.y += q.vy; q.life--;
+      if (q.smoke) q.vx += (rnd() - 0.5) * 0.05;
+      if (q.life <= 0 || q.y < 1) { parts.splice(k, 1); continue; }
+      const px = Math.round(q.x), py = Math.round(q.y);
+      if (px < 0 || px >= W) continue;
+      if (q.smoke && t % 2) continue;
+      const i = (py * W + px) * 4, p = RGB[q.c];
+      img.data[i] = p[0]; img.data[i + 1] = p[1]; img.data[i + 2] = p[2];
+    }
+    g.putImageData(img, 0, 0);
+  };
+  for (let i = 0; i < 40; i++) stepFire();
+  frame();
+  if (!reduce) {
+    let last = 0;
+    const loop = (now) => {
+      if (now - last > 83) { last = now; frame(); }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
