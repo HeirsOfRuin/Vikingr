@@ -356,15 +356,13 @@ Used for holmgang, duels, champion fights, killings at feasts, and the first man
 
 - **Exchanges.** Each exchange, both fighters choose one of five actions:
 
-  | Action | Beats | Loses to |
+  | Move | Beats | Loses to |
   |---|---|---|
-  | **Strike** | Feint, Shield-bash | Guard, Bind |
-  | **Guard** | Strike, Bind | Feint, Shield-bash |
-  | **Feint** | Guard, Shield-bash | Strike, Bind |
-  | **Bind** (hook the shield or blade) | Strike, Feint | Guard, Shield-bash |
-  | **Shield-bash** | Guard, Bind | Strike, Feint |
+  | **Strike** | Feint (catches it) | Guard |
+  | **Guard** (take it on the rim and turn it) | Strike | Feint |
+  | **Feint** (draw the guard up, cut under) | Guard | Strike |
 
-  Rebalanced in Phase 1 so each move beats two and loses to two (the first draft was lopsided: Strike beat three). A test enforces it. Wins are not equal: a won Strike wounds, a won Guard mostly tires the attacker.
+  Cut from five moves to three on 2026-10-11 after the calibration playtest: five felt like too many options on a phone. Shield-bash and Bind folded into Guard, which now turns the blow on the rim (Ormr's trick) and staggers the attacker. Wins are not equal: a won Strike wounds badly, a won Feint cuts and tires, a won Guard ripostes and tires. Shields still break: a turned strike costs the guard one blow, and a trade of strikes costs both.
 - **Resources:** stamina, **shield integrity** (shields break, and holmgang allows a fixed number, three by the customary rules), and wounds.
 - **Reading the opponent.** Each opponent has habits, such as favouring the strike or tiring after round 4. Wits + Cunning reveals them over the exchanges. A lost eye reduces this.
 - **Holmgang rules as custom tells them:** fought on a cloak, three shields each, and the first to bleed on the cloak may yield and pay the *holmlausn* (three marks of silver). Yielding costs fame and honour. Fighting on risks death.
@@ -816,6 +814,7 @@ The front rank buys fame with risk, as §1 intends.
 ## Decisions log
 | Date | Decision |
 |---|---|
+| 2026-10-11 | Calibration verdict: loved the voice, look and animation; the duel had too many options. Duel cut to three moves (§11.1). Fights now run 6–8 exchanges. |
 | 2026-10-11 | Phase 2 frame approved as recommended (oarsman start, command won at Bangor; 4 boyhood scenes; captives with consequences; Ásgeir falls in about half of runs; a nickname by Yule; Gyða in the prologue). Calibration round built: Runestone reskin (bundled Alegreya fonts, pixel tab icons, knotwork), the scene renderer animating the converted art (fire, glow, water, smoke, sparks, gulls, a crowd that laughs with the hall), `[break]` Continue pages, and three calibration scenes (Ormr's night; Iona, the approach and the landing; the Yule flyting, ending in a holmgang or a nickname). Scene band is 400 × 160. |
 | 2026-10-11 | Next-phase direction from the author: the Adalia process (all prose drafted by Claude; frame, then calibration, then build, then playtest). Goals: a sleek UI, a unique Viking visual identity, fine pixel-art scenes, animated battles and feasts, a campaign with real variety. Decided: **Runestone** look (§19a); **hybrid art** (Josh supplies sources, `tools/art.ts` converts them to the master palette, animation in code; §19b); **Phase 2 slice is the western raid route only**, with variety from approaches and pools, and campaign variety recorded as goals (§21a). |
 | 2026-10-11 | Phase 1 built. Duel cycle rebalanced so each move beats two and loses to two. Bangor's defenders cut from 32 to 28. Map grid 16°W–34°E, 45°–66.5°N; the far reaches come later. |

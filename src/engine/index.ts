@@ -179,7 +179,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'duel': {
       const d = (p as { duel: import('./state').DuelState }).duel;
-      const out = DUEL_MOVES.map((m) => opt('Moves', { t: 'duel_move', move: m }, MOVE_NAMES[m], !(m === 'bash' && d.hero.shields <= 0), 'No shield left.'));
+      const out = DUEL_MOVES.map((m) => opt('Moves', { t: 'duel_move', move: m }, MOVE_NAMES[m]));
       out.push(opt('Other', { t: 'duel_auto' }, 'Let instinct take it'));
       if (canYield(d)) out.push(opt('Other', { t: 'yield' }, 'Step off the cloak and pay the holmlausn', true, undefined, '3 marks; honour falls'));
       return out;

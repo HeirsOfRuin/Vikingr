@@ -58,7 +58,7 @@ export const SKILL_XP_PER_LEVEL = 10; // xp to the next level is this × (level 
 // ---- duel ----
 export const DUEL = {
   maxExchanges: 30,
-  cost: { strike: 2, guard: -2, feint: 1, bind: 2, bash: 3 },
+  cost: { strike: 2, guard: -2, feint: 1 },
   baseQuality: 0.7,
   skillStep: 0.06,
   agiStep: 0.03,

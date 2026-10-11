@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 export const ATTRS = ['str', 'agi', 'end', 'wit', 'pre'] as const;
 export const SKILLS = ['weapons', 'shield', 'seamanship', 'command', 'cunning', 'speech', 'trade', 'lore', 'craft'] as const;
-export const DUEL_MOVES = ['strike', 'guard', 'feint', 'bind', 'bash'] as const;
+export const DUEL_MOVES = ['strike', 'guard', 'feint'] as const;
 export const ORDERS = ['hold', 'push', 'missiles', 'wedge', 'give', 'flank'] as const;
 export const TERRAINS = ['beach', 'field', 'ford', 'rampart', 'ship', 'woods'] as const;
 export const PHASES = ['muster', 'sailing', 'return', 'winter'] as const;

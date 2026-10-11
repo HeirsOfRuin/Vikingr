@@ -1,5 +1,5 @@
-// Single combat (DESIGN §11.1). Exchanges: both fighters choose one of five
-// moves; each move beats two and loses to two. Pure: (duel, moves, rng) -> duel.
+// Single combat (DESIGN §11.1). Exchanges: both fighters choose one of three
+// moves; each beats one and loses to one. Pure: (duel, moves, rng) -> duel.
 // A duel fought by hand, fought "on instinct" and run by tools/measure-duel.ts
 // all go through resolveExchange().
 import type { DuelMove, Fighter } from '../content/schema';
@@ -8,13 +8,11 @@ import type { DuelSide, DuelState } from './state';
 import type { RngCursor } from './rng';
 import { DUEL } from './tuning';
 
-/** What each move beats. Each beats two and loses to two. */
+/** What each move beats: the triangle. Strike catches a feint; a guard turns a strike; a feint draws the guard. */
 export const BEATS: Record<DuelMove, readonly DuelMove[]> = {
-  strike: ['feint', 'bash'],
-  guard: ['strike', 'bind'],
-  feint: ['guard', 'bash'],
-  bind: ['strike', 'feint'],
-  bash: ['guard', 'bind'],
+  strike: ['feint'],
+  guard: ['strike'],
+  feint: ['guard'],
 };
 
 export function matchup(a: DuelMove, b: DuelMove): 1 | 0 | -1 {
@@ -22,7 +20,7 @@ export function matchup(a: DuelMove, b: DuelMove): 1 | 0 | -1 {
   return BEATS[a].includes(b) ? 1 : -1;
 }
 
-export const MOVE_NAMES: Record<DuelMove, string> = { strike: 'Strike', guard: 'Guard', feint: 'Feint', bind: 'Bind', bash: 'Shield-bash' };
+export const MOVE_NAMES: Record<DuelMove, string> = { strike: 'Strike', guard: 'Guard', feint: 'Feint' };
 
 export function sideFromFighter(f: Fighter, kind: DuelState['kind']): DuelSide {
   const hpMax = 10 + 2 * f.attrs.end;
@@ -57,15 +55,12 @@ export function canYield(d: DuelState): boolean {
 
 // ---- policies ----
 
-/** Weights a fighter's habits by his state: tired men guard, and nobody bashes with a broken shield. */
+/** Weights a fighter's habits by his state: tired men guard, and a man with no shield guards less. */
 function situational(me: DuelSide, base: Partial<Record<DuelMove, number>>): Record<DuelMove, number> {
   const w = {} as Record<DuelMove, number>;
   for (const m of DUEL_MOVES) w[m] = (base[m] ?? 1) + 0.05;
   if (me.stamina <= 2) w.guard *= 3;
-  if (me.shields <= 0) {
-    w.bash = 0.01;
-    w.guard *= 0.5;
-  }
+  if (me.shields <= 0) w.guard *= 0.5;
   return w;
 }
 
@@ -79,7 +74,7 @@ export const habitPolicy: DuelPolicy = (d, side, rng) => {
     if (rng.float() < reads) {
       const heroSeen = d.heroSeen ?? {};
       const fav = DUEL_MOVES.reduce((a, m) => ((heroSeen[m] ?? 0) > (heroSeen[a] ?? 0) ? m : a), 'strike' as DuelMove);
-      const counters = DUEL_MOVES.filter((m) => BEATS[m].includes(fav) && !(m === 'bash' && me.shields <= 0));
+      const counters = DUEL_MOVES.filter((m) => BEATS[m].includes(fav));
       if (counters.length) return counters[rng.int(counters.length)]!;
     }
   }
@@ -94,7 +89,7 @@ export function foeForecast(d: DuelState): Record<DuelMove, number> {
   const total = DUEL_MOVES.reduce((s, m) => s + habits[m], 0);
   for (const m of DUEL_MOVES) {
     // a read habit is known; an unread one is a guess, and only what he has done so far shifts it
-    const known = d.read.includes(m) ? habits[m] / total : 0.2;
+    const known = d.read.includes(m) ? habits[m] / total : 1 / DUEL_MOVES.length;
     prior[m] = known * (d.read.includes(m) ? 8 : 2) + (d.seen[m] ?? 0) * 0.5;
   }
   const s = DUEL_MOVES.reduce((a, m) => a + prior[m], 0);
@@ -103,7 +98,7 @@ export function foeForecast(d: DuelState): Record<DuelMove, number> {
 }
 
 /** Roughly what winning an exchange with each move is worth (damage, stamina, shield). */
-const WIN_VALUE: Record<DuelMove, number> = { strike: 5, feint: 3.5, bind: 2.5, bash: 2, guard: 1.5 };
+const WIN_VALUE: Record<DuelMove, number> = { strike: 5, feint: 3.5, guard: 2.5 };
 
 /** Fighting on instinct: counter what he expects, with some noise. Used by "let instinct take it" and the bot. */
 export const adaptivePolicy: DuelPolicy = (d, side, rng) => {
@@ -120,7 +115,7 @@ export const adaptivePolicy: DuelPolicy = (d, side, rng) => {
       v += fc[o] * (r > 0 ? WIN_VALUE[m] : r < 0 ? -WIN_VALUE[o] : 0);
     }
     if (d.hero.stamina < (DUEL.cost[m] ?? 0)) v -= 1.5;
-    if (m === 'bash' && d.hero.shields <= 0) v -= 5;
+    if (m === 'guard' && d.hero.shields <= 0) v -= 1;
     if (v > bestV) { bestV = v; best = m; }
   }
   return best;
@@ -168,39 +163,28 @@ function apply(d: DuelState, wSide: 'hero' | 'foe', mw: DuelMove, ml: DuelMove, 
   const q = rng.float() < quality(w, l, mw === 'guard' ? w.shield : w.weapons, ml === 'guard' ? l.shield : l.weapons);
   switch (mw) {
     case 'strike': {
+      // caught him mid-feint: a clean blow
       const base = 3 + w.str + w.weapon - l.armour + rng.int(3);
       const dmg = hit(l, q ? base : base / 2);
-      return `${W} ${you ? 'catch' : 'catches'} the ${ml === 'feint' ? 'feint' : 'shield-rush'} with a ${q ? 'clean' : 'glancing'} blow (${dmg}).`;
+      return `${W} ${you ? 'see' : 'sees'} the feint for what it is and ${you ? 'cut' : 'cuts'} through it, ${q ? 'clean' : 'glancing'} (${dmg}).`;
     }
     case 'feint': {
-      if (!q) {
-        l.stamina -= 1;
-        return `${W} ${you ? 'draw' : 'draws'} the ${ml === 'guard' ? 'guard' : 'rush'} wide, but the cut that follows is late.`;
-      }
+      // drew the guard high and cut in under it
+      l.stamina -= 1;
+      if (!q) return `${W} ${you ? 'draw' : 'draws'} the guard up, but the cut that follows is late.`;
       const dmg = hit(l, 2 + w.weapon + rng.int(2) - Math.floor(l.armour / 2));
-      return `${W} ${you ? 'draw' : 'draws'} the ${ml === 'guard' ? 'guard' : 'rush'} wide and ${you ? 'cut' : 'cuts'} in behind it (${dmg}).`;
-    }
-    case 'bind': {
-      l.stamina -= 2;
-      if (!q) return `${W} ${you ? 'hook' : 'hooks'} the ${ml === 'strike' ? 'blade' : 'shield'} and ${you ? 'hold' : 'holds'} it, breathing hard.`;
-      const dmg = hit(l, 2 + rng.int(2));
-      return `${W} ${you ? 'hook' : 'hooks'} the ${ml === 'strike' ? 'blade' : 'shield'} aside and ${you ? 'hammer' : 'hammers'} the pommel home (${dmg}).`;
-    }
-    case 'bash': {
-      const broke = damageShield(l, 2, d.kind);
-      l.stamina -= 2;
-      const dmg = q ? hit(l, 1 + rng.int(2)) : 0;
-      return `${W} ${you ? 'drive' : 'drives'} the shield-boss into the ${ml === 'guard' ? 'guard' : 'bind'}${broke ? ', and the shield splits' : ''}${dmg ? ` (${dmg})` : ''}.`;
+      return `${W} ${you ? 'draw' : 'draws'} the guard up and ${you ? 'cut' : 'cuts'} in under it (${dmg}).`;
     }
     case 'guard': {
+      // took the blow on the rim and turned it, so he came on past
       if (w.shields <= 0 && rng.float() > DUEL.noShieldGuard) {
         const dmg = hit(w, (3 + l.str + l.weapon - w.armour) / 2);
         return `${W} ${you ? 'have' : 'has'} no shield left; the parry is not enough (${dmg} to ${you ? 'you' : 'him'}).`;
       }
-      const broke = ml === 'strike' ? damageShield(w, 1, d.kind) : false;
-      l.stamina -= 1;
-      const dmg = q ? hit(l, 1 + rng.int(3)) : 0;
-      return `${W} ${you ? 'take' : 'takes'} it on the shield${broke ? ', which splits' : ''}${dmg ? ` and ${you ? 'answer' : 'answers'} with a cut (${dmg})` : ''}.`;
+      const broke = damageShield(w, 1, d.kind);
+      l.stamina -= 2;
+      const dmg = q ? hit(l, 2 + rng.int(3)) : 0;
+      return `${W} ${you ? 'take' : 'takes'} it on the rim and ${you ? 'turn' : 'turns'} it${broke ? ', and the shield splits' : ''}${dmg ? `, and he stumbles past onto the riposte (${dmg})` : ''}.`;
     }
   }
 }
@@ -211,16 +195,12 @@ function tie(d: DuelState, m: DuelMove, rng: RngCursor): string {
       const pH = 0.5 + 0.06 * (d.hero.weapons - d.foe.weapons);
       const a = rng.float() < pH ? hit(d.foe, (3 + d.hero.str + d.hero.weapon - d.foe.armour) / 2) : 0;
       const b = rng.float() < 1 - pH ? hit(d.hero, (3 + d.foe.str + d.foe.weapon - d.hero.armour) / 2) : 0;
-      return `Blow for blow${a ? `: you land one (${a})` : ''}${b ? `${a ? ' and' : ':'} he lands one (${b})` : ''}${!a && !b ? ', steel on steel' : ''}.`;
-    }
-    case 'bash': {
       damageShield(d.hero, 1, d.kind);
       damageShield(d.foe, 1, d.kind);
-      return 'Shield meets shield with a crack. Both of you stagger.';
+      return `Blow for blow, shield on shield${a ? `: you land one (${a})` : ''}${b ? `${a ? ' and' : ':'} he lands one (${b})` : ''}${!a && !b ? ', and the splinters fly' : ''}.`;
     }
     case 'guard': return 'Both of you hold back behind your shields and breathe.';
-    case 'feint': return 'Two feints, and nothing behind either.';
-    case 'bind': return 'Blades locked, you shove and grunt and break apart.';
+    case 'feint': return 'Two feints, and nothing behind either. You circle.';
   }
 }
 

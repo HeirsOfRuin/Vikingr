@@ -6,7 +6,7 @@
   shield: 2
   armour: 1
   weapon: 2
-  habits: { strike: 4, bash: 2, guard: 1, feint: 1, bind: 1 }
+  habits: { strike: 5, guard: 1, feint: 1 }
   desc: A big man with a loud mouth and a heavy arm. He swings first and keeps swinging.
 - id: eyvind
   name: Eyvind the Quiet
@@ -15,7 +15,7 @@
   shield: 3
   armour: 1
   weapon: 2
-  habits: { guard: 3, feint: 3, bind: 2, strike: 1 }
+  habits: { guard: 4, feint: 3, strike: 1 }
   desc: Thin, patient, and hard to hit. He waits for you to make the mistake.
 - id: irish_champion
   name: An Irish champion
@@ -24,7 +24,7 @@
   shield: 4
   armour: 2
   weapon: 2
-  habits: { strike: 2, feint: 2, bind: 2, guard: 2, bash: 1 }
+  habits: { strike: 2, feint: 2, guard: 2 }
   desc: A king's man with a gilded spear and no fear in him.
 - id: green_boy
   name: A farmer's boy
@@ -42,5 +42,5 @@
   shield: 1
   armour: 0
   weapon: 2
-  habits: { strike: 3, guard: 3, bind: 1 }
+  habits: { strike: 3, guard: 3 }
   desc: A big man in a brown robe with a hay-spear, standing in the gate because nobody else would.

@@ -7,10 +7,10 @@ import { RngCursor, seedRng } from '../../src/engine/rng';
 const duel = () => makeDuel('holmgang', true, 'thorgils', sideFromFighter(content.fighters.eyvind!, 'holmgang'), sideFromFighter(content.fighters.thorgils!, 'holmgang'), 0.1);
 
 describe('duel', () => {
-  it('each move beats two and loses to two', () => {
+  it('each move beats one and loses to one', () => {
     for (const m of DUEL_MOVES) {
-      expect(BEATS[m]).toHaveLength(2);
-      expect(DUEL_MOVES.filter((o) => matchup(o, m) > 0)).toHaveLength(2);
+      expect(BEATS[m]).toHaveLength(1);
+      expect(DUEL_MOVES.filter((o) => matchup(o, m) > 0)).toHaveLength(1);
       for (const o of DUEL_MOVES) expect(matchup(m, o)).toBe(-matchup(o, m) || 0);
     }
   });

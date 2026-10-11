@@ -38,7 +38,7 @@ export function DuelView({ content, d, options, onAct }: { content: ContentBundl
         <div>Exchange {d.exchange}. {seen ? `He has used: ${seen}.` : 'He has not shown you anything yet.'}</div>
         {d.read.length > 0 && <div>You have read him: he leans on the {d.read.map((m) => MOVE_NAMES[m].toLowerCase()).join(', ')}.</div>}
         {d.exchange > 0 && <div class="muted">Your guess: {likely.map((m) => MOVE_NAMES[m].toLowerCase()).join(' or ')} next.</div>}
-        <div class="muted">Strike beats feint and shield-bash. Guard beats strike and bind. Feint beats guard and shield-bash. Bind beats strike and feint. Shield-bash beats guard and bind.</div>
+        <div class="muted">Strike catches a feint. Guard turns a strike. Feint draws a guard.</div>
       </div>
       <div class="log recent">{d.log.slice(-4).map((l, i) => <p key={d.log.length + i}>{l}</p>)}</div>
       <Actions options={options} onAct={onAct} />

@@ -17,13 +17,13 @@ const heroes: Fighter[] = [
   { id: 'hero25', name: 'Hero at 25', attrs: { str: 3, agi: 3, end: 3, wit: 2, pre: 2 }, weapons: 5, shield: 4, armour: 2, weapon: 2, habits: {}, desc: '' },
   { id: 'hero35', name: 'Champion', attrs: { str: 4, agi: 3, end: 3, wit: 3, pre: 3 }, weapons: 7, shield: 6, armour: 2, weapon: 3, habits: {}, desc: '' },
 ];
-const uniform: DuelPolicy = (_d, _s, rng) => DUEL_MOVES[rng.int(5)]!;
+const uniform: DuelPolicy = (_d, _s, rng) => DUEL_MOVES[rng.int(DUEL_MOVES.length)]!;
 
-// sanity: the move cycle is balanced (each move beats two, loses to two)
+// sanity: the move cycle is balanced (each move beats as many as it loses to)
 for (const m of DUEL_MOVES) {
   const beats = BEATS[m].length;
   const loses = DUEL_MOVES.filter((o) => BEATS[o].includes(m)).length;
-  if (beats !== 2 || loses !== 2) { console.log(`measure-duel: FAILED — ${m} beats ${beats}, loses to ${loses}`); process.exit(1); }
+  if (beats !== loses || beats * 2 !== DUEL_MOVES.length - 1) { console.log(`measure-duel: FAILED — ${m} beats ${beats}, loses to ${loses}`); process.exit(1); }
 }
 
 const pct = (n: number) => `${Math.round(n * 100)}%`.padStart(4);
