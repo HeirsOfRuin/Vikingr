@@ -1,0 +1,132 @@
+# Skye (docs/FRAME-831.md §1): a settler's steading. Men for hire, an offer of land, and the papar.
+- id: sk_kolbeinn
+  kind: place
+  trigger: arrive
+  at: [skye]
+  once: true
+  title: Kolbeinn's steading
+  text: |
+    The sea loch runs a long way into the mountains, black water under black rock, and at the head of it, where a river comes down through a strip of green, there is a steading: a longhouse of turf and stone, a byre, a boat-shed, and the round ruin of something older that the settlers have been taking stones from for twenty years.
+
+    Kolbeinn comes down to the shore to meet you. He is fifty, bald, with a beard to his belt and a voice like gravel in a bucket. Behind him are his sons, his sons' wives, a lot of children, and his own wife, a small dark Pictish woman who looks at your ship the way a cat looks at a dog.
+    [break]
+    Kolbeinn talks the way a man talks when he hasn't had new ears in a year.
+
+    He came from Sogn as a young man and never went back. He has three hundred sheep, and land up three valleys, and a neighbour across the loch, a Pict with a lot of cousins, who says the land up the third valley is his. Kolbeinn would like men to explain to the neighbour, firmly, that it isn't.
+
+    "And I would like," he says, looking at you with his head on one side, "a son-in-law. My daughter Þórunn is a widow. She has land, and a temper, and no husband, and I am too old to be shouted at."
+  choices:
+    - id: fight
+      text: Take his silver and settle the matter of the third valley.
+      danger: true
+      effects:
+        - { set: flag.sk_valley }
+        - { battle: { foe: island_men, men: 12, terrain: field, win: sk_valley_won, lose: sk_valley_lost, parted: sk_valley_lost } }
+      result: |
+        [if service]
+        {captain} takes Kolbeinn's silver, and the Raven's men go up the third valley in the morning mist with their shields on their backs.
+        [else]
+        You take Kolbeinn's silver, and your men go up the third valley in the morning mist with their shields on their backs.
+        [/if]
+
+        The neighbour's cousins are waiting at the head of it, on a ridge, with spears and a great many opinions.
+    - id: men
+      text: Ask whether any of his sons' friends want a summer at an oar.
+      visible_if: "!service"
+      effects: [ { recruit: 6 }, { set: flag.sk_recruited }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      result: |
+        Six of them come down to the shore the next morning with their sea-chests: Hebridean Norse, half of them with Pictish mothers, all of them sick of sheep. They row badly and fight well, Kolbeinn says. He turns out to be right on both counts.
+    - id: thorunn
+      text: Go and meet his daughter.
+      effects: [ { set: flag.sk_thorunn } ]
+      next: sk_thorunn
+      result: |
+        Kolbeinn beams. His wife says something in her own language, short and sharp, and all the children laugh.
+
+        "She says," Kolbeinn translates, "that it's your funeral."
+
+- id: sk_valley_won
+  kind: spine
+  title: The third valley
+  text: |
+    The cousins break at the second rush and go back up over the ridge, leaving two dead in the heather and a lot of spears. Kolbeinn walks the boundary afterwards with a pile of stones on a sledge, setting them up as cairns, humming.
+
+    "Twenty years," he says, setting the last one. "Twenty years he's been telling me it was his." He pays more than he promised, and he pays in silver, which surprises everyone, including Kolbeinn.
+  choices:
+    - id: done
+      text: Take the silver.
+      effects: [ { add: { loot: 180 } }, { deed: { type: battle_won, text: Settled the third valley for Kolbeinn on Skye } }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      result: The cairns are still there. In a hundred years nobody will remember why.
+
+- id: sk_valley_lost
+  kind: spine
+  title: The third valley
+  text: |
+    The cousins don't break. They have the ridge, and they know the ground, and they come down at you through the heather in a rush that throws you back into the river.
+
+    Kolbeinn is philosophical about it. "Twenty years," he says. "What's another twenty?"
+  choices:
+    - id: done
+      text: Go back down to the ship.
+      effects: [ { add: { crew.morale: -1, loot: 90 } }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      result: He gives you half the silver anyway, for trying. It's the kind of thing that makes you want to try again.
+
+- id: sk_thorunn
+  kind: spine
+  title: Þórunn
+  text: |
+    She is in the byre, mucking out, and she doesn't stop when you come in.
+
+    She is perhaps twenty-five, tall, with her father's eyes and her mother's darkness, and forearms like a smith's. Her husband drowned two winters ago, taking a boat across the loch in weather he'd been told not to. She tells you so straight away, as if it were a warning.
+
+    "My father wants me married to a man with a ship," she says, "so that when he dies, there's a ship. I want to be left alone with my sheep." She leans on her fork. "What do you want?"
+    [if flag.gyda_courting || flag.gyda_eloped]
+    You think of Gyða, behind her father's byre, with her arms folded. You think of her very clearly.
+    [/if]
+  choices:
+    - id: honest
+      text: Tell her the truth. You're promised elsewhere, or as good as.
+      visible_if: "flag.gyda_courting || flag.gyda_eloped"
+      effects: [ { add: { honour: 1 } }, { set: flag.sk_thorunn_friend }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      result: |
+        She laughs, the first time you've heard her laugh. "Good," she says. "Then you can tell my father, and he'll believe it from you." She gives you a cheese for your trouble, and you tell Kolbeinn, and he sighs, and gives you another.
+    - id: offer
+      text: Tell her you might come back. A man needs somewhere to stop rowing, one day.
+      effects: [ { set: flag.sk_land_offer }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      result: |
+        She looks at you for a long moment, the way her mother looked at your ship.
+
+        "Then come back," she says. "With the ship. And we'll see." She goes back to the dung. It is, you think, walking back down to the shore, the most romantic thing anyone has ever said to you, and you can't work out why.
+    - id: sheep
+      text: Ask about the sheep.
+      effects: [ { add: { skill.trade: 1 } }, { set: flag.sk_thorunn_friend }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      result: |
+        It turns out to be the right question. She talks about the sheep for most of the afternoon: the Hebridean breed, small and brown and stubborn, the grazing up the three valleys, the price of wool in Dublin. By the end of it you know more about sheep than you ever wanted to, and she likes you, a little, and you both know nothing will come of it.
+
+- id: sk_papar
+  kind: queued
+  title: The papar
+  text: |
+    On the way out of the loch there is an islet: a rock with a skin of turf on it, and three beehive huts of stone, and a little garden, and a cross.
+
+    Irish hermits. The papar, the settlers call them. They were here before the Picts were Christian, Kolbeinn says, and they'll be here after the Norse go home. They don't own anything. They don't want anything. Kolbeinn's people leave them alone because they're unlucky to kill.
+
+    One of them is sitting on the rock in the sun, with his feet in the water, watching you go by.
+  choices:
+    - id: bless
+      text: Steer close, and ask the old man to bless the ship.
+      effects: [ { add: { hamingja: 1, man.hallvard.loyalty: -1 } }, { set: flag.sk_blessed } ]
+      result: |
+        He looks surprised. Then he gets up, and raises his hand, and makes the sign of their god over the ship, slowly, from stem to stern.
+
+        Hallvard spits over the side, three times. But you notice he doesn't stop him.
+    - id: bell
+      text: Land, and take the bell from the hut. Bronze is bronze.
+      effects: [ { add: { loot: 20, hamingja: -1 } }, { set: flag.sk_bell } ]
+      result: |
+        It's a little hand-bell, green with age, worth almost nothing. The old man watches you take it without a word.
+
+        Kolbeinn's people won't look at you as you row past the steading. That night, for no reason anyone can see, the wind goes round into your teeth and stays there.
+    - id: pass
+      text: Row past. Leave him to his god.
+      result: He raises a hand as you go by. You find you've raised yours back before you think about it.

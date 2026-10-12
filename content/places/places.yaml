@@ -63,9 +63,48 @@ places:
     known: false
     active: true
     raid: { wealth: 1500, defenders: 28, foe: ulster_levy, terrain: field }
+  # ---- opened in 831 (docs/FRAME-831.md) ----
+  - id: kaupang
+    name: Kaupang
+    lon: 10.05
+    lat: 59.0
+    kind: market
+    region: Vík
+    desc: "The market at Skíringssalr: a beach of booths and smoke under the king's hall, where Danes, Frisians and Swedes sell everything, and buy everything, including people."
+    known: false
+    active: true
+    market: true
+  - id: lindisfarne
+    name: Lindisfarne
+    lon: -1.8
+    lat: 55.67
+    kind: monastery
+    region: Northumbria
+    desc: "The holy island where it began, forty years ago. Twice a day the sea covers the sands between it and the mainland, and twice a day it lets you walk across."
+    known: false
+    active: true
+    raid: { wealth: 1100, defenders: 16, foe: northumbrian_levy, terrain: beach }
+  - id: skye
+    name: Skíð
+    lon: -6.2
+    lat: 57.35
+    kind: hall
+    region: The Hebrides
+    desc: "Skye. Black mountains, sea lochs, and here and there a Norse steading built on top of a Pictish one, where the settlers have stopped going home."
+    known: false
+    active: true
+  - id: conaille
+    name: Conaille
+    lon: -6.38
+    lat: 54.0
+    kind: hall
+    region: Ireland
+    desc: "Conaille Muirthemne, on Dundalk Bay: a small Irish kingdom with a king in a ringfort, cattle on the plain, and no Norse ship yet seen in its bay."
+    known: false
+    active: true
+    raid: { wealth: 1300, defenders: 26, foe: conaille_men, terrain: field }
   # ---- later phases ----
   - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
-  - { id: kaupang, name: "Kaupang", lon: 10.05, lat: 59.0, kind: market, region: Vík, desc: "The market at Skíringssalr." }
   - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland." }
   - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, kind: market, region: Denmark, desc: "A market on the west coast of Jutland." }
   - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren." }
@@ -78,7 +117,6 @@ places:
   - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, kind: town, region: Ireland, desc: "The black pool on the Liffey." }
   - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, kind: monastery, region: Ireland, desc: "The chief church of the Irish." }
   - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon." }
-  - { id: lindisfarne, name: "Lindisfarne", lon: -1.8, lat: 55.67, kind: monastery, region: Northumbria, desc: "The holy island where it began." }
   - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, kind: town, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse." }
   - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, kind: island, region: Kent, desc: "An island in the mouth of the Thames." }
   - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, kind: market, region: Mercia, desc: "The market on the Thames." }
@@ -97,3 +135,11 @@ legs:
   - { a: orkney, b: home_fjord, days: 2.5, kind: open }
   - { a: orkney, b: iona, days: 3, kind: coastal }
   - { a: iona, b: bangor, days: 1.5, kind: coastal }
+  # opened in 831
+  - { a: home_fjord, b: kaupang, days: 3, kind: coastal }
+  - { a: karmoy, b: kaupang, days: 2.5, kind: coastal }
+  - { a: orkney, b: lindisfarne, days: 4, kind: coastal }
+  - { a: home_fjord, b: lindisfarne, days: 4, kind: open }
+  - { a: orkney, b: skye, days: 3, kind: coastal }
+  - { a: skye, b: iona, days: 1.5, kind: coastal }
+  - { a: bangor, b: conaille, days: 1, kind: coastal }

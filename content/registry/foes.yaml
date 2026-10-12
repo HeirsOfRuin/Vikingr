@@ -19,3 +19,13 @@
   quality: 0
   doctrine: { hold: 2, missiles: 2, give: 2 }
   desc: Farmers and fishermen who would rather you took the sheep and left.
+- id: northumbrian_levy
+  name: The Northumbrian levy
+  quality: 1
+  doctrine: { hold: 3, push: 2, missiles: 1 }
+  desc: The reeve's men from the mainland farms. Spears and long shields. They stand, and they are slow to break.
+- id: conaille_men
+  name: The men of Conaille
+  quality: 1
+  doctrine: { missiles: 3, flank: 2, give: 2, push: 1 }
+  desc: A small king's household and his cattle-lords. Javelins, horses on the flanks, and a hall to fall back to.

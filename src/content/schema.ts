@@ -55,6 +55,8 @@ const baseEffect = z.union([
   z.object({ plunder: z.object({ next: id.optional() }).strict() }).strict(),
   z.object({ position: z.enum(['front', 'wall', 'rear']) }).strict(),
   z.object({ captain: z.string() }).strict(),
+  z.object({ sell_captives: z.number().int().min(1) }).strict(),
+  z.object({ recruit: z.number().int().min(1) }).strict(),
   z.object({ ship: z.object({ type: id, name: z.string(), crew: z.number().int().min(0) }).strict() }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */

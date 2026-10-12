@@ -1,0 +1,187 @@
+# Sea events for 831 (docs/FRAME-831.md §2.3). Written for both an oarsman and a captain.
+- id: se_danes
+  kind: pool
+  trigger: sea
+  chance: 0.05
+  once: true
+  requires: ["year >= 831"]
+  art: open_sea
+  title: Danish sails
+  text: |
+    Sails on the horizon at noon: one, then four, then nine, coming up from the south-east in a line, close-hauled and in no hurry.
+
+    Danes. You can tell by the sails, which are striped red and white like Ásgeir's old cloak, and by the way they hold their line, like men who are used to doing what they are told.
+    [if service]
+    {captain} swears quietly and steadily for some time.
+    [else]
+    Your men look at you. Nine ships is three hundred men.
+    [/if]
+    [break]
+    The nearest one comes down within hail. A big man in the bow, in a mail shirt that catches the sun, cups his hands. "Who are you?" he calls. "And where are you going, little ship?"
+  choices:
+    - id: hail
+      text: Call back across the water. Trade news, man to man.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          You call back your name, and your father's, and the jarl's, and where you have been. The Dane laughs, and tells you his: Ubbi, a hersir of King Horik's, going to Frisia "to see what the emperor's sons have left lying about."
+
+          He throws you a skin of wine across the water, Frankish wine, sour and wonderful. "When you're tired of rowing for jarls," he calls, as they draw away, "come to Hedeby and ask for Ubbi."
+        effects: [ { set: flag.se_ubbi }, { add: { skill.lore: 1, crew.morale: 1 } } ]
+      failure:
+        text: |
+          You call back. Your voice cracks on the second word, the way it hasn't since you were fourteen.
+
+          The Dane laughs so hard he has to hold the stem-post. "Go home, little ship," he calls. "Your mother's worried." All nine ships seem to be laughing as they draw away.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: teeth
+      text: Get the shields up along the rail. Let them see you're no fishing boat.
+      effects: [ { add: { honour: 1 } }, { set: flag.se_shields } ]
+      result: |
+        [if service]
+        You are first to the rail with your shield, and the bench behind you follows, and then the whole ship, until the Raven bristles like a hedgehog.
+        [else]
+        "Shields," you say, and the rail goes up red and black and yellow in the space of a breath.
+        [/if]
+
+        The Dane looks at it for a while. Then he raises his hand, palm out, the way you'd salute a man across a hall, and his ship sheers off to rejoin the line.
+
+        "He was laughing," Ulf says afterwards. "Wasn't he?" Nobody can say.
+    - id: wide
+      text: Give them a wide berth, and say nothing.
+      result: |
+        You keep your head down and your oar going. The Danes pass a long way off, all afternoon, nine sails going west and south toward somebody else's coast.
+
+        Hallvard watches them until they're gone. "That's the future," he says. "Going past."
+
+- id: se_fog
+  kind: pool
+  trigger: sea
+  chance: 0.05
+  once: true
+  requires: ["year >= 831"]
+  art: open_sea
+  title: Fog
+  text: |
+    It comes down at dawn: not a bank you can see coming, but a whiteness that is just suddenly there, so thick you can't see the stem-post from the stern.
+
+    Everything goes quiet. The oars drip. Somewhere, a long way off or very close, you can hear surf.
+    [if service]
+    {captain} has the men ship their oars, and stands at the steering-oar with his head on one side, listening.
+    [else]
+    The men ship their oars and look at you.
+    [/if]
+  choices:
+    - id: lead
+      text: Get the lead-line out, and feel for the bottom.
+      check: { skill: seamanship, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          You swing the lead and call the depths. Twelve fathoms, sand. Ten, sand. Eight, shell. Shell means a beach, and a beach means you know roughly where you are.
+
+          When the fog lifts at noon you are exactly where you thought you were, and the men look at you differently.
+        effects: [ { add: { skill.seamanship: 1, crew.morale: 1 } } ]
+      failure:
+        text: |
+          You swing the lead and call the depths, and the depths make no sense, and you call them anyway.
+
+          When the fog lifts the next morning you are a day off your course, with a skerry close enough to spit on and the men looking at you sideways.
+        effects: [ { days: 1 } ]
+    - id: birds
+      text: Listen for the birds. They go home to land.
+      check: { skill: lore, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          Toward evening you hear them: gulls going over high, all in the same direction, and a cormorant low across the water. Land that way.
+
+          It is. You row toward it slowly through the white, and come out of the fog at sunset half a mile off a headland you know.
+        effects: [ { add: { skill.lore: 1, hamingja: 1 } } ]
+      failure:
+        text: |
+          The birds go every way at once, as if they were as lost as you. You sit in the fog all night and all the next day, eating cold food and telling worse and worse stories.
+        effects: [ { days: 2 } ]
+    - id: wait
+      text: Sit tight and wait for it to lift.
+      effects: [ { days: 1 } ]
+      result: |
+        You wait. The fog waits too. Bersi tells the story of every bad bargain he ever made, which takes most of the day. At last the wind comes, and the fog goes like a sheet pulled off a bed, and there is the coast, about where it should be.
+
+- id: se_grumble
+  kind: pool
+  trigger: sea
+  chance: 0.05
+  once: true
+  requires: ["year >= 831", "!service"]
+  art: open_sea
+  title: Grumbling at the oars
+  text: |
+    It starts with one man at the bow, and by the afternoon it has come all the way down the ship like water in a bilge. The food is bad. The rowing is hard. The summer is going, and there's nothing under the benches yet to show for it.
+
+    Nobody says it to your face. Everybody says it loud enough for you to hear.
+  choices:
+    - id: cask
+      text: Broach a cask of the good ale, and drink with them.
+      effects: [ { add: { crew.morale: 2, provisions: -30 } } ]
+      result: |
+        You broach the cask yourself and pass the first horn to the man who started it. He's so surprised he drinks it.
+
+        By evening they are singing again. The song is about you, and it isn't kind, and it is a lot better than silence.
+    - id: speak
+      text: Stand up on the stern-deck and tell them what's coming.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You tell them where you're going, and what's there, and what their share will be, and you say it like a man who's already seen it.
+
+          It works. Not because they believe you, exactly, but because they want to, and you've given them permission.
+        effects: [ { add: { crew.morale: 2, skill.command: 1 } } ]
+      failure:
+        text: |
+          You tell them where you're going, and what's there. Somebody at the bow says, "That's what Ásgeir said," and somebody else says, "And look what happened to him," and you lose the rest of it in the laughing.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: ketill
+      text: Let Ketill have a quiet word along the benches.
+      requires: [man.ketill.sworn]
+      effects: [ { add: { crew.morale: 1, man.ketill.loyalty: 1 } } ]
+      result: |
+        Ketill goes down the ship slowly, stopping here and there, a hand on a shoulder, a word you can't hear. By dark it's quiet.
+
+        You ask him what he said. "That you'd row them home yourself, if it came to it," he says. "Don't make a liar of me."
+
+- id: se_curragh
+  kind: pool
+  trigger: sea
+  chance: 0.05
+  once: true
+  requires: ["year >= 831"]
+  art: open_sea
+  title: The skin boat
+  text: |
+    A boat on the swell, low in the water: an Irish curragh, hide stretched over a frame of withies, with three men in it rowing as hard as they can in the wrong direction.
+
+    They're fishermen, or they're monks, or they're both. They have seen you, and they know what you are, and they're rowing anyway, the way a hare runs from a hawk.
+    [if service]
+    "Fetch," says {captain}, cheerfully, and the bow comes round.
+    [/if]
+  choices:
+    - id: take
+      text: Run them down and take them aboard. Three men are three men's price.
+      effects: [ { captives: 3 }, { set: flag.se_curragh_taken }, { add: { man.hallvard.loyalty: -1 } } ]
+      result: |
+        It isn't a chase. The curragh is light and the men in it are tired, and the Raven's bow is on them inside the hour. They don't fight. One of them is crying.
+
+        You tow the curragh behind, empty, for a day, and then cut it loose. It goes drifting off across the grey water like a thing nobody owns.
+    - id: water
+      text: Come alongside, and give them water instead.
+      effects: [ { add: { honour: 1, hamingja: 1, man.hallvard.loyalty: 1, man.bersi.loyalty: -1 } }, { set: flag.se_curragh_spared } ]
+      result: |
+        [if service]
+        You say it loud enough that {captain} hears, and the men at the benches near you, and it's done before anyone can argue.
+        [/if]
+        You hand a skin of water down into the curragh. The oldest of them takes it and stares at you, and says something in Irish, and then, carefully, in Latin, something Colmán would have known.
+
+        Bersi tells you what three men would have fetched in Kaupang. He tells you twice.
+    - id: leave
+      text: Let them go. It's a long way to drag them for not much.
+      result: |
+        You let them go. They row on toward the coast, faster now, not looking back, until they are a speck and then not even that.

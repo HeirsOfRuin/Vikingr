@@ -1,0 +1,260 @@
+# Conaille (docs/FRAME-831.md §1). The Annals of Ulster, 831: "The first plundering of Conaille by the
+# heathens; and its king, Máel Brigte, and his brother Canannán were taken prisoner and carried off to the ships."
+- id: c_approach
+  kind: place
+  trigger: arrive
+  at: [conaille]
+  once: true
+  title: Dundalk Bay
+  text: |
+    The bay is wide and shallow and brown with the outflow of three rivers, and the plain behind it is the flattest land you have seen since you left home: cattle country, green to the mountains, with smoke from a dozen farms going straight up into a still morning.
+
+    On a rise above the shore, a mile inland, there is a ringfort: a round bank of earth with a palisade on top and a gate, and inside it a hall with a high thatched roof. The king's house. Dún Delgan, the man with the missing hand called it.
+
+    On the gate, if you look hard, there is something hanging.
+    [break]
+    Three somethings. What the crows have left of them is still wearing Norse clothes.
+    [if service]
+    Nobody on the Raven says anything. {captain} looks at the gate until the crows on it get bored and lift off, and then turns and looks at the men, and doesn't need to make a speech.
+    [else]
+    Nobody in your ship says anything. Then everybody looks at you.
+    [/if]
+  choices:
+    - id: night
+      text: Land in the dark down the coast, and come at the fort across the plain at dawn.
+      danger: true
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You beach in the dark three miles south, among dunes, and come across the plain in the grey before sunrise, through the cattle, with the cows lifting their heads to watch you pass and going back to their grass.
+
+          The gate is open. A boy is driving the king's milk cows out of it. He sees you, and drops his stick, and runs inside screaming, and then you are running too.
+        effects:
+          - { set: flag.c_surprise }
+          - { battle: { foe: conaille_men, men: 14, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+      failure:
+        text: |
+          You beach in the dark three miles south, and come across the plain in the grey before sunrise, and a dog at the first farm you pass starts barking, and doesn't stop.
+
+          By the time you reach the fort, the gate is shut, and the king's household is out in front of it in a line, and the king himself is in the middle in a red cloak with a sword like a church door.
+        effects:
+          - { battle: { foe: conaille_men, men: 24, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+    - id: trade
+      text: Go in openly, as traders, with an interpreter. Kings like Frankish wine.
+      visible_if: "flag.colman_kept || flag.k_news || flag.se_ubbi"
+      danger: true
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          [if flag.colman_kept]
+          Colmán does the talking. You don't know what he says; he won't tell you afterwards. But the king's steward comes down to the beach and looks at your Frankish wine, and goes back up the hill, and comes down again, and invites you to the hall to drink with the king.
+          [else]
+          You go in with a jar of Frankish wine on your shoulder and an Irish slave-boy from Kaupang to talk for you. The king's steward comes down to look at the wine, and goes back up the hill, and comes down again, and invites you up to the hall.
+          [/if]
+
+          You go up with twelve men and the wine, and your swords under your cloaks, and the rest of the ship coming up the hill behind you as soon as you are inside the gate.
+        effects:
+          - { set: flag.c_guest }
+          - { set: flag.c_surprise }
+          - { add: { honour: -1 } }
+          - { battle: { foe: conaille_men, men: 10, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+      failure:
+        text: |
+          The king's steward comes down to the beach, and looks at the wine, and looks at your hands, and looks at the gate where the three Norsemen are hanging. Then he walks back up the hill without a word, and the gate shuts behind him.
+
+          They come out to meet you an hour later, all of them.
+        effects:
+          - { battle: { foe: conaille_men, men: 26, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+    - id: straight
+      text: Straight up from the beach. Let him see you coming.
+      danger: true
+      effects:
+        - { battle: { foe: conaille_men, men: 22, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+      result: |
+        You go up the hill from the beach in a wall, with the sun behind you and the gate in front, and the three dead men watching you come.
+
+        The king comes out to meet you. He has a red cloak, and a sword like a church door, and he doesn't look frightened at all.
+    - id: away
+      text: Not this. Not today. Sail on.
+      visible_if: "!service"
+      effects: [ { add: { honour: -1 } }, { set: flag.c_declined } ]
+      result: |
+        You turn the ship. Nobody argues. Nobody says anything at all, all the way out of the bay.
+        [if flag.j_promised_king]
+        You think about the jarl's hall, and what you said in it, all the way out of the bay.
+        [/if]
+
+- id: c_hall
+  kind: spine
+  title: The king's doorway
+  text: |
+    The household breaks, and runs for the gate, and you go through it on their heels before they can shut it.
+
+    Inside the ring there is a yard, and cattle, and women screaming, and the hall, and in the hall's doorway, with his back to the dark, the king.
+
+    Máel Brigte is a man of forty, red-bearded, with gold at his throat and blood on his sword, and his brother beside him with a spear. They are the last of them. They know it. The king says something in Irish, loud and clear, and you don't need it translated: come on, then.
+  choices:
+    - id: take
+      text: Take him alive. A living king is worth his weight in silver.
+      danger: true
+      effects: [ { fight: { foe: mael_brigte, kind: duel, lethal: false, win: c_king, lose: c_king_lost } } ]
+      result: You go at him with the flat of your sword and your shield up, and the brother goes down under the men behind you, and then it is you and the king in his own doorway.
+    - id: kill
+      text: Kill him in his door, for the three on the gate.
+      danger: true
+      effects: [ { set: flag.c_king_killed }, { fight: { foe: mael_brigte, kind: duel, lethal: true, win: c_after_kill, lose: c_king_lost } } ]
+      result: You go at him to kill him, and he sees it in your face, and smiles, as if that were the better offer.
+    - id: men
+      text: Stand back, and let the men take them with spears and shields.
+      effects: [ { set: flag.c_king_taken }, { set: flag.c_men_took }, { captives: 2 } ]
+      result: |
+        It takes six men with shields and a lot of shouting. The brother gets a spear in the thigh, and the king cuts one of your men nearly in half before they pin him to the doorpost with three shields and take his sword.
+
+        He doesn't stop shouting the whole time they are tying him. Nobody understands a word of it. Nobody needs to.
+      next: c_king
+
+- id: c_king
+  kind: spine
+  title: Máel Brigte
+  text: |
+    [if !flag.c_men_took]
+    He goes down at last under your shield, and you put your knee on his sword arm and your blade at his throat, and he stops. He looks up at you, breathing hard, and laughs. A king's laugh: it says, well, that's that, then.
+    [/if]
+    They bring him and his brother down to the ships with their hands tied, through their own cattle, past their own people. The women follow at a distance, keening. The men don't follow at all.
+
+    In the hall, on the high table, the king's cup is still standing where he left it when the boy came screaming through the gate: a big drinking-horn, rimmed and tipped with silver, half full of ale.
+  choices:
+    - id: drink
+      text: Drink from the king's cup, in the king's own hall.
+      effects:
+        - { set: flag.c_king_taken }
+        - { set: flag.c_drank }
+        - { keep_boast: irish_cup }
+        - { deed: { type: deed, text: Took Máel Brigte of Conaille alive and drank from his cup in his own hall, weight: 6 } }
+        - { if: "!flag.c_men_took", then: [ { captives: 2 } ] }
+        - { queue: { scene: c_ransom, days: 2 } }
+        - { plunder: { next: c_after } }
+      result: |
+        You pick it up with both hands. The ale is warm, and sour, and the best you have ever drunk.
+
+        Outside, through the door, the king is watching you over his shoulder as they lead him down the hill. He sees what you are doing. He doesn't laugh this time.
+    - id: horn
+      text: Take the horn for the jarl. Leave the ale.
+      effects:
+        - { set: flag.c_king_taken }
+        - { set: flag.c_horn_for_jarl }
+        - { deed: { type: deed, text: Took Máel Brigte of Conaille alive, weight: 5 } }
+        - { if: "!flag.c_men_took", then: [ { captives: 2 } ] }
+        - { queue: { scene: c_ransom, days: 2 } }
+        - { plunder: { next: c_after } }
+      result: |
+        You pour the ale out on the floor, and wrap the horn in a cloak, and give it to Ketill to carry.
+        [if flag.j_promised_king]
+        "The jarl's," you say. Ketill nods. A promise in a hall is a heavy thing to carry home empty-handed.
+        [else]
+        "Somebody will want it," you say. Ketill nods. Somebody always does.
+        [/if]
+
+- id: c_after_kill
+  kind: spine
+  title: The king's doorway
+  text: |
+    Máel Brigte, king of Conaille, dies in his own doorway with your sword in him and his brother dead beside him, and the hall behind them full of smoke.
+
+    You take his head down to the gate, and cut down the three Norsemen, and put the king up in their place. It is the kind of thing that will be told about, in Ireland and at home. In Ireland it will be told for a very long time.
+  choices:
+    - id: on
+      text: Strip the hall, and burn it.
+      effects:
+        - { deed: { type: killed_champion, text: Killed Máel Brigte king of Conaille in his own doorway, weight: 6 } }
+        - { set: flag.c_ulaid_feud }
+        - { add: { honour: -1 } }
+        - { plunder: { next: c_after } }
+      result: The men go through the ringfort like fire through a hayrick. Nobody comes to stop them. There is nobody left to come.
+
+- id: c_king_lost
+  kind: spine
+  title: The king's doorway
+  text: |
+    You go down in the doorway with the king's sword-hilt in your face and his foot on your chest, and for a long moment you are sure you are going to die in a hall in Ireland and never see the sea again.
+
+    Then the men behind you come through the door like a wave, and the king goes down under them, still roaring, and somebody drags you out into the yard by your belt.
+
+    It's Ulf. "Lie still," he says. "We've got him. You can say you did, if you like."
+  choices:
+    - id: up
+      text: Get up.
+      effects:
+        - { set: flag.c_king_taken }
+        - { captives: 2 }
+        - { deed: { type: deed, text: At the taking of Máel Brigte of Conaille, weight: 3 } }
+        - { queue: { scene: c_ransom, days: 2 } }
+        - { plunder: { next: c_after } }
+      result: You get up. It takes a while. The king, tied hand and foot in the yard, watches you do it with something like sympathy.
+
+- id: c_beaten
+  kind: spine
+  title: The plain of Muirthemne
+  text: |
+    The men of Conaille are better than you thought: javelins in the face, horsemen on the flanks, and a king who fights in front of his own line like a man with nothing to lose. In the end it's you that goes back down the hill, step by step, and into the boats.
+
+    From the gate, as you pull away, the three Norsemen watch you go.
+  choices:
+    - id: away
+      text: Row out of the bay.
+      effects: [ { set: flag.c_beaten }, { add: { crew.morale: -1 } } ]
+      result: Nobody speaks until the bay is behind you. Then Ulf says, very quietly, "Next year," and nobody laughs.
+
+- id: c_after
+  kind: spine
+  title: Leaving Conaille
+  text: |
+    You row out of Dundalk Bay on the evening tide, with the smoke of Dún Delgan going up behind you over the plain like a pillar.
+    [if flag.c_king_taken]
+    The king of Conaille sits in the bilge with his hands tied, looking back at it. His brother sits beside him, holding his thigh together, and doesn't look at anything.
+    [/if]
+  choices:
+    - id: go
+      text: Row on.
+      effects: [ { set: flag.c_done } ]
+      result: Behind you, the plain goes dark. Somewhere on it a horn is blowing, over and over, a long way off.
+
+# The ransom (Annals of Ulster: the king was "carried off to the ships"; the rest is the game's).
+- id: c_ransom
+  kind: queued
+  requires: [flag.c_king_taken, "captives >= 2"]
+  title: The ransom
+  text: |
+    Two days later a boat comes out to you: a curragh with a monk in the bow, an old man from Armagh with a white beard and a bag between his feet that he holds as if it were a child.
+
+    He speaks Norse. Badly, but he speaks it. "For the king," he says. "And for his brother. From the abbot of Armagh, and the king of the Ulaid, who would rather pay you than have it said a king of the Ulaid's kin was sold in a market." He opens the bag. It is very full.
+  choices:
+    - id: take
+      text: Take the silver. Send them home.
+      effects: [ { captives: -2 }, { add: { loot: 700, honour: 1 } }, { set: flag.c_ransomed } ]
+      result: |
+        You put the king and his brother into the curragh. Máel Brigte stands up in it, which no sane man does in a curragh, and looks at you for a long moment across the water.
+
+        Then he says something in Irish to the monk, and the monk says to you, carefully: "He says he will remember your face." It isn't a threat, quite. It isn't quite not.
+    - id: more
+      text: Tell the monk a king is worth twice that.
+      check: { skill: trade, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          The monk closes his eyes. Then he opens them, and reaches under his robe, and brings out a second bag, smaller and heavier: gold, Frankish gold, a church's gold.
+
+          "I was told," he says, "that you would ask."
+        effects: [ { captives: -2 }, { add: { loot: 1100 } }, { set: flag.c_ransomed }, { set: flag.c_ransom_doubled } ]
+      failure:
+        text: |
+          The monk closes the bag, and picks up his oar, and begins, without a word, to row away.
+
+          You shout after him. He keeps rowing. In the end you have to go after him in the ship, which is undignified, and take the first price, which is humiliating, while the king watches from the bilge, laughing until he cries.
+        effects: [ { captives: -2 }, { add: { loot: 600 } }, { set: flag.c_ransomed } ]
+    - id: keep
+      text: Keep the king. Take him home and show the jarl.
+      effects: [ { set: flag.c_king_kept }, { captives: -2 }, { add: { honour: -1 } } ]
+      result: |
+        The monk says a short prayer, not for you. Then he closes the bag and rows away without a word.
+
+        The king of Conaille goes home with you in the bilge, to be shown in a Norwegian jarl's hall like a bear. It is a thing that will be talked about for a generation, on both sides of the sea.

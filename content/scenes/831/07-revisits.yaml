@@ -1,0 +1,100 @@
+# Old places, a year on (docs/FRAME-831.md §2.3).
+- id: o_831_ingibjorg
+  kind: place
+  trigger: arrive
+  at: [orkney]
+  once: true
+  requires: ["year >= 831", flag.o_ingibjorg]
+  art: birsay
+  title: The red thread
+  text: |
+    The causeway, the hall, the peat smoke going straight up. Harek's hall is the same. You are not.
+
+    Ingibjörg is pouring the ale again. She sees you come in, and stops pouring, and the man she was pouring for says something sharp and then sees where she is looking and doesn't say anything else.
+
+    The red thread is still round your wrist. It's grey now, and frayed, and you have not once thought of taking it off.
+    [break]
+    She finds you outside, later, on the shingle by the causeway, with the tide coming in over it.
+
+    "My father has had three men ask for me since you were here," she says. "He's said no to all of them. He says he's waiting for a better offer." She looks at you sideways. "I said I was waiting too. He asked what for. I didn't tell him."
+    [if flag.gyda_courting || flag.gyda_eloped]
+    You think of Gyða. You think of her very clearly, and for a long moment you don't say anything at all.
+    [/if]
+  choices:
+    - id: thread
+      text: Tell her you kept the thread.
+      effects: [ { set: flag.ingibjorg_waiting }, { add: { man.ulf.loyalty: 1 } } ]
+      result: |
+        You hold up your wrist. She looks at the thread, grey and frayed, and then at you, and laughs, a little shakily.
+
+        "It was meant to bring you back," she says. "It's done that. What it does next is up to you." She ties a new one beside it, red as the first, and goes back up to the hall.
+    - id: gyda
+      text: Tell her the truth. There is a girl at home.
+      visible_if: "flag.gyda_courting || flag.gyda_eloped"
+      effects: [ { set: flag.ingibjorg_told }, { add: { honour: 1 } } ]
+      result: |
+        She nods slowly, as if you'd told her the price of something. "Is she pretty?" she says. You tell her. "Is she clever?" You tell her that too.
+
+        "Good," Ingibjörg says. "Then I won't feel sorry for you." She takes the thread off your wrist, very gently, and drops it in the sea, and walks back up the shingle without looking back.
+    - id: harek
+      text: Go and find her father.
+      visible_if: "!flag.gyda_courting && !flag.gyda_eloped"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          Harek listens to you with his beard in his fist. He asks about your ship, and your shares, and your father's land, and the jarl, and your name, and what men call you, and why.
+
+          "Come back next summer," he says at last, "with something on your arm I can weigh. Then we'll talk." It is not no. Ingibjörg, listening through the wall, makes a sound like a cat that has been given a fish.
+        effects: [ { set: flag.ingibjorg_promised } ]
+      failure:
+        text: |
+          Harek listens with his beard in his fist, and then laughs, not unkindly. "Come back," he says, "when you've got a ship of your own and a hall to put her in. My daughter isn't going to sleep on a rowing bench."
+        effects: [ { set: flag.ingibjorg_waiting } ]
+
+- id: i_831_colman
+  kind: place
+  trigger: arrive
+  at: [iona]
+  once: true
+  requires: ["year >= 831", { any: [flag.i_colman_spared, flag.colman_freed_home, flag.i_colman_read] }]
+  art: iona_dawn
+  title: Colmán
+  text: |
+    The church on Iona has a new roof. Green thatch, still raw, on blackened walls. The monks have come back, the way they always come back.
+
+    And one of them is coming down the beach to meet you, alone, with his hands open and empty at his sides so you can see there is nothing in them.
+
+    It's Colmán. He is thinner. He has a burn scar down one side of his neck that he didn't have before. He stops at the edge of the water, and looks at you, and you can see him deciding whether to smile.
+    [if flag.colman_freed_home]
+    "You paid my passage," he says, in his careful Norse. "The trader kept his word. I did not think he would. I did not think you would."
+    [elif flag.i_colman_spared]
+    "You gave me back my pages," he says, in his careful Norse. "I finished copying them. They are in the church. You could see them, if you came without your sword."
+    [else]
+    "You asked me what the words said," he says, in his careful Norse. "Nobody had ever asked. I have been thinking about it all year."
+    [/if]
+  choices:
+    - id: walk
+      text: Leave your sword in the ship, and go up with him.
+      effects: [ { set: flag.colman_friend }, { add: { skill.lore: 1, honour: 1, man.hallvard.loyalty: -1 } } ]
+      result: |
+        You leave your sword with Ketill, who looks at you as if you'd taken leave of your senses, and go up the beach with Colmán.
+
+        He shows you the book. It is a psalter, he says, and he made it himself, every letter, in the winter after you came. In the margin of the last page there is a little drawing of a ship with a raven on its sail. "So that I remember," he says, "to pray for the men in it."
+
+        You don't know what to say to that. He doesn't seem to need you to say anything.
+    - id: warn
+      text: Tell him to take the books and go. Others are coming, and they won't ask.
+      effects: [ { set: flag.colman_warned }, { add: { hamingja: 1 } } ]
+      result: |
+        He listens. Then he nods, slowly, as if you'd told him something he already knew.
+
+        "We will go to Ireland," he says. "There is a place at Kells. The abbot has been saying so for years." He looks at you. "You understand that you are telling me this, and that the men you are warning me about are men like you."
+
+        You understand it. You still don't know what to do with it.
+    - id: raid
+      text: Tell him you're sorry, and that it doesn't change anything.
+      effects: [ { set: flag.colman_betrayed_831 } ]
+      result: |
+        He looks at you for a long moment. Then he turns and walks back up the beach, not hurrying, toward the bell-house.
+
+        The bell starts ringing before you are back in the ship.

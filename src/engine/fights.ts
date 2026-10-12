@@ -13,9 +13,10 @@ import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
-const HERO_ARMOUR = 1;
+/** Leather and wool; a mail shirt from Kaupang (flag.mail) turns more blows. */
+const heroArmour = (state: GameState): number => (state.flags.mail ? 2 : 1);
 /** A plain spear or axe; his grandfather's sword cuts better (the boyhood scene "father's word"). */
-const heroWeapon = (state: GameState): number => (state.flags.b_sword ? 3 : 2);
+const heroWeapon = (state: GameState): number => (state.flags.b_sword || state.flags.frankish_sword ? 3 : 2);
 
 export function heroDuelSide(state: GameState, content: ContentBundle, kind: DuelState['kind']): DuelSide {
   const end = effAttr(state, content, 'end');
@@ -31,7 +32,7 @@ export function heroDuelSide(state: GameState, content: ContentBundle, kind: Due
     agi: effAttr(state, content, 'agi'),
     weapons: state.hero.skills.weapons,
     shield: state.hero.skills.shield,
-    armour: HERO_ARMOUR,
+    armour: heroArmour(state),
     weapon: heroWeapon(state),
     habits: {},
     bled: false,
@@ -133,7 +134,7 @@ export function startBattle(
     heroDown: false,
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),
-    heroArmour: HERO_ARMOUR,
+    heroArmour: heroArmour(state),
     heroHits: [],
     named,
     deeds: [],

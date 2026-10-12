@@ -53,3 +53,30 @@
   weapon: 2
   habits: { strike: 3, guard: 2, feint: 2 }
   desc: Ásgeir's second. A long, sour man with a broken nose, who has been to Ireland and wants everyone to know it.
+- id: mael_brigte
+  name: Máel Brigte, king of Conaille
+  attrs: { str: 3, agi: 3, end: 3, wit: 3, pre: 3 }
+  weapons: 4
+  shield: 3
+  armour: 1
+  weapon: 2
+  habits: { strike: 3, guard: 2, feint: 2 }
+  desc: A small king with a big sword, fighting in his own doorway because there is nowhere left to stand.
+- id: hallbjorn
+  name: Hallbjörn, your brother
+  attrs: { str: 4, agi: 2, end: 3, wit: 2, pre: 2 }
+  weapons: 2
+  shield: 2
+  armour: 0
+  weapon: 1
+  habits: { strike: 4, guard: 2 }
+  desc: Bigger than you, and slower, and he has never once stopped to think in a fight.
+- id: grimr
+  name: Grímr Hrappsson
+  attrs: { str: 3, agi: 2, end: 3, wit: 2, pre: 2 }
+  weapons: 3
+  shield: 2
+  armour: 1
+  weapon: 2
+  habits: { strike: 3, guard: 3, feint: 1 }
+  desc: Thorgils's elder brother. He fights the way he farms, steadily and without imagination, and he does not stop.

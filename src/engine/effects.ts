@@ -4,7 +4,7 @@ import type { GameState } from './state';
 import type { RngCursor } from './rng';
 import { addDeed } from './fame';
 import { addWound, heal } from './hero';
-import { addLoyalty, clampMorale, newMan } from './crew';
+import { addLoyalty, addRecruits, capacity, clampMorale, newMan } from './crew';
 import { startDuel, startBattle } from './fights';
 import { startVoyage } from './voyage';
 import { startPlunder } from './plunder';
@@ -97,7 +97,21 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('shares' in e) { if (state.service) state.service.shares = e.shares; }
     else if ('plunder' in e) { if (state.at) startPlunder(state, state.at, [], e.plunder.next); }
     else if ('position' in e) state.position = e.position;
-    else if ('captain' in e) { if (state.service) state.service.captain = e.captain; }
+    else if ('sell_captives' in e) {
+      // a market price, straight into the heap
+      if (state.captives > 0) {
+        state.loot += state.captives * e.sell_captives;
+        journal(state, `Sold ${state.captives} captives at the market.`);
+        state.captives = 0;
+      }
+    } else if ('recruit' in e) {
+      // men who sign on away from home: as many as the ship has benches for
+      if (!state.service) {
+        const room = Math.max(0, capacity(state, content) - state.crew.men - state.men.filter((m) => m.alive).length);
+        const n = Math.min(room, e.recruit);
+        if (n > 0) { addRecruits(state, n); journal(state, `${n} men signed on.`); }
+      }
+    } else if ('captain' in e) { if (state.service) state.service.captain = e.captain; }
     else if ('ship' in e) {
       // a ship of his own, in place of the bench in another man's: the old crew stays with the old ship
       state.ships = [{ id: `ship${state.day}`, type: e.ship.type, name: e.ship.name, hull: 80 }];

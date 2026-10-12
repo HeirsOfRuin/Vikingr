@@ -1,0 +1,142 @@
+# Spring 831 (docs/FRAME-831.md §2.1–2): the jarl's council, where the world gets bigger; Gyða's price.
+- id: j_council
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["year >= 831", seen.sp_831, "place == home_fjord", "!flag.placeholder_start"]
+  art: yule_hall
+  when: Spring, 831
+  title: The jarl's council
+  text: |
+    Jarl Eystein holds his spring council the week the ice goes out, when the men who mean to sail are in the district and the men who mean to stay are pretending they might.
+
+    It is a council in name. In fact it is the jarl's hall full of captains and their best men, and ale, and news. News is what everyone has come for.
+    [break]
+    There is a lot of it this year.
+
+    The Danes have a strong king, Horik, and he is not friendly. The Frankish emperor's sons have risen against their father, and the Franks are too busy fighting each other to watch their own coasts. A trader from Kaupang says that every market from Hedeby to Birka is full of Frankish swords, and that a man with silver can buy a mail shirt there for the price of two cows, which is a lie, but not a very big one.
+
+    An old man who went east of Orkney years ago says the Northumbrian monks have put Lindisfarne back together, forty years after the first ships, and that it is rich again. "It always comes back," he says. "Like grass."
+
+    A Hebridean, a Norseman with a Pictish wife and a Pictish accent, says a settler called Kolbeinn on Skye is paying good silver for men who will stay a summer and fight for him.
+
+    And a man with a hand missing tells the hall about Conaille, a little Irish kingdom on a bay south of Bangor. Its king, Máel Brigte, caught three Norse traders on his beach last autumn and hanged them from his gate. No Norse ship has yet gone into that bay with its shields up. "Somebody should," he says, and looks round the hall.
+    [break]
+    [if service]
+    {captain} has listened to all of it with his arms folded. Afterwards, on the landing, he tells the men what he has decided. Orkney first, then Skye for Kolbeinn's silver, then south to Conaille, to see whether a king hangs as easily as a trader.
+
+    He looks round at the faces. When he gets to yours, he waits.
+    [else]
+    When the talk dies down, Jarl Eystein calls you up to the high seat. He has never done that before. The hall notices.
+
+    "You brought a ship home last year," he says, "which is more than some of the men in this hall have done. What will you do with her this summer?"
+    [/if]
+  choices:
+    # a captain, before the jarl
+    - id: commission
+      text: Offer to carry the jarl's furs and soapstone to Kaupang, and bring him back what he asks.
+      visible_if: "!service"
+      effects: [ { set: flag.j_commission }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      result: |
+        The jarl nods slowly. "Twelve bales of marten and fox, and forty soapstone pots. Sell them in Kaupang, and bring me back a Frankish sword: a real one, with the maker's name on the blade. The rest of the silver you can keep for your trouble."
+
+        It isn't glory. It's the jarl's trust, which lasts longer.
+    - id: king
+      text: Promise the jarl the king of Conaille.
+      visible_if: "!service"
+      effects: [ { set: flag.j_promised_king }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      result: |
+        "I'll bring you Máel Brigte," you say, "or the cup he drinks from."
+
+        The hall roars. The jarl doesn't. He looks at you for a breath longer than is comfortable. "Then bring me one or the other," he says, "because the whole district heard you say it."
+    - id: counsel
+      text: Thank him for the news, and keep your own counsel.
+      visible_if: "!service"
+      effects: [ { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      result: |
+        "I'll go where the wind is good," you say, "and tell you about it in the autumn."
+
+        It's the right answer for a young man with a borrowed reputation. A few of the older captains nod. The jarl almost smiles.
+    # an oarsman, before his captain
+    - id: agree
+      text: Nod. Conaille it is.
+      visible_if: service
+      effects: [ { route: [orkney, skye, conaille] }, { shares: 1 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      result: You nod. {captain} looks satisfied, which in him is hard to tell from looking hungry.
+    - id: lindisfarne
+      text: Argue for Lindisfarne instead. A church full of silver, and no king to defend it.
+      visible_if: service
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You say what everybody is thinking: a king in a ringfort has a household of fighting men, and a church on a tidal island has monks. You were at Bangor. You know what an Irish levy costs.
+
+          The men who were at Bangor with you start nodding before you've finished. {captain} chews on it, and spits, and says, "Lindisfarne. And if it's been picked clean, I'll take it out of your share."
+        effects: [ { route: [orkney, lindisfarne] }, { shares: 1 }, { set: flag.j_argued }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      failure:
+        text: |
+          You make the case. {captain} hears you out, and then says, "Monks don't hang Norsemen from their gates. Kings do. I want the king." It is not an argument you can answer, and he knows it.
+        effects: [ { route: [orkney, skye, conaille] }, { shares: 1 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+    - id: shares
+      text: Ask {captain} for two shares this year, for what you did last year.
+      visible_if: service
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          He looks at you a long while. Then he looks at the men behind you, who are all, somehow, finding something interesting to do with their hands.
+
+          "Two shares," he says. "If you earn them. If you don't, one, and I'll tell everyone why."
+        effects: [ { route: [orkney, skye, conaille] }, { shares: 2 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      failure:
+        text: |
+          "Two shares," says {captain}, "for a man who still can't take a reef in without asking Ketill how." The men laugh. It isn't cruel. It's worse: it's fond.
+        effects: [ { route: [orkney, skye, conaille] }, { shares: 1 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+
+- id: j_gyda
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["year >= 831", seen.j_council, "place == home_fjord", flag.gyda_courting]
+  art: home_fjord
+  when: Spring, 831
+  title: Bárð's price
+  text: |
+    Bárð sends for you before you sail. He is a short, wide man who has never in his life said a word more than he needed, and he doesn't start now.
+
+    "Gyða says you," he says. "Her mother says you. I say: what have you got?"
+
+    You tell him. He listens with his head on one side, the way he listens to a cow's breathing.
+
+    "Three marks," he says. "By the winter nights. Silver, weighed on my scales, not on yours. And a name men say without laughing. Then you can have her, and she can have you, and God help the pair of you." He says god, not gods. He has been trading with Irishmen.
+    [break]
+    Gyða is behind the byre, where everybody does their meeting. "Well?" she says.
+  choices:
+    - id: agree
+      text: Tell her you'll have the three marks by the winter nights.
+      effects: [ { set: flag.gyda_price } ]
+      result: |
+        "Good," Gyða says. "Don't die. I'd have to start again with someone stupider." She kisses you, the way she did the spring before, on the side of the mouth, and goes back in.
+    - id: haggle
+      text: Go back in and haggle Bárð down.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You haggle. Bárð enjoys it more than he lets on. In the end it is two marks, and a good knife for him, and a promise that his name gets said at your wedding before your father's.
+
+          When you come out, Gyða is laughing. "He's never come down for anyone," she says. "He likes you. That's worse."
+        effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_low } ]
+      failure:
+        text: |
+          You haggle. Bárð lets you talk until you run out, and then says, "Four marks," and goes back to his cow.
+
+          Gyða has heard all of it through the wall. "Well done," she says. "Shall I tell him you'd like to try for five?"
+        effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_high } ]
+    - id: away
+      text: Ask her to come away with you now, and let Bárð keep his scales.
+      effects: [ { set: flag.gyda_eloped }, { add: { honour: -1 } } ]
+      result: |
+        She looks at you for a long moment, and you can't tell what she is thinking, and then you can.
+
+        "Yes," she says. "Tonight. Before I think about it."
+
+        By morning she is at your father's house with a bundle and her grandmother's brooches, and by noon Bárð has been to see your father, and your father has paid him two cows to go away, and Bárð has gone away, and has not forgiven anyone, and will not.

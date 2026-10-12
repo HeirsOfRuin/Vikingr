@@ -106,3 +106,90 @@ mourned_hallvard: { description: "Buried Hallvard with his hammer" }
 hallvard_hammer: { description: "Wears Hallvard's hammer" }
 bersi_silver_sent: { description: "Sent Bersi's silver to his woman in Hordaland" }
 bersi_silver_kept: { description: "Put Bersi's silver in the common heap" }
+# ---- the year 831 (content/scenes/831) ----
+# spring
+j_commission: { description: "Took the jarl's furs and soapstone to sell at Kaupang" }
+j_commission_done: { description: "Sold the jarl's goods and bought his sword" }
+j_commission_well: { description: "Sold the jarl's goods well" }
+j_commission_failed: { description: "Came home without doing the jarl's errand" }
+j_promised_king: { description: "Promised the jarl the king of Conaille, in his hall" }
+j_promise_kept: { description: "Kept his promise of the king of Conaille" }
+j_promise_broken: { description: "Broke his promise of the king of Conaille" }
+j_trusted: { description: "The jarl trusts him with his goods" }
+j_argued: { description: "Talked his captain round to Lindisfarne" }
+gyda_price: { description: "Bárð named the bride-price for Gyða" }
+gyda_price_low: { description: "Haggled Bárð down to two marks" }
+gyda_price_high: { description: "Haggled Bárð up to four marks" }
+gyda_eloped: { description: "Ran off with Gyða without paying Bárð" }
+# the sea
+se_ubbi: { description: "Traded news with Ubbi the Dane at sea" }
+se_shields: { description: "Showed the Danish fleet his shields" }
+se_curragh_taken: { description: "Took three Irishmen from a curragh" }
+se_curragh_spared: { description: "Gave water to the Irishmen in the curragh" }
+# Kaupang
+mail: { description: "Owns a mail shirt" }
+frankish_sword: { description: "Owns a Frankish sword with a maker's name in the blade" }
+k_sold_captives: { description: "Sold captives at Kaupang" }
+k_news: { description: "Heard the news in the Kaupang booths" }
+ubbi_sworn: { description: "Promised Ubbi his ship for Frisia next spring" }
+ubbi_offer: { description: "Ubbi's offer is open" }
+ubbi_refused: { description: "Refused Ubbi: he has a jarl" }
+# Lindisfarne
+l_tide: { description: "Took Lindisfarne on the flood tide" }
+l_tribute: { description: "Took tribute from the reeve of Bamburgh instead of raiding" }
+l_cover: { description: "Took the jewelled cover of the Lindisfarne book" }
+l_book: { description: "Took the Lindisfarne book whole, for ransom" }
+l_spared_book: { description: "Left the Lindisfarne book on the altar" }
+l_beaten: { description: "Beaten off at Lindisfarne" }
+l_done: { description: "Left Lindisfarne" }
+# Skye
+sk_valley: { description: "Fought for Kolbeinn over the third valley" }
+sk_recruited: { description: "Signed on Hebridean men at Kolbeinn's" }
+sk_thorunn: { description: "Met Þórunn, Kolbeinn's widowed daughter" }
+sk_thorunn_friend: { description: "Þórunn likes him, a little" }
+sk_land_offer: { description: "Þórunn's land on Skye is there if he comes back" }
+sk_blessed: { description: "The papar blessed his ship" }
+sk_bell: { description: "Took the papar's bell" }
+# Conaille
+c_surprise: { description: "Took Conaille by surprise" }
+c_guest: { description: "Came into Conaille as a guest, and broke guest-right" }
+c_declined: { description: "Turned away from Conaille" }
+c_beaten: { description: "Beaten off at Conaille" }
+c_king_taken: { description: "Took Máel Brigte of Conaille alive" }
+c_men_took: { description: "The men took the king; he stood back" }
+c_drank: { description: "Drank from the king of Conaille's cup in his hall" }
+c_horn_for_jarl: { description: "Took the king of Conaille's horn for the jarl" }
+c_king_killed: { description: "Killed Máel Brigte in his doorway" }
+c_ulaid_feud: { description: "The Ulaid remember the king in his doorway" }
+c_ransomed: { description: "Ransomed the king of Conaille to Armagh" }
+c_ransom_doubled: { description: "Got a double ransom for the king" }
+c_king_kept: { description: "Brought the king of Conaille home as a captive" }
+c_done: { description: "Left Conaille" }
+# Birsay and Iona revisited
+ingibjorg_waiting: { description: "Ingibjörg is waiting for him" }
+ingibjorg_told: { description: "Told Ingibjörg about Gyða" }
+ingibjorg_promised: { description: "Harek will talk to him next summer" }
+colman_friend: { description: "Walked unarmed with Colmán on Iona" }
+colman_warned: { description: "Warned Colmán to take the books to Kells" }
+colman_betrayed_831: { description: "Told Colmán it changed nothing" }
+# winter 831
+married_gyda: { description: "Married Gyða Bárðardóttir" }
+gyda_one_more_year: { description: "Bárð gave him one more summer to pay" }
+gyda_lost_831: { description: "Bárð gave Gyða to another man" }
+bard_peace: { description: "Made peace with Bárð" }
+own_house: { description: "Built his own house across the fjord" }
+brother_fought: { description: "Fought Hallbjörn at the boundary stone" }
+brother_beaten: { description: "Beat Hallbjörn at the boundary stone" }
+brother_won_stone: { description: "Hallbjörn beat him at the boundary stone" }
+brother_yielded: { description: "Left the boundary stone where Hallbjörn put it" }
+brother_father_ruled: { description: "His father put the boundary stone back" }
+brother_estranged: { description: "He and Hallbjörn are not speaking" }
+brother_ally: { description: "Paid the farm's debt: Hallbjörn is his ally" }
+brother_half: { description: "Paid half the farm's debt" }
+brother_refused: { description: "Refused to pay the farm's debt" }
+hrapp_fought: { description: "Fought Grímr Hrappsson on the cloak" }
+hrapp_ended: { description: "The Hrappsson feud is ended" }
+hrapp_outlawed: { description: "Grímr Hrappsson outlawed for the burning" }
+hrapp_unpunished: { description: "The Thing let the Hrappssons go" }
+hrapp_paid: { description: "Paid the Hrappssons to end it" }
+sp832_done: { description: "Spring 832: the written saga pauses" }

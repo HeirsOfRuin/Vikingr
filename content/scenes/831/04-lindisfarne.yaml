@@ -1,0 +1,135 @@
+# Lindisfarne (docs/FRAME-831.md §1): the holy island where it began. The tide makes the raid.
+- id: l_approach
+  kind: place
+  trigger: arrive
+  at: [lindisfarne]
+  once: true
+  title: The holy island
+  text: |
+    You raise it at dawn: a low island like a whale's back, with a little rock at one end and a huddle of roofs at the other, and between it and the mainland a plain of wet sand shining like a blade.
+
+    Forty years ago the first ships came here. Your grandfather's generation. Everyone in the north knows the story, and everyone tells it differently, and in every telling the monks were taken by surprise.
+
+    They won't be surprised now. There is a beacon on the mainland hill, unlit, with a man beside it.
+    [break]
+    [if service]
+    {captain} studies the island a long time. "The tide," he says at last, to nobody in particular. "Everything here is the tide."
+    [else]
+    Ketill comes and stands beside you at the steering-oar. "The tide," he says. "Everything here is the tide."
+    [/if]
+
+    At low water the sands are a road, and the reeve's men can walk across them from the mainland. At high water the island is an island, and nobody can reach it, and nobody can leave.
+  choices:
+    - id: high
+      text: Go in on the flood tide, when the sands are covered and the mainland can't come.
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You wait offshore until the sea has covered the sands and the island is cut off, and then you come in hard on the last of the flood.
+
+          The beacon goes up on the hill behind you. It doesn't matter. Nobody on the mainland can cross for six hours, and the only men on the island are the monks, and the island's own tenants, and a few of the reeve's men who were there to watch for you.
+        effects:
+          - { set: flag.l_tide }
+          - { battle: { foe: northumbrian_levy, men: 9, terrain: beach, win: l_church, lose: l_beaten, parted: l_beaten } }
+      failure:
+        text: |
+          You misjudge it. You come in an hour early, with the water still shallow over the sands, and the reeve's men from the mainland are splashing across to meet you, knee-deep, cursing, with their spears up.
+
+          At least they're wet.
+        effects:
+          - { battle: { foe: northumbrian_levy, men: 20, terrain: beach, win: l_church, lose: l_beaten, parted: l_beaten } }
+      danger: true
+    - id: dawn
+      text: Straight in at the harbour beach, now, before the beacon is lit.
+      danger: true
+      effects:
+        - { battle: { foe: northumbrian_levy, men: 15, terrain: beach, win: l_church, lose: l_beaten, parted: l_beaten } }
+      result: |
+        You go in. The man on the hill sees you before you're halfway, and the beacon catches, and smoke stands up over Northumbria like a finger pointing. By the time your keel hits the beach, there are men on the shore with long shields.
+    - id: tribute
+      text: Send a man to the reeve at Bamburgh. Offer to go away, for silver.
+      visible_if: "!service"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You send Bersi, because Bersi can talk about money with anybody. He comes back at evening on a borrowed horse with a reeve's man, a chest, and a very satisfied face.
+
+          The Northumbrians would rather pay than fight. The chest has three hundred in it, in silver pennies with a king's head on them, and the reeve's man watches you count it with an expression like a man passing a stone.
+        effects: [ { set: flag.l_tribute }, { add: { loot: 300, man.bersi.loyalty: 1 } }, { deed: { type: deed, text: Took tribute from the reeve of Bamburgh, weight: 3 } } ]
+        next: l_after
+      failure:
+        text: |
+          You send Bersi. He comes back at evening, at a run, with an arrow in his pack and no reeve.
+
+          "They said no," he says. "Quite loudly." Behind him, on the hill, the beacon is burning, and men are coming down to the sands.
+        effects:
+          - { battle: { foe: northumbrian_levy, men: 22, terrain: beach, win: l_church, lose: l_beaten, parted: l_beaten } }
+      danger: true
+
+- id: l_church
+  kind: spine
+  title: Saint Cuthbert's house
+  text: |
+    The church is timber, long and dark, and newer than you expected: they rebuilt it after the first ships, and again after the next ones. In the middle of it there is a shrine like a little house of carved oak, and around the shrine there are monks on their knees, and they do not get up when you come in.
+
+    Their saint is in the shrine. Cuthbert, they call him. They say his body doesn't rot.
+    [break]
+    On the altar there is a book.
+
+    It is the most beautiful thing you have ever seen. Its cover is gold, worked into knots like the knots on your own sword-hilt, and set with red stones and blue ones and pearls. An old monk is standing in front of it with his arms spread, as if he could stop you with his arms.
+  choices:
+    - id: cover
+      text: Take the cover. Leave them the pages.
+      effects: [ { set: flag.l_cover }, { add: { loot: 200 } }, { plunder: { next: l_after } } ]
+      result: |
+        You take your knife to the binding while the old monk weeps. The gold comes away in your hands, heavy and warm. You leave the book, naked, on the altar, its painted pages full of birds and beasts biting their own tails.
+        [if flag.i_colman_spared || flag.colman_freed_home]
+        You think of Colmán gathering his pages off the floor at Iona, and wonder whether this one will be grateful. He isn't.
+        [/if]
+    - id: book
+      text: Take the whole book. Monks pay to get their books back.
+      effects: [ { set: flag.l_book }, { add: { man.hallvard.loyalty: -1 } }, { plunder: { next: l_after } } ]
+      result: |
+        You wrap it in a cloak, cover and all, and put it under your arm. The old monk follows you to the door, and then down the beach, and then into the water up to his waist, saying the same thing over and over in his own language, until Ulf pushes him under, not hard, and he stops.
+
+        Bersi says the Northumbrians will pay a hundred pounds of silver for it. Bersi has never seen a hundred pounds of silver.
+    - id: leave
+      text: Leave the book. Take everything else.
+      effects: [ { set: flag.l_spared_book }, { add: { honour: 1, hamingja: 1 } }, { plunder: { next: l_after } } ]
+      result: |
+        You don't know why. Something about the old man's arms. You turn your back on the altar and go out to strip the houses, and the men who saw you look at each other, and then follow you.
+
+        Hallvard is the last to leave the church. He touches the shrine on the way out, quickly, the way you'd touch a sleeping dog.
+
+- id: l_beaten
+  kind: spine
+  title: The sands
+  text: |
+    The Northumbrians don't break. They stand behind their long shields like a fence and push, slowly, and keep pushing, and in the end it's you that goes back, step by step, down the beach and into the water.
+
+    You get the ship off. Behind you, on the shore, they are already singing something, slow and low, like monks.
+  choices:
+    - id: away
+      text: Row out of range, and count who's missing.
+      effects: [ { set: flag.l_beaten }, { add: { crew.morale: -1 } } ]
+      result: |
+        You count. Then you count again, because the first number was wrong, and the second one is the same.
+
+        Nobody says anything about where it began. Nobody needs to.
+
+- id: l_after
+  kind: spine
+  title: The tide turns
+  text: |
+    [if flag.l_tribute]
+    You lie offshore that night with the reeve's chest under the stern-deck, and watch the lights of the island, where the monks are singing as if nothing had happened. For them, nothing has.
+    [else]
+    You get off the island with the tide already running in over the sands behind you, and the men from the mainland standing at the water's edge, shouting, unable to cross.
+
+    The church is burning. Or it isn't. Either way, the monks will build it again. They always do.
+    [/if]
+  choices:
+    - id: go
+      text: Put to sea.
+      effects: [ { set: flag.l_done } ]
+      result: The holy island goes down behind you into the evening, low and black, until there is only the beacon still burning on the hill to show where it was.

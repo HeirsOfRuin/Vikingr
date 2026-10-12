@@ -1,0 +1,110 @@
+# Kaupang (docs/FRAME-831.md §1): the market. Gear, captives, the jarl's errand, and a Dane with an offer.
+- id: k_market
+  kind: place
+  trigger: arrive
+  at: [kaupang]
+  cooldown_days: 200
+  title: The market at Skíringssalr
+  text: |
+    Kaupang is a beach, a smell, and a noise.
+
+    The beach is a long curve of shingle under a wooded ridge, with the king's hall on the ridge and two hundred booths and huts crowded along the water below it, and ships drawn up wherever a ship will fit. The smell is smoke, fish, tar, dung, and something sweet you can't name until a Frisian holds a lump of it under your nose: wax, from the Franks, for their churches.
+
+    The noise is every language you have ever heard and several you haven't.
+    [break]
+    There is a smith's booth with mail shirts hung on poles like dead men. There is a Frank with swords laid out on a cloth, each with a name inlaid in the blade in letters you can't read. There is a trader from the east with silver dirhams so fresh their edges cut your thumb.
+
+    And at the far end of the beach, past the fish, there is a pen of people, and a man standing on a barrel calling prices.
+  choices:
+    - id: mail
+      text: Buy the mail shirt. Four marks.
+      visible_if: "!flag.mail"
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { set: flag.mail } ]
+      result: |
+        It is heavier than you thought and lighter than you feared: thirty pounds of riveted rings, to the knee, with a smell of oil and somebody else's sweat. The smith laces it on you and hits you in the chest with a hammer, to show you. It hurts a great deal less than it should.
+
+        Ulf wants to try it on. You let him, later. He doesn't give it back for an hour.
+      next: k_market
+    - id: sword
+      text: Buy a Frankish sword, with the maker's name in the blade. Three marks.
+      visible_if: "!flag.frankish_sword && !flag.b_sword"
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { set: flag.frankish_sword } ]
+      result: |
+        The Frank lets you heft three before you choose. The one you choose has a name inlaid in the blade in iron wire, VLFBERHT, and a balance that makes the others feel like oars.
+
+        "He makes them on the Rhine," the Frank says, "and he does not know your name, and he does not care. But the sword will."
+      next: k_market
+    - id: jarl
+      text: Sell the jarl's furs and soapstone, and buy his sword.
+      visible_if: "flag.j_commission && !flag.j_commission_done"
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          You sell the jarl's goods well, better than he'd have got himself: the marten to a Swede who wants it for a bride's cloak, the soapstone to a Frisian who doesn't haggle because he can't count. You buy the jarl a Frankish sword with a name in the blade, and there is a good fat purse left over.
+        effects: [ { set: flag.j_commission_done }, { set: flag.j_commission_well }, { add: { silver: 48, skill.trade: 1 } } ]
+        next: k_market
+      failure:
+        text: |
+          You sell the jarl's goods. The Swede who buys the marten beats you down so far that you suspect he will be telling the story for years. There is enough for the jarl's sword, and very little else.
+        effects: [ { set: flag.j_commission_done }, { add: { silver: 12 } } ]
+        next: k_market
+    - id: sell
+      text: Sell the captives to the man on the barrel. He pays better than the trader at home.
+      visible_if: "captives >= 1"
+      effects: [ { sell_captives: 32 }, { set: flag.k_sold_captives }, { add: { man.hallvard.loyalty: -1 } } ]
+      result: |
+        The man on the barrel looks at their teeth, and their hands, and the soles of their feet, the way your father looks at a horse. He pays well. That is the worst thing about it: he pays well, and it is easy.
+
+        They go into the pen. One of them looks back at you, once, and then doesn't again.
+      next: k_market
+    - id: news
+      text: Drink in the booths and listen.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.k_news } ]
+      result: |
+        You hear that King Horik of the Danes has made peace with the Franks and broken it twice already this year. You hear that the emperor's sons have locked their father in a monastery and let him out again. You hear that there are Swedes trading on rivers so far east that the people there have never seen the sea.
+
+        And you hear that a Dane called Ubbi has been in Kaupang all week, looking for Norwegian captains with ships and no lord. He has been asking about you by name.
+      next: k_market
+    - id: leave
+      text: Leave the market.
+      effects: [ { if: "!seen.k_ubbi", then: [ { queue: { scene: k_ubbi, days: 0 } } ] } ]
+      result: You push back out through the crowd to the ship, with your purse lighter and your head full.
+
+# a Danish hersir with an offer: a hook toward Hedeby, Frisia and King Horik (§21a career paths)
+- id: k_ubbi
+  kind: queued
+  requires: ["!service"]
+  title: Ubbi
+  text: |
+    He finds you at the ship at dusk: a big man with a red beard and a mail shirt better than any on the smith's poles, and two men behind him who don't look at anything but your hands.
+    [if flag.se_ubbi]
+    "Little ship," he says, grinning. "I told you to come to Hedeby. You came to Kaupang. It's a start."
+    [else]
+    "You're the one they call {nick}," he says. "I asked."
+    [/if]
+
+    His name is Ubbi, and he is a hersir of King Horik's, and he is going to Frisia next summer with as many ships as he can find, because the emperor's sons are fighting each other and Dorestad is the richest market in the north and nobody is watching it.
+
+    "I could use a Norwegian," he says. "Your people don't run. Bring your ship to Hedeby next spring, and you'll have a full share for every bench, and the king's silver ring on your arm."
+  choices:
+    - id: yes
+      text: Clasp his hand. Next spring, Hedeby.
+      effects: [ { set: flag.ubbi_sworn }, { know: hedeby } ]
+      result: |
+        He crushes your hand in his and laughs. "Good. Bring the loud one, too," he says, nodding at Ulf. "I like a man you can hear in the dark."
+
+        Ketill says nothing until Ubbi is gone. Then he says, "The jarl won't like it," and goes to sleep.
+    - id: maybe
+      text: Tell him you'll think on it.
+      effects: [ { set: flag.ubbi_offer } ]
+      result: |
+        "Think fast," Ubbi says. "Frisia won't wait, and neither will I." He leaves you a ring off his own arm, a thin twisted thing of Danish silver, as a reminder.
+    - id: no
+      text: Tell him you have a jarl already.
+      effects: [ { set: flag.ubbi_refused }, { add: { honour: 1 } } ]
+      result: |
+        He shrugs. "Every man has a jarl until he hasn't," he says, and goes.
+
+        Word gets back to Jarl Eystein, somehow, by the autumn. He doesn't say anything about it. He doesn't need to: the next time you are in his hall, he gives you the seat nearer the fire.

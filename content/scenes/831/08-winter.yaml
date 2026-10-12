@@ -1,0 +1,393 @@
+# Autumn and winter 831 (docs/FRAME-831.md §2.4–5): the jarl's reckoning, Gyða, the brother, the Hrappssons, Yule.
+- id: h1_return
+  kind: place
+  trigger: arrive
+  at: [home_fjord]
+  once: true
+  requires: ["year >= 831", seen.j_council, "month >= 8"]
+  art: home_fjord
+  title: The second homecoming
+  text: |
+    The fjord in autumn: the birches gone yellow on the slopes, the first snow on the tops, and the whole district down on the landing again, because a ship coming home is still the best thing that happens all year.
+    [if flag.c_king_kept]
+    This year there is something else to look at. The king of Conaille comes up the shingle with his hands tied and his red cloak filthy, and looks round at the fjord, and the mountains, and the people staring at him, as if he were trying to decide whether to buy the place.
+    [/if]
+    [break]
+    Jarl Eystein sends for you before you've got the salt off your face.
+    [if service]
+    He sends for {captain} first, as is proper. Then, which is not usual at all, for you.
+    [/if]
+  choices:
+    - id: jarl
+      text: Go up to the jarl's hall.
+      effects:
+        - { if: { all: [flag.j_promised_king, { any: [flag.c_king_kept, flag.c_horn_for_jarl, flag.c_drank, flag.c_king_killed] }] }, then: [ { add: { silver: 48 } }, { set: flag.j_promise_kept }, { deed: { type: ring_giving, text: Given a ring by Jarl Eystein for the king of Conaille, weight: 3 } } ], else: [ { if: flag.j_promised_king, then: [ { add: { honour: -2 } }, { set: flag.j_promise_broken } ] } ] }
+        - { if: flag.j_commission_done, then: [ { set: flag.j_trusted } ], else: [ { if: flag.j_commission, then: [ { add: { honour: -1 } }, { set: flag.j_commission_failed } ] } ] }
+      result: |
+        [if flag.j_promised_king && flag.c_king_kept]
+        You bring him the king. You actually bring him the king, tied, in his own red cloak, and stand him in front of the high seat.
+
+        Jarl Eystein looks Máel Brigte up and down, the way he'd look at a bull at a fair. Then he laughs, a big bark of a laugh, and takes a gold ring off his own arm and throws it to you across the hall.
+        [elif flag.j_promised_king && flag.c_horn_for_jarl]
+        You bring him the king's horn, silver-rimmed, and put it in his hands. He turns it over, and smells it, and laughs, and takes a ring off his own arm and throws it to you across the hall.
+        [elif flag.j_promised_king && flag.c_drank || flag.j_promised_king && flag.c_king_killed]
+        You tell him what you did in Máel Brigte's hall. He listens without moving. Then he takes a ring off his own arm and throws it to you. "Next time," he says, "bring me the cup."
+        [elif flag.j_promised_king]
+        You promised him the king of Conaille, in front of the whole hall, in the spring. You have come back without him.
+
+        The jarl doesn't say anything about it. Nobody does. Everybody remembers.
+        [else]
+        The jarl hears what you did this summer, all of it, with his chin on his fist.
+        [/if]
+        [if flag.j_commission_done]
+
+        He draws the Frankish sword you brought him, and looks down the blade, and nods. "You can be trusted with my goods," he says. "That's rarer than courage."
+        [elif flag.j_commission]
+
+        He asks, at the end, what became of his furs and his soapstone. You have no good answer. He lets the silence say the rest.
+        [/if]
+
+- id: w1_wedding
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", flag.gyda_courting, flag.gyda_price]
+  weight: 10
+  art: yule_hall
+  title: The winter nights
+  text: |
+    The winter nights: the first frost, the slaughter of the beasts that won't last the winter, and the time for weddings.
+
+    Bárð has his scales out on the table in his house when you come, and his wife beside him, and Gyða behind them, very straight, with her hands folded so tightly the knuckles are white.
+    [if flag.gyda_price_low]
+    "Two marks," Bárð says. "And the knife." He doesn't smile. He looks as if he wants to.
+    [elif flag.gyda_price_high]
+    "Four marks," Bárð says, and looks at you as if he already knows.
+    [else]
+    "Three marks," Bárð says.
+    [/if]
+  choices:
+    - id: pay_low
+      text: Put two marks on the scales.
+      visible_if: flag.gyda_price_low
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { set: flag.married_gyda } ]
+      next: w1_feast
+    - id: pay
+      text: Put three marks on the scales.
+      visible_if: "!flag.gyda_price_low && !flag.gyda_price_high"
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { set: flag.married_gyda } ]
+      next: w1_feast
+    - id: pay_high
+      text: Put four marks on the scales.
+      visible_if: flag.gyda_price_high
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { set: flag.married_gyda } ]
+      next: w1_feast
+    - id: plead
+      text: Ask Bárð for one more summer.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You say it plainly: you haven't got it, and you will have, and here is how. Bárð looks at Gyða. Gyða looks at the floor.
+
+          "One summer," Bárð says. "One. And if you come back with nothing, she marries the next man who can lift the scales."
+        effects: [ { set: flag.gyda_one_more_year } ]
+      failure:
+        text: |
+          Bárð hears you out. Then he puts the scales away.
+
+          He gives her, at midwinter, to a farmer from the next valley, a widower of forty with good land and a bad knee. Gyða doesn't come to the door when you pass, all that winter. Once, you see her at the window. She doesn't look away. Neither do you.
+        effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_lost_831 }, { add: { honour: -1 } } ]
+
+- id: w1_feast
+  kind: spine
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: The wedding
+  text: |
+    You are married at the winter nights, in your father's house, with the whole district crammed in and the door open to let the smoke out and the cold in.
+
+    Your father gives Gyða a pair of oval brooches that were your grandmother's. Bárð gives you a cow, grudgingly, and then, drunk, a second cow, which he tries to take back in the morning.
+    [if man.ulf.alive]
+    Ulf makes a speech. Nobody can remember afterwards what was in it, but everyone agrees it was the best speech ever made at a wedding in Hordaland, and Gyða laughs so hard she has to sit down on the floor.
+    [/if]
+    [if flag.skald]
+    Kálfr makes a verse. It rhymes your name with "thunder" and Gyða's with "wonder", which is cheating, and nobody cares.
+    [/if]
+    [break]
+    Late in the night, when the fire has burned down and most of the guests are asleep on the benches, she finds your hand under the table.
+
+    "Well, sea-king," she says. "Here we are."
+  choices:
+    - id: here
+      text: Here we are.
+      effects: [ { deed: { type: deed, text: Married Gyða Bárðardóttir at the winter nights, weight: 2 } }, { add: { hamingja: 1 } } ]
+      result: She leans her head on your shoulder, and for the first time since you were sixteen you aren't thinking about the sea at all.
+
+- id: w1_eloped
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", flag.gyda_eloped]
+  art: home_fjord
+  title: Bárð's cows
+  text: |
+    Gyða has been in your father's house a year now, and runs it, mostly, though your mother would deny it under torture.
+
+    Bárð still hasn't forgiven anybody. He sends his cows to graze on your father's side of the stream, every day, and waits to see what you'll do about it.
+  choices:
+    - id: pay
+      text: Go to Bárð with two marks, and make peace.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, honour: 1 } }, { set: flag.bard_peace } ]
+      result: |
+        He takes the silver, and weighs it, twice, and then sits down heavily on his bench and puts his face in his hands. "She was my only one," he says. You hadn't thought of that. He gives you a cow, afterwards. It seems to be how he says things.
+    - id: house
+      text: Build her a house of your own, on the far side of the fjord.
+      requires: ["silver >= 60"]
+      effects: [ { add: { silver: -60 } }, { set: flag.own_house } ]
+      result: |
+        You build it with your own hands and Ketill's and anyone else you can bribe with ale: turf walls, a timber roof, a hearth. It is small and smoky and the door sticks. Gyða walks round it twice, and says, "It will do," which from her is a great deal.
+    - id: cows
+      text: Drive his cows back over the stream, every day, until he gets bored.
+      result: |
+        He doesn't get bored. Neither do you. By midwinter it has become a thing the whole district comes to watch, and the cows are visibly fed up.
+
+- id: w1_brother
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", fate.brother_feud, { any: [flag.gyda_lost, flag.h_brother_feud, flag.h_brother_envy, flag.gyda_eloped, flag.married_gyda] }]
+  art: home_fjord
+  title: The boundary stone
+  text: |
+    It starts over a stone.
+
+    There is a boundary stone between the home field and the outfield that your grandfather set up, and Hallbjörn has moved it, three paces, onto the strip of land your father promised you for a house. Your father has said nothing. He is getting old, and tired, and he would rather not see.
+
+    You go out to the stone in the morning. Hallbjörn is waiting beside it, with an axe on his shoulder.
+    [if flag.married_gyda || flag.gyda_eloped]
+    "She was meant for me," he says, "before you went west." It isn't about the stone. It never was.
+    [elif flag.gyda_lost]
+    "She chose me," he says. "Get used to it." It isn't about the stone. It never was.
+    [else]
+    "The farm is mine," he says. "All of it. Every stone." It isn't about the stone. It never was.
+    [/if]
+  choices:
+    - id: fight
+      text: Put the stone back yourself, and let him try to stop you.
+      danger: true
+      effects: [ { set: flag.brother_fought }, { fight: { foe: hallbjorn, kind: duel, lethal: false, win: w1_brother_won, lose: w1_brother_lost } } ]
+      result: He lets the axe fall off his shoulder into his hands. Your mother starts screaming from the house.
+    - id: yield
+      text: Leave the stone where it is. Three paces of land isn't worth a brother.
+      effects: [ { set: flag.brother_yielded }, { add: { honour: -1, hamingja: 1 } } ]
+      result: |
+        You look at the stone a long time. Then you turn round and walk back to the house.
+
+        Hallbjörn shouts something after you. You don't listen. That evening your father puts his hand on the back of your neck and leaves it there, and says nothing, and you understand that he saw all of it.
+    - id: father
+      text: Fetch your father, and make him say whose land it is.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          Your father comes out in his shirt, old and furious, and stands between you, and puts his hand on the stone. "My father put this here," he says. "This is where it stays." He puts it back himself, grunting.
+
+          Hallbjörn goes inside without a word. It isn't over. But it's over for this winter.
+        effects: [ { set: flag.brother_father_ruled } ]
+      failure:
+        text: |
+          Your father comes out, and looks at the two of you, and at the stone, and his face falls in on itself like an old man's. "Sort it out," he says. "I won't have to watch it." He goes back inside.
+
+          Neither of you moves the stone. Neither of you speaks to the other again that winter.
+        effects: [ { set: flag.brother_estranged } ]
+
+- id: w1_brother_won
+  kind: spine
+  art: home_fjord
+  title: The boundary stone
+  text: |
+    Hallbjörn is on his back in the frozen mud with his nose broken, and you are standing over him with the stone at your feet, and neither of you can quite believe it.
+
+    You put the stone back. He watches you do it. Then he gets up, holding his face, and goes into the house, and you hear your mother start crying, and your father say something short, and then nothing.
+  choices:
+    - id: go
+      text: Go in after him.
+      effects: [ { set: flag.brother_beaten }, { add: { honour: 1 } } ]
+      result: He won't look at you at supper. Gyða, if she's there, puts more meat on your plate than his. Nobody says anything about it. Nobody needs to.
+
+- id: w1_brother_lost
+  kind: spine
+  art: home_fjord
+  title: The boundary stone
+  text: |
+    You are on your back in the frozen mud, and Hallbjörn is standing over you, breathing hard, with blood on the axe-haft from where he hit you with it.
+
+    He doesn't say anything. He just goes back to the stone, and leans on it, and looks at you, until you get up and go.
+  choices:
+    - id: go
+      text: Go.
+      effects: [ { set: flag.brother_won_stone } ]
+      result: The stone stays where he put it. It will stay there, you think, a long time. Until one of you dies, probably.
+
+- id: w1_brother_debt
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", flag.h_brother_debt, "!fate.brother_feud"]
+  art: home_fjord
+  title: Bárð's calves
+  text: |
+    Hallbjörn comes to you at night, when the house is asleep, which is how you know it's bad.
+
+    The farm owes Bárð for the calves. It has owed him since last spring. Bárð has been patient, and now he isn't, and in the spring he will take the best of the cows. "I can't ask Father," Hallbjörn says. "He'd die of it."
+  choices:
+    - id: pay
+      text: Pay the debt. Two marks.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, honour: 1 } }, { set: flag.brother_ally } ]
+      result: |
+        You count it out on the bench between you by the light of the fire's last coals. Hallbjörn watches you do it without a word.
+
+        When it's done he puts his hand on your shoulder, the first time he has touched you since you were twelve and he was hitting you, and leaves it there.
+    - id: half
+      text: Pay half, and tell him to find the rest himself.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { set: flag.brother_half } ]
+      result: He takes it. He thanks you. He doesn't quite meet your eye. It's more than he'd have done for you, and you both know it, and neither of you says so.
+    - id: no
+      text: Tell him it's his farm. His debt.
+      effects: [ { set: flag.brother_refused } ]
+      result: He nods, as if it were what he'd expected. In the spring, Bárð takes the red cow, and your father stands at the byre door and watches her go, and doesn't say anything to anybody.
+
+- id: w1_hrappssons
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", flag.thorgils_feud]
+  art: home_fjord
+  title: Fire in the night
+  text: |
+    You wake to the dogs, and then to the smell, and then to your mother screaming.
+
+    The byre is on fire. Somebody has stacked brushwood against the gable end and set it alight, and the cows are bellowing inside, and by the time you get the door open and the beasts out, the roof is gone.
+
+    In the snow by the gate there are tracks. Three men. One of them walks with a stick.
+  choices:
+    - id: grimr
+      text: Go to the Hrappssons' farm, and call Grímr out.
+      danger: true
+      effects: [ { set: flag.hrapp_fought }, { fight: { foe: grimr, kind: holmgang, lethal: true, win: w1_hrapp_won, lose: w1_hrapp_lost } } ]
+      result: |
+        You go at dawn, with Ketill and Ulf behind you and the whole district following at a distance to see what happens.
+
+        Grímr comes out of his door with his shield already on his arm. "I wondered when," he says. They peg out a cloak in his own yard.
+    - id: thing
+      text: Take it to the Thing. Arson is outlawry.
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You take it to the spring Thing with the tracks remembered, and three witnesses, and the stick, which you found in the ditch. The law-speaker hears it. The Hrappssons are fined a sum that will take them ten years to pay, and Grímr is outlawed for three.
+
+          It isn't revenge. It's better: it's the law, and everybody saw it.
+        effects: [ { set: flag.hrapp_outlawed }, { add: { honour: 1, skill.lore: 1 } } ]
+      failure:
+        text: |
+          You take it to the Thing. The Hrappssons bring twelve men to swear they were at home all night. You bring the tracks, which have melted.
+
+          The law-speaker sighs and does nothing. On the way home, somebody behind you says, "Should have paid," and the men round him laugh.
+        effects: [ { set: flag.hrapp_unpunished }, { add: { honour: -1 } } ]
+    - id: pay
+      text: Pay what they asked for Thorgils's leg, and end it.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { set: flag.hrapp_paid } ]
+      result: |
+        You go to them with the silver. Grímr takes it without a word, and weighs it, and nods. "Now it's paid," he says.
+
+        It is. It costs you something more than silver, though, and the whole district knows exactly how much.
+
+- id: w1_hrapp_won
+  kind: spine
+  art: holmgang
+  title: The cloak
+  text: |
+    Grímr Hrappsson is dead on his own yard, on his own cloak, with his brothers watching from the door.
+
+    Nobody moves. The snow comes down on the dead man. Then Thorgils, on his stick, comes down from the doorway, and looks at his brother, and looks at you, and says, "That's enough. That's all of it now," and it is.
+  choices:
+    - id: go
+      text: Go home.
+      effects: [ { set: flag.hrapp_ended }, { deed: { type: holmgang_won, text: Killed Grímr Hrappsson on the cloak for the burning of his father's byre } } ]
+      result: Nobody follows you. Behind you, the Hrappssons' women start the keening. You will hear it, some nights, for years.
+
+- id: w1_hrapp_lost
+  kind: spine
+  art: holmgang
+  title: The cloak
+  text: |
+    You are on your knees on Grímr's cloak with your blood all over it, and Grímr is standing over you with his axe up.
+
+    He doesn't bring it down. He looks at you, and then at your men at the edge of the cloak with their hands on their axes, and lowers his.
+
+    "Blood on the cloak," he says. "That's the law. Three marks, and we're done."
+  choices:
+    - id: pay
+      text: Pay him. It's the law.
+      effects: [ { add: { silver: -72, honour: -1 } }, { set: flag.hrapp_ended } ]
+      result: You pay. You'd pay twice as much not to have to look at him while you do it.
+
+- id: w1_yule
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", { any: ["month == 12", "month <= 2"] }]
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 831
+  title: Yule again
+  text: |
+    Yule again, in the jarl's hall: the boar, the smoke, the dogs, the noise. You come in this year to a different seat: further up the benches, nearer the fire, among men who nod to you now.
+    [if flag.c_king_kept]
+    The king of Conaille is at the bottom of the hall, chained by one ankle to a post, eating as well as anyone and better than most. He has learned a little Norse. Most of it is about your mother.
+    [/if]
+    [break]
+    The bragarfull comes round. Before it reaches you, the jarl's man reckons last year's boasts, as is the custom, one by one, so the hall can hear who kept his word.
+    [if boast.own_ship == 2]
+    Yours: you swore to stand at your own steering-oar. You did. The hall bangs the tables.
+    [elif boast.own_ship >= 1]
+    Yours: you swore to stand at your own steering-oar. You haven't. The hall goes quiet in the way that is worse than laughing.
+    [/if]
+    [if boast.irish_cup == 2]
+    You swore to drink from an Irish king's cup. You drank from Máel Brigte's, in his own hall. The hall roars.
+    [elif boast.irish_cup == 1]
+    You swore to drink from an Irish king's cup. It is still to come.
+    [/if]
+    [if boast.father_silver == 2]
+    You swore three marks into your father's hand. Your father, at the bottom of the hall, raises his cup.
+    [/if]
+    [if boast.first_over == 3]
+    You swore to be first over the wall. You weren't. Somebody says so, loudly, and is told to shut up, and doesn't.
+    [/if]
+
+    Then the horn is in your hands again.
+  choices:
+    - id: dorestad
+      text: Swear you will see Dorestad, the richest market of the Franks, and take something from it.
+      effects: [ { boast: dorestad }, { add: { flag.y_hall: 2 } } ]
+      result: |
+        The name goes round the hall like a struck bell. Dorestad: nobody here has seen it. Everybody has heard of it.
+        [if flag.ubbi_sworn]
+        Ketill looks at you sharply. He knows where Ubbi is going next summer.
+        [/if]
+    - id: two_ships
+      text: Swear that by next Yule two ships will follow your steering-oar.
+      visible_if: "!service"
+      effects: [ { boast: two_ships }, { add: { flag.y_hall: 1 } } ]
+      result: The captains at the top of the hall look at each other. One of them laughs. The jarl doesn't.
+    - id: none
+      text: Drink, and swear nothing this year.
+      effects: [ { add: { man.ketill.loyalty: 1 } } ]
+      result: |
+        You drink and pass it on. This time nobody mutters. A man with a name doesn't need to buy one with a boast every winter.
+
+        "Better," says Ketill.
