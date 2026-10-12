@@ -205,7 +205,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     case 'battle': {
       const b = (p as { battle: import('./state').BattleState }).battle;
       const ok = availableOrders(b, 'us');
-      const out = ok.map((o) => opt('Orders', { t: 'order', order: o }, ORDER_NAMES[o]));
+      const out = ok.map((o) => opt(state.service ? 'Your shout' : 'Orders', { t: 'order', order: o }, ORDER_NAMES[o]));
       for (const pos of ['front', 'wall', 'rear'] as Position[]) if (pos !== b.position && !b.heroDown) out.push(opt('Your place', { t: 'position', pos }, `Move to: ${POSITION_NAMES[pos]}`));
       out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
       return out;
@@ -240,7 +240,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (lord) out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
       else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
       for (const m of aliveMen(state)) out.push(opt('Gifts', { t: 'hall', what: 'gift', arg: m.id }, `Give ${m.name} an arm-ring`, state.silver >= ORTUG_PER_MARK, `You need ${formatSilver(ORTUG_PER_MARK)}.`, `Loyalty ${m.loyalty}/10`));
-      out.push(opt('Hall', { t: 'hall', what: 'train' }, 'Train with the men'));
+      out.push(opt('Hall', { t: 'hall', what: 'train' }, lord ? 'Train with the men' : 'Practise with your bench-mates'));
       out.push(opt('Hall', { t: 'hall', what: 'rest' }, 'Rest and heal'));
       if (state.flags.skald) out.push(opt('Hall', { t: 'hall', what: 'skald' }, 'Have the skald compose'));
       if (home) out.push(opt('Hall', { t: 'hall', what: 'blot' }, 'Hold a blót', state.silver >= 12, `You need ${formatSilver(12)}.`, formatSilver(12)));
@@ -262,7 +262,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? 'More silver; more noise'),
         opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, 'Worth silver in Kaupang; slow and loud'),
         opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
-        opt('Plunder', { t: 'plunder', what: 'leave' }, 'Back to the ships, now', true, undefined, `Carrying ${formatSilver(pl.taken)}`),
+        state.service
+          ? opt('Plunder', { t: 'plunder', what: 'leave' }, `Head for the ships before ${state.service.captain} blows the horn`, true, undefined, `Carrying ${formatSilver(pl.taken)}`)
+          : opt('Plunder', { t: 'plunder', what: 'leave' }, 'Back to the ships, now', true, undefined, `Carrying ${formatSilver(pl.taken)}`),
       ];
     }
     case 'place': {

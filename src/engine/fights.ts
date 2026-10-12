@@ -125,11 +125,11 @@ export function startBattle(
   const b: BattleState = {
     foeId: foe.id,
     terrain: opts.terrain,
-    us: { name: 'Your men', men: ours, start: ours, quality: state.crew.quality, morale: state.crew.morale, doctrine: {}, last: null },
+    us: { name: state.service ? `${state.service.captain}'s men` : 'Your men', men: ours, start: ours, quality: state.crew.quality, morale: state.crew.morale, doctrine: {}, last: null },
     them: { name: foe.name, men: opts.men, start: opts.men, quality: foe.quality, morale: 6 + foe.quality, doctrine: foe.doctrine, last: null },
     position: state.position,
     round: 0,
-    log: [`${foe.name}: about ${opts.men} of them. You have ${ours}.`],
+    log: [`${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`],
     heroDown: false,
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),

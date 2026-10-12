@@ -4,7 +4,7 @@ import type { ContentBundle, Leg } from '../content/schema';
 import type { GameState, Wind } from './state';
 import type { RngCursor } from './rng';
 import { dateOf } from './calendar';
-import { STORM_BY_MONTH, STORM_LEG_MULT, WIND, HUNGER_MORALE_PER_DAY } from './tuning';
+import { STORM_BY_MONTH, STORM_LEG_MULT, WIND, HUNGER_MORALE_PER_DAY, SEA_EVENTS_PER_LEG } from './tuning';
 import { fleetSpeed, mouths, aliveMen, clampMorale } from './crew';
 import { effAttr, heal, kill, learn } from './hero';
 import { addDeed } from './fame';
@@ -146,7 +146,9 @@ export function runVoyage(state: GameState, content: ContentBundle, rng: RngCurs
     v.wind = rollWind(v.wind, rng);
     v.progress += WIND.progress[v.wind] * fleetSpeed(state, content);
     const eat = mouths(state);
-    if (state.provisions >= eat) state.provisions -= eat;
+    // at another man's oar, the captain feeds the ship: that is his part of the bargain
+    if (state.service) { /* his stores, not the hero's */ }
+    else if (state.provisions >= eat) state.provisions -= eat;
     else {
       state.provisions = 0;
       state.stats.hungerDays += 1;
@@ -169,7 +171,10 @@ export function runVoyage(state: GameState, content: ContentBundle, rng: RngCurs
       arrive(state, content, rng, lines);
       return { lines, arrived: true };
     }
-    if (trigger(state, content, rng, 'sea')) break;
+    if ((v.events ?? 0) < SEA_EVENTS_PER_LEG && trigger(state, content, rng, 'sea')) {
+      v.events = (v.events ?? 0) + 1;
+      break;
+    }
   }
   return { lines, arrived: false };
 }

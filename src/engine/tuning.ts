@@ -34,6 +34,8 @@ export const WIND = {
 } as const;
 export const PROVISION_ORTUG_PER = 20; // man-days of food per ørtug
 export const HUNGER_MORALE_PER_DAY = 0.5;
+/** Sea scenes that can break into one leg of a voyage: enough for colour, not so many that a crossing drags. */
+export const SEA_EVENTS_PER_LEG = 1;
 
 // ---- crew ----
 export const SIGN_ON_GIFT = 3; // ørtugar per recruit

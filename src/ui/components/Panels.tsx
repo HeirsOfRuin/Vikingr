@@ -83,7 +83,17 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
         {state.building && <p class="muted small">Building over the winter: a {content.ships[state.building]?.name.toLowerCase()}.</p>}
       </div>
       <div class="card">
-        <h3>The crew</h3>
+        <h3>{state.service ? `${state.service.captain}'s ship` : 'The crew'}</h3>
+        {state.service ? (
+          <dl class="kv">
+            <dt>Ship</dt><dd>{state.ships[0]?.name ?? 'none'}, {state.service.captain} at the steering-oar</dd>
+            <dt>Men</dt><dd>{state.crew.men + aliveMen(state).length + 1} at the oars, you among them</dd>
+            <dt>Mood</dt><dd>{moraleWord(state.crew.morale)}</dd>
+            <dt>Your shares</dt><dd>{state.service.shares}</dd>
+            <dt>Silver</dt><dd>{formatSilver(state.silver)}</dd>
+            <dt>In the heap</dt><dd>{formatSilver(state.loot)}</dd>
+          </dl>
+        ) : (
         <dl class="kv">
           <dt>Men</dt><dd>{state.crew.men}, and {aliveMen(state).length} sworn men <span class="muted">(the ships carry {capacity(state, content)})</span></dd>
           <dt>Quality</dt><dd>{qualityWord(state.crew.quality)}</dd>
@@ -92,6 +102,7 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
           <dt>Silver</dt><dd>{formatSilver(state.silver)}</dd>
           <dt>Plunder to share</dt><dd>{formatSilver(state.loot)}</dd>
         </dl>
+        )}
       </div>
       <h3>{state.men.some((m) => m.sworn) ? 'Your men' : 'Your bench-mates'}</h3>
       {state.men.length ? state.men.map((m) => {
@@ -103,11 +114,11 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
               <>
                 <Bar value={m.loyalty} max={10} kind="gold" />
                 <p class="small">{def?.desc}</p>
-                <div class="row sans small">
+                {m.sworn && <div class="row sans small">
                   {(['front', 'wall', 'rear'] as Position[]).map((p) => (
                     <button key={p} class={`choice${m.slot === p ? ' primary' : ''}`} style={{ minHeight: 36, padding: '4px 8px' }} onClick={() => onAct({ t: 'slot', man: m.id, slot: p })}>{POSITION_NAMES[p]}</button>
                   ))}
-                </div>
+                </div>}
               </>
             ) : <p class="muted small">Dead, {m.diedOn !== null ? formatDate(m.diedOn) : ''}.</p>}
           </div>

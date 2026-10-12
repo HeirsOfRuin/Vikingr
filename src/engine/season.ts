@@ -199,8 +199,11 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
     case 'train': {
       const a = learn(state, 'weapons', 5);
       const b = learn(state, 'shield', 4);
-      state.crew.quality = Math.min(2, state.crew.quality + 0.1);
-      lines.push('Weeks of sword-play in the snow with the sworn men, and the crew drilled at the wall until they curse you.');
+      if (state.service) lines.push('Weeks of sword-play in the snow with Ketill and the others, behind your father\'s byre, until your arms are lead and your shins are black.');
+      else {
+        state.crew.quality = Math.min(2, state.crew.quality + 0.1);
+        lines.push('Weeks of sword-play in the snow with the sworn men, and the crew drilled at the wall until they curse you.');
+      }
       for (const l of [a, b]) if (l) lines.push(l);
       break;
     }

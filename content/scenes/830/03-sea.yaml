@@ -51,6 +51,7 @@
   trigger: sea
   chance: 0.04
   once: true
+  requires: [service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
   art: open_sea
   title: The whale
   text: |
@@ -131,7 +132,7 @@
   trigger: sea
   chance: 0.02
   once: true
-  requires: ["month <= 8"]
+  requires: ["month <= 8", service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
   art: open_sea
   title: Sails astern
   text: |
@@ -166,6 +167,7 @@
   trigger: sea
   chance: 0.04
   once: true
+  requires: [service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
   art: open_sea
   title: The calm
   text: |
@@ -207,6 +209,7 @@
   trigger: sea
   chance: 0.04
   once: true
+  requires: [service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
   art: open_sea
   title: Ravens
   text: |

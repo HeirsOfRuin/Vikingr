@@ -105,6 +105,25 @@ describe('the year 830', () => {
     expect(one.phase).toBe('winter');
   });
 
+  it('at another man\'s oar the captain feeds the ship, and a leg of a voyage is broken by one scene at most', () => {
+    let s = start();
+    s.pending = null;
+    s.phase = 'sailing';
+    s.service!.route = ['orkney'];
+    s.provisions = 0;
+    s.day = 130;
+    s = act(content, s, { t: 'follow' });
+    let scenes = 0;
+    for (let i = 0; i < 200 && s.voyage; i++) {
+      const sc = screenOf(s);
+      if (sc === 'scene') scenes++;
+      const opts = (s.pending?.t === 'scene') ? content.scenes[s.pending.id]!.choices.filter((c) => !c.requires).map((c) => ({ t: 'choose' as const, id: c.id })) : [];
+      s = act(content, s, opts[0] ?? (sc === 'battle' ? { t: 'battle_auto' } : sc === 'duel' ? { t: 'duel_auto' } : sc === 'voyage' ? { t: 'voyage_on' } : { t: 'continue' }));
+    }
+    expect(s.stats.hungerDays).toBe(0);
+    expect(scenes).toBeLessThanOrEqual(1);
+  });
+
   it('a whole year plays through to spring 831 without dead ends, and every survivor has a name by then', () => {
     for (let seed = 1; seed <= 40; seed++) {
       const r = playLife(content, 'random', seed, 2, 'younger_son', (s: GameState) => s.seen.sp_831 !== undefined && !s.pending);

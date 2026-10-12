@@ -64,7 +64,8 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
     taken -= dropped;
     state.crew.men = Math.max(0, state.crew.men - lost);
     lines.push(`The countryside comes down on you before you are done: men with spears from every farm for a day's walk. You run for the ships, dropping ${formatSilver(dropped)} on the way, and ${plural(lost, 'man', 'men')} do not reach them.`);
-  } else lines.push('You call the men off while the going is good, and walk down to the ships under the weight of it.');
+  } else if (state.service) lines.push(`${state.service.captain}'s horn sounds from the strand, and you walk down to the ships with the rest, under the weight of it.`);
+  else lines.push('You call the men off while the going is good, and walk down to the ships under the weight of it.');
   ps.raided += 1;
   ps.lastRaided = state.day;
   ps.defence = Math.min(3, ps.defence * (p.burned ? 1.8 : 1.5));

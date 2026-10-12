@@ -90,6 +90,8 @@ export interface Voyage {
   progress: number;
   daysAtSea: number;
   wind: Wind;
+  /** Scenes that have broken into this leg (at most SEA_EVENTS_PER_LEG). */
+  events?: number;
 }
 
 export interface DuelSide {

@@ -117,15 +117,19 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
   const d = dateOf(state.day);
   const food = Math.floor(state.provisions / Math.max(1, mouths(state)));
   const place = state.at ? content.places[state.at] : null;
+  const svc = state.service;
+  const ship = state.ships[0]?.name ? state.ships[0].name.replace(/^the /, 'The ') : 'The ship';
   const head = (() => {
     switch (screen) {
       case 'voyage': {
         const v = state.voyage!;
-        return <><h2>At sea</h2><p>Bound for {content.places[v.to]!.name}. {v.daysAtSea} days out, the wind {v.wind}. Food for {food} days.</p></>;
+        return <><h2>At sea</h2><p>Bound for {content.places[v.to]!.name}{svc ? ` in ${svc.captain}'s ship` : ''}. {v.daysAtSea} days out, the wind {v.wind}.{svc ? '' : ` Food for ${food} days.`}</p></>;
       }
       case 'muster':
+        if (svc) return <><h2>{ship}</h2><p>The ice is off the fjord. {svc.captain} has {state.ships[0]?.name ?? 'his ship'} down on the jarl's landing, loaded with water, meal, dried fish and spare oars, and he is waiting for the spring storms to blow out. Your sea-chest is under your bench. All that is left is to row.</p><p class="muted small sans">Silver: {formatSilver(state.silver)}.</p></>;
         return <><h2>The spring muster</h2><p>The ice is off the fjord. Men come down from the farms to see who is going west this year, and on whose ship. Sign them on, fill the ship with food, mend her, and go.</p><p class="muted small sans">{state.musterPool} men in the district would still sign on. Food for {food} days. Silver: {formatSilver(state.silver)}.</p></>;
       case 'return':
+        if (svc) return <><h2>Home</h2><p>{ship} is hauled up on the jarl's landing, and the men are on the strand round the heap, waiting for {svc.captain} to divide the summer.</p><p class="muted small sans">In the heap: {formatSilver(state.loot)}{state.captives ? `, and ${state.captives} captives for the trader` : ''}. Your shares: {svc.shares}.</p></>;
         return <><h2>Home</h2><p>The ships are hauled up and the men want their shares. How you divide the plunder is how they will remember the summer.</p><p class="muted small sans">Plunder: {formatSilver(state.loot)}. {state.flags.owes_jarl ? 'The jarl takes a quarter first, for the loan of the ship. ' : ''}The crew is {moraleWord(state.crew.morale)}.</p></>;
       case 'hall':
         return <><h2>The winter hall</h2><p>Snow to the eaves, and the long nights. {state.hallLeft === 1 ? 'One more thing to do before spring.' : `${state.hallLeft} things to do before spring.`}</p><p class="muted small sans">Silver: {formatSilver(state.silver)}. {state.deeds.some((x) => x.told === null) ? 'Some deeds have not been told yet: a feast would tell them.' : 'Every deed has been told.'}</p></>;
@@ -134,7 +138,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
           <>
             <h2>{place?.name}</h2>
             <p>{place?.desc}</p>
-            <p class="muted small sans">{capitalise(seasonName(state.day))}. Food for {food} days. The crew is {moraleWord(state.crew.morale)}. {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === 'home_fjord' && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
+            <p class="muted small sans">{capitalise(seasonName(state.day))}. {svc ? `You row in ${svc.captain}'s ship. The men are ${moraleWord(state.crew.morale)}.` : `Food for ${food} days. The crew is ${moraleWord(state.crew.morale)}.`} {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === 'home_fjord' && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
           </>
         );
     }
