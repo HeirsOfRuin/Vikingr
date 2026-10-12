@@ -76,6 +76,11 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         for (const p of e.route) if (!content.places[p]?.active) errors.push(`${where}: route place "${p}" is not an active place`);
       } else if ('plunder' in e) {
         sceneRef(where, e.plunder.next);
+      } else if ('raided' in e) {
+        if (!content.places[e.raided.place]) errors.push(`${where}: unknown place "${e.raided.place}"`);
+      } else if ('standing' in e) {
+        if (e.standing.place && !content.places[e.standing.place]) errors.push(`${where}: unknown place "${e.standing.place}"`);
+        if (!e.standing.place && !e.standing.people) errors.push(`${where}: standing needs a place or a people`);
       } else if ('ship' in e) {
         if (!content.ships[e.ship.type]) errors.push(`${where}: unknown ship type "${e.ship.type}"`);
       } else if ('voyage' in e) {

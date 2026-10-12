@@ -311,14 +311,14 @@
       success:
         text: |
           The ewe goes into a sack and the sack goes into the ship, and nobody on the shore is any the wiser. She is very good roasted, that night, in a bay on the far side of the island.
-        effects: [ { add: { man.bersi.loyalty: 1, crew.morale: 1 } } ]
+        effects: [ { add: { man.bersi.loyalty: 1, crew.morale: 1 } }, { standing: { place: shetland, n: -1 } } ]
       failure:
         text: |
           The ewe objects. Loudly. The farmers come running, and Ásgeir has to pay for her twice over, and then he pays you back for it out of your hide, on the oar, all the way to Orkney.
         effects: [ { add: { man.bersi.loyalty: 1, silver: -3 } } ]
     - id: stop
       text: Tell Bersi to leave it.
-      effects: [ { add: { honour: 1, man.bersi.loyalty: -1 } } ]
+      effects: [ { add: { honour: 1, man.bersi.loyalty: -1 } }, { standing: { place: shetland, n: 1 } } ]
       result: |
         Bersi looks at you as if you had suggested he leave his own leg behind. But he leaves the ewe.
 

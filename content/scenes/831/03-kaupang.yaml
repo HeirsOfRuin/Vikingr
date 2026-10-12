@@ -43,7 +43,7 @@
       success:
         text: |
           You sell the jarl's goods well, better than he'd have got himself: the marten to a Swede who wants it for a bride's cloak, the soapstone to a Frisian who doesn't haggle because he can't count. You buy the jarl a Frankish sword with a name in the blade, and there is a good fat purse left over.
-        effects: [ { set: flag.j_commission_done }, { set: flag.j_commission_well }, { add: { silver: 48, skill.trade: 1 } } ]
+        effects: [ { set: flag.j_commission_done }, { set: flag.j_commission_well }, { standing: { place: kaupang, n: 1 } }, { add: { silver: 48, skill.trade: 1 } } ]
         next: k_market
       failure:
         text: |

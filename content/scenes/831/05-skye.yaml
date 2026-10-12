@@ -55,7 +55,7 @@
   choices:
     - id: done
       text: Take the silver.
-      effects: [ { add: { loot: 180 } }, { deed: { type: battle_won, text: Settled the third valley for Kolbeinn on Skye } }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      effects: [ { add: { loot: 180 } }, { standing: { place: skye, n: 3 } }, { deed: { type: battle_won, text: Settled the third valley for Kolbeinn on Skye } }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
       result: The cairns are still there. In a hundred years nobody will remember why.
 
 - id: sk_valley_lost
@@ -68,7 +68,7 @@
   choices:
     - id: done
       text: Go back down to the ship.
-      effects: [ { add: { crew.morale: -1, loot: 90 } }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
+      effects: [ { add: { crew.morale: -1, loot: 90 } }, { standing: { place: skye, n: 1 } }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
       result: He gives you half the silver anyway, for trying. It's the kind of thing that makes you want to try again.
 
 - id: sk_thorunn
@@ -115,14 +115,14 @@
   choices:
     - id: bless
       text: Steer close, and ask the old man to bless the ship.
-      effects: [ { add: { hamingja: 1, man.hallvard.loyalty: -1 } }, { set: flag.sk_blessed } ]
+      effects: [ { add: { hamingja: 1, man.hallvard.loyalty: -1 } }, { set: flag.sk_blessed }, { standing: { place: skye, n: 1 } } ]
       result: |
         He looks surprised. Then he gets up, and raises his hand, and makes the sign of their god over the ship, slowly, from stem to stern.
 
         Hallvard spits over the side, three times. But you notice he doesn't stop him.
     - id: bell
       text: Land, and take the bell from the hut. Bronze is bronze.
-      effects: [ { add: { loot: 20, hamingja: -1 } }, { set: flag.sk_bell } ]
+      effects: [ { add: { loot: 20, hamingja: -1 } }, { set: flag.sk_bell }, { standing: { place: skye, n: -1 } } ]
       result: |
         It's a little hand-bell, green with age, worth almost nothing. The old man watches you take it without a word.
 

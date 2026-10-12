@@ -357,6 +357,7 @@
           - { deed: { type: front_deed, text: Held the strand at Bangor while the Raven pushed off } }
           - { add: { man.ketill.loyalty: 1, man.ulf.loyalty: 1 } }
           - { set: flag.bg_left }
+          - { raided: { place: bangor, failed: true } }
           - { if: "fate.asgeir_falls && !flag.bg_covered", then: [ { captain: Steinarr }, { set: flag.bg_steinarr } ] }
       failure:
         text: |
@@ -367,12 +368,14 @@
           - { injury: broken_nose }
           - { add: { man.ulf.loyalty: 1 } }
           - { set: flag.bg_left }
+          - { raided: { place: bangor, failed: true } }
           - { set: flag.bg_ulf_pulled }
           - { if: "fate.asgeir_falls && !flag.bg_covered", then: [ { captain: Steinarr }, { set: flag.bg_steinarr } ] }
     - id: run
       text: Run for the ship.
       effects:
         - { set: flag.bg_left }
+        - { raided: { place: bangor, failed: true } }
         - { if: "fate.asgeir_falls && !flag.bg_covered", then: [ { captain: Steinarr }, { set: flag.bg_steinarr } ] }
       result: |
         You run. Everybody runs. You reach the ship and go over the side and get an oar in your hands, and pull, and the strand falls away behind you with men on it, Irish and not, and the javelins fall short in the water.

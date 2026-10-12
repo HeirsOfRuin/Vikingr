@@ -11,6 +11,7 @@ import { formatSilver, capitalise } from '../../engine/format';
 import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
 import { Bar } from './Actions';
+import { tierAt, TIER_NAMES } from '../../engine/standing';
 
 const QUALITY = ['green', 'blooded', 'seasoned', 'veterans'];
 export const qualityWord = (q: number) => QUALITY[Math.max(0, Math.min(3, Math.floor(q)))]!;
@@ -135,6 +136,18 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
     <div>
       <h2>The saga so far</h2>
       <p class="muted">Fame {Math.round(livingFame(state))}. Lasting fame {lastingFame(state)}. A deed counts only once it has been told: at a feast, by a skald, or by the men who saw it.</p>
+      <div class="card">
+        <h3>Your name in the ports</h3>
+        <p class="muted small">What each place you know thinks of you. A raid is remembered at the place, and along the coast by its own people. Fair trade and kept faith mend it, slowly; so does time.</p>
+        <table class="ports sans small">
+          <tbody>
+            {Object.values(content.places).filter((p) => p.active && p.kind !== 'home' && state.known.includes(p.id)).map((p) => {
+              const t = tierAt(state, content, p.id);
+              return <tr key={p.id}><td>{p.name}</td><td class="muted">{p.region}</td><td><span class={`pill standing-${t}`}>{TIER_NAMES[t]}</span></td></tr>;
+            })}
+          </tbody>
+        </table>
+      </div>
       <div class="card">
         <h3>The greatest living legends</h3>
         <table class="list">

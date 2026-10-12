@@ -104,6 +104,13 @@ main > * + * { margin-top: 0; }
 .pill.risky { background: #4a3517; color: #e8c38a; }
 .pill.even { background: var(--sea-deep); color: #b9ccd4; }
 .pill.favourable { background: #2f3a22; color: #c7d3a0; }
+/* standing in the ports (DESIGN §11.6) */
+.pill.standing-hostile { background: var(--rune-red-dark); color: #f3cfc6; }
+.pill.standing-unfriendly { background: #4a3517; color: #e8c38a; }
+.pill.standing-wary { background: var(--sea-deep); color: #b9ccd4; }
+.pill.standing-friendly { background: #2f3a22; color: #c7d3a0; }
+.pill.standing-allied { background: #3d4a24; color: #e2ecb8; }
+.ports td { padding: 4px 6px 4px 0; vertical-align: top; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; }
 .row > .choice { flex: 1 1 120px; }
 

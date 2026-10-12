@@ -9,7 +9,8 @@ import { test, unmetLabel } from './conditions';
 import { applyEffects } from './effects';
 import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
-import { aliveMen, capacity, mouths, newMan } from './crew';
+import { addRecruits, aliveMen, capacity, mouths, newMan } from './crew';
+import { baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
@@ -24,7 +25,7 @@ import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
 import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
-import { SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
+import { SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -33,6 +34,9 @@ export type Action =
   | { t: 'voyage_on' }
   | { t: 'raid' }
   | { t: 'forage' }
+  | { t: 'resupply' }
+  | { t: 'hire' }
+  | { t: 'land' }
   | { t: 'rest' }
   | { t: 'end_season' }
   | { t: 'winter_here' }
@@ -285,17 +289,30 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const short = state.provisions < mouths(state) * r.days;
           out.push(opt('Sail', { t: 'sail', to: r.to }, `Sail to ${content.places[r.to]!.name}`, true, undefined, `About ${r.days} days, ${r.leg.kind === 'open' ? 'open sea' : r.leg.kind}${short ? '. Not enough food' : ''}`));
         }
-      } else if (at !== 'home_fjord') out.push(opt('Sail', { t: 'passage_home' }, 'Take passage home on a trader', state.silver >= 12, `You need ${formatSilver(12)}.`, formatSilver(12)));
+      } else if (at !== 'home_fjord') out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage home on a trader' : 'Work your passage home on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
       if (place.raid) {
         const done = state.seasonRaids.includes(at);
         out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.'));
       }
-      if (at !== 'home_fjord') out.push(opt('Here', { t: 'forage' }, 'Go ashore for cattle and water', true, undefined, 'Food for the crew; the locals may object'));
-      out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
+      // what this port will do for him depends on what it thinks of him (DESIGN §11.6)
+      const tier = tierAt(state, content, at);
+      if (at !== 'home_fjord') {
+        if (tier === 'hostile') {
+          const lf = landingFoe(content, at);
+          out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them`));
+        } else {
+          const rc = resupplyCost(state, content, at);
+          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && state.silver > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          const hire = hireable(state, content, at);
+          if (canHire(state, content, at) > 0) out.push(opt('Here', { t: 'hire' }, hire > 0 ? `Hire ${plural(hire, 'man', 'men')} here` : 'Hire men here', hire > 0, 'No benches free, or no silver for the gift.', `${formatSilver(hire * SIGN_ON_GIFT)}`));
+          out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them; and they will remember' : 'Food for the crew; the locals will remember'));
+        }
+      }
+      if (tier !== 'hostile') out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
       if (at === 'home_fjord') {
         out.push(...homeActions(state, content));
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
-      } else if (doy >= WINTER_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, `Winter at ${place.name}`));
+      } else if (doy >= WINTER_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, `Winter at ${place.name}`, tier !== 'hostile' && tier !== 'unfriendly', 'Nobody here will give you a roof.'));
       return out;
     }
   }
@@ -381,9 +398,45 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'raid':
       startRaid(state, content, rng, state.at!);
       break;
+    case 'resupply': {
+      const rc = resupplyCost(state, content, state.at!)!;
+      const pay = Math.min(rc.cost, state.silver);
+      const got = rc.cost ? Math.round((rc.need * pay) / rc.cost) : 0;
+      state.silver -= pay;
+      state.provisions += got;
+      state.day += 1;
+      // a paying customer is remembered kindly, up to a point
+      if (standing(state, content, state.at!) < baseStanding(content, state.at!) + 3) shiftStanding(state, content, state.at!, 1);
+      report('Trading', [`You buy dried fish, meal, cheese and a cask of sour ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`]);
+      break;
+    }
+    case 'hire': {
+      const n = hireable(state, content, state.at!);
+      state.silver -= n * SIGN_ON_GIFT;
+      addRecruits(state, n);
+      const ps = state.places[state.at!]!;
+      ps.hired = (ps.hired ?? 0) + n;
+      state.day += 1;
+      journal(state, `${plural(n, 'man', 'men')} signed on at ${content.places[state.at!]!.name}.`);
+      report('Hiring', [`${plural(n, 'young man', 'young men')} come down to the shore with sea-chests on their shoulders and take your sign-on gift. ${formatSilver(n * SIGN_ON_GIFT)}.`]);
+      break;
+    }
+    case 'land': {
+      const lf = landingFoe(content, state.at!);
+      state.day += 1;
+      shiftStanding(state, content, state.at!, -1);
+      startBattle(state, content, { foe: lf.foe, men: lf.men, terrain: 'beach', context: 'scene', place: state.at });
+      if (state.pending?.t === 'battle') {
+        state.pending.battle.log.unshift('They have seen your sail, and they know whose it is. They are on the beach before your keel is.');
+        state.provisions += mouths(state) * 10; // whatever happens on the beach, the water-casks get filled
+      }
+      break;
+    }
     case 'forage': {
       state.day += 2;
-      if (rng.float() < 0.15) {
+      const fightChance = { hostile: 1, unfriendly: 0.55, wary: 0.3, friendly: 0.15, allied: 0.1 }[tierAt(state, content, state.at!)];
+      shiftStanding(state, content, state.at!, -2);
+      if (rng.float() < fightChance) {
         startBattle(state, content, { foe: 'island_men', men: 6 + rng.int(14), terrain: 'field', context: 'scene', place: state.at });
         if (state.pending?.t === 'battle') state.pending.battle.log.unshift('The cattle have owners, and the owners have spears.');
       } else {
@@ -406,12 +459,14 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'winter_here':
       report('Winter abroad', winterHere(state));
       break;
-    case 'passage_home':
-      state.silver -= 12;
-      state.day += 12;
+    case 'passage_home': {
+      const paid = state.silver >= 12;
+      if (paid) state.silver -= 12;
+      state.day += paid ? 12 : 30;
       state.at = 'home_fjord';
-      report('Home', ['A trader takes you home for silver and a hand at the oars.']);
+      report('Home', [paid ? 'A trader takes you home for silver and a hand at the oars.' : 'A trader takes you home for nothing but your back at his oars, by the longest way round, with a stop at every market between.']);
       break;
+    }
     case 'recruit': report('Muster', recruit(state, content)); break;
     case 'provision': report('Muster', provision(state)); break;
     case 'refit': report('Muster', refit(state, content)); break;

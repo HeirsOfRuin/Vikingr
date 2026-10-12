@@ -15,6 +15,7 @@ import { moraleWord } from './Panels';
 import { SceneArt } from '../scene/SceneArt';
 import { getValue } from '../../engine/paths';
 import { renderText } from '../../engine/text';
+import { tierAt, TIER_NAMES, TIER_HINTS } from '../../engine/standing';
 import { PlunderView } from './Fights';
 
 const AFTERLIFE: Record<string, { title: string; text: string }> = {
@@ -138,6 +139,10 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
           <>
             <h2>{place?.name}</h2>
             <p>{place?.desc}</p>
+            {place && place.kind !== 'home' && (() => {
+              const t = tierAt(state, content, place.id);
+              return <p class="small sans"><span class={`pill standing-${t}`}>{TIER_NAMES[t]}</span> {TIER_HINTS[t]}</p>;
+            })()}
             <p class="muted small sans">{capitalise(seasonName(state.day))}. {svc ? `You row in ${svc.captain}'s ship. The men are ${moraleWord(state.crew.morale)}.` : `Food for ${food} days. The crew is ${moraleWord(state.crew.morale)}.`} {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === 'home_fjord' && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
           </>
         );

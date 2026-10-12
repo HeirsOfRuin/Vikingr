@@ -187,6 +187,10 @@ export interface PlaceState {
   defence: number; // multiplier on defenders, decays toward 1
   raided: number; // times raided
   lastRaided: number | null;
+  /** What the place thinks of him (DESIGN §11.6); absent until it first changes, then -10..10. */
+  standing?: number;
+  /** Men hired here this year. */
+  hired?: number;
 }
 
 export interface LogEntry {

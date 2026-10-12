@@ -10,6 +10,7 @@ import { startVoyage } from './voyage';
 import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
+import { onRaided, shiftPeople, shiftStanding } from './standing';
 
 function addTo(state: GameState, path: string, n: number): void {
   switch (path) {
@@ -111,6 +112,12 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const n = Math.min(room, e.recruit);
         if (n > 0) { addRecruits(state, n); journal(state, `${n} men signed on.`); }
       }
+    } else if ('raided' in e) {
+      const { place, ...how } = e.raided;
+      onRaided(state, content, place, how);
+    } else if ('standing' in e) {
+      if (e.standing.place) shiftStanding(state, content, e.standing.place, e.standing.n);
+      if (e.standing.people) shiftPeople(state, content, e.standing.people, e.standing.n, e.standing.place);
     } else if ('captain' in e) { if (state.service) state.service.captain = e.captain; }
     else if ('ship' in e) {
       // a ship of his own, in place of the bench in another man's: the old crew stays with the old ship

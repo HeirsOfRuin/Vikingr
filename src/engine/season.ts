@@ -10,6 +10,7 @@ import { effAttr, heal, learn, strawDeathCheck, kill, age } from './hero';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { trigger } from './director';
+import { driftStanding } from './standing';
 import {
   HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
 } from './tuning';
@@ -296,6 +297,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   }
   // a winter hauled up: the men patch and tar what they can
   for (const sh of state.ships) sh.hull = Math.min(100, sh.hull + 15);
+  // grudges fade, slowly; this year's hiring is spent
+  driftStanding(state, content);
   if (state.building) {
     const t = content.ships[state.building]!;
     const name = SHIP_NAMES[(state.ships.length + state.stats.legs) % SHIP_NAMES.length]!;

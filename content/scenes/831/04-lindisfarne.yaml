@@ -55,7 +55,7 @@
           You send Bersi, because Bersi can talk about money with anybody. He comes back at evening on a borrowed horse with a reeve's man, a chest, and a very satisfied face.
 
           The Northumbrians would rather pay than fight. The chest has three hundred in it, in silver pennies with a king's head on them, and the reeve's man watches you count it with an expression like a man passing a stone.
-        effects: [ { set: flag.l_tribute }, { add: { loot: 300, man.bersi.loyalty: 1 } }, { deed: { type: deed, text: Took tribute from the reeve of Bamburgh, weight: 3 } } ]
+        effects: [ { set: flag.l_tribute }, { standing: { place: lindisfarne, n: -2 } }, { add: { loot: 300, man.bersi.loyalty: 1 } }, { deed: { type: deed, text: Took tribute from the reeve of Bamburgh, weight: 3 } } ]
         next: l_after
       failure:
         text: |
@@ -95,7 +95,7 @@
         Bersi says the Northumbrians will pay a hundred pounds of silver for it. Bersi has never seen a hundred pounds of silver.
     - id: leave
       text: Leave the book. Take everything else.
-      effects: [ { set: flag.l_spared_book }, { add: { honour: 1, hamingja: 1 } }, { plunder: { next: l_after } } ]
+      effects: [ { set: flag.l_spared_book }, { add: { honour: 1, hamingja: 1 } }, { standing: { place: lindisfarne, n: 2 } }, { plunder: { next: l_after } } ]
       result: |
         You don't know why. Something about the old man's arms. You turn your back on the altar and go out to strip the houses, and the men who saw you look at each other, and then follow you.
 
@@ -111,7 +111,7 @@
   choices:
     - id: away
       text: Row out of range, and count who's missing.
-      effects: [ { set: flag.l_beaten }, { add: { crew.morale: -1 } } ]
+      effects: [ { set: flag.l_beaten }, { add: { crew.morale: -1 } }, { raided: { place: lindisfarne, failed: true } } ]
       result: |
         You count. Then you count again, because the first number was wrong, and the second one is the same.
 

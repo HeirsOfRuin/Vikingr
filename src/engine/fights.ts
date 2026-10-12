@@ -11,6 +11,7 @@ import { banter } from './banter';
 import { startPlunder } from './plunder';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
+import { onRaided } from './standing';
 import { DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
 /** Leather and wool; a mail shirt from Kaupang (flag.mail) turns more blows. */
@@ -241,6 +242,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     ps.defence = Math.min(3, ps.defence * 1.5);
     ps.raided += 1;
     ps.lastRaided = state.day;
+    onRaided(state, content, b.place, { failed: !won });
     state.loot += take;
     state.stats.plunder += take;
     if (won) {

@@ -7,6 +7,7 @@ import { addDeed } from './fame';
 import { journal } from './journal';
 import { formatSilver, plural } from './format';
 import { POSITION_FAME } from './tuning';
+import { onRaided } from './standing';
 
 export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'leave';
 export const ALARM_MAX = 10;
@@ -67,6 +68,7 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
   } else if (state.service) lines.push(`${state.service.captain}'s horn sounds from the strand, and you walk down to the ships with the rest, under the weight of it.`);
   else lines.push('You call the men off while the going is good, and walk down to the ships under the weight of it.');
   ps.raided += 1;
+  onRaided(state, content, p.place, { burned: p.burned, captives: p.captives > 0 });
   ps.lastRaided = state.day;
   ps.defence = Math.min(3, ps.defence * (p.burned ? 1.8 : 1.5));
   if (p.burned) ps.wealth = Math.round(ps.wealth * 0.5);

@@ -9,6 +9,8 @@ export const ORDERS = ['hold', 'push', 'missiles', 'wedge', 'give', 'flank'] as 
 export const TERRAINS = ['beach', 'field', 'ford', 'rampart', 'ship', 'woods'] as const;
 export const PHASES = ['muster', 'sailing', 'return', 'winter'] as const;
 export const PLACE_KINDS = ['home', 'hall', 'market', 'monastery', 'town', 'island', 'landmark'] as const;
+export const PEOPLES = ['norse', 'danish', 'swedish', 'gael', 'english', 'frisian', 'frankish', 'baltic', 'rus'] as const;
+export type People = (typeof PEOPLES)[number];
 export const TEMPERAMENTS = ['hot', 'steady', 'greedy', 'pious', 'ambitious', 'dour'] as const;
 
 export type Attr = (typeof ATTRS)[number];
@@ -57,6 +59,8 @@ const baseEffect = z.union([
   z.object({ captain: z.string() }).strict(),
   z.object({ sell_captives: z.number().int().min(1) }).strict(),
   z.object({ recruit: z.number().int().min(1) }).strict(),
+  z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
+  z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
   z.object({ ship: z.object({ type: id, name: z.string(), crew: z.number().int().min(0) }).strict() }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */
@@ -127,6 +131,10 @@ export const place = z.object({
   lon: z.number(),
   lat: z.number(),
   kind: z.enum(PLACE_KINDS),
+  /** Who lives there: what one of them thinks of a raider, the rest of them hear (DESIGN §11.6). */
+  people: z.enum(PEOPLES),
+  /** Where his standing starts, if not the people's usual (-10 hostile .. 10 allied). */
+  standing: z.number().int().min(-10).max(10).optional(),
   region: z.string(),
   desc: z.string(),
   known: z.boolean().optional(),

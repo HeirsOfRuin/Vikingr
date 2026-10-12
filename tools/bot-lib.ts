@@ -126,7 +126,9 @@ export class Bot {
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
     const hungry = state.provisions < mouths(state) * 6;
-    if (hungry && at !== 'home_fjord') { const f = pick((a) => a.t === 'forage'); if (f) return f; }
+    // food: buy it where they'll sell, take it where they won't, fight for it where they hate you
+    if (hungry && at !== 'home_fjord') { const f = pick((a) => a.t === 'resupply') ?? pick((a) => a.t === 'forage') ?? (this.policy === 'reckless' || this.policy === 'raider' ? pick((a) => a.t === 'land') : undefined); if (f) return f; }
+    if (this.policy !== 'coward') { const h = pick((a) => a.t === 'hire'); if (h) return h; }
     if (at === 'home_fjord') {
       const end = pick((a) => a.t === 'end_season');
       if (end) return end;

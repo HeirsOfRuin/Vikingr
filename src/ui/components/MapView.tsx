@@ -4,6 +4,9 @@ import type { GameState } from '../../engine/state';
 import { lonLatToTile, type MapData } from '../../engine/mapgrid';
 import { routes } from '../../engine/voyage';
 import { formatDate } from '../../engine/calendar';
+import { tierAt, TIER_NAMES, TIER_HINTS, type Tier } from '../../engine/standing';
+
+const TIER_STROKE: Record<Tier, string> = { hostile: '#b3352a', unfriendly: '#c8913a', wary: '#6f8792', friendly: '#8a9860', allied: '#c7d3a0' };
 import { PX, worldCanvas } from '../worldart';
 
 interface Props {
@@ -101,7 +104,7 @@ export function MapView({ content, map, state, mini }: Props) {
               return (
                 <g key={p.id} onClick={() => !drag.current?.moved && setPicked(p.id)} style={{ cursor: 'pointer' }}>
                   <circle cx={x * PX} cy={y * PX} r={r * 2.5} fill="transparent" />
-                  <circle cx={x * PX} cy={y * PX} r={r} fill={fill} stroke="#111213" stroke-width={1 / scale} opacity={p.active ? 1 : 0.5} />
+                  <circle cx={x * PX} cy={y * PX} r={r} fill={fill} stroke={p.active && p.kind !== 'home' ? TIER_STROKE[tierAt(state, content, p.id)] : '#111213'} stroke-width={(p.active && p.kind !== 'home' ? 2.2 : 1) / scale} opacity={p.active ? 1 : 0.5} />
                   {reachable.includes(p.id) && <circle cx={x * PX} cy={y * PX} r={r * 1.9} fill="none" stroke="#c8913a" stroke-width={1 / scale} />}
                   <text x={x * PX + r * 1.6} y={y * PX + label * 0.35} font-size={label} fill="#e6ddc8" stroke="#111213" stroke-width={label * 0.25} paint-order="stroke" font-family="Georgia, serif">{p.name}</text>
                 </g>
@@ -123,6 +126,7 @@ export function MapView({ content, map, state, mini }: Props) {
               <h2>{pickedPlace.name}</h2>
               <p class="muted small sans">{pickedPlace.region}{pickedPlace.raid ? ' · a place to raid' : ''}{pickedPlace.market ? ' · a market' : ''}</p>
               <p>{pickedPlace.desc}</p>
+              {pickedPlace.active && pickedPlace.kind !== 'home' && <p class="small sans"><span class={`pill standing-${tierAt(state, content, pickedPlace.id)}`}>{TIER_NAMES[tierAt(state, content, pickedPlace.id)]}</span> {TIER_HINTS[tierAt(state, content, pickedPlace.id)]}</p>}
               {!pickedPlace.active && <p class="muted small sans">Beyond your reach for now. (Later phases.)</p>}
               {visits(pickedPlace.id).length > 0 && <p class="muted small sans">You were here: {visits(pickedPlace.id).join(', ')}</p>}
             </>

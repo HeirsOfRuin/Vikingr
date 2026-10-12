@@ -24,7 +24,7 @@
           The Orkneyman's name is Grjótgarð, and he drinks like a sea taking a ship. You match him horn for horn. Somewhere around the ninth horn the hall stops talking to watch. Somewhere around the twelfth Grjótgarð stands up, says something wise about seals, and falls into the fire.
 
           They pull him out. He is not much burned, and he is very proud of you, and he tells everyone so all night, with his arm round your neck.
-        effects: [ { deed: { type: deed, text: Drank Grjótgarð of Orkney under the table, weight: 1, witnesses: 60 } }, { add: { crew.morale: 1 } } ]
+        effects: [ { deed: { type: deed, text: Drank Grjótgarð of Orkney under the table, weight: 1, witnesses: 60 } }, { add: { crew.morale: 1 } }, { standing: { place: orkney, n: 1 } } ]
         next: o_council
       failure:
         text: |
@@ -59,7 +59,7 @@
           You talk till the fire burns down. At the end of it she ties a red thread round your wrist, to bring you back to Orkney, she says, and then goes in before her father sees.
 
           Ulf, who has been watching all night, can't decide whether to be jealous or proud, and manages both.
-        effects: [ { set: flag.o_ingibjorg }, { add: { man.ulf.loyalty: 1 } } ]
+        effects: [ { set: flag.o_ingibjorg }, { add: { man.ulf.loyalty: 1 } }, { standing: { place: orkney, n: 1 } } ]
         next: o_council
       failure:
         text: |

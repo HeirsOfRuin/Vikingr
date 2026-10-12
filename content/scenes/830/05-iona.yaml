@@ -185,7 +185,7 @@
       next: i_colman
     - id: mercy
       text: Kill any who fight. Let the old ones out the back.
-      effects: [ { set: flag.i_mercy }, { add: { honour: 1, man.hallvard.loyalty: 1, man.ulf.loyalty: -1 } } ]
+      effects: [ { set: flag.i_mercy }, { add: { honour: 1, man.hallvard.loyalty: 1, man.ulf.loyalty: -1 } }, { standing: { place: iona, n: 1 } } ]
       result: |
         Nobody fights. You stand in the little door at the back of the church and jerk your head at the old ones, and after a moment they understand, and go, shuffling, holding each other up, out into the wet grass and away toward the hill.
 
@@ -227,7 +227,7 @@
   choices:
     - id: words
       text: Take the covers. Give him back the pages.
-      effects: [ { set: flag.i_colman_spared }, { add: { skill.lore: 1, honour: 1 } } ]
+      effects: [ { set: flag.i_colman_spared }, { add: { skill.lore: 1, honour: 1 } }, { standing: { place: iona, n: 1 } } ]
       result: |
         You get the covers off, silver and gold and red stones, and you let the pages fall where he can reach them.
 
@@ -295,6 +295,7 @@
       effects:
         - { add: { loot: 400 } }
         - { route: [bangor] }
+        - { if: "flag.i_captives || flag.i_colman_taken", then: [ { raided: { place: iona, burned: true, captives: true } } ], else: [ { raided: { place: iona, burned: true } } ] }
         - { deed: { type: raid, text: At the raid on Iona } }
         - { if: flag.i_first, then: [ { shares: 2 } ] }
       result: |
@@ -306,6 +307,7 @@
       effects:
         - { add: { loot: 400, man.ulf.loyalty: 1 } }
         - { route: [bangor] }
+        - { if: "flag.i_captives || flag.i_colman_taken", then: [ { raided: { place: iona, burned: true, captives: true } } ], else: [ { raided: { place: iona, burned: true } } ] }
         - { deed: { type: raid, text: Fired the church on Iona } }
         - { if: flag.i_first, then: [ { shares: 2 } ] }
       result: |
@@ -317,6 +319,7 @@
       effects:
         - { add: { loot: 400, man.hallvard.loyalty: 1, hamingja: 1 } }
         - { route: [bangor] }
+        - { if: "flag.i_captives || flag.i_colman_taken", then: [ { raided: { place: iona, burned: true, captives: true } } ], else: [ { raided: { place: iona, burned: true } } ] }
         - { deed: { type: raid, text: At the raid on Iona } }
         - { if: flag.i_first, then: [ { shares: 2 } ] }
       result: |

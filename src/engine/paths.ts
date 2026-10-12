@@ -6,6 +6,7 @@ import type { GameState } from './state';
 import { dateOf } from './calendar';
 import { effAttr, age } from './hero';
 import { fameRank, lastingFame, livingFame } from './fame';
+import { standing } from './standing';
 
 export type Value = number | string | boolean;
 
@@ -59,6 +60,7 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     case 'wound': return state.hero.wounds.some((w) => w.id === a);
     case 'known': return state.known.includes(a!);
     case 'fate': return state.fates[a!] ?? 0;
+    case 'standing': return standing(state, content, a!);
     case 'omen': return state.omens[a!] ?? 0;
     case 'boast': {
       const bt = state.boasts.find((x) => x.id === a);
@@ -90,6 +92,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'wound': return content.injuries[a!] ? null : `unknown injury "${a}"`;
     case 'known': return content.places[a!] ? null : `unknown place "${a}"`;
     case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn'].includes(b!) ? null : `bad sworn-man path "${path}"`;
+    case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;
     case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;
     case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
     case 'boast': return content.boasts[a!] && !b ? null : `unknown boast "${a}" (declare it in content/registry/boasts.yaml)`;

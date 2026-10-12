@@ -45,7 +45,7 @@
           Harek listens to you with his beard in his fist. He asks about your ship, and your shares, and your father's land, and the jarl, and your name, and what men call you, and why.
 
           "Come back next summer," he says at last, "with something on your arm I can weigh. Then we'll talk." It is not no. Ingibjörg, listening through the wall, makes a sound like a cat that has been given a fish.
-        effects: [ { set: flag.ingibjorg_promised } ]
+        effects: [ { set: flag.ingibjorg_promised }, { standing: { place: orkney, n: 1 } } ]
       failure:
         text: |
           Harek listens with his beard in his fist, and then laughs, not unkindly. "Come back," he says, "when you've got a ship of your own and a hall to put her in. My daughter isn't going to sleep on a rowing bench."
@@ -75,7 +75,7 @@
   choices:
     - id: walk
       text: Leave your sword in the ship, and go up with him.
-      effects: [ { set: flag.colman_friend }, { add: { skill.lore: 1, honour: 1, man.hallvard.loyalty: -1 } } ]
+      effects: [ { set: flag.colman_friend }, { standing: { place: iona, n: 3 } }, { add: { skill.lore: 1, honour: 1, man.hallvard.loyalty: -1 } } ]
       result: |
         You leave your sword with Ketill, who looks at you as if you'd taken leave of your senses, and go up the beach with Colmán.
 
@@ -84,7 +84,7 @@
         You don't know what to say to that. He doesn't seem to need you to say anything.
     - id: warn
       text: Tell him to take the books and go. Others are coming, and they won't ask.
-      effects: [ { set: flag.colman_warned }, { add: { hamingja: 1 } } ]
+      effects: [ { set: flag.colman_warned }, { standing: { place: iona, n: 2 } }, { add: { hamingja: 1 } } ]
       result: |
         He listens. Then he nods, slowly, as if you'd told him something he already knew.
 
@@ -93,7 +93,7 @@
         You understand it. You still don't know what to do with it.
     - id: raid
       text: Tell him you're sorry, and that it doesn't change anything.
-      effects: [ { set: flag.colman_betrayed_831 } ]
+      effects: [ { set: flag.colman_betrayed_831 }, { standing: { place: iona, n: -1 } } ]
       result: |
         He looks at you for a long moment. Then he turns and walks back up the beach, not hurrying, toward the bell-house.
 
