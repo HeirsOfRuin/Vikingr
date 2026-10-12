@@ -126,8 +126,10 @@ export class Bot {
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
     const hungry = state.provisions < mouths(state) * 6;
+    // top up wherever they'll sell, before it is urgent
+    if (at !== 'home_fjord' && state.provisions < mouths(state) * 15) { const buy = pick((a) => a.t === 'resupply') ?? pick((a) => a.t === 'guest'); if (buy) return buy; }
     // food: buy it where they'll sell, take it where they won't, fight for it where they hate you
-    if (hungry && at !== 'home_fjord') { const f = pick((a) => a.t === 'resupply') ?? pick((a) => a.t === 'forage') ?? (this.policy === 'reckless' || this.policy === 'raider' ? pick((a) => a.t === 'land') : undefined); if (f) return f; }
+    if (hungry && at !== 'home_fjord') { const f = pick((a) => a.t === 'resupply') ?? pick((a) => a.t === 'guest') ?? pick((a) => a.t === 'forage') ?? (this.policy === 'reckless' || this.policy === 'raider' ? pick((a) => a.t === 'land') : undefined); if (f) return f; }
     if (this.policy !== 'coward') { const h = pick((a) => a.t === 'hire'); if (h) return h; }
     if (at === 'home_fjord') {
       const end = pick((a) => a.t === 'end_season');
@@ -137,7 +139,8 @@ export class Bot {
       const rec = pick((a) => a.t === 'recruit');
       if (rec) return rec;
     }
-    const goingHome = doy >= LATE_SEASON_DOY - 20;
+    // hungry, and nobody here will feed him: go home, where they always will
+    const goingHome = doy >= LATE_SEASON_DOY - 20 || (hungry && at !== 'home_fjord');
     let target: string | null = null;
     if (!goingHome) {
       const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id));

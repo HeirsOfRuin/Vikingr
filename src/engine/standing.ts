@@ -96,6 +96,8 @@ export function driftStanding(state: GameState, content: ContentBundle): void {
 // ---- what a port will do for him ----
 
 export const RESUPPLY_DAYS = 30;
+/** Guest-right: a friendly hall feeds a ship's crew once a year, free. Days of food. */
+export const GUEST_DAYS: Record<Tier, number> = { hostile: 0, unfriendly: 0, wary: 0, friendly: 7, allied: 14 };
 /** Fighting your way ashore at a hostile port: about this many come down to the beach. */
 const LANDING_FOE: Record<People, string> = {
   norse: 'rival_crew', danish: 'rival_crew', swedish: 'rival_crew', gael: 'ulster_levy', english: 'northumbrian_levy',

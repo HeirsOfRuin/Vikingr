@@ -10,7 +10,7 @@ import { applyEffects } from './effects';
 import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, mouths, newMan } from './crew';
-import { baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
+import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
@@ -35,6 +35,7 @@ export type Action =
   | { t: 'raid' }
   | { t: 'forage' }
   | { t: 'resupply' }
+  | { t: 'guest' }
   | { t: 'hire' }
   | { t: 'land' }
   | { t: 'rest' }
@@ -302,7 +303,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them`));
         } else {
           const rc = resupplyCost(state, content, at);
-          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && state.silver > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && state.silver + state.loot > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          const year = dateOf(state.day).year;
+          if (GUEST_DAYS[tier] > 0) out.push(opt('Here', { t: 'guest' }, 'Ask for guest-right', state.places[at]?.guested !== year, 'You have had their hospitality this year.', `Food for ${GUEST_DAYS[tier]} days, free, once a year`));
           const hire = hireable(state, content, at);
           if (canHire(state, content, at) > 0) out.push(opt('Here', { t: 'hire' }, hire > 0 ? `Hire ${plural(hire, 'man', 'men')} here` : 'Hire men here', hire > 0, 'No benches free, or no silver for the gift.', `${formatSilver(hire * SIGN_ON_GIFT)}`));
           out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them; and they will remember' : 'Food for the crew; the locals will remember'));
@@ -400,14 +403,25 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       break;
     case 'resupply': {
       const rc = resupplyCost(state, content, state.at!)!;
-      const pay = Math.min(rc.cost, state.silver);
+      // his own silver first; then the ship's stores are bought out of the heap, as any captain would
+      const pay = Math.min(rc.cost, state.silver + state.loot);
       const got = rc.cost ? Math.round((rc.need * pay) / rc.cost) : 0;
-      state.silver -= pay;
+      const own = Math.min(pay, state.silver);
+      state.silver -= own;
+      state.loot -= pay - own;
       state.provisions += got;
       state.day += 1;
       // a paying customer is remembered kindly, up to a point
       if (standing(state, content, state.at!) < baseStanding(content, state.at!) + 3) shiftStanding(state, content, state.at!, 1);
       report('Trading', [`You buy dried fish, meal, cheese and a cask of sour ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`]);
+      break;
+    }
+    case 'guest': {
+      const days = GUEST_DAYS[tierAt(state, content, state.at!)];
+      state.provisions += mouths(state) * days;
+      state.places[state.at!]!.guested = dateOf(state.day).year;
+      state.day += 1;
+      report('Guest-right', [`They take you up to the hall and feed your men, and put food in the ships for ${plural(days, 'day')}, and will not hear of silver. Next time, they will expect you to remember it.`]);
       break;
     }
     case 'hire': {

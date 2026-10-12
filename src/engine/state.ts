@@ -191,6 +191,8 @@ export interface PlaceState {
   standing?: number;
   /** Men hired here this year. */
   hired?: number;
+  /** The year he last asked for guest-right here. */
+  guested?: number;
 }
 
 export interface LogEntry {

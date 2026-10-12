@@ -42,3 +42,9 @@ The 90th percentile is the captains.
 
 - The Phase 1 sandbox raids still use the old wealth for every place except Iona and Bangor, so the outlaw and freedman starts are poorer than the younger son. The next pass widens the target list and adds trade.
 - An oarsman cannot spend much: the hall gives him work, gifts, training and a blót. That is deliberate in year one.
+
+## Food away from home (standing in the ports, DESIGN §11.5)
+- **Buying food:** at home it costs 1 ørtug per 20 man-days. Away from home the price depends on standing: double at a wary port, the home price at a friendly one, half at an allied one. Unfriendly and hostile ports sell nothing. One purchase fills the ship for 30 days.
+- **Guest-right:** a friendly port gives 7 days of food, an allied one 14, free, once a year.
+- **Taking cattle:** free in silver, but it costs 2 standing. At unfriendly ports it usually means a fight.
+- **Hiring away from home:** the same 3 ørtug sign-on gift as at home. Friendly Norse ports have 4 men a year to hire, allied ones 8.

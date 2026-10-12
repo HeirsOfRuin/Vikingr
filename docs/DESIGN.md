@@ -405,6 +405,40 @@ Used for pitched fights, defending a beach, and the assault phase of a raid.
 
 ---
 
+### 11.5 Standing in the ports (`standing.ts`, decided 2026-10-12)
+Every port has one number for what it thinks of him, from −10 to 10. Everything the port will or won't do for him comes from that number. The author's brief: "events like allowing you to dock, resupply, recruit, or to be attacked on sight if you try to land should be derived."
+
+**Where it starts.** Each place has a people (Norse, Danish, Swedish, Gael, English, Frisian, Frankish, Baltic, Rus), and each people has a usual starting point. Norse ports start at 2, Gaels and the English at −2. A place can override this from its own history: Orkney starts at 3 (Harek), Conaille at −4 (the king who hanged Norse traders), and home is always 10.
+
+**The tiers:**
+
+| Tier | Standing | Landing | Food | Guest-right | Men | Winter |
+|---|---|---|---|---|---|---|
+| Hostile | −10 to −6 | Fought on the beach. Only a raid, a fight ashore for water and cattle, or sailing on. | none | none | none | no |
+| Unfriendly | −5 to −2 | May put in; taking cattle usually means a fight | none | none | none | no |
+| Wary | −1 to 1 | May put in | at double price | none | none | yes |
+| Friendly | 2 to 5 | Welcome | at a fair price | 7 days, free, once a year | 4 a year | yes |
+| Allied | 6 to 10 | Welcome | at half price | 14 days, free, once a year | 8 a year | yes |
+
+Only Norse, Danish and Swedish ports will put men on his benches.
+
+**What moves it:**
+- **A raid, at the place:** −5. Burning it is a further −2, and taking captives a further −1.
+- **A raid beaten off:** −3 at the place.
+- **The rest of the same people:** −2 for any raid on one of them, −3 if it was burned. One Irish house's grief is heard all along the coast. Other peoples don't care.
+- **Taking cattle:** −2.
+- **Fighting your way ashore:** −1.
+- **Buying food:** +1, up to 3 above where the place started.
+- **Story choices** (`standing` and `raided` effects): for example, Kolbeinn's valley (+3), the ransomed king (+3), walking unarmed with Colmán (+3), breaking guest-right at Conaille (−2), and killing the king in his doorway (−2 to every Gaelic port).
+- **The turn of each year:** standing moves a third of the way back to where it started. The hiring pool refills.
+
+**Measured** (`npm run measure:831`, two raiding summers as the younger son):
+- The Irish coast closes: Bangor is hostile in about 85% of lives, Conaille in 90–98%, and Iona in about 60%. Iona's burning in 830 and the hanged traders mean Conaille is usually hostile before he first sees it.
+- The Norse ports stay friendly bases.
+- In the 5-year bot runs, days hungry at sea rise from about 3 a year to 30–40, with plunder and survival unchanged. Food away from home now matters.
+
+Scenes can test it with `standing.<place>`. The port screen, the map (each marker's ring) and the Saga tab ("Your name in the ports") all show it.
+
 ## 12. Mythology: present and ambiguous
 
 ### Writing rules (enforced by the style guide and `lint-style`)
@@ -860,6 +894,7 @@ Economy: `docs/ECONOMY.md`.
 ## Decisions log
 | Date | Decision |
 |---|---|
+| 2026-10-12 | **Standing in the ports** (§11.5), at the author's request. One number per port drives docking, food, guest-right, hiring, wintering, and being fought on landing. Raids hurt the place and its people; trade, kept faith and time mend it. Guest-right was added after the bot showed that a captain with no silver could only feed his men by taking cattle, which turned the Norse ports hostile within a season. A castaway with no silver can work his passage home. |
 | 2026-10-12 | **The year 831 and four new places**, on the author's instruction (frame in `docs/FRAME-831.md`). **Kaupang:** market, gear (mail, a Frankish sword), captives at a market price, Ubbi the Dane's offer. **Lindisfarne:** a raid shaped by the tide, the jewelled book. **Skye:** Kolbeinn's steading, hired men, Þórunn's offer of land, the papar. **Conaille:** the historical capture of King Máel Brigte in 831, his cup and his ransom. Also: return visits to Birsay and Iona, four sea events, the jarl's council and commissions, Gyða's bride-price and wedding, the brother at the boundary stone, the Hrappssons' fire, Yule 831 with the boasts reckoned, and spring 832 where the written story pauses (the oarsman gets a second chance at a ship). Engine: `sell_captives`, `recruit`, gear flags, a `winter` path, `{captain}` and `{ship}` text tokens. Measured (`npm run measure:831`): every surviving life reaches spring 832; about half are captains by then; the king of Conaille is taken in about half of runs. |
 | 2026-10-12 | First playtest of the year: the writing and the fighting landed, and the sea events were fun. Three fixes. (1) **At another man's oar the game no longer talks as if he commands:** the muster, homecoming, place, voyage and crew screens, the winter training, the plunder exit (the captain's horn ends it) and the shield-wall all changed. In the wall an oarsman's orders become his shout, which the men round him take up. The four sea scenes with Ásgeir at the helm now fire only on the outward voyage. (2) **The captain feeds the ship:** no rationing or hunger while in service. (3) **At most one sea scene per leg of a voyage** (`SEA_EVENTS_PER_LEG`), so crossings keep moving. |
 | 2026-10-12 | The year 830 built to the approved frame. Economy pass: Bangor's wealth is 1,500 and Iona's 720; at another man's oar, a quarter of the plunder goes to the ship and three quarters to the oars; captives sell for 24. Calibration scenes retired into the real year; the title preview became chapter jumps for playtesting. |
