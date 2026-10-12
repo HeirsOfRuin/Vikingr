@@ -59,7 +59,7 @@ try {
     for (const [re, name] of SHOTS) if (re.test(h) && !seen.has(name)) { seen.add(name); await snap(name); }
     if (seen.has('spring-831') || (await page.locator('button', { hasText: 'Begin another life' }).count())) break;
     if (h.startsWith('Plunder:')) {
-      await click(page, ++rounds > 2 ? /Back to the ships/ : /Strip the next house/);
+      await click(page, ++rounds > 2 ? /Back to the ships|Head for the ships/ : /Strip the next house/);
       continue;
     }
     let clicked = false;
@@ -67,7 +67,11 @@ try {
       const b = page.locator('main button:not([disabled])', { hasText: t }).first();
       if (await b.count()) { await b.click(); clicked = true; break; }
     }
-    if (!clicked) await page.locator('main .choices button:not([disabled])').first().click({ timeout: 4000 });
+    if (!clicked) {
+      // the safe road where there is one, so the run is the same every time; a fight where there isn't
+      const safe = page.locator('main .choices button:not([disabled]):not(.danger)').first();
+      await ((await safe.count()) ? safe : page.locator('main .choices button:not([disabled])').first()).click({ timeout: 4000 });
+    }
   }
   for (const need of ['boyhood', 'muster', 'birsay', 'bangor', 'home', 'yule']) if (!seen.has(need) && !(await page.locator('button', { hasText: 'Begin another life' }).count())) errors.push(`never reached: ${need}`);
   for (const t of ['Map', 'Hero', 'Crew', 'Saga']) {
@@ -81,6 +85,32 @@ try {
   await page.reload();
   await click(page, 'Continue your life');
   await snap('reloaded');
+  // 831: the Conaille chapter, as captain, through the king's doorway to leaving the bay
+  await page.locator('button[aria-label="Menu"]').click();
+  await page.locator('button', { hasText: 'Back to the title' }).click();
+  await click(page, 'Play from a chapter');
+  await click(page, /^Conaille, 831/);
+  await snap('conaille');
+  await click(page, /^Continue/);
+  await click(page, /Straight up from the beach/);
+  const seen831 = new Set<string>();
+  for (let step = 0; step < 200; step++) {
+    const h = ((await page.locator('main h2').first().textContent({ timeout: 2000 }).catch(() => '')) ?? '').trim();
+    for (const [re, name] of [[/The shield-wall/, 'conaille-battle'], [/doorway|Máel Brigte/, 'conaille-king'], [/^Leaving Conaille|Plain of Muirthemne/i, 'conaille-after']] as [RegExp, string][]) if (re.test(h) && !seen831.has(name)) { seen831.add(name); await snap(name); }
+    if (seen831.has('conaille-after') || (await page.locator('button', { hasText: /Begin another life|Back to the chapters/ }).count())) break;
+    if (h.startsWith('Plunder:')) { await click(page, /Back to the ships|Head for the ships/); continue; }
+    let clicked = false;
+    for (const t of PREFER) {
+      const b = page.locator('main button:not([disabled])', { hasText: t }).first();
+      if (await b.count()) { await b.click(); clicked = true; break; }
+    }
+    if (!clicked) {
+      // the safe road where there is one, so the run is the same every time; a fight where there isn't
+      const safe = page.locator('main .choices button:not([disabled]):not(.danger)').first();
+      await ((await safe.count()) ? safe : page.locator('main .choices button:not([disabled])').first()).click({ timeout: 4000 });
+    }
+  }
+  if (!seen831.has('conaille-after') && !(await page.locator('button', { hasText: /Back to the chapters/ }).count())) errors.push('the Conaille chapter never reached the end of the raid');
   const width = await page.evaluate(() => document.documentElement.scrollWidth);
   if (width > 390) errors.push(`page is ${width}px wide at a 390px viewport (horizontal scroll)`);
 } catch (e) {

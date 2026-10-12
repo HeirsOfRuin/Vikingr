@@ -1,6 +1,6 @@
 # The Year 831: Frame
 
-**Status:** built on the author's instruction ("expand into the next year and expand the map with a further 4 locations", 2026-10-12). The recommendations below were taken as decided so the build could go straight ahead. Any of them can be changed after the playtest.
+**Status: built** (2026-10-12), `content/scenes/831/`. Waiting on the author's playtest. Built on the author's instruction ("expand into the next year and expand the map with a further 4 locations", 2026-10-12). The recommendations below were taken as decided so the build could go straight ahead. Any of them can be changed after the playtest.
 
 **The year in one line:** the boy who went west on another man's bench now has a name, perhaps a ship, and a district watching him. 831 asks what he does with it: trade, raid further, settle, or take a king.
 

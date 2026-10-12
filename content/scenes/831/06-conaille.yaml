@@ -96,7 +96,6 @@
   choices:
     - id: take
       text: Take him alive. A living king is worth his weight in silver.
-      danger: true
       effects: [ { fight: { foe: mael_brigte, kind: duel, lethal: false, win: c_king, lose: c_king_lost } } ]
       result: You go at him with the flat of your sword and your shield up, and the brother goes down under the men behind you, and then it is you and the king in his own doorway.
     - id: kill

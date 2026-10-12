@@ -79,3 +79,15 @@ Prompt add-on for these: *"9th century, timber and turf buildings only, no stone
 ## Delivery
 - Put files in `art/src/` named by key (for example `art/src/hearth_ormr.png`), or send them in the chat. I will run the converter and show a contact sheet before anything goes into the game.
 - If an image does not survive conversion (too busy, too dark), I will say so with the contact sheet, and you can regenerate it.
+
+## Shot list: the 831 places (wanted)
+Standalone images at about 2.5:1 work best (see the round 2 notes). Prompt add-on as before: *"9th century, timber and turf buildings only, no stone castles, single-masted ships."*
+
+| Key | Scene | Composition | Light |
+|---|---|---|---|
+| `kaupang` | The market at Kaupang | A curved shingle beach crowded with booths and smoke, ships drawn up, a wooded ridge with a timber hall above | Busy grey morning, smoke drifting |
+| `lindisfarne` | Lindisfarne from the sea | A low tidal island with a small timber church and huts, wet sands shining between it and the mainland, a beacon on a hill | Dawn, silver light on the sands |
+| `skye` | Kolbeinn's steading | A turf longhouse at the head of a black sea loch under dark mountains, sheep, a boat-shed, a round stone ruin | Overcast, low cloud on the peaks |
+| `conaille` | Dún Delgan | A flat green plain behind a brown bay, a round earth ringfort with a palisade and a thatched hall on a rise | Still morning, smoke rising straight |
+
+Once these arrive, each place gets `art:` in `content/places/places.yaml` and its scenes get the key.

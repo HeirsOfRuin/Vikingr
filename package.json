@@ -18,6 +18,7 @@
     "measure:duel": "tsx tools/measure-duel.ts",
     "measure:battle": "tsx tools/measure-battle.ts",
     "measure:830": "tsx tools/measure-830.ts",
+    "measure:831": "tsx tools/measure-831.ts",
     "smoke": "tsx tools/smoke.ts",
     "check": "npm run typecheck && npm test && npm run validate && npm run lint:style && npm run bot -- --runs 100 --years 10",
     "build:artifact": "npm run content && tsc --noEmit && VITE_ARTIFACT=1 vite build && tsx tools/build-artifact.ts",

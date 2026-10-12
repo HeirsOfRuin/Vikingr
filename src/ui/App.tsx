@@ -26,7 +26,25 @@ const CHAPTERS: { scene: string; label: string; year: number; doy: number; at: s
   { scene: 'i_approach', label: 'Iona', year: 830, doy: 158, at: 'iona', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; if (s.service) s.service.route = ['bangor']; } },
   { scene: 'b_lough', label: 'Bangor', year: 830, doy: 170, at: 'bangor', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; s.loot = 400; if (s.service) s.service.route = []; } },
   { scene: 'y_feast', label: 'Yule', year: 830, doy: 358, at: 'home_fjord', phase: 'winter', setup: (s) => { s.flags.o_iona = 1; s.flags.bg_left = 1; s.flags._winter = 830; s.hallLeft = 3; } },
+  { scene: 'j_council', label: 'Spring 831, as captain of the Raven', year: 831, doy: 60, at: 'home_fjord', phase: 'muster', setup: captain },
+  { scene: 'c_approach', label: 'Conaille, 831, as captain', year: 831, doy: 170, at: 'conaille', phase: 'sailing', setup: captain },
+  { scene: 'l_approach', label: 'Lindisfarne, 831, as captain', year: 831, doy: 165, at: 'lindisfarne', phase: 'sailing', setup: captain },
 ];
+
+/** A chapter in 831 as if he had taken the Raven at Bangor: his own ship, the bench-mates sworn, a name. */
+function captain(s: GameState): void {
+  s.service = null;
+  s.flags.bg_command = 1;
+  s.flags.owes_jarl = 1;
+  s.flags.bg_left = 1;
+  s.flags._winter = 830;
+  s.seen.sp_831 = s.day;
+  s.hero.nickname = 'Raven';
+  s.crew.men = 30;
+  s.provisions = 900;
+  for (const m of s.men) m.sworn = true;
+  for (const p of ['iona', 'bangor', 'kaupang', 'lindisfarne', 'skye', 'conaille']) if (!s.known.includes(p)) s.known.push(p);
+}
 
 function shortDate(day: number): string {
   const d = dateOf(day);
@@ -47,7 +65,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
-          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into the year at Iona, Bangor or Yule. Not saved.</span></span></button>
+          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into 830 or 831 part-way through. Not saved.</span></span></button>
         </div>
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
       </div>
@@ -57,7 +75,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
     return (
       <main class="screen">
         <h1>Chapters</h1>
-        <p>Jump into the year 830 part-way through, as if the summer so far had gone quietly. Nothing you do here is saved.</p>
+        <p>Jump into the story part-way through, as if everything so far had gone quietly. The 831 chapters start you as captain of the Raven. Nothing you do here is saved.</p>
         <h3>His name</h3>
         <input type="text" id="cal-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
         <div class="choices">

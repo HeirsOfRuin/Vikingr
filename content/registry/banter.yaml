@@ -33,3 +33,11 @@
 - { who: hallvard, when: hall, text: "Hallvard carves runes on a stick by the fire, and when Ulf asks what they say, he puts the stick in the fire." }
 - { who: ketill, when: hall, text: "Ketill sits by your father in the evenings, and they talk about a summer twenty years ago, and both of them laugh in the same places." }
 - { who: ketill, when: hall, requires: [flag.ormr_dead], text: "\"Ormr would have hated a quiet death,\" says Ketill. \"He'll have told them in the hall that he went down fighting.\"" }
+
+# ---- 831 ----
+- { who: ulf, when: sea, requires: [flag.mail], text: "Ulf asks to borrow the mail shirt \"just for an afternoon\". He asks every afternoon." }
+- { who: bersi, when: arrive, requires: ["place == kaupang"], text: "Bersi walks the length of the Kaupang beach twice before he buys anything, and comes back with a comb, a whetstone and a look of deep peace." }
+- { who: hallvard, when: sea, requires: [flag.c_king_kept], text: "Hallvard has started talking to the king of Conaille in the bilge, in signs. Neither of them will say what about." }
+- { who: ketill, when: fight, requires: ["year >= 831"], text: "\"You fight like a man with a name now,\" says Ketill, and you can't tell if it's praise." }
+- { who: ulf, when: hall, requires: [flag.married_gyda], text: "Ulf has made up a song about your wedding. Gyda has made him promise never to sing it again. He hums it." }
+- { who: bersi, when: sea, requires: [flag.c_ransomed], text: "Bersi has worked out how much the king of Conaille weighed, and how much silver he was ransomed for, and is now very interested in kings." }
