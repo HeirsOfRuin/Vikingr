@@ -80,12 +80,21 @@ export class Bot {
         return pick((a) => a.t === 'battle_auto')!;
       }
       case 'muster': {
+        if (state.service) return pick((a) => a.t === 'set_sail') ?? enabled[0]!.action;
         if (this.policy === 'homebody') return pick((a) => a.t === 'stay_home')!;
         return pick((a) => a.t === 'borrow_ship') ?? pick((a) => a.t === 'recruit') ?? pick((a) => a.t === 'refit') ?? pick((a) => a.t === 'provision') ?? pick((a) => a.t === 'set_sail') ?? enabled[0]!.action;
       }
       case 'return': {
+        if (state.service) return pick((a) => a.t === 'take_share')!;
         const how = state.loot > 600 ? 'generous' : this.policy === 'coward' ? 'mean' : 'fair';
         return pick((a) => a.t === 'share' && a.how === how)!;
+      }
+      case 'plunder': {
+        const p = state.pending!.t === 'plunder' ? state.pending!.plunder : null;
+        const limit = this.policy === 'reckless' ? 8.5 : this.policy === 'coward' ? 4 : 6.5;
+        if (p && p.alarm >= limit) return pick((a) => a.t === 'plunder' && a.what === 'leave')!;
+        if (p && this.policy === 'raider' && p.round === 1) return pick((a) => a.t === 'plunder' && a.what === 'captives')!;
+        return pick((a) => a.t === 'plunder' && a.what === 'grab')!;
       }
       case 'hall': return this.hall(state, content, opts);
       case 'place': return this.place(state, content, opts);
@@ -111,6 +120,8 @@ export class Bot {
     const pick = (pred: (a: Action) => boolean) => find(opts, pred)?.action;
     const at = state.at!;
     const doy = dateOf(state.day).doy;
+    // at another man's oar the captain decides: follow him, and haul up when he does
+    if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? opts.find((o) => o.enabled)!.action;
     const raid = pick((a) => a.t === 'raid');
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
@@ -150,14 +161,14 @@ export interface RunResult {
 }
 
 /** Plays one life (or `years` of it). Errors on dead ends and softlocks instead of hanging. */
-export function playLife(content: ContentBundle, policy: Policy, seed: number, years: number, background = 'younger_son'): RunResult {
+export function playLife(content: ContentBundle, policy: Policy, seed: number, years: number, background = 'younger_son', until?: (s: GameState) => boolean): RunResult {
   let state = newGame(content, { background, seed, name: 'Bot' });
   const bot = new Bot(policy, new RngCursor(seedRng(seed ^ 0x5bd1e995)));
   const startYear = dateOf(state.day).year;
   let steps = 0;
   let lastDay = state.day;
   let still = 0;
-  while (!state.death && dateOf(state.day).year < startYear + years) {
+  while (!state.death && dateOf(state.day).year < startYear + years && !until?.(state)) {
     const a = bot.choose(state, content);
     if (!a) return { policy, seed, steps, years: dateOf(state.day).year - startYear, state, error: `dead end on ${screenOf(state)} at day ${state.day}` };
     try {

@@ -7,11 +7,12 @@
   attrs: { str: 3, agi: 2, end: 2, wit: 2, pre: 2 }
   skills: { weapons: 2, shield: 2, seamanship: 1, command: 1, speech: 1 }
   honour: 1
-  silver: 24
+  silver: 0
   men: [ketill, ulf, hallvard, bersi]
-  crew: 22
-  ship: karvi
-  start_scene: p1_start_younger
+  crew: 36
+  ship: snekkja
+  start_scene: b_ship_home
+  service: { captain: Ásgeir, ship_name: the Raven }
 - id: outlaw
   label: The outlaw
   desc: You killed a man at sixteen and the district declared you outlaw. You have a deed already, a blood feud, and no harbour to call home.

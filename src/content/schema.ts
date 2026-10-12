@@ -30,21 +30,35 @@ export const condInput: z.ZodType<CondInput> = z.lazy(() =>
   z.union([z.string(), z.array(condInput), z.object({ all: z.array(condInput) }), z.object({ any: z.array(condInput) }), z.object({ not: condInput })]),
 );
 
-export const effect = z.union([
+export type Effect = z.infer<typeof baseEffect> | { if: CondInput; then: Effect[]; else?: Effect[] };
+const baseEffect = z.union([
   z.object({ set: z.string() }).strict(),
   z.object({ clear: z.string() }).strict(),
   z.object({ add: z.record(z.string(), z.number()) }).strict(),
   z.object({ deed: z.object({ type: id, text: z.string().optional(), weight: z.number().optional(), witnesses: z.number().int().optional() }).strict() }).strict(),
   z.object({ injury: id }).strict(),
-  z.object({ man: z.object({ id, loyalty: z.number().optional(), join: z.boolean().optional(), leave: z.boolean().optional() }).strict() }).strict(),
+  z.object({ man: z.object({ id, loyalty: z.number().optional(), join: z.boolean().optional(), leave: z.boolean().optional(), swear: z.boolean().optional(), nickname: z.string().optional() }).strict() }).strict(),
   z.object({ fight: z.object({ foe: id, kind: z.enum(['duel', 'holmgang']), lethal: z.boolean(), win: id.optional(), lose: id.optional() }).strict() }).strict(),
-  z.object({ battle: z.object({ foe: id, men: z.number().int(), terrain: z.enum(TERRAINS), win: id.optional(), lose: id.optional() }).strict() }).strict(),
-  z.object({ queue: z.object({ scene: id, days: z.number().int().min(1) }).strict() }).strict(),
+  z.object({ battle: z.object({ foe: id, men: z.number().int(), terrain: z.enum(TERRAINS), raid: z.boolean().optional(), win: id.optional(), lose: id.optional(), parted: id.optional() }).strict() }).strict(),
+  z.object({ queue: z.object({ scene: id, days: z.number().int().min(0) }).strict() }).strict(),
   z.object({ know: id }).strict(),
   z.object({ journal: z.string() }).strict(),
   z.object({ days: z.number().int().min(0) }).strict(),
+  z.object({ nickname: z.string() }).strict(),
+  z.object({ boast: id }).strict(),
+  z.object({ keep_boast: id }).strict(),
+  z.object({ command: z.literal(true) }).strict(),
+  z.object({ route: z.array(id) }).strict(),
+  z.object({ voyage: id }).strict(),
+  z.object({ captives: z.number().int() }).strict(),
+  z.object({ shares: z.number().min(0) }).strict(),
+  z.object({ plunder: z.object({ next: id.optional() }).strict() }).strict(),
+  z.object({ position: z.enum(['front', 'wall', 'rear']) }).strict(),
+  z.object({ captain: z.string() }).strict(),
+  z.object({ ship: z.object({ type: id, name: z.string(), crew: z.number().int().min(0) }).strict() }).strict(),
 ]);
-export type Effect = z.infer<typeof effect>;
+/** An effect, or a conditional list of them: { if, then, else }. */
+export const effect: z.ZodType<Effect> = z.lazy(() => z.union([baseEffect, z.object({ if: condInput, then: z.array(effect), else: z.array(effect).optional() }).strict()]));
 
 const check = z.object({ skill: z.enum(SKILLS), attr: z.enum(ATTRS), difficulty: z.number().int() }).strict();
 const outcome = z.object({ text: z.string().optional(), effects: z.array(effect).optional(), next: id.optional() }).strict();
@@ -86,6 +100,7 @@ export const scene = z.object({
   id,
   kind: z.enum(['spine', 'pool', 'queued', 'place', 'phase']),
   title: z.string(),
+  when: z.string().optional(),
   placeholder: z.boolean().optional(),
   calibration: z.boolean().optional(),
   art: sceneArt.optional(),
@@ -168,10 +183,24 @@ export const background = z.object({
   crew: z.number().int(),
   ship: id,
   start_scene: id,
+  /** Starts at another man's oar: the ship and crew are his, and the hero's men are bench-mates, not sworn. */
+  service: z.object({ captain: z.string(), ship_name: z.string() }).strict().optional(),
 }).strict();
 export type Background = z.infer<typeof background>;
 
 export const flagDef = z.object({ description: z.string() }).strict();
+
+export const boastDef = z.object({ id, text: z.string(), days: z.number().int().min(1) }).strict();
+export type BoastDef = z.infer<typeof boastDef>;
+export const fateDef = z.object({ id, chance: z.number().min(0).max(1), desc: z.string() }).strict();
+export type FateDef = z.infer<typeof fateDef>;
+export const banterLine = z.object({
+  who: id,
+  when: z.enum(['sea', 'fight', 'arrive', 'hall']),
+  requires: condInput.optional(),
+  text: z.string(),
+}).strict();
+export type BanterLine = z.infer<typeof banterLine>;
 
 export interface ContentBundle {
   hash: string;
@@ -189,4 +218,7 @@ export interface ContentBundle {
   scenes: Record<string, Scene>;
   names: string[];
   art: Record<string, ArtEntry>;
+  boasts: Record<string, BoastDef>;
+  fates: Record<string, FateDef>;
+  banter: BanterLine[];
 }

@@ -1,0 +1,145 @@
+# The muster (FRAME-PHASE2 §2.1): the jarl's landing, the Raven, the bench, the four bench-mates.
+- id: m_landing
+  kind: spine
+  art: muster
+  when: Spring, 830
+  title: The Raven
+  text: |
+    The jarl's landing smells of tar and wet rope and too many men. There are three ships drawn up on the shingle, and the biggest is the Raven: forty oars, a mast like a young pine, and a carved head on her stem that somebody has painted black and given red eyes.
+
+    Ásgeir Kolsson is standing on a sea-chest in the middle of it all, pointing at things. He is older than the man in the prow you remember, thicker in the neck, with grey in his beard, but he still stands as if the ground were a deck.
+
+    "Hall's boy," he says, when you come up. He looks you over the way your father looks at a calf. "You'll do. Find a bench. Find a chest. Find out who you're rowing next to, because you'll be smelling him till autumn."
+    [break]
+    You find out soon enough.
+
+    Ketill is the oldest man at the oars, grey all through, with forearms like ship's knees. "I rowed with your father," he says, "the year he went west and came back with nothing but a broken nose. Try to do better."
+
+    Ulf is your own age, near enough, with a grin like a split melon and a sword he can't stop touching. He tells you his whole life before you've got your chest open. It is mostly about girls and fights, and you suspect most of it is lies.
+
+    Hallvard is thin and quiet and wears a silver hammer on a thong round his neck. He watches the sky while the others talk.
+
+    Bersi is counting. He counts the oars, the men, the barrels of water and the sacks of meal, and he tells you what each man's share will be if the summer goes well, and then what it will be if it goes badly, and then what it will be if half of you die. He seems to like that number best.
+    [break]
+    "Prow benches or the middle?" says Ketill. "Prow men are first ashore and first in the wall. Ásgeir sees them. So does everybody with a spear."
+  choices:
+    - id: prow
+      text: Take a prow bench.
+      effects: [ { set: flag.m_prow }, { route: [shetland, orkney] }, { add: { man.ulf.loyalty: 1 } } ]
+      result: |
+        "Good," says Ulf, who has already taken the bench across from it. "Now there's two of us to be stupid."
+
+        Ketill takes the bench behind you without a word, and you understand that he will be watching your back all summer whether you want him to or not.
+      next: m_standout
+    - id: middle
+      text: Take a bench in the middle of the ship.
+      effects: [ { set: flag.m_middle }, { route: [shetland, orkney] }, { add: { man.bersi.loyalty: 1 } } ]
+      result: |
+        "Sensible," says Bersi, settling in beside you. "The middle men live longer and their share is the same."
+
+        Ulf calls you an old woman from the prow. Ketill says nothing, and takes the bench behind you anyway.
+      next: m_standout
+
+- id: m_standout
+  kind: spine
+  art: muster
+  when: Spring, 830
+  title: The loading
+  text: |
+    For three days you load. Water, meal, dried fish, a barrel of butter, spare oars, spare rope, a spare sail, the jarl's chest of trade-goods that nobody is allowed to open.
+
+    Ásgeir watches the new men. You can feel him doing it. Every captain does it, Ketill says: he is working out which of you will run.
+  choices:
+    - id: chest
+      text: Carry the jarl's chest aboard on your own.
+      check: { skill: craft, attr: str, difficulty: 5 }
+      next: m_farewell
+      success:
+        text: |
+          It takes two men to lift it, and you lift it alone, and walk it up the plank with your back cracking and your eyes watering, and set it down in the stern without dropping it.
+
+          Ásgeir says nothing. But you see him say something to Ketill afterwards, and Ketill nod.
+        effects: [ { set: flag.m_noticed } ]
+      failure:
+        text: |
+          You get it as far as the plank. Then your foot goes, and the chest goes, and the jarl's trade-goods go into the shallows along with most of your dignity.
+
+          It turns out to be full of soap. Ulf laughs until he has to sit down. "The first thing you've stolen for the jarl," he says, "and you washed it."
+        effects: [ { set: flag.m_soap } ]
+    - id: pull
+      text: Take the oar in the practice pull, against a man twice your age.
+      check: { skill: seamanship, attr: end, difficulty: 4 }
+      next: m_farewell
+      success:
+        text: |
+          Ásgeir sets the new men against the old in the fjord, one oar each side, pulling till one of you gives up. The man across from you has been rowing since before you were born.
+
+          He gives up first. It takes a long time, and you can't feel your hands afterwards, and he shakes one of them anyway.
+        effects: [ { set: flag.m_noticed }, { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: |
+          Ásgeir sets the new men against the old in the fjord. You last longer than you thought you would and nowhere near as long as you hoped.
+
+          "You'll learn," says the man across from you, not unkindly, and spits over the side.
+    - id: oar
+      text: Look at the steering-oar. The withy holding it looks worn.
+      check: { skill: craft, attr: wit, difficulty: 4 }
+      next: m_farewell
+      success:
+        text: |
+          You find Ásgeir and show him. The withy that binds the steering-oar to the hull is worn almost through on the inside, where nobody would see it until it parted in a sea.
+
+          He looks at it a long time. Then he looks at you. "Make a new one," he says. "And if it breaks, I'll drown you in it."
+        effects: [ { set: flag.m_noticed }, { add: { skill.craft: 1 } } ]
+      failure:
+        text: |
+          You show Ásgeir. He looks at the withy, and then at you. "It's been like that three summers," he says. "It'll do one more."
+
+          It probably will. You still don't like the look of it.
+    - id: quiet
+      text: Keep your head down and do what you're told.
+      effects: [ { add: { man.ketill.loyalty: 1 } } ]
+      result: |
+        You load what you are told to load and carry what you are told to carry, and say nothing to anybody.
+
+        "Good," says Ketill, at the end of the third day. "The ones who try too hard in the spring are usually the ones I'm burying in the summer."
+      next: m_farewell
+
+- id: m_farewell
+  kind: spine
+  art: home_fjord
+  when: Spring, 830
+  title: Leaving
+  text: |
+    On the last morning half the district comes down to the landing to see the ships go.
+    [if flag.b_blessing]
+    Your father is there, with your mother. He doesn't say anything. He doesn't need to: his shield is on your arm.
+    [elif flag.b_sword]
+    Your father is there. He looks at the sword at your hip, and then at you, and nods once, and that is the end of it.
+    [elif flag.b_slipped_away]
+    Your mother is there, and she is very angry, and she has brought you a sack of food anyway.
+    [else]
+    Your father is there, and your mother, and they stand a little apart from the crowd.
+    [/if]
+    [if flag.b_gyda_promise]
+    Gyða is there too, at the back, with her arms folded. She doesn't wave. She watches you all the way out of the fjord.
+    [/if]
+    [if fate.ormr_dies]
+    Ormr hasn't come down. He doesn't leave his corner now.
+    [else]
+    Ormr has come down, which is a long way for him, and sits on a rock with his stump in his lap, watching the oars like a man watching a fire.
+    [/if]
+  choices:
+    - id: look
+      text: Look back until the fjord takes them.
+      result: |
+        You look back until the headland comes between you and them. Then there is nothing behind you but water, and Ulf is singing something filthy at the oar across from you, and Ásgeir is shouting the stroke.
+
+        You are going west.
+    - id: dont
+      text: Don't look back.
+      effects: [ { add: { man.ulf.loyalty: 1 } } ]
+      result: |
+        You don't look back. You put your back into the oar and keep your eyes on the man in front of you, and when Ulf asks you if you're crying you tell him it's spray.
+
+        "It's spray for me too," says Ulf, after a while.

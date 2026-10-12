@@ -3,17 +3,106 @@ outlawed: { description: Outlawed from the home district }
 leysingi: { description: A freedman's son }
 skald: { description: A skald in your household }
 owes_jarl: { description: Owes the jarl a share of this season's plunder for the loan of a ship }
-# calibration scenes (content/scenes/calibration)
-cal_ormr_worth: { description: Asked Ormr whether it was worth it }
-cal_ormr_trick: { description: Ormr taught you to turn a blade on the shield rim }
-cal_ormr_tree: { description: Asked Ormr about the monks' god on the tree }
-cal_ormr_seax: { description: Ormr gave you his seax }
-cal_iona_straight: { description: Told Ásgeir to go straight in }
-cal_iona_north: { description: Ásgeir took your advice and landed in the north cove }
-cal_iona_rebuffed: { description: Ásgeir laughed off your advice }
-cal_iona_warned: { description: You read the bell as an alarm }
-cal_iona_first: { description: First through the gate at Iona }
-cal_iona_ketill: { description: Went through the gate behind Ketill }
-cal_iona_ship: { description: Stayed with the ship at Iona }
-cal_hall: { description: How loud the hall is (0 to 2) }
-cal_score: { description: Exchanges won in the Yule flyting }
+# ---- the year 830 (content/scenes/830) ----
+# boyhood
+b_watched_oars: { description: "As a boy, watched the men unload the ship" }
+b_watched_swords: { description: "As a boy, watched the swords" }
+b_heard_stories: { description: "As a boy, listened to the old men's stories" }
+b_asgeir_coin: { description: "As a boy, Ásgeir gave him a coin at the scales" }
+b_fought: { description: "Fought Hallbjörn at twelve" }
+b_tricked: { description: "Outwitted Hallbjörn at twelve" }
+b_yielded: { description: "Took Hallbjörn's beating at twelve" }
+b_told: { description: "Told his father about Hallbjörn" }
+b_ormr_worth: { description: "Asked Ormr whether it was worth it" }
+b_ormr_trick: { description: "Ormr taught him to turn a blade on the shield rim" }
+b_ormr_tree: { description: "Asked Ormr about the monks' god on the tree" }
+b_ormr_seax: { description: "Ormr gave him his seax" }
+b_blessing: { description: "Left home with his father's blessing and shield" }
+b_sword: { description: "Took his grandfather's sword without asking" }
+b_gyda_promise: { description: "Made Gyða a promise before he left" }
+b_slipped_away: { description: "Left home before dawn without a word" }
+# the muster and the crossing
+m_prow: { description: "Took a prow bench in the Raven" }
+m_middle: { description: "Took a bench in the middle of the Raven" }
+m_noticed: { description: "Ásgeir noticed him at the loading" }
+m_soap: { description: "Dropped the jarl's chest of soap in the fjord" }
+s_seasick: { description: "Was seasick on the first day out" }
+s_saved_ulf: { description: "Saved Ulf at sea" }
+s_caught_bersi: { description: "Caught Bersi cheating at dice" }
+# Birsay
+o_hearth: { description: "Was sick in Harek's hearth at Birsay" }
+o_kalfr: { description: "Brought Kálfr the skald aboard at Birsay" }
+o_ingibjorg: { description: "Ingibjörg of Birsay tied a red thread on his wrist" }
+o_listened: { description: "Listened to the old men at Birsay" }
+o_iona: { description: "The Raven goes to Iona before Bangor" }
+o_bangor_first: { description: "The Raven goes straight to Bangor" }
+o_spoke: { description: "Spoke at the ship's council at Birsay" }
+# Iona
+i_straight: { description: "Told Ásgeir to go straight in at Iona" }
+i_north: { description: "Ásgeir took his advice and landed in the north cove" }
+i_rebuffed: { description: "Ásgeir laughed off his advice at Iona" }
+i_warned: { description: "Read the bell at Iona as an alarm" }
+i_first: { description: "First through the gate at Iona" }
+i_ketill: { description: "Went through the gate behind Ketill" }
+i_ship: { description: "Stayed with the ship at Iona" }
+i_captives: { description: "Took the young monks of Iona as captives" }
+i_mercy: { description: "Let the old monks of Iona go" }
+i_hid_silver: { description: "Hid a reliquary from the common heap at Iona" }
+i_caught_stealing: { description: "Caught hiding a reliquary at Iona; half shares" }
+i_colman_spared: { description: "Gave Colmán back his pages" }
+i_colman_taken: { description: "Took Brother Colmán captive" }
+i_burned_books: { description: "Burned the books of Iona" }
+i_colman_read: { description: "Colmán read him the psalm of the valley" }
+# Bangor
+bg_scouted: { description: "Scouted the Ulster levy by night" }
+bg_seen: { description: "The levy was warned before Bangor" }
+bg_traders: { description: "Colmán talked the Raven up the strand as traders" }
+bg_colman_freed: { description: "Colmán was set free at Bangor" }
+bg_colman_betrayed: { description: "Colmán warned the strand at Bangor" }
+bg_covered: { description: "Stood at Ásgeir's shoulder at Bangor" }
+bg_front: { description: "Stood in the front rank at Bangor" }
+bg_command: { description: "Took command of the Raven at Bangor" }
+bg_steinarr: { description: "Steinarr took the Raven after Bangor" }
+bg_challenged: { description: "Fought Steinarr for the steering-oar" }
+bg_mocked: { description: "Laughed at for asking Ásgeir for a ship" }
+bg_left: { description: "Has left Bangor for home" }
+bg_ulf_pulled: { description: "Ulf dragged him out of the surf at Bangor" }
+asgeir_patron: { description: "Ásgeir will speak for him to the jarl" }
+# home
+h_brother_close: { description: "Embraced Hallbjörn at the homecoming" }
+h_brother_debt: { description: "Knows the farm is in debt to Bárð" }
+h_brother_cold: { description: "Hallbjörn was cold at the homecoming" }
+h_brother_envy: { description: "Hallbjörn envies his silver" }
+h_brother_feud: { description: "Said something to Hallbjörn that can't be taken back" }
+gyda_courting: { description: "Courting Gyða Bárðardóttir" }
+gyda_lost: { description: "Gyða is to marry Hallbjörn" }
+h_captives_sold: { description: "Let the trader have the captives" }
+h_thralls: { description: "Kept the captives as thralls on the farm" }
+colman_sold: { description: "Colmán was sold to the Kaupang trader" }
+colman_kept: { description: "Kept Colmán in the household" }
+colman_freed_home: { description: "Paid Colmán's passage to Dublin" }
+ormr_dead: { description: "Ormr One-Hand died in the winter of 830" }
+# Yule and the holmgang
+y_hall: { description: "How loud the Yule hall is (0 to 2)" }
+y_score: { description: "Exchanges won in the Yule flyting" }
+y_won: { description: "Won the Yule flyting" }
+y_jarl_ended: { description: "The jarl ended the flyting" }
+y_challenged: { description: "Challenged Thorgils to the holmgang" }
+y_ketill_peace: { description: "Ketill made Thorgils unsay his words" }
+y_withdrew: { description: "Let the jarl's law settle the holmgang with silver" }
+y_holm_won: { description: "Beat Thorgils on the cloak" }
+y_holm_lost: { description: "Lost to Thorgils on the cloak" }
+y_asked_death: { description: "Asked the völva how he will die" }
+y_paid_volva: { description: "Paid the völva" }
+thorgils_paid: { description: "Paid the Hrappssons for Thorgils's leg" }
+thorgils_feud: { description: "Refused the Hrappssons: a feud" }
+thorgils_thing_won: { description: "The Thing said the cloak settled it" }
+thorgils_thing_lost: { description: "The Thing made him pay the Hrappssons" }
+father_paid: { description: "Put three marks in his father's hand" }
+# the dead
+mourned_ketill: { description: "Said the words over Ketill" }
+mourned_ulf: { description: "Named Ulf over his pyre" }
+mourned_hallvard: { description: "Buried Hallvard with his hammer" }
+hallvard_hammer: { description: "Wears Hallvard's hammer" }
+bersi_silver_sent: { description: "Sent Bersi's silver to his woman in Hordaland" }
+bersi_silver_kept: { description: "Put Bersi's silver in the common heap" }

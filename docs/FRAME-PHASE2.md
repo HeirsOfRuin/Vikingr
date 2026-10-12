@@ -1,6 +1,6 @@
 # Phase 2: The Year 830, a Frame for Approval
 
-**Status:** approved by the author (2026-10-11), all seven decisions as recommended. The calibration scenes are written (`content/scenes/calibration/`, playable from the title screen). The rest of the year waits for the author's verdict on them.
+**Status:** approved by the author (2026-10-11), all seven decisions as recommended. Calibration approved, with the duel cut to three moves. **The year is built** (2026-10-12): `content/scenes/830/`; see DESIGN "Phase 2 as built". Waiting on the author's playtest.
 
 **Fixed by the author:**
 - The year is 830; the hero is 16.

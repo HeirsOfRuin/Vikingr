@@ -17,6 +17,12 @@ export function formatSilver(ortug: number): string {
   return (neg ? '-' : '') + parts.join(' ');
 }
 
+/** For tight spaces (the top bar): once there are marks, the ørtugar are dropped. */
+export function formatSilverShort(ortug: number): string {
+  const n = Math.abs(Math.round(ortug));
+  return n >= ORTUG_PER_MARK ? formatSilver(Math.sign(ortug) * (n - (n % ORTUG_PER_EYRIR))) : formatSilver(ortug);
+}
+
 /** Parses "2m", "3a", "4o", "2m3a" into ørtugar. Plain numbers are ørtugar. */
 export function parseSilver(text: string): number {
   const t = text.trim();

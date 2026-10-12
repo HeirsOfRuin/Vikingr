@@ -1,0 +1,35 @@
+# Crew banter (FRAME-PHASE2 §4.6): one short line at a time, from a man who is alive, at a moment that fits.
+# when: sea (a day's rowing), fight (after a fight), arrive (making land), hall (the winter benches).
+# Lines heard this year are skipped while fresh ones remain.
+
+# ---- at sea ----
+- { who: ulf, when: sea, text: "Ulf asks Hallvard what the gulls are saying. Hallvard tells him. Ulf rows in silence for an hour." }
+- { who: ulf, when: sea, requires: [nickname], text: "Ulf has been practising your name all morning, in different voices. The one he likes best is the one the jarl would use." }
+- { who: ulf, when: sea, requires: ["!nickname"], text: "\"When I get my name,\" says Ulf, \"it'll be something with blood in it.\" Bersi suggests Ulf Nosebleed. It takes Ketill to separate them." }
+- { who: ketill, when: sea, text: "Ketill rows the way other men breathe. When you look back at him he nods at your oar: lower, longer. He is right. He is always right about oars." }
+- { who: ketill, when: sea, requires: [flag.bg_command], text: "\"Your father would have done it differently,\" Ketill says, watching you at the steering-oar. A long pause. \"Worse.\"" }
+- { who: hallvard, when: sea, text: "Hallvard watches a raven cross the bow, left to right, and says nothing for so long that the whole ship starts to worry." }
+- { who: hallvard, when: sea, requires: [flag.i_colman_read], text: "\"The valley,\" Hallvard says, out of nowhere, at the oar behind you. \"The one the monk read about. Where do you think it is?\"" }
+- { who: bersi, when: sea, text: "Bersi has worked out what each man's share will be if the wind holds, if it doesn't, and if Ulf falls overboard. The last one is the best." }
+- { who: bersi, when: sea, requires: ["loot >= 200"], text: "Bersi keeps glancing at the sacks under the stern-deck, the way a man glances at a woman across a hall." }
+
+# ---- after a fight ----
+- { who: ulf, when: fight, text: "Ulf is laughing and can't stop, and there are tears on his face, and he doesn't seem to know about either." }
+- { who: ulf, when: fight, text: "\"Did you see me?\" says Ulf. \"Tell me you saw me.\" You saw him. You tell him so. He makes you tell him again." }
+- { who: ketill, when: fight, text: "Ketill sits on a rock and cleans his axe, slowly, and doesn't talk to anyone. When he's finished he cleans yours." }
+- { who: ketill, when: fight, requires: [flag.i_first], text: "\"First through the gate,\" says Ketill, binding your arm. \"Do it again and I'll break your legs myself, to save the Irish the trouble.\"" }
+- { who: hallvard, when: fight, text: "Hallvard goes among the dead with his hammer in his fist, and stops by each of ours, and says something you can't hear." }
+- { who: bersi, when: fight, text: "Bersi is already going through the dead men's purses. \"They won't need it,\" he says, when he sees you looking. \"And we will.\"" }
+
+# ---- making land ----
+- { who: ulf, when: arrive, text: "Ulf is first over the side, as always, and goes in up to the chest, as always, and comes up swearing, as always." }
+- { who: bersi, when: arrive, text: "\"Cheese,\" says Bersi, sniffing the land wind. \"Somebody's making cheese. I can smell it.\" He is almost always right about cheese." }
+- { who: hallvard, when: arrive, text: "Hallvard pours a little ale into the sea before he steps ashore, for whoever is watching." }
+- { who: ketill, when: arrive, text: "Ketill walks up the beach and looks at the sky and the hills and the smoke, slowly, one after the other, and then comes back and tells you how many men live here." }
+
+# ---- the winter benches ----
+- { who: ulf, when: hall, text: "Ulf has a girl at the next farm, he says. Then he has a girl at the farm after that. By midwinter he has worked his way up the whole fjord, in the telling." }
+- { who: bersi, when: hall, text: "Bersi has lent Ulf two ørtugar at a rate of interest that would make a Frisian blush. Ulf hasn't noticed." }
+- { who: hallvard, when: hall, text: "Hallvard carves runes on a stick by the fire, and when Ulf asks what they say, he puts the stick in the fire." }
+- { who: ketill, when: hall, text: "Ketill sits by your father in the evenings, and they talk about a summer twenty years ago, and both of them laugh in the same places." }
+- { who: ketill, when: hall, requires: [flag.ormr_dead], text: "\"Ormr would have hated a quiet death,\" says Ketill. \"He'll have told them in the hall that he went down fighting.\"" }

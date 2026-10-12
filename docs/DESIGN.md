@@ -811,9 +811,56 @@ The front rank buys fame with risk, as §1 intends.
 5. **Missing systems:** wounds on named men, nicknames, flyting, boasts, omens, feuds, marriage and rank are designed but not built.
 6. **All 9 scenes are placeholders**, marked as such.
 
+## Phase 2 as built: the year 830 (2026-10-12)
+
+### What exists
+- **The younger son's year, written in full:** 11 files in `content/scenes/830/`, from the boyhood (age 8) to the spring of 831.
+  - Boyhood (4 scenes), the muster (3), the crossing pool (8), Birsay (2), Iona (7), Bangor (7), the way home and the homecoming (5), Yule (7), the holmgang (4), spring 831 (2), and a mourning scene for each of the four bench-mates.
+  - 24 banter lines.
+  - The calibration scenes have been folded into the real year and retired. The title screen's preview list is now **Play from a chapter** (Iona, Bangor, Yule), for playtesting; nothing played there is saved.
+- **Bangor is the gate:**
+  - Ásgeir's fate is rolled at the start of a life (`fate.asgeir_falls`, 50%).
+  - Standing at his shoulder turns a death into a maiming.
+  - **Command routes:** a speech, the deeds the men saw, Ketill's word, first blood against Steinarr, or Ásgeir naming him. Otherwise he serves on, under Ásgeir or Steinarr.
+- **Spring 831:**
+  - **In command:** he takes the Raven out again.
+  - **At the oar:** he can get the jarl's old karvi through Ásgeir, or by asking himself; buy a karvi; or take his bench again.
+  - The bench-mates swear to him, or leave, by loyalty.
+- **Engine additions this round:**
+  - effects: `captain` and `ship`; `queue` with zero days;
+  - service pacing: the captain sails on 1 May and hauls up on 1 September, and goes west the way he went last year when no scene says otherwise;
+  - first-blood duels leave light wounds only;
+  - his grandfather's sword hits harder;
+  - spring scenes open after the chapter card has been read.
+- **Instruments:**
+  - `npm run measure:830`;
+  - a smoke test that plays the whole year in the browser (26 screenshots);
+  - 8 new tests (42 in all);
+  - the style lint now reads banter, boasts and effects nested inside `if`.
+
+### Measurements (300 lives per policy; scene choices are random, so this is a careless player)
+| | Raider | Random |
+|---|---|---|
+| Alive at spring 831 | 97% | 95% |
+| Ásgeir's fate on him | 44% | 45% |
+| Took command at Bangor | 21% | 15% |
+| A ship of his own in 831 | 40% | 33% |
+| Grautr (Porridge) | 38% | 38% |
+| Other names | 11 others, 1–11% each | the same |
+
+Economy: `docs/ECONOMY.md`.
+
+### Known gaps
+1. **Grautr is the commonest name**, because a careless player loses the flyting. A deliberate player wins it more often. Watch this in the playtest.
+2. **Hand play against auto-resolve** in the shield-wall has not been re-measured since the economy and Bangor changes.
+3. **Not yet ported from Adalia:** the scripted plans and transcripts.
+4. **The outlaw and the freedman's son** still start in the Phase 1 sandbox, with placeholder scenes.
+5. **Art still needed** for regeneration and for new scenes, as listed in `docs/ART.md`.
+
 ## Decisions log
 | Date | Decision |
 |---|---|
+| 2026-10-12 | The year 830 built to the approved frame. Economy pass: Bangor's wealth is 1,500 and Iona's 720; at another man's oar, a quarter of the plunder goes to the ship and three quarters to the oars; captives sell for 24. Calibration scenes retired into the real year; the title preview became chapter jumps for playtesting. |
 | 2026-10-11 | Calibration verdict: loved the voice, look and animation; the duel had too many options. Duel cut to three moves (§11.1). Fights now run 6–8 exchanges. |
 | 2026-10-11 | Phase 2 frame approved as recommended (oarsman start, command won at Bangor; 4 boyhood scenes; captives with consequences; Ásgeir falls in about half of runs; a nickname by Yule; Gyða in the prologue). Calibration round built: Runestone reskin (bundled Alegreya fonts, pixel tab icons, knotwork), the scene renderer animating the converted art (fire, glow, water, smoke, sparks, gulls, a crowd that laughs with the hall), `[break]` Continue pages, and three calibration scenes (Ormr's night; Iona, the approach and the landing; the Yule flyting, ending in a holmgang or a nickname). Scene band is 400 × 160. |
 | 2026-10-11 | Next-phase direction from the author: the Adalia process (all prose drafted by Claude; frame, then calibration, then build, then playtest). Goals: a sleek UI, a unique Viking visual identity, fine pixel-art scenes, animated battles and feasts, a campaign with real variety. Decided: **Runestone** look (§19a); **hybrid art** (Josh supplies sources, `tools/art.ts` converts them to the master palette, animation in code; §19b); **Phase 2 slice is the western raid route only**, with variety from approaches and pools, and campaign variety recorded as goals (§21a). |

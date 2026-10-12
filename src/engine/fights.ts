@@ -6,13 +6,16 @@ import type { RngCursor } from './rng';
 import { makeDuel, sideFromFighter } from './duel';
 import { effAttr, hpMax, addWound, woundFor, kill, learn } from './hero';
 import { addDeed } from './fame';
-import { aliveMen, addLoyalty, clampMorale } from './crew';
+import { aliveMen, addLoyalty, clampMorale, fitMen } from './crew';
+import { banter } from './banter';
+import { startPlunder } from './plunder';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
 const HERO_ARMOUR = 1;
-const HERO_WEAPON = 2;
+/** A plain spear or axe; his grandfather's sword cuts better (the boyhood scene "father's word"). */
+const heroWeapon = (state: GameState): number => (state.flags.b_sword ? 3 : 2);
 
 export function heroDuelSide(state: GameState, content: ContentBundle, kind: DuelState['kind']): DuelSide {
   const end = effAttr(state, content, 'end');
@@ -29,7 +32,7 @@ export function heroDuelSide(state: GameState, content: ContentBundle, kind: Due
     weapons: state.hero.skills.weapons,
     shield: state.hero.skills.shield,
     armour: HERO_ARMOUR,
-    weapon: HERO_WEAPON,
+    weapon: heroWeapon(state),
     habits: {},
     bled: false,
     hits: [],
@@ -54,7 +57,8 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
   const lines: string[] = [];
   state.stats.duels += 1;
   state.hero.hp = Math.max(0, d.hero.hp);
-  for (const h of d.hero.hits) if (h >= 5) addWound(state, content, woundFor(rng, h >= 7), `the fight with ${foe.name}`);
+  // a fight to first blood leaves scars, not cripples
+  for (const h of d.hero.hits) if (h >= 5) addWound(state, content, woundFor(rng, d.lethal && h >= 7), `the fight with ${foe.name}`);
   const lw = learn(state, 'weapons', 4);
   const ls = learn(state, 'shield', 3);
   let next: string | undefined;
@@ -90,7 +94,7 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
         return;
       }
       state.hero.hp = 1;
-      addWound(state, content, woundFor(rng, true), `the fight with ${foe.name}`);
+      addWound(state, content, woundFor(rng, d.lethal), `the fight with ${foe.name}`);
       state.honour = Math.max(-10, state.honour - 1);
       lines.push(`${foe.name} beat you. You live, which is more than he meant.`);
       next = d.lose;
@@ -116,7 +120,7 @@ export function startBattle(
 ): void {
   const foe = content.foes[opts.foe];
   if (!foe) throw new Error(`unknown foe ${opts.foe}`);
-  const named = aliveMen(state).map((m) => ({ id: m.id, name: m.name, slot: m.slot, weapons: m.weapons, down: false, hurt: false }));
+  const named = fitMen(state).map((m) => ({ id: m.id, name: m.name, slot: m.slot, weapons: m.weapons, down: false, hurt: false }));
   const ours = state.crew.men + named.length;
   const b: BattleState = {
     foeId: foe.id,
@@ -159,6 +163,15 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
       m.diedOn = state.day;
       lines.push(`${m.name} is dead.`);
       journal(state, `${m.name} fell${b.place ? ' at ' + (content.places[b.place]?.name ?? b.place) : ''}.`);
+      // a death is mourned, if a scene has been written for it
+      if (content.scenes[`mourn_${m.id}`]) state.queue.push({ scene: `mourn_${m.id}`, day: state.day + 1 });
+    }
+  }
+  for (const n of b.named.filter((x) => x.hurt && !x.down)) {
+    const m = state.men.find((x) => x.id === n.id);
+    if (m) {
+      m.hurtUntil = state.day + 25 + Math.floor(rng.float() * 20);
+      lines.push(`${m.name} is hurt, and will sit out a fight or two.`);
     }
   }
   const crewLost = Math.max(0, b.lost - namedLost.length);
@@ -210,7 +223,14 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     } else addDeed(state, content, { type: d.type, text: `${d.text} at ${where}`, witnesses });
   }
 
-  // plunder
+  // plunder: a raid you command goes on to the plunder rounds; in another man's ship, he divides it
+  if (b.context === 'raid' && b.place && won && !state.service) {
+    const pl = content.places[b.place]!;
+    lines.unshift(`${pl.name} is yours for the afternoon.`);
+    clampMorale(state);
+    startPlunder(state, b.place, lines, b.win);
+    return;
+  }
   if (b.context === 'raid' && b.place) {
     const ps = state.places[b.place]!;
     const pl = content.places[b.place]!;
@@ -241,8 +261,11 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   } else {
     lines.unshift(won ? 'The field is yours.' : b.over === 'lost' ? 'You are beaten.' : 'Neither side holds the field.');
   }
+  const talk = banter(state, content, rng, 'fight', 0.7);
+  if (talk) lines.push(talk);
   clampMorale(state);
-  state.pending = { t: 'report', title: won ? 'Victory' : b.over === 'lost' ? 'Defeat' : 'The fight is broken off', lines, next: won ? b.win : b.lose };
+  const next = won ? b.win : b.over === 'lost' ? b.lose : b.parted ?? b.lose;
+  state.pending = { t: 'report', title: won ? 'Victory' : b.over === 'lost' ? 'Defeat' : 'The fight is broken off', lines, next };
 }
 
 /** A raid on a place: the approach decides how many of the defenders are awake (Phase 1: one roll). */

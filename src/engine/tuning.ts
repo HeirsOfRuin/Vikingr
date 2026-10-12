@@ -12,6 +12,8 @@ export const SAILING_DOY = 120; // 1 May: the normal start of the sailing season
 export const LATE_SEASON_DOY = 243; // 1 September: may end the season at home
 export const FORCE_RETURN_DOY = 288; // 15 October: at home on or after this, the season ends
 export const WINTER_DOY = 304; // 1 November
+/** Where another man's ship goes when no scene has said otherwise. */
+export const SERVICE_ROUTE = ['orkney', 'iona', 'bangor'] as const;
 export const HALL_ACTIONS = 5;
 export const HALL_ACTION_DAYS = 24;
 

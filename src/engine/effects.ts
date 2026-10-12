@@ -6,6 +6,9 @@ import { addDeed } from './fame';
 import { addWound, heal } from './hero';
 import { addLoyalty, clampMorale, newMan } from './crew';
 import { startDuel, startBattle } from './fights';
+import { startVoyage } from './voyage';
+import { startPlunder } from './plunder';
+import { test } from './conditions';
 import { journal } from './journal';
 
 function addTo(state: GameState, path: string, n: number): void {
@@ -30,6 +33,10 @@ function addTo(state: GameState, path: string, n: number): void {
 
 export function applyEffects(state: GameState, content: ContentBundle, rng: RngCursor, effects: Effect[] | undefined): void {
   for (const e of effects ?? []) {
+    if ('if' in e) {
+      applyEffects(state, content, rng, test(e.if, state, content) ? e.then : e.else);
+      continue;
+    }
     if ('set' in e) state.flags[e.set.replace(/^flag\./, '')] = 1;
     else if ('clear' in e) delete state.flags[e.clear.replace(/^flag\./, '')];
     else if ('add' in e) for (const [k, v] of Object.entries(e.add)) addTo(state, k, v);
@@ -45,12 +52,59 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         journal(state, `${m.name} left your service.`);
       }
       if (m && e.man.loyalty) addLoyalty(m, e.man.loyalty);
+      if (m && e.man.swear && !m.sworn && m.alive) {
+        m.sworn = true;
+        journal(state, `${m.name} swore his oath to you.`);
+      }
+      if (m && e.man.nickname) {
+        m.nickname = e.man.nickname;
+        journal(state, `${m.name} is called ${e.man.nickname} now.`);
+      }
     } else if ('fight' in e) startDuel(state, content, e.fight.foe, e.fight.kind, e.fight.lethal, e.fight.win, e.fight.lose);
-    else if ('battle' in e) startBattle(state, content, { ...e.battle, context: state.voyage ? 'sea' : 'scene', place: state.at });
+    else if ('battle' in e) {
+      const { raid, parted, ...b } = e.battle;
+      startBattle(state, content, { ...b, context: raid ? 'raid' : state.voyage ? 'sea' : 'scene', place: state.at });
+      if (parted && state.pending?.t === 'battle') state.pending.battle.parted = parted;
+      if (raid && state.at && !state.seasonRaids.includes(state.at)) state.seasonRaids.push(state.at);
+    }
     else if ('queue' in e) state.queue.push({ scene: e.queue.scene, day: state.day + e.queue.days });
     else if ('know' in e) { if (!state.known.includes(e.know)) state.known.push(e.know); }
     else if ('journal' in e) journal(state, e.journal);
     else if ('days' in e) { state.day += e.days; heal(state, content, e.days); }
+    else if ('nickname' in e) {
+      state.hero.nickname = e.nickname;
+      journal(state, `Men call you ${e.nickname} now.`);
+    } else if ('boast' in e) {
+      const def = content.boasts[e.boast]!;
+      if (!state.boasts.some((b) => b.id === e.boast)) state.boasts.push({ id: e.boast, sworn: state.day, due: state.day + def.days, state: 'open' });
+      journal(state, `You swore over the cup: ${def.text}`);
+    } else if ('keep_boast' in e) {
+      const b = state.boasts.find((x) => x.id === e.keep_boast && x.state === 'open');
+      if (b) {
+        b.state = 'kept';
+        addDeed(state, content, { type: 'boast_kept', text: `Kept his boast: ${content.boasts[b.id]!.text}`, witnesses: state.crew.men });
+      }
+    } else if ('command' in e) {
+      if (state.service) {
+        journal(state, `You took command of ${state.ships[0]?.name ?? 'the ship'}.`);
+        state.service = null;
+      }
+    } else if ('route' in e) {
+      if (state.service) state.service.route = [...e.route];
+    } else if ('voyage' in e) {
+      if (state.at && state.at !== e.voyage) startVoyage(state, content, e.voyage, true);
+    } else if ('captives' in e) state.captives = Math.max(0, state.captives + e.captives);
+    else if ('shares' in e) { if (state.service) state.service.shares = e.shares; }
+    else if ('plunder' in e) { if (state.at) startPlunder(state, state.at, [], e.plunder.next); }
+    else if ('position' in e) state.position = e.position;
+    else if ('captain' in e) { if (state.service) state.service.captain = e.captain; }
+    else if ('ship' in e) {
+      // a ship of his own, in place of the bench in another man's: the old crew stays with the old ship
+      state.ships = [{ id: `ship${state.day}`, type: e.ship.type, name: e.ship.name, hull: 80 }];
+      state.crew.men = e.ship.crew;
+      state.service = null;
+      journal(state, `Took ${e.ship.name} for his own.`);
+    }
   }
   void rng;
 }

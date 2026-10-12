@@ -40,8 +40,15 @@ export function parseExpr(src: string): Cond {
   return c;
 }
 
+/** Inline form for text passages and short conditions: "a && b", "a || b" ("&&" binds tighter). No parentheses. */
+export function parseInline(src: string): Cond {
+  if (src.includes('||')) return { t: 'any', of: src.split('||').map((p) => parseInline(p.trim())) };
+  if (src.includes('&&')) return { t: 'all', of: src.split('&&').map((p) => parseExpr(p.trim())) };
+  return parseExpr(src.trim());
+}
+
 export function compileCond(input: CondInput): Cond {
-  if (typeof input === 'string') return parseExpr(input);
+  if (typeof input === 'string') return input.includes('&&') || input.includes('||') ? parseInline(input) : parseExpr(input);
   const hit = objCache.get(input);
   if (hit) return hit;
   let c: Cond;

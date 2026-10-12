@@ -25,7 +25,7 @@ export function HeroPanel({ content, state }: { content: ContentBundle; state: G
   return (
     <div>
       <h2>{h.name}{h.nickname ? ` ${h.nickname}` : ''}</h2>
-      <p class="muted">{bg?.label}, {age(state)} winters old. {capitalise(honourWord(state.honour))}.</p>
+      <p class="muted">{bg?.label}, {age(state)} winters old. {state.service ? `An oarsman in ${state.service.captain}'s ship` : state.ships.length ? "A ship's captain" : 'Without a ship'}. {capitalise(honourWord(state.honour))}.</p>
       <div class="card">
         <h3>Body</h3>
         Blood {Math.round(h.hp)}/{hpMax(state, content)}
@@ -55,6 +55,14 @@ export function HeroPanel({ content, state }: { content: ContentBundle; state: G
         <h3>Luck</h3>
         <p>{luckWord(state.hamingja)}</p>
       </div>
+      {state.boasts.length > 0 && (
+        <div class="card">
+          <h3>Boasts sworn over the cup</h3>
+          {state.boasts.map((b) => (
+            <p key={b.id}>{content.boasts[b.id]?.text} <span class="muted small sans">— {b.state === 'open' ? `due by ${formatDate(b.due)}` : b.state === 'kept' ? 'kept' : 'broken'}</span></p>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -85,12 +93,12 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
           <dt>Plunder to share</dt><dd>{formatSilver(state.loot)}</dd>
         </dl>
       </div>
-      <h3>Sworn men</h3>
+      <h3>{state.men.some((m) => m.sworn) ? 'Your men' : 'Your bench-mates'}</h3>
       {state.men.length ? state.men.map((m) => {
         const def = content.men[m.id];
         return (
           <div class="card" key={m.id}>
-            <b>{m.name}{m.nickname ? ` ${m.nickname}` : ''}</b> <span class="muted small sans">— {m.temperament}{m.alive ? `, ${loyaltyWord(m.loyalty)}` : ''}</span>
+            <b>{m.name}{m.nickname ? ` ${m.nickname}` : ''}</b> <span class="muted small sans">— {m.temperament}{m.alive ? (m.sworn ? `, sworn to you, ${loyaltyWord(m.loyalty)}` : ', a bench-mate; he has not sworn to you') : ''}{m.alive && m.hurtUntil !== null && m.hurtUntil > state.day ? ', hurt' : ''}</span>
             {m.alive ? (
               <>
                 <Bar value={m.loyalty} max={10} kind="gold" />

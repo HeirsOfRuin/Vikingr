@@ -1,5 +1,6 @@
 # PLACEHOLDER world scenes for the Phase 1 engine build.
 - id: p1_orkney_hall
+  requires: [flag.placeholder_start]  # the Phase 1 sandbox starts only; the year 830 has its own
   kind: place
   placeholder: true
   trigger: arrive
@@ -22,6 +23,7 @@
       text: Drink, listen, and leave in the morning.
       effects: [ { add: { crew.morale: 1 } } ]
 - id: p1_sea_wreckage
+  requires: [flag.placeholder_start]  # the Phase 1 sandbox starts only; the year 830 has its own
   kind: pool
   placeholder: true
   trigger: sea
@@ -39,6 +41,7 @@
       text: Leave the dead to Rán.
       effects: [ { add: { hamingja: 1 } } ]
 - id: p1_sea_rivals
+  requires: [flag.placeholder_start]  # the Phase 1 sandbox starts only; the year 830 has its own
   kind: pool
   placeholder: true
   trigger: sea

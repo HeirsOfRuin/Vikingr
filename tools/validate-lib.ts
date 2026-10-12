@@ -3,6 +3,7 @@
 import type { ContentBundle, Effect, Scene, Choice } from '../src/content/schema';
 import { validateCond, condPaths } from '../src/engine/conditions';
 import { checkAddPath, checkPath } from '../src/engine/paths';
+import { checkText } from '../src/engine/text';
 import { lonLatToTile, terrainAt, WATER, type MapData } from '../src/engine/mapgrid';
 
 export interface Report {
@@ -30,6 +31,12 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   const effects = (where: string, list: Effect[] | undefined): { lethal: boolean } => {
     let lethal = false;
     for (const e of list ?? []) {
+      if ('if' in e) {
+        cond(where, e.if);
+        lethal = effects(where, e.then).lethal || lethal;
+        lethal = effects(where, e.else).lethal || lethal;
+        continue;
+      }
       if ('set' in e || 'clear' in e) {
         const path = 'set' in e ? e.set : e.clear;
         const f = path.replace(/^flag\./, '');
@@ -57,16 +64,35 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.foes[e.battle.foe]) errors.push(`${where}: unknown foe "${e.battle.foe}"`);
         sceneRef(where, e.battle.win);
         sceneRef(where, e.battle.lose);
+        sceneRef(where, e.battle.parted);
         lethal = true;
       } else if ('queue' in e) sceneRef(where, e.queue.scene);
       else if ('know' in e) {
         if (!content.places[e.know]) errors.push(`${where}: unknown place "${e.know}"`);
+      } else if ('boast' in e || 'keep_boast' in e) {
+        const b = 'boast' in e ? e.boast : e.keep_boast;
+        if (!content.boasts[b]) errors.push(`${where}: unknown boast "${b}" (declare it in content/registry/boasts.yaml)`);
+      } else if ('route' in e) {
+        for (const p of e.route) if (!content.places[p]?.active) errors.push(`${where}: route place "${p}" is not an active place`);
+      } else if ('plunder' in e) {
+        sceneRef(where, e.plunder.next);
+      } else if ('ship' in e) {
+        if (!content.ships[e.ship.type]) errors.push(`${where}: unknown ship type "${e.ship.type}"`);
+      } else if ('voyage' in e) {
+        if (!content.places[e.voyage]?.active) errors.push(`${where}: voyage to "${e.voyage}", not an active place`);
       }
     }
     return { lethal };
   };
+  const text = (where: string, t: string | undefined) => {
+    if (t) for (const e of checkText(t, content)) errors.push(`${where}: ${e}`);
+  };
   const choice = (s: Scene, c: Choice) => {
     const where = `scene ${s.id} choice ${c.id}`;
+    text(where, c.text);
+    text(where, c.result);
+    text(where, c.success?.text);
+    text(where, c.failure?.text);
     cond(where, c.requires);
     cond(where, c.visible_if);
     sceneRef(where, c.next);
@@ -84,6 +110,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   let placeholders = 0;
   for (const s of Object.values(content.scenes)) {
     if (s.placeholder) placeholders++;
+    text(`scene ${s.id}`, s.text);
     cond(`scene ${s.id}`, s.requires);
     if ((s.kind === 'place' || s.kind === 'pool' || s.kind === 'phase') && !s.trigger) errors.push(`scene ${s.id}: ${s.kind} scenes need a trigger`);
     if ((s.kind === 'spine' || s.kind === 'queued') && s.trigger) errors.push(`scene ${s.id}: ${s.kind} scenes are opened by links, not triggers`);
@@ -95,7 +122,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
       ids.add(c.id);
       choice(s, c);
     }
-    if (s.choices.every((c) => c.requires !== undefined)) warnings.push(`scene ${s.id}: every choice has a requirement; it can dead-end`);
+    if (s.choices.every((c) => c.requires !== undefined || c.visible_if !== undefined)) warnings.push(`scene ${s.id}: every choice has a requirement or a visibility condition; it can dead-end`);
   }
   if (placeholders) info.push(`${placeholders} placeholder scenes (Phase 2 replaces them)`);
 
@@ -104,6 +131,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   const queue = [
     ...Object.values(content.backgrounds).map((b) => b.start_scene),
     ...Object.values(content.scenes).filter((s) => s.trigger || s.calibration).map((s) => s.id),
+    // queued by the engine when a sworn man dies (fights.ts)
+    ...Object.keys(content.scenes).filter((id) => id.startsWith('mourn_')),
   ];
   while (queue.length) {
     const id = queue.pop()!;
@@ -111,9 +140,11 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     reached.add(id);
     for (const c of content.scenes[id]!.choices) {
       for (const n of [c.next, c.success?.next, c.failure?.next]) if (n) queue.push(n);
-      for (const e of [...(c.effects ?? []), ...(c.success?.effects ?? []), ...(c.failure?.effects ?? [])]) {
+      const flat = (es: Effect[]): Effect[] => es.flatMap((e) => ('if' in e ? [...flat(e.then), ...flat(e.else ?? [])] : [e]));
+      for (const e of flat([...(c.effects ?? []), ...(c.success?.effects ?? []), ...(c.failure?.effects ?? [])])) {
+        if ('plunder' in e && e.plunder.next) queue.push(e.plunder.next);
         if ('fight' in e) queue.push(...[e.fight.win, e.fight.lose].filter((x): x is string => !!x));
-        if ('battle' in e) queue.push(...[e.battle.win, e.battle.lose].filter((x): x is string => !!x));
+        if ('battle' in e) queue.push(...[e.battle.win, e.battle.lose, e.battle.parted].filter((x): x is string => !!x));
         if ('queue' in e) queue.push(e.queue.scene);
       }
     }
@@ -186,6 +217,13 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     }
   }
   for (const f of artFiles ?? []) if (!content.art[f]) warnings.push(`src/art/${f}.png is not in content/registry/art.yaml`);
+
+  // banter, fates, boasts
+  content.banter.forEach((b, i) => {
+    if (!content.men[b.who]) errors.push(`banter line ${i + 1}: unknown man "${b.who}"`);
+    cond(`banter line ${i + 1}`, b.requires);
+    text(`banter line ${i + 1}`, b.text);
+  });
 
   // rivals
   for (const r of Object.values(content.rivals)) {

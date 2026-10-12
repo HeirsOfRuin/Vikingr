@@ -1,6 +1,8 @@
 import type { ContentBundle } from '../../content/schema';
 import { DUEL_MOVES, ORDERS } from '../../content/schema';
-import type { DuelSide, DuelState, BattleState } from '../../engine/state';
+import type { DuelSide, DuelState, BattleState, PlunderState } from '../../engine/state';
+import { formatSilver, plural } from '../../engine/format';
+import { ALARM_MAX } from '../../engine/plunder';
 import type { Action, ActionOption } from '../../engine/index';
 import { MOVE_NAMES, foeForecast } from '../../engine/duel';
 import { ORDER_NAMES, POSITION_NAMES, enemyForecast } from '../../engine/battle';
@@ -78,6 +80,23 @@ export function BattleView({ content, b, options, onAct }: { content: ContentBun
       <div class="log recent">{b.log.slice(-4).map((l, i) => <p key={b.log.length + i}>{l}</p>)}</div>
       <Actions options={options} onAct={onAct} />
       {b.log.length > 4 && <div class="log">{b.log.slice(0, -4).reverse().map((l, i) => <p key={i}>{l}</p>)}</div>}
+    </div>
+  );
+}
+
+export function PlunderView({ content, p, options, onAct }: { content: ContentBundle; p: PlunderState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  const name = content.places[p.place]?.name ?? p.place;
+  return (
+    <div>
+      <h2>Plunder: {name}</h2>
+      <div class="card sans small">
+        <div>Carrying {formatSilver(p.taken)}{p.captives ? `, and ${plural(p.captives, 'captive')}` : ''}.</div>
+        <div class="muted">The alarm{p.alarm >= ALARM_MAX - 3 ? ': men are gathering in the hills' : ': the countryside is waking'}</div>
+        <Bar value={p.alarm} max={ALARM_MAX} kind="red" />
+        <div class="muted">When it fills, every farm for a day's walk comes down on you, and you lose some of what you carry getting back to the ships.</div>
+      </div>
+      <div class="log recent">{p.log.slice(-4).map((l, i) => <p key={p.log.length + i}>{l}</p>)}</div>
+      <Actions options={options} onAct={onAct} />
     </div>
   );
 }

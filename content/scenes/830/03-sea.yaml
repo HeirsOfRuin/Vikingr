@@ -1,0 +1,324 @@
+# The crossing (FRAME-PHASE2 §2.2): a pool of things that happen at sea. A run sees three or four.
+- id: s_seasick
+  kind: pool
+  trigger: sea
+  chance: 0.3
+  once: true
+  requires: [service]
+  art: open_sea
+  title: The open sea
+  text: |
+    The fjord let you think you knew what a ship was. The open sea teaches you otherwise.
+
+    The Raven climbs each grey swell, hangs on the top of it, and drops into the trough with a lurch that leaves your stomach somewhere above the mast. The whole ship creaks like an old man getting up. Your mouth fills with water that isn't spray.
+
+    Ulf, across from you, has gone the colour of whey. Bersi is eating dried fish, slowly, and watching you both with interest.
+  choices:
+    - id: side
+      text: Lean over the side like an honest man.
+      effects: [ { set: flag.s_seasick } ]
+      result: |
+        You lean over the side and give the sea everything you've eaten since Hordaland. Then everything you ate the day before.
+
+        When you sit back up, half the ship is cheering. Ulf leans over his own side and joins you, and the cheering gets louder.
+
+        "Green-gills," says Bersi, chewing. "Both of you." It is, you will find, a name that sticks to a man.
+    - id: hold
+      text: Hold it in. Nobody needs to know.
+      check: { skill: seamanship, attr: end, difficulty: 4 }
+      success:
+        text: |
+          You swallow, and breathe through your nose, and fix your eyes on the horizon the way Ketill told you, and keep rowing.
+
+          By evening it passes. Nobody noticed, except Ketill, who noticed everything, and who passes you a strip of dried fish without a word.
+        effects: [ { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: |
+          You hold it in past Stad and halfway to Shetland. Then you don't, and there is no time to reach the side, and Bersi is sitting downwind.
+
+          Bersi says nothing at all. He gets up, very slowly, and goes and washes himself in the sea, and comes back, and looks at you. The whole ship is silent. Then the whole ship is laughing, and it doesn't stop until Shetland.
+        effects: [ { set: flag.s_seasick }, { add: { man.bersi.loyalty: -1, man.ulf.loyalty: 1 } } ]
+    - id: charm
+      text: Ask Hallvard if he has a charm against it.
+      effects: [ { add: { man.hallvard.loyalty: 1 } } ]
+      result: |
+        Hallvard has a charm for everything. This one involves a twist of thread round your wrist and a word you're not to say aloud.
+
+        It doesn't work. But Hallvard sits with you while it doesn't, and tells you the names of the birds, and by evening the worst of it has passed, and you have a friend you didn't have that morning.
+
+- id: s_whale
+  kind: pool
+  trigger: sea
+  chance: 0.04
+  once: true
+  art: open_sea
+  title: The whale
+  text: |
+    Something comes up beside the ship, and keeps coming up: a grey back as long as the Raven, wet and ridged and crusted with white shells, close enough to touch with an oar.
+
+    It breathes. The sound is like a smith's bellows the size of a hall. The stink of it comes down the wind a moment later, and three men retch who haven't retched since Hordaland.
+
+    "Hold the oars!" Ásgeir roars. "Nobody touch it!"
+
+    Ulf has already picked up a spear.
+  choices:
+    - id: still
+      text: Ship your oar and keep still.
+      effects: [ { add: { skill.seamanship: 1 } } ]
+      result: |
+        You ship your oar and sit very still, and so does everyone else, except Ulf, whom Ketill sits on.
+
+        The whale rolls an eye at the ship. It is the size of a shield-boss, and old, and you have the feeling it is deciding something. Then it sinks, without hurry, and the sea closes over it, and the whole ship breathes out at once.
+    - id: ulf
+      text: Grab Ulf's arm before he throws.
+      check: { skill: weapons, attr: agi, difficulty: 4 }
+      success:
+        text: |
+          You catch his arm on the backswing. He struggles. You hold on. The whale slides under the ship, so close that the Raven lifts on its back and settles again.
+
+          "I'd have had it," Ulf says afterwards.
+
+          "You'd have had us all at the bottom," says Ásgeir, and gives you a look you put away to think about later.
+        effects: [ { set: flag.s_saved_ulf }, { add: { man.ulf.loyalty: 1 } } ]
+      failure:
+        text: |
+          He throws. The spear goes into the whale's back and stays there, quivering, like a twig in a hillside.
+
+          The whale doesn't seem to notice. It sinks, slowly, taking a good spear with it, and Ásgeir docks it from Ulf's share before it's even gone.
+        effects: [ { add: { man.ulf.loyalty: -1 } } ]
+    - id: words
+      text: Say the words Hallvard says to the sea.
+      effects: [ { add: { hamingja: 1, man.hallvard.loyalty: 1 } } ]
+      result: |
+        You don't know the words. Hallvard says them, low and fast, and you say them after him.
+
+        The whale sinks. Whether it heard is between it and the sea.
+
+- id: s_wreck
+  kind: pool
+  trigger: sea
+  chance: 0.035
+  once: true
+  art: open_sea
+  title: Wreckage
+  text: |
+    Planks on the water. A spar. A sea-chest, riding low. And, tangled in a line from the spar, a drowned man, face down, his hair spread out round his head like weed.
+
+    Somebody else's ship, somebody else's summer.
+  choices:
+    - id: chest
+      text: Lean out and haul the chest aboard.
+      effects: [ { add: { silver: 6 } }, { days: 1 } ]
+      result: |
+        It takes three of you to get it over the side. Inside: a cloak, a whetstone, a pair of good boots, and a little hacksilver in a leather bag.
+
+        By the custom of the sea, what you haul out you keep. Hallvard won't touch any of it. Bersi offers to buy the boots, and you sell them to him, and you both feel you've won.
+    - id: bury
+      text: Cut the dead man free and give him to the sea properly.
+      effects: [ { add: { hamingja: 1, honour: 1 } } ]
+      result: |
+        You cut him free of the line. Ketill helps you turn him over. He was young, younger than you would have guessed from the back of his head. Nobody knows him.
+
+        Hallvard says what should be said. You let him go, and he goes down slowly into the green, looking up.
+
+        Nobody talks much the rest of that day.
+    - id: on
+      text: Row on. The sea has its own.
+      result: The wreckage drops astern. By evening nobody mentions it, and by the next morning you can't remember the colour of the dead man's hair.
+
+- id: s_sail
+  kind: pool
+  trigger: sea
+  chance: 0.02
+  once: true
+  requires: ["month <= 8"]
+  art: open_sea
+  title: Sails astern
+  text: |
+    A ship has been closing on you since dawn. Shields along her side, no answer to Ásgeir's hail, and men standing up at her rail to look at you the way you'd look at a loose cow.
+
+    "Danes," says Ketill. "Or Irish Norse. Doesn't matter. They want what we've got, or they want to see if we'll give it to them."
+
+    Ásgeir turns the Raven to meet them.
+  choices:
+    - id: rail
+      text: Take your shield to the rail.
+      danger: true
+      effects: [ { battle: { foe: rival_crew, men: 26, terrain: ship } } ]
+      result: The two ships come together with a crash that throws men off their feet, and then there are grappling hooks, and then there is nothing but the rail and the man on the other side of it.
+    - id: sail
+      text: Help get more sail on her. Outrun them.
+      danger: true
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You're at the halyards before Ásgeir has finished shouting, and the Raven heels and leaps, and the strange ship falls astern, and keeps falling. By evening she's a speck. By night she's gone.
+
+          "Fight when it pays," says Ásgeir, to nobody, and gives you a nod.
+        effects: [ { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: |
+          The wind is wrong, and the strange ship is lighter, and she runs you down by noon. You fight anyway, tired from the oars.
+        effects: [ { add: { crew.morale: -1 } }, { battle: { foe: rival_crew, men: 28, terrain: ship } } ]
+
+- id: s_calm
+  kind: pool
+  trigger: sea
+  chance: 0.04
+  once: true
+  art: open_sea
+  title: The calm
+  text: |
+    The wind dies in the night and doesn't come back. The sea goes flat and oily, and the sail hangs like a wet sheet, and Ásgeir puts you on the oars.
+
+    You row all day. Your hands, which had just started to harden, open up again. Somewhere in the afternoon Ulf starts to sing, to keep the stroke.
+
+    It is a song about a bishop and a goat. It has a great many verses. Each one is worse than the last.
+  choices:
+    - id: sing
+      text: Sing along. Loudly.
+      effects: [ { add: { crew.morale: 1, man.ulf.loyalty: 1, skill.speech: 1 } } ]
+      result: |
+        You don't know the words, but by the ninth verse nobody needs to. The whole ship is roaring it, forty men pulling to the bishop and his goat, and Ásgeir is laughing at the steering-oar, and the stroke has never been better.
+
+        The wind comes back at sunset. Some of you are sorry.
+    - id: verse
+      text: Make up a verse of your own about Bersi.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          You make it up as you go: Bersi, his scales, his dice, and a certain arrangement with a sheep in Shetland that nobody can disprove.
+
+          The ship howls. Bersi pretends to be angry, then forgets to pretend. By evening men are singing your verse instead of Ulf's, and Ulf is sulking, and you have learned something about what a ship will remember.
+        effects: [ { add: { crew.morale: 1, skill.speech: 1, man.bersi.loyalty: -1 } } ]
+      failure:
+        text: |
+          You start a verse about Bersi. It doesn't rhyme, and then it doesn't scan, and then it doesn't end.
+
+          "Leave it to Ulf," says Bersi kindly, and the ship laughs, and not with you.
+    - id: quiet
+      text: Tell Ulf to save his breath for rowing.
+      effects: [ { add: { man.hallvard.loyalty: 1, man.ulf.loyalty: -1 } } ]
+      result: |
+        Ulf stops singing. Hallvard says "Thank the gods" under his breath, the first joke you've heard him make. The ship rows on in silence, and the silence is worse than the song, and by evening you rather wish you'd let him finish.
+
+- id: s_ravens
+  kind: pool
+  trigger: sea
+  chance: 0.04
+  once: true
+  art: open_sea
+  title: Ravens
+  text: |
+    Two ravens find the ship in the morning, a day out from any land, and follow her.
+
+    They keep their distance, sliding along the wind. Then one of them comes down the length of the ship, over all your heads, and lands on the top of the steering-oar, right by Ásgeir's hand, and sits there looking at him.
+
+    Nobody says anything. Ásgeir doesn't move his hand. Hallvard has gone white.
+  choices:
+    - id: ask
+      text: Ask Hallvard, quietly, what it means.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        [if omen.asgeir_falls]
+        Hallvard doesn't want to tell you. When he does, he whispers it.
+
+        "The All-Father's birds choose. One of them has chosen a man in this ship." He doesn't look at the stern. He doesn't have to.
+        [else]
+        Hallvard lets out a breath. "It sat on the oar and not on the man," he says. "It's looking at the ship, not at him. The ship's chosen. The ship's lucky." He sounds as if he is trying to believe it.
+        [/if]
+
+        The raven sits a while longer. Then it lifts, unhurried, and goes back to its mate, and the two of them fall away astern.
+    - id: meat
+      text: Throw it a strip of your dried meat.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: |
+        You throw the meat up into the wind. The raven on the oar watches it go past. The other one takes it out of the air, neat as a hawk, and the two of them go away north together, talking about it.
+
+        Ásgeir looks at you. "Well," he says. "Somebody's been fed."
+    - id: mock
+      text: Flap your arms and caw at it.
+      effects: [ { add: { hamingja: -1, man.ulf.loyalty: 1, man.hallvard.loyalty: -1 } } ]
+      result: |
+        You flap your arms and caw. Ulf nearly falls off his bench laughing. The raven looks at you with one black eye, a long, considering look, and then it lifts off the oar and goes.
+
+        Hallvard doesn't speak to you for the rest of the day. That night he sits up late, watching the sky, and in the morning you notice that he has tied a twist of thread round your oar.
+
+- id: s_dice
+  kind: pool
+  trigger: sea
+  chance: 0.04
+  once: true
+  art: open_sea
+  title: Bersi's dice
+  text: |
+    At anchor in a bay with no name, Bersi brings out the dice. Bone dice, yellow with handling, that he says belonged to his grandfather, who won a farm with them.
+
+    "And lost it with them," says Ketill.
+
+    "Details," says Bersi. He shakes them in his fist. "An eyrir a throw, for the young men. Who's brave?"
+  choices:
+    - id: play
+      text: Play, for an eyrir a throw.
+      requires: ["silver >= 3"]
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          You win the first throw, and the third, and the fifth. Bersi's smile gets thinner and thinner. By the end of the night you are four aurar up and Bersi is explaining, to anyone who will listen, how luck evens out.
+        effects: [ { add: { silver: 12, man.bersi.loyalty: -1 } } ]
+      failure:
+        text: |
+          You win the first throw. After that you don't win anything at all, and by the end of the night Bersi has two aurar of yours and is being very kind about it.
+        effects: [ { add: { silver: -6, man.bersi.loyalty: 1 } } ]
+    - id: watch
+      text: Watch his hands instead of the dice.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You watch his hands. It takes you a while. Then you see it: the little roll of the wrist, and the second pair of dice that live up his sleeve, slightly heavier on the sixes.
+
+          You don't say anything in front of the others. Later, you say it to Bersi, quietly. He looks at you a long moment, and then he laughs, and gives back what he took off Ulf.
+
+          "You'll go far," he says. "Don't go far without me."
+        effects: [ { set: flag.s_caught_bersi }, { add: { man.bersi.loyalty: 2 } } ]
+      failure:
+        text: |
+          You watch his hands all night and see nothing. Either he's honest or he's very good. Bersi, catching you watching, winks.
+    - id: no
+      text: Keep your silver.
+      result: |
+        "Wise," says Ketill. Bersi takes Ulf's silver instead, all of it, in the space of one evening. Ulf takes it well. He takes it very loudly, for a very long time.
+
+- id: sh_landfall
+  kind: place
+  trigger: arrive
+  at: [shetland]
+  once: true
+  requires: [service]
+  art: open_sea
+  title: Hjaltland
+  text: |
+    Shetland comes up out of the sea low and brown and treeless, and smelling of peat smoke and sheep. There are Norse farms on it now, where the old people used to live, and the farmers come down to the shore to see who you are before they decide whether to be pleased.
+
+    You take on water. Ásgeir buys mutton. And Bersi, while the farmers are watching Ásgeir, has his eye on a fat ewe grazing by the stream.
+  choices:
+    - id: help
+      text: Help him. Mutton is mutton.
+      check: { skill: cunning, attr: agi, difficulty: 4 }
+      success:
+        text: |
+          The ewe goes into a sack and the sack goes into the ship, and nobody on the shore is any the wiser. She is very good roasted, that night, in a bay on the far side of the island.
+        effects: [ { add: { man.bersi.loyalty: 1, crew.morale: 1 } } ]
+      failure:
+        text: |
+          The ewe objects. Loudly. The farmers come running, and Ásgeir has to pay for her twice over, and then he pays you back for it out of your hide, on the oar, all the way to Orkney.
+        effects: [ { add: { man.bersi.loyalty: 1, silver: -3 } } ]
+    - id: stop
+      text: Tell Bersi to leave it.
+      effects: [ { add: { honour: 1, man.bersi.loyalty: -1 } } ]
+      result: |
+        Bersi looks at you as if you had suggested he leave his own leg behind. But he leaves the ewe.
+
+        "These are our people," you say.
+
+        "They're Shetlanders," says Bersi, as if that settles it, and sulks till Orkney.

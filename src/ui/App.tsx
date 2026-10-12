@@ -6,7 +6,7 @@ import { act, newGame, screenOf, type Action } from '../engine/index';
 import { toSave, fromSave } from '../engine/save';
 import { encodeSaveCode, decodeSaveCode } from '../engine/savecode';
 import { dateOf, dayOf, MONTHS } from '../engine/calendar';
-import { formatSilver } from '../engine/format';
+import { formatSilverShort } from '../engine/format';
 import { livingFame, untoldCount } from '../engine/fame';
 import { saveGame, loadGame, clearSave } from './storage';
 import { NowView } from './components/NowView';
@@ -21,11 +21,11 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 const NAMES = ['Hrafn', 'Asbjorn', 'Ketil', 'Orm', 'Thorir', 'Ulfar', 'Eyvind', 'Halldor', 'Arni', 'Bjorn'];
 
-/** The calibration scenes (FRAME-PHASE2 §7): where and when each one opens. */
-const CALIBRATION: { scene: string; label: string; year: number; doy: number; at: string; phase: GameState['phase'] }[] = [
-  { scene: 'cal_ormr', label: "Ormr's night", year: 828, doy: 345, at: 'home_fjord', phase: 'winter' },
-  { scene: 'cal_iona', label: 'The approach to Iona', year: 830, doy: 158, at: 'iona', phase: 'sailing' },
-  { scene: 'cal_yule', label: 'Yule: the flyting', year: 830, doy: 358, at: 'home_fjord', phase: 'winter' },
+/** Playtest jumps into the year 830: where and when each chapter opens, and what has to be true first. Never saved. */
+const CHAPTERS: { scene: string; label: string; year: number; doy: number; at: string; phase: GameState['phase']; setup?: (s: GameState) => void }[] = [
+  { scene: 'i_approach', label: 'Iona', year: 830, doy: 158, at: 'iona', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; if (s.service) s.service.route = ['bangor']; } },
+  { scene: 'b_lough', label: 'Bangor', year: 830, doy: 170, at: 'bangor', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; s.loot = 400; if (s.service) s.service.route = []; } },
+  { scene: 'y_feast', label: 'Yule', year: 830, doy: 358, at: 'home_fjord', phase: 'winter', setup: (s) => { s.flags.o_iona = 1; s.flags.bg_left = 1; s.flags._winter = 830; s.hallLeft = 3; } },
 ];
 
 function shortDate(day: number): string {
@@ -47,7 +47,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
-          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Calibration scenes<span class="hint">Three finished scenes, for your verdict on voice, length and look</span></span></button>
+          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into the year at Iona, Bangor or Yule. Not saved.</span></span></button>
         </div>
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
       </div>
@@ -56,12 +56,12 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
   if (step === 'preview') {
     return (
       <main class="screen">
-        <h1>Calibration</h1>
-        <p>Three scenes written at full quality, before the rest of the year is written. Play each, then say what to change: the voice, the length, the look, the animation.</p>
+        <h1>Chapters</h1>
+        <p>Jump into the year 830 part-way through, as if the summer so far had gone quietly. Nothing you do here is saved.</p>
         <h3>His name</h3>
         <input type="text" id="cal-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
         <div class="choices">
-          {CALIBRATION.map((c) => (
+          {CHAPTERS.map((c) => (
             <button key={c.scene} class="choice" onClick={() => onPreview(c.scene, name)}><span class="txt">{c.label}<span class="hint">{content.scenes[c.scene]?.title}</span></span></button>
           ))}
           <button class="choice" onClick={() => setStep('title')}><span class="txt">Back</span></button>
@@ -126,7 +126,7 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
   const [error, setError] = useState('');
   const [titleStep, setTitleStep] = useState<'title' | 'preview'>('title');
 
-  // calibration lives never overwrite a real save
+  // chapter jumps never overwrite a real save
   useEffect(() => { if (state && !preview) saveGame(state, content); }, [state]);
   useEffect(() => { window.scrollTo(0, 0); }, [state?.pending, tab]);
 
@@ -142,12 +142,13 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
           onContinue={() => { const l = loadGame(content); if (l) setState(l.state); }}
           onNew={(bg, name) => { setPreview(null); setState(newGame(content, { background: bg, seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name })); setTab('now'); }}
           onPreview={(scene, name) => {
-            const c = CALIBRATION.find((x) => x.scene === scene)!;
+            const c = CHAPTERS.find((x) => x.scene === scene)!;
             const s = newGame(content, { background: 'younger_son', seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name });
             s.day = dayOf(c.year, c.doy);
             s.at = c.at;
             s.phase = c.phase;
             if (!s.known.includes(c.at)) s.known.push(c.at);
+            c.setup?.(s);
             s.pending = { t: 'scene', id: scene };
             s.seen[scene] = s.day;
             setPreview(scene);
@@ -172,26 +173,20 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
   const busy = !['place', 'hall', 'muster', 'return'].includes(screen);
   const untold = untoldCount(state);
   const where = state.at ? content.places[state.at]?.name : state.voyage ? `Bound for ${content.places[state.voyage.to]?.name}` : '';
-  const previewDone = preview && !state.pending && !state.death;
 
   return (
     <div class="app">
       <header class="topbar">
         <span class="where">{where}</span>
         <span class="stat">{shortDate(state.day)}</span>
-        <span class="stat silver">{formatSilver(state.silver)}</span>
+        <span class="stat silver">{formatSilverShort(state.silver)}</span>
         <span class="stat">Fame {Math.round(livingFame(state))}{untold ? <span class="untold"> +{untold}</span> : ''}</span>
         <button class="iconbtn" aria-label="Menu" onClick={() => setMenu(true)}><i /><i /><i /></button>
       </header>
       <main>
         {error && <p class="card small sans">{error}</p>}
-        {previewDone ? (
-          <div class="screen">
-            <h2>End of the calibration scene</h2>
-            <p>That is as far as this scene goes. In the game, the year carries on from here.</p>
-            <div class="choices"><button class="choice primary" onClick={() => toTitle('preview')}><span class="txt">Back to the calibration scenes</span></button></div>
-          </div>
-        ) : (
+        {preview && <p class="note small sans">Playtest chapter: not saved.</p>}
+        {(
           <>
             {tab === 'now' && <NowView content={content} map={map} state={state} onAct={onAct} />}
             {tab === 'map' && <div class="screen"><h2>The known world</h2><MapView content={content} map={map} state={state} /></div>}
@@ -201,7 +196,7 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
           </>
         )}
         {state.death && tab === 'now' && (
-          <div class="choices"><button class="choice primary" onClick={() => { if (!preview) clearSave(); toTitle(preview ? 'preview' : 'title'); }}><span class="txt">{preview ? 'Back to the calibration scenes' : 'Begin another life'}</span></button></div>
+          <div class="choices"><button class="choice primary" onClick={() => { if (!preview) clearSave(); toTitle(preview ? 'preview' : 'title'); }}><span class="txt">{preview ? 'Back to the chapters' : 'Begin another life'}</span></button></div>
         )}
       </main>
       <nav class="tabs">

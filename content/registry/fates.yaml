@@ -1,0 +1,9 @@
+# Fates (FRAME-PHASE2 §4.7): rolled once at the start of a life. Scenes read fate.<id> to decide what
+# happens, and omen.<id> for what the signs say: the omen tells the truth about seven times in ten.
+- { id: asgeir_falls, chance: 0.5, desc: "Ásgeir Kolsson falls at Bangor, unless someone stands over him" }
+- { id: ormr_dies, chance: 0.85, desc: "Ormr One-Hand dies before the spring of 831" }
+- { id: gyda_waits, chance: 0.6, desc: "Gyða waits for him through the summer" }
+- { id: ulf_glory, chance: 0.5, desc: "Ulf will be remembered in a verse, and die young for it" }
+- { id: brother_feud, chance: 0.35, desc: "Hallbjörn and he will come to blows over the farm" }
+- { id: bersi_betrays, chance: 0.3, desc: "Bersi will sell him for silver one day" }
+- { id: storm_home, chance: 0.4, desc: "A September storm on the way home from Ireland" }

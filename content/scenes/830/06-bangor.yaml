@@ -1,0 +1,413 @@
+# Bangor (FRAME-PHASE2 §2.5): the real fight, and the gate to command.
+# Ásgeir's fate: he falls if fate.asgeir_falls, unless the hero stood at his shoulder (flag.bg_covered),
+# in which case he lives, maimed. If the fate is not on him, he comes through.
+- id: b_lough
+  kind: place
+  trigger: arrive
+  at: [bangor]
+  once: true
+  requires: [service]
+  art: bangor_field
+  title: The lough
+  text: |
+    Belfast Lough opens in front of you like a mouth: wide and grey and quiet, with low green hills on both sides and the smoke of farms going up into a still evening.
+
+    Bangor is on the south shore, near the mouth. You can see the abbey from the water: a ring of earth bank, a lot of roofs inside it, a round bell-tower of stone. Smoke from a dozen cooking fires. Cattle on the slope above.
+
+    It is bigger than Iona. It is a great deal bigger than Iona.
+    [break]
+    Ásgeir brings the Raven into a bay out of sight of the abbey, behind a headland, and the men sit at their oars in the dusk and eat cold fish and don't talk much.
+
+    "The levy's close," says Steinarr. "Two or three farms' worth of spearmen at every hall in the valley, and the king's own men a day's ride off. We go in at first light, straight up from the strand, and we're inside the bank before they've found their shoes."
+
+    Ásgeir chews his fish. Then he looks down the ship at you.
+    [if flag.i_north || flag.i_warned]
+    "Hall's boy had eyes at Iona. What do your eyes say now?"
+    [else]
+    "Anyone else?"
+    [/if]
+  choices:
+    - id: scout
+      text: Offer to go ashore in the dark and see where the levy is.
+      check: { skill: cunning, attr: agi, difficulty: 5 }
+      next: b_wall
+      success:
+        text: |
+          Ketill comes with you, because he says somebody has to bring your body back. You go up through wet bracken in the dark with your faces smeared with mud.
+
+          There is a hall in the next valley with fires in front of it and forty spears stacked against the wall. The men around the fires are drinking, and two of them are fighting, and nobody is watching the road.
+
+          You come back down to the ship an hour before dawn. Ásgeir listens and grins in the dark. "Then we go now," he says, "while they sleep it off."
+        effects: [ { set: flag.bg_scouted }, { add: { man.ketill.loyalty: 1 } } ]
+      failure:
+        text: |
+          You go up through wet bracken in the dark. You get as far as a farm on the ridge before a dog finds you, and then a boy with a lantern, and then the boy's father, shouting.
+
+          You run. Behind you, all down the valley, the dogs start, one farm after another, like a fire catching.
+
+          "Well," says Ásgeir, when you come back down to the ship with your shins bleeding, "now they know. Get some sleep."
+        effects: [ { set: flag.bg_seen } ]
+    - id: traders
+      text: Put Colmán in the bow. A man with Irish can talk you up the strand as traders.
+      visible_if: flag.i_colman_taken
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      next: b_wall
+      success:
+        text: |
+          You put it to Colmán plainly: talk us in, and you go free at the end of it. He looks at you a long time. Then he nods.
+
+          At dawn the Raven comes round the headland slowly, with shields off the rail and the sail half down like a tired trader's, and Colmán standing in the bow calling out in Irish to the men on the strand. They call back. One of them laughs.
+
+          You are thirty paces up the beach before anyone sees the axes. Colmán is on his knees in the shallows with his hands over his face.
+        effects: [ { set: flag.bg_traders }, { set: flag.bg_colman_freed } ]
+      failure:
+        text: |
+          You put it to Colmán: talk us in, and you go free. He nods. At dawn he stands in the bow and calls out in Irish to the men on the strand.
+
+          Whatever he calls, it isn't what you told him to. The men on the strand turn and run for the abbey, shouting, and the bell starts before you've beached.
+
+          Steinarr knocks Colmán down into the bilge. You don't stop him.
+        effects: [ { set: flag.bg_seen }, { set: flag.bg_colman_betrayed } ]
+    - id: straight
+      text: Back Steinarr. First light, straight up the strand.
+      result: |
+        "First light," you say. Steinarr looks almost pleased. Ásgeir nods.
+
+        Nobody sleeps much. Bersi counts the shields twice. Hallvard says a prayer to Thor under his breath, and then, after a pause, something else, very quietly, that might have been to anybody.
+      next: b_wall
+
+- id: b_wall
+  kind: spine
+  art: bangor_field
+  title: The wall
+  text: |
+    They are waiting for you between the strand and the abbey bank: a line of men across the road, with the bell going behind them.
+    [if flag.bg_traders]
+    Not many. Fifteen, perhaps, from the abbey's own farms, still pulling on their helmets, and more running down from the bank. You have caught them half-dressed.
+    [elif flag.bg_scouted]
+    Not all of them. The hall in the next valley is still asleep. These are the abbey's own men, and some herdsmen, and the bell is calling the rest.
+    [elif flag.bg_seen]
+    All of them. The whole valley came down in the night. Thirty spears at least, with round shields painted red and yellow, and a big man in the middle with a gilded helmet who must be somebody's champion.
+    [else]
+    More than you'd like. The bell has done its work. Two dozen spears, and more coming down the hill.
+    [/if]
+
+    Ásgeir walks out in front of the Raven's men with his shield on his arm and his sword over his shoulder, as if he were going to look at a field.
+
+    "Shields," he says. "Wall."
+    [break]
+    Forty men lock shields on the wet grass. It makes a sound you will hear for the rest of your life: a clatter, then a knock, then nothing at all.
+
+    Then the Irish start throwing.
+
+    The javelins come in high and drop. One takes the man beside Bersi through the foot and pins him to the turf, and he stands there screaming, unable to fall down. Steinarr breaks the shaft off with his heel. "Stand," he says. "Stand. They throw, then they run, then they come back. Stand."
+
+    You have a moment. Not much more than one. Where are you going to be?
+  choices:
+    - id: shoulder
+      text: At Ásgeir's shoulder, under the raven banner.
+      danger: true
+      effects:
+        - { set: flag.bg_covered }
+        - { position: front }
+        - &bangor_battle
+          if: flag.bg_traders
+          then: [ { battle: { foe: ulster_levy, men: 15, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+          else:
+            - if: flag.bg_scouted
+              then: [ { battle: { foe: ulster_levy, men: 19, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+              else:
+                - if: flag.bg_seen
+                  then: [ { battle: { foe: ulster_levy, men: 30, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+                  else: [ { battle: { foe: ulster_levy, men: 24, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+      result: |
+        You shoulder in beside him in the front rank. He glances at you sideways. "Hall's boy," he says. "Keep your shield up and your mouth shut." Above you the banner cracks in the wind: a black raven on red.
+    - id: front
+      text: The front rank, beside Ulf.
+      danger: true
+      effects: [ { set: flag.bg_front }, { position: front }, { add: { man.ulf.loyalty: 1 } }, *bangor_battle ]
+      result: |
+        Ulf makes room for you without being asked. He is white as milk and grinning like a dog. "If I die," he says, "make them call me something good."
+    - id: wall
+      text: In the wall, with Ketill at your back.
+      danger: true
+      effects: [ { position: wall }, *bangor_battle ]
+      result: |
+        You take your place in the wall. Ketill's shield comes up behind yours and settles on your shoulder, solid as a roof-beam, and you feel him breathing slow, the way he rows.
+    - id: rear
+      text: The second rank, throwing back over their heads.
+      danger: true
+      effects: [ { position: rear }, *bangor_battle ]
+      result: |
+        You stay back with the boys and the old men and the spare spears, and throw over the heads of the wall. It is a job somebody has to do. You tell yourself that twice.
+
+- id: b_field
+  kind: spine
+  art: bangor_field
+  title: The field
+  text: |
+    The levy breaks all at once, the way a wall of turf goes when the rain has been in it. One man turns to run, and then everybody is running, back up the slope toward the abbey bank and past it, and the Raven's men go after them howling.
+
+    You don't. You stand where the wall was, and lean on your shield, and breathe.
+    [break]
+    [if fate.asgeir_falls && !flag.bg_covered]
+    Ásgeir is lying under the banner. A javelin took him under the arm, where the mail doesn't reach, in the last rush before the levy broke. He is quite dead. His eyes are open and he looks surprised, as if somebody had told him a joke he didn't get.
+
+    The men come back from the chase in twos and threes, and see him, and stop. Steinarr pulls the javelin out and throws it away. Then he picks up Ásgeir's sword, and looks round at the men, and you can see him counting.
+    [elif fate.asgeir_falls]
+    Ásgeir is down under the banner, and alive, because you were there. The javelin that was meant for his ribs went into your shield instead. The one after it took him through the thigh, and the big man in the gilded helmet took two fingers off his sword hand before you put him down.
+
+    He will live, Ketill says, binding the leg. He will not stand in a wall again. Ásgeir lies on his back on the grass and looks at the sky and says nothing at all, and that is worse than anything he could say.
+    [else]
+    Ásgeir walks back down from the bank with blood to the elbows and his helmet under his arm, laughing. He has a cut over one eye and he has lost a boot. He looks ten years younger.
+
+    "Bangor!" he shouts, and the men roar it back. "Bangor!"
+    [/if]
+  choices:
+    # Ásgeir dead: the ship is anybody's
+    - id: speak
+      text: Get up on a sea-chest and speak to the men before Steinarr does.
+      visible_if: "fate.asgeir_falls && !flag.bg_covered"
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          You don't remember most of what you say. You remember Ásgeir's name, and the summer, and the gate at Iona or the wall at Bangor, whichever was nearer the front of your mind. You remember saying the Raven needs a man the gods are looking at, and that they had been looking at you all summer.
+
+          You remember Ulf shouting your name first, and then the others, and Steinarr's face.
+        next: b_oaths
+      failure:
+        text: |
+          You get up on a sea-chest and open your mouth, and the men look at you: a boy of sixteen with somebody else's blood on him, asking for a ship.
+
+          Steinarr doesn't even answer. He just waits until you've finished, and then says, "Who's taking her home?" and they all look at him.
+        effects: [ { captain: Steinarr }, { set: flag.bg_steinarr } ]
+        next: b_serve
+    - id: deeds
+      text: Show them the blood on you. They saw where you stood this summer.
+      visible_if: { all: ["fate.asgeir_falls", "!flag.bg_covered", { any: [flag.i_first, flag.bg_front] }] }
+      check: { skill: speech, attr: pre, difficulty: 3 }
+      success:
+        text: |
+          You don't make a speech. You stand there in front of them with your shield hacked to splinters and your arm red to the shoulder, and say: "You saw me. Who else here was where I was?"
+
+          Nobody answers. Then Ulf hits his shield with his axe, and Hallvard, and then the whole ship, until the gulls go up off the lough.
+        next: b_oaths
+      failure:
+        text: |
+          You stand there in front of them with your shield hacked to splinters. "You saw me," you say.
+
+          "We saw you," says Steinarr. "Brave as a bull. Bulls don't steer." It is enough. They look at him.
+        effects: [ { captain: Steinarr }, { set: flag.bg_steinarr } ]
+        next: b_serve
+    - id: ketill
+      text: Look to Ketill. The men will listen to him.
+      visible_if: "fate.asgeir_falls && !flag.bg_covered"
+      requires: ["man.ketill.alive", "man.ketill.loyalty >= 6"]
+      result: |
+        Ketill gets up off the grass slowly, an old man's way, and wipes his axe on his trousers, and looks round the circle.
+
+        "I rowed with this boy's father," he says. "I've rowed with Ásgeir eleven summers. I watched this one all the way from the jarl's landing to here." He jerks his head at you. "He'll do. He'll do better than some." He doesn't look at Steinarr. He doesn't need to.
+
+        It is enough. Ketill has never asked the ship for anything before.
+      next: b_oaths
+    - id: challenge
+      text: Tell Steinarr he'll have the steering-oar when he takes it off you.
+      visible_if: "fate.asgeir_falls && !flag.bg_covered"
+      effects: [ { captain: Steinarr }, { set: flag.bg_challenged }, { set: flag.bg_steinarr }, { fight: { foe: steinarr, kind: duel, lethal: false, win: b_oaths, lose: b_serve } } ]
+      result: |
+        Steinarr laughs. Then he sees you mean it, and stops laughing, and the men make a ring on the grass without being asked. To first blood, Ketill says, loud, before anybody can say otherwise. The ship can't spare either of you.
+    - id: yield
+      text: Let Steinarr have her. He's been to Ireland. You've been to Iona.
+      visible_if: "fate.asgeir_falls && !flag.bg_covered"
+      effects: [ { captain: Steinarr }, { set: flag.bg_steinarr } ]
+      result: |
+        Nobody argues. Steinarr takes Ásgeir's sword and his place in the stern, and that is that.
+
+        Later, you see him watching you across the fire, and you understand that he will not forget you were there when he did it.
+      next: b_serve
+    # Ásgeir maimed: he can name a man
+    - id: named
+      text: Go to Ásgeir where he lies.
+      visible_if: "fate.asgeir_falls && flag.bg_covered"
+      result: |
+        He takes hold of your wrist with his good hand, hard.
+
+        "I can't steer with one hand and one leg," he says. "Steinarr will want her. Steinarr would lose her by the second summer." He breathes through his teeth for a while. "You stood with me. Nobody told you to. Take her home. She's the jarl's ship, and the jarl will want his quarter, and I'll want mine, and you'll have the rest."
+
+        He says it loud enough for the men to hear. Then he lies back and shuts his eyes, and Steinarr walks away down to the water and stands there a long time with his back to everybody.
+      next: b_oaths
+    - id: decline
+      text: Tell Ásgeir Steinarr should have her. You are sixteen.
+      visible_if: "fate.asgeir_falls && flag.bg_covered"
+      effects: [ { captain: Steinarr }, { set: flag.bg_steinarr }, { set: flag.asgeir_patron }, { add: { honour: 1 } } ]
+      result: |
+        Ásgeir breathes through his teeth a while. "Sixteen," he says. "I was nineteen. I lost her the first summer." He lets go of your wrist. "All right. Steinarr. But next year you come and see me."
+
+        Steinarr hears it. He nods to you, once, like a man paying a debt he resents.
+      next: b_serve
+    # Ásgeir unhurt
+    - id: share
+      text: Take the extra share Ásgeir holds out to you.
+      visible_if: { all: ["!fate.asgeir_falls", { any: [flag.i_first, flag.bg_front, flag.bg_covered] }] }
+      effects: [ { shares: 2 } ]
+      result: |
+        "You were where I could see you," Ásgeir says, in front of the ship. "Two shares, at the dividing." He slaps your face, not hard, the way a man slaps a horse he is pleased with.
+
+        Steinarr looks at you the way he looked at you in Birsay.
+      next: b_serve
+    - id: ask
+      text: Ask Ásgeir to speak for you to the jarl. A ship of your own, next year.
+      visible_if: "!fate.asgeir_falls"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      next: b_serve
+      success:
+        text: |
+          He laughs. Then he stops, and looks at you, the way he looked at you on the jarl's landing in the spring.
+
+          "Maybe," he says. "Maybe. Do something this winter worth telling the jarl about, and I'll tell him."
+        effects: [ { set: flag.asgeir_patron } ]
+      failure:
+        text: |
+          He laughs, and keeps laughing, and tells Steinarr, who tells the ship. "Hall's boy wants a ship!" For the rest of the summer, men bow when you go past.
+        effects: [ { set: flag.bg_mocked } ]
+    - id: on
+      text: Say nothing. There is an abbey up there, and nobody in it.
+      visible_if: "!fate.asgeir_falls"
+      next: b_serve
+
+- id: b_oaths
+  kind: spine
+  art: bangor_field
+  title: The steering-oar
+  text: |
+    [if flag.bg_challenged]
+    Steinarr sits on the grass holding his arm together, with blood coming out between his fingers. "First blood," he says, as if it tasted bad. "She's yours. Lose her and I'll be there."
+    [/if]
+    It doesn't happen the way it happens in the stories. Nobody lifts you on a shield. Ásgeir's sea-chest is carried up to you, and you sit on it, and men come up one at a time and say things.
+
+    Ketill comes first. He puts his hands between yours, the old way, and says the words your father must have said to somebody once.
+    [break]
+    The others come after. Not all of them. Some of the Raven's men only nod, and go up the hill to the abbey: they'll row for you, because they want to get home, and that's all.
+
+    But the ones who sat on your bench all summer come up. Or most of them.
+  choices:
+    - id: take
+      text: Take their oaths. Then take Bangor.
+      effects:
+        - { command: true }
+        - { set: flag.bg_command }
+        - { set: flag.owes_jarl }
+        - { deed: { type: deed, text: Took command of the Raven on the field at Bangor, weight: 4 } }
+        - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ] }
+        - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ] }
+        - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ] }
+        - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ] }
+        - { plunder: { next: b_leave } }
+      result: |
+        You stand up off Ásgeir's chest. You are captain of a forty-oar ship, at sixteen, in Ireland, with an Irish king a day's ride away and an abbey full of silver on the hill.
+
+        "Well?" you say. "Are we going up there, or not?"
+
+# serving on: the plunder under Ásgeir or Steinarr
+- id: b_serve
+  kind: spine
+  art: bangor_field
+  title: The abbey
+  text: |
+    [if flag.bg_challenged]
+    You are on the grass with your arm opened to the bone and Steinarr standing over you. "First blood," he says, and wipes his sword on your shoulder. "Get up. There's an abbey."
+    [elif flag.bg_steinarr]
+    Steinarr stands in the gate of the abbey bank with Ásgeir's sword and calls the men up.
+    [else]
+    Ásgeir stands in the gate of the abbey bank and calls the men up.
+    [/if]
+    The bell has stopped. Inside the bank there are a dozen houses, and a stone church, and a round tower with its door ten feet off the ground and the ladder pulled up behind it.
+
+    "They're in there with the silver," says Bersi, looking up at the tower. "Every abbey in Ireland has one. They pull the ladder up and wait for us to get bored."
+  choices:
+    - id: up
+      text: Go up into the abbey with the rest.
+      effects: [ { plunder: { next: b_leave } } ]
+      result: The tower can wait. Everything else in Bangor can't.
+
+- id: b_rout
+  kind: spine
+  art: bangor_field
+  title: The strand
+  text: |
+    The wall goes. You don't see it go; you feel it, the way you feel a ship heel. The pressure on your shield is suddenly from the side, and then there are Irishmen where your own men were, and then everybody is running for the water.
+    [if fate.asgeir_falls && !flag.bg_covered]
+    You pass Ásgeir lying on his face under the banner, with a javelin standing out of his back. Nobody stops for him. Nobody can.
+    [elif fate.asgeir_falls]
+    You have Ásgeir by the belt, hauling him, with a javelin through his thigh and two fingers gone from his sword hand. He is cursing you the whole way. He is alive to curse.
+    [/if]
+    The Raven is thirty paces off. The levy is coming down the slope behind you, whooping, the way men whoop when they've stopped being afraid.
+  choices:
+    - id: hold
+      text: Turn on the strand and hold them while the men push off.
+      check: { skill: shield, attr: end, difficulty: 5 }
+      success:
+        text: |
+          Ketill turns with you without being asked, and then Ulf, and then three of the Raven's men you couldn't have named that morning. Six shields across the strand, in the wet sand, with the sea behind you.
+
+          The first of the Irish runs onto them and stops, and the rest stop behind him, and for a few breaths nobody moves. Then the keel grates, and somebody shouts, and you are wading backwards into the sea with your shield up, and hands are pulling you over the side.
+
+          Every man who got into the Raven that morning knows why he did.
+        effects:
+          - { deed: { type: front_deed, text: Held the strand at Bangor while the Raven pushed off } }
+          - { add: { man.ketill.loyalty: 1, man.ulf.loyalty: 1 } }
+          - { set: flag.bg_left }
+          - { if: "fate.asgeir_falls && !flag.bg_covered", then: [ { captain: Steinarr }, { set: flag.bg_steinarr } ] }
+      failure:
+        text: |
+          You turn. A spear-butt takes you in the face and the strand comes up and hits you, and somebody is dragging you through the surf by your hair. It is Ulf. He doesn't let go until you're over the side.
+
+          "You're welcome," he says, and is sick in the bilge.
+        effects:
+          - { injury: broken_nose }
+          - { add: { man.ulf.loyalty: 1 } }
+          - { set: flag.bg_left }
+          - { set: flag.bg_ulf_pulled }
+          - { if: "fate.asgeir_falls && !flag.bg_covered", then: [ { captain: Steinarr }, { set: flag.bg_steinarr } ] }
+    - id: run
+      text: Run for the ship.
+      effects:
+        - { set: flag.bg_left }
+        - { if: "fate.asgeir_falls && !flag.bg_covered", then: [ { captain: Steinarr }, { set: flag.bg_steinarr } ] }
+      result: |
+        You run. Everybody runs. You reach the ship and go over the side and get an oar in your hands, and pull, and the strand falls away behind you with men on it, Irish and not, and the javelins fall short in the water.
+
+        Nobody talks about it afterwards. Nobody needs to.
+
+- id: b_leave
+  kind: spine
+  art: bangor_field
+  title: Leaving the lough
+  text: |
+    You row out of Belfast Lough on the evening tide with the Raven low in the water.
+    [if flag.bg_command]
+    She is yours. The men at the oars are yours, more or less, and the silver under the benches is theirs, and the jarl's, and Ásgeir's, and some of it is yours. Home is a fortnight north and east. Which way you go is your affair now.
+    [elif flag.bg_steinarr]
+    Steinarr is at the steering-oar. Ásgeir is wrapped in his cloak under the stern-deck, going home to be buried in the hill above the fjord. The men row quietly.
+    [else]
+    Ásgeir is at the steering-oar, singing something about a woman in Dublin. Half the ship sings with him.
+    [/if]
+    [if service]
+
+    It is a long way home, and the captain is in no hurry to get there. The rest of the summer goes on the Irish coast: cattle lifted from a headland farm, a week's trading at the Norse camp at Dublin, a fight on a beach that nobody afterwards remembers the reason for.
+    [/if]
+    [if flag.bg_colman_freed]
+    Colmán stands on the strand and watches you go. He doesn't wave. After a while he turns, and walks up toward what is left of the abbey.
+    [/if]
+  choices:
+    - id: look
+      text: Watch the smoke over Bangor.
+      effects: [ { set: flag.bg_left }, { if: service, then: [ { days: 75 } ] } ]
+      result: The smoke stands up over the abbey long after the abbey has gone behind the headland. Then it goes too, and there is only the sea.
+    - id: count
+      text: Sit with Bersi while he counts it.
+      effects: [ { set: flag.bg_left }, { add: { man.bersi.loyalty: 1, skill.trade: 1 } }, { if: service, then: [ { days: 75 } ] } ]
+      result: |
+        Bersi counts it twice. Then he counts it a third time, with his lips moving, and sits back against the strakes with a face like a man in love.
+
+        "If half of you die before we get home," he says, "it's a very good year."

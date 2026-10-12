@@ -1,0 +1,135 @@
+# Spring 831 (FRAME-PHASE2 §2.9): the gate result. The chapter card has already said where he stands;
+# this is where he chooses how to go on. The four bench-mates decide whether to come with him.
+- id: sp_831
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["year >= 831", "place == home_fjord", "phase == muster", "!flag.placeholder_start"]
+  art: muster
+  when: Spring, 831
+  title: The ice goes out
+  text: |
+    The ice goes out of the fjord in a single night, with a noise like thunder a long way off, and in the morning the water is black and open all the way to the sea.
+
+    You are seventeen.
+    [if flag.bg_command]
+    The Raven is drawn up on the jarl's landing where you left her, with new tar on her strakes. Jarl Eystein has had his quarter, and made it clear he will want it again. The men who rowed her home are drifting down to the landing in ones and twos, to see who's going west, and with whom.
+    [elif flag.asgeir_patron && fate.asgeir_falls]
+    Ásgeir sends for you. He sits by his fire with his bad leg up on a stool and his ruined hand in his lap, and he has been talking to the jarl all winter.
+    [elif flag.asgeir_patron]
+    Ásgeir sends for you. He has been talking to the jarl all winter, he says, and the jarl has an old karvi rotting on his landing that he would rather see earn something.
+    [elif flag.bg_steinarr]
+    Steinarr has the Raven now. He is mustering on the jarl's landing, and he hasn't sent for you. You can go and stand in front of him, or you can find some other way west.
+    [else]
+    Ásgeir is mustering on the jarl's landing again. He'll take you back on the same bench, at the same share. Or you can find some other way west.
+    [/if]
+  choices:
+    - id: raven
+      text: Take the Raven out again.
+      visible_if: flag.bg_command
+      effects:
+        - { keep_boast: own_ship }
+        - &ketill_oath { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
+        - &ulf_oath { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
+        - &hallvard_oath { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
+        - &bersi_oath { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
+        - { if: "!nickname", then: [ { nickname: Raven } ] }
+      result: |
+        You walk down to the landing, and the men who are waiting there stop talking and look at you.
+
+        It's still strange. It will be strange for years.
+    - id: patron
+      text: Go with Ásgeir to the jarl, and ask for the karvi.
+      visible_if: "service && flag.asgeir_patron"
+      effects:
+        - { ship: { type: karvi, name: "The jarl's old karvi", crew: 12 } }
+        - { set: flag.owes_jarl }
+        - { keep_boast: own_ship }
+        - *ketill_oath
+        - *ulf_oath
+        - *hallvard_oath
+        - *bersi_oath
+      result: |
+        The jarl looks at you the way he looked at you at Yule: as if he were weighing a horse he hadn't decided whether to buy.
+
+        "Ásgeir says you'll bring her back," he says. "Ásgeir has been wrong before." He holds out his hand. "A quarter of what she brings home. And if you lose her, you'll row for me till you've paid for her."
+
+        She's twenty-eight oars and leaks at the stern. She's yours.
+    - id: ask
+      text: Go to the jarl yourself and ask for his old karvi.
+      visible_if: "service && !flag.asgeir_patron"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          The jarl keeps you waiting half a morning, and then hears you out with his chin on his fist.
+
+          "You've a name, now," he says at last. "Men will row for a name." He doesn't smile. "A quarter of what she brings home. Lose her, and you'll row for me till you've paid for her."
+
+          She's twenty-eight oars and leaks at the stern. She's yours.
+        effects:
+          - { ship: { type: karvi, name: "The jarl's old karvi", crew: 10 } }
+          - { set: flag.owes_jarl }
+          - { keep_boast: own_ship }
+          - *ketill_oath
+          - *ulf_oath
+          - *hallvard_oath
+          - *bersi_oath
+      failure:
+        text: |
+          The jarl hears you out, and then laughs, not unkindly. "One summer at an oar," he says, "and he wants a ship. Come back when you've had three."
+
+          You go back down to the landing. There is still a bench.
+        effects: [ { route: [orkney, iona, bangor] } ]
+    - id: buy
+      text: Buy a karvi of your own, outright, from a farmer down the fjord.
+      visible_if: service
+      requires: ["silver >= 192"]
+      effects:
+        - { add: { silver: -192 } }
+        - { ship: { type: karvi, name: Grey Goose, crew: 8 } }
+        - { keep_boast: own_ship }
+        - *ketill_oath
+        - *ulf_oath
+        - *hallvard_oath
+        - *bersi_oath
+      result: |
+        She's old and she's slow and the farmer who sells her to you cries when you take her away, which makes you wonder what he knows. But she's yours, and nobody else's, and she owes nobody a quarter of anything.
+
+        You call her the Grey Goose, because she is grey, and because she waddles.
+    - id: bench
+      text: Take your oar again. One more summer on another man's bench.
+      visible_if: service
+      effects: [ { route: [orkney, iona, bangor] }, { add: { man.ketill.loyalty: 1 } } ]
+      result: |
+        You walk down to the landing and find your bench, and put your chest under it.
+
+        "Sensible," says Bersi. "The middle men live longer."
+
+        "You're not in the middle," says Ulf. "You're in the prow. You've always been in the prow."
+
+# Keeping the boast to his father (boasts.yaml: father_silver).
+- id: sp_father
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["year >= 831", "place == home_fjord", "phase == muster", "boast.father_silver == 1", "silver >= 72"]
+  art: home_fjord
+  when: Spring, 831
+  title: Your father's hand
+  text: |
+    Your father is mending the byre roof, the way he does every spring, swearing at it the way he does every spring.
+
+    You swore over the jarl's horn that you would put three marks of silver in his hand. You have them.
+  choices:
+    - id: give
+      text: Climb up and give it to him.
+      effects: [ { add: { silver: -72 } }, { keep_boast: father_silver }, { set: flag.father_paid } ]
+      result: |
+        You climb up beside him and hold it out: three marks, weighed out on the jarl's own scales so there can be no argument.
+
+        He looks at it a long time without taking it. Then he takes it, and puts it inside his shirt, and goes on mending the roof.
+
+        "The cow," he says, after a while, "was a good cow." That's all. It's enough. At the Thing that spring, he tells everyone.
+    - id: later
+      text: Not yet. The summer may need it.
+      result: You leave him on the roof. There is still time. There is always still time, until the year turns.

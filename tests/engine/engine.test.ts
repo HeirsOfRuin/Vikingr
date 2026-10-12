@@ -9,6 +9,8 @@ import { livingFame } from '../../src/engine/fame';
 import { playLife } from '../../tools/bot-lib';
 
 const start = () => newGame(content, { background: 'younger_son', seed: 7, name: 'Ari' });
+/** The Phase 1 sandbox: a placeholder start with a borrowed karvi (the outlaw and the freedman's son, until Phase 3). */
+const sandbox = () => newGame(content, { background: 'freedman', seed: 7, name: 'Ari' });
 const doFirst = (s: GameState, pred: (a: Action) => boolean) => {
   const o = listActions(s, content).find((x) => x.enabled && pred(x.action));
   if (!o) throw new Error(`no enabled action on ${screenOf(s)}: ${listActions(s, content).map((x) => JSON.stringify(x.action)).join(' ')}`);
@@ -36,14 +38,14 @@ describe('engine', () => {
   it('act is pure: it never changes its input', () => {
     const s = start();
     const copy = structuredClone(s);
-    act(content, s, { t: 'choose', id: 'go' });
+    act(content, s, listActions(s, content)[0]!.action);
     expect(s).toEqual(copy);
   });
   it('refuses actions that are not available', () => {
     expect(() => act(content, start(), { t: 'raid' })).toThrow(ActionError);
   });
   it('musters, sails and arrives', () => {
-    let s = clear(start());
+    let s = clear(sandbox());
     expect(screenOf(s)).toBe('muster');
     s = clear(doFirst(s, (a) => a.t === 'recruit'));
     s = clear(doFirst(s, (a) => a.t === 'set_sail'));
@@ -56,7 +58,7 @@ describe('engine', () => {
     if (s.hero.alive) expect(s.at).toBe('shetland');
   });
   it('a winter in the hall ends in the next spring', () => {
-    let s = clear(start());
+    let s = clear(sandbox());
     s = clear(doFirst(s, (a) => a.t === 'stay_home'));
     expect(screenOf(s)).toBe('return');
     s = clear(doFirst(s, (a) => a.t === 'share'));
@@ -68,7 +70,7 @@ describe('engine', () => {
     }
   });
   it('saves round-trip, as JSON and as a save code', async () => {
-    let s = clear(start());
+    let s = clear(sandbox());
     s = clear(doFirst(s, (a) => a.t === 'recruit'));
     const loaded = fromSave(JSON.parse(JSON.stringify(toSave(s, content))), content);
     expect(loaded.state).toEqual(s);
@@ -85,7 +87,7 @@ describe('engine', () => {
   it('a bot life actually plays: years pass, the hero ages, deeds are done', () => {
     let played = 0;
     for (const seed of [1, 2, 3, 4, 5]) {
-      const r = playLife(content, 'raider', seed, 5);
+      const r = playLife(content, 'raider', seed, 5, seed % 2 ? 'younger_son' : 'freedman');
       expect(r.error).toBeNull();
       played += r.years;
       if (!r.state.death) {

@@ -20,13 +20,13 @@ export interface Route {
 
 const AVG_PROGRESS = WIND.states.reduce((s, w, i) => s + WIND.progress[w] * WIND.weights[i]!, 0);
 
-/** Legs out of a place to places that are on the map in this phase and known to the hero. */
-export function routes(state: GameState, content: ContentBundle, from: string): Route[] {
+/** Legs out of a place to places that are on the map in this phase and known to the hero (or to anyone: any). */
+export function routes(state: GameState, content: ContentBundle, from: string, any = false): Route[] {
   const speed = fleetSpeed(state, content);
   return content.legs
     .filter((l) => l.a === from || l.b === from)
     .map((leg) => ({ leg, to: leg.a === from ? leg.b : leg.a }))
-    .filter((r) => content.places[r.to]?.active && state.known.includes(r.to))
+    .filter((r) => content.places[r.to]?.active && (any || state.known.includes(r.to)))
     .map((r) => ({ ...r, days: Math.round((r.leg.days / (speed * AVG_PROGRESS)) * 10) / 10 }));
 }
 
@@ -44,9 +44,38 @@ export function stormChance(state: GameState, kind: Leg['kind'], wind: Wind): nu
   return STORM_BY_MONTH[m]! * STORM_LEG_MULT[kind] * (wind === 'gale' ? WIND.galeStormMult : 1) * Math.max(0.3, skill);
 }
 
-export function startVoyage(state: GameState, content: ContentBundle, to: string): void {
+/** The next place on the shortest sea road from one place to another (by legs, any place on the map). */
+export function nextHop(content: ContentBundle, from: string, to: string): string | null {
+  if (from === to) return null;
+  const prev: Record<string, string> = {};
+  const seen = new Set([from]);
+  const q = [from];
+  while (q.length) {
+    const cur = q.shift()!;
+    for (const l of content.legs) {
+      const nb = l.a === cur ? l.b : l.b === cur ? l.a : null;
+      if (!nb || seen.has(nb) || !content.places[nb]?.active) continue;
+      seen.add(nb);
+      prev[nb] = cur;
+      q.push(nb);
+    }
+  }
+  if (!seen.has(to)) return null;
+  let cur = to;
+  while (prev[cur] !== from) cur = prev[cur]!;
+  return cur;
+}
+
+/** Sets out for `to`. With any, the way need not be known to the hero (another man is steering), and a far
+ *  destination is reached hop by hop: this leg goes to the next place on the road. */
+export function startVoyage(state: GameState, content: ContentBundle, to: string, any = false): void {
   const from = state.at!;
-  const r = routes(state, content, from).find((x) => x.to === to);
+  if (any) {
+    const hop = nextHop(content, from, to);
+    if (!hop) throw new Error(`no sea road from ${from} to ${to}`);
+    to = hop;
+  }
+  const r = routes(state, content, from, any).find((x) => x.to === to);
   if (!r) throw new Error(`no route from ${from} to ${to}`);
   state.voyage = { from, to, kind: r.leg.kind, total: r.leg.days, progress: 0, daysAtSea: 0, wind: 'fair' };
   state.at = null;
@@ -152,6 +181,8 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   state.stats.legs += 1;
   learnNeighbours(state, content, v.to);
   const place = content.places[v.to]!;
+  if (state.service && state.service.route[0] === v.to) state.service.route.shift();
+  if (!state.known.includes(v.to)) state.known.push(v.to);
   lines.push(how ?? `Landfall at ${place.name} after ${plural(v.daysAtSea, 'day')} at sea.`);
   journal(state, `Landfall at ${place.name}.`);
   const d = dateOf(state.day);

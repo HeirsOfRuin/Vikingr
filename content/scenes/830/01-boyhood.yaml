@@ -1,0 +1,308 @@
+# Boyhood (FRAME-PHASE2 §2.0): four scenes, ages 8 to 15. Each sets a lean and a relationship.
+- id: b_ship_home
+  kind: spine
+  art: ship_home
+  when: Late summer, 822
+  title: The ship that came home
+  text: |
+    Somebody on the hill shouts, and then everybody is running.
+
+    You are eight. You run faster than your brother, who is twelve and thinks running is for children, and so you are first down to the shingle when the ship comes round the headland.
+
+    She is low in the water. That is the first thing the grown men say, all of them, in the same voice: she's low. Low means heavy, and heavy means silver.
+    [break]
+    Kol the Steersman's ship. Thirty oars rising and falling together, and the men at them singing something you can't make out, and a young man in the prow with his foot on the gunwale, standing there as if the sea had been made for him to stand over. Kol's son, Ásgeir. Your father says his name the way he says the names of good horses.
+
+    The keel grinds up the shingle. Women are crying. Somebody is shouting a name over and over, and nobody answers it.
+
+    Then they start to unload.
+  choices:
+    - id: oars
+      text: Watch the men at the oars, and how they bring her in.
+      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.b_watched_oars } ]
+      result: |
+        You watch them ship the oars, all at once, on one word from Kol. You watch how they lay her up the shingle, rolling her on logs, a dozen men to a side, and how the oldest of them puts his hand flat on her strakes when it's done, like a man settling a horse.
+
+        That night you lie awake and say the word over to yourself. You don't know what it means. You know what it does.
+      next: b_ship_home_end
+    - id: swords
+      text: Watch the swords and spears come ashore.
+      effects: [ { add: { skill.weapons: 1 } }, { set: flag.b_watched_swords } ]
+      result: |
+        They come out of the ship in bundles, spears tied with rope like firewood. A sword in a red leather scabbard. An axe with a notch out of the edge you could put your thumb in.
+
+        One of the men sees you looking, and holds the axe out to you, haft first. It's so heavy you nearly drop it on your foot. The men laugh, and so do you, and you don't give it back until your father makes you.
+      next: b_ship_home_end
+    - id: stories
+      text: Sit at the old men's feet, where the stories are being told.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.b_heard_stories } ]
+      result: |
+        The old men who stayed home have already found the ones who went, and the ale is already going round, and the stories have already started growing.
+
+        A church with a roof of lead. A river so wide you couldn't see across it. A king's man in a red cloak who ran so fast he left his shoes behind. You sit in the grass and listen until your mother finds you and drags you home by the ear, and you hear the rest through the wall, half the night.
+      next: b_ship_home_end
+    - id: silver
+      text: Push through to the scales, where they're weighing the silver.
+      effects: [ { add: { skill.trade: 1, silver: 1 } }, { set: flag.b_asgeir_coin } ]
+      result: |
+        It comes out of the ship in sacks and boxes, and it doesn't look like treasure. It looks like rubbish: bent spoons, a cup crushed flat, a bracelet cut in three, coins with a stranger's face. Kol weighs every piece on his scales, and a man with a knife nicks each one to see it's silver all through.
+
+        Ásgeir sees you at his elbow. He picks a sliver of hacksilver off the scale, no bigger than your fingernail, and flips it to you.
+
+        "For luck," he says. "Every ship needs a boy watching her come home."
+      next: b_ship_home_end
+
+- id: b_ship_home_end
+  kind: spine
+  art: ship_home
+  when: Late summer, 822
+  title: The ship that came home
+  text: |
+    Later, when it's dark and the fires are lit along the shore, your father finds you. He stands beside you a while, looking at the ship.
+
+    "Your brother will have the farm," he says. "You know that."
+
+    You know that. You have always known that.
+
+    "Well," says your father. He nods at the ship. "There's that, too."
+  choices:
+    - id: on
+      text: Look at the ship.
+      next: b_brother
+
+- id: b_brother
+  kind: spine
+  art: home_fjord
+  when: Spring, 826
+  title: Hallbjörn
+  text: |
+    You are twelve, and your brother Hallbjörn is sixteen, and big, and has started standing the way your father stands.
+
+    The færing is drawn up on the shingle below the farm, the little four-oared boat you have both fished from since you could hold a line. You are pushing her out when Hallbjörn comes down the path.
+
+    "Not today," he says. "I need her."
+
+    "You don't need her. You're going to Bárð's to look at Gyða."
+
+    He goes red. Then he puts his foot on the gunwale and leans on it, so the boat won't move.
+
+    "Everything on this farm is going to be mine," he says. "The boat too. You might as well get used to it."
+  choices:
+    - id: fight
+      text: Hit him.
+      check: { skill: weapons, attr: str, difficulty: 5 }
+      success:
+        text: |
+          You hit him in the belly with everything you have, and he folds up and sits down in the shallows, and for a moment the whole world is very quiet.
+
+          Then he gets up and gives you the beating of your life. But he takes a while to do it, and when it's over, and you're both lying on the shingle bleeding, he laughs.
+
+          "Take the boat," he says. "You've earned it."
+        effects: [ { set: flag.b_fought }, { add: { skill.weapons: 1 } } ]
+        next: b_ormr
+      failure:
+        text: |
+          You swing at him. He catches your wrist without looking, the way he'd catch a thrown apple, and puts you in the fjord.
+
+          The water is cold enough to stop your heart. When you come up, spluttering, he's already rowing away in the færing, and he doesn't look back.
+        effects: [ { set: flag.b_fought } ]
+        next: b_ormr
+    - id: trick
+      text: Tell him Gyða's father is coming up the path behind him.
+      check: { skill: cunning, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          He spins round. You shove the boat off the shingle, jump in over the stern and are three oar-lengths out before he turns back.
+
+          He stands on the shore shouting. You can't hear all of it. You hear enough to know he'll remember this, and you row out into the fjord laughing so hard you can barely pull.
+        effects: [ { set: flag.b_tricked }, { add: { skill.cunning: 1 } } ]
+        next: b_ormr
+      failure:
+        text: |
+          "Gyða's father is coming down the path."
+
+          Hallbjörn doesn't even look round. "He's at the Thing in Gula. Nice try, little brother." He gets in the boat and pushes off, and the oar-blade flicks cold water in your face as he goes.
+        effects: [ { set: flag.b_tricked } ]
+        next: b_ormr
+    - id: yield
+      text: Let him have the boat.
+      effects: [ { set: flag.b_yielded }, { add: { honour: 1 } } ]
+      result: |
+        You let go of the boat and step back.
+
+        It isn't what he expected. He stands there with his foot on the gunwale, looking at you, and then at the boat, and then at the path up to Bárð's farm.
+
+        "Tomorrow," he says, after a while. "You can have her tomorrow." It's the first time he has ever given you anything. You both pretend it isn't.
+      next: b_ormr
+    - id: father
+      text: Go and get your father.
+      effects: [ { set: flag.b_told }, { add: { skill.speech: 1 } } ]
+      result: |
+        Your father comes down the path slowly, the way he does everything, and listens to both of you, and then he looks at the boat.
+
+        "The farm is his," he says to you. "The boat is the farm's." Then, to Hallbjörn: "And the sea is nobody's. Let the boy fish."
+
+        Hallbjörn lets you fish. He doesn't speak to you for three days, and when he does, he calls you the sea-king, and he doesn't mean it kindly.
+      next: b_ormr
+
+- id: b_ormr
+  kind: spine
+  art: hearth_ormr
+  when: Deep winter, 828
+  title: Ormr's Night
+  text: |
+    The longhouse is asleep, or pretending. Your brother snores like a saw in wet wood. The dogs have taken the warm end of the bench, and the fire has burned down to a red eye in the ash.
+
+    Ormr One-Hand is awake. He is always awake. He sits on his stool by the hearth with a net across his knees, holding the cord in his teeth and knotting it with the one hand he has left. The stump of the other rests on his thigh, wrapped in old linen.
+
+    "Can't sleep?" he says, without looking up. "Neither can I. When you're old, the night gets long at both ends."
+    [break]
+    Every winter Ormr tells how he lost the hand. When you were six it was a bear. When you were nine it was a Frankish count with a door. Last Yule it was a woman in Dublin, and your mother sent you out to see to the cows before he got to the end.
+
+    You sit down on the other side of the fire. He looks at you a while, the way he looks at weather.
+
+    "You want the true one," he says. "Your brother never asked for the true one."
+
+    He puts the net down.
+    [break]
+    "An island in the west. Monks. Your father was a boy. We came in on the morning tide and they ran, mostly, and the ones who didn't run, prayed. You'll hear men say the monks don't fight. Some of them don't.
+
+    "I found a chest in their kitchen house. Silver on the lid. I put my hand in up to the wrist, and a boy came out of the dark with a cleaver. No older than you. Cooking boy. Thin as a rake.
+
+    "I killed him. Then I sat on the shore with my arm in the sea, watching the water go red, and I thought: so that's what it costs. Nobody tells you that part. They tell you about the silver."
+
+    He spits into the fire. It hisses.
+
+    "There was a cup in that chest. I lost it at dice in Hedeby before the leaves turned."
+
+    He coughs, a long wet cough that bends him double over the net. When he straightens, he wipes his mouth on the linen, and there is a dark spot on it in the firelight. He sees you see it.
+
+    "Well," says Ormr. "Ask your question. It's late, and I'm not getting younger."
+  choices:
+    - id: worth
+      text: Ask him whether it was worth it.
+      effects: [ { set: flag.b_ormr_worth }, { add: { skill.seamanship: 1 } } ]
+      result: |
+        Ormr thinks about it longer than you expect.
+
+        "The hand? No. The going? Yes." He looks into the fire. "There's a sea out there with no end to it, and on it a man is nobody's second son. Your brother will have the farm, and the cows, and the same field every spring until they bury him in it. You won't."
+
+        He picks the net up again and holds the cord in his teeth.
+
+        "You'll lose things," he says around it. "Go anyway."
+      next: b_fathers_word
+    - id: trick
+      text: Ask what he'd do now, if the boy came out of the dark.
+      effects: [ { set: flag.b_ormr_trick }, { add: { skill.shield: 1 } } ]
+      result: |
+        Ormr stands, slower than he used to, and takes the poker from the hearth.
+
+        "Shield up. Not like that. Like you mean to keep your face." He knocks your arm into place with the poker. "When he comes, you don't take the cut in the middle of the shield. You take it on the rim and turn it, so. His blade goes past you and he comes with it. Then he's close, and you're not."
+
+        He does it three times. The third time the poker taps you behind the ear before you have seen it move.
+
+        "Again," he says.
+
+        You practise until the fire is ash and your brother throws a boot at the pair of you.
+      next: b_fathers_word
+    - id: tree
+      text: Ask him what the monks' god looked like.
+      effects: [ { set: flag.b_ormr_tree }, { add: { skill.lore: 1 } } ]
+      result: |
+        "A man hanging on a tree," says Ormr. "They carve him everywhere. On their crosses, on their books, on the lids of their boxes. Hung on a tree with a wound in his side."
+
+        He is quiet a while.
+
+        "Odin hung on the tree nine nights, with a spear in him, to win the runes. I said that to Brand the Priest-Burner on the way home, and he told me to shut my mouth or he'd shut it for me."
+
+        He shrugs with the one shoulder that still shrugs properly.
+
+        "Two gods on two trees. Maybe it's the same tree, and the Irish heard the story wrong. Don't say it in front of your father."
+      next: b_fathers_word
+    - id: log
+      text: Say nothing. Put another log on the fire.
+      effects: [ { set: flag.b_ormr_seax } ]
+      result: |
+        You put a log on the fire and sit back down. The bark catches, and the light comes up on the old man's face.
+
+        Ormr watches you a while.
+
+        "You listen," he says at last. "That's rarer than courage, and it lasts longer."
+
+        He reaches under his stool and holds something out to you, handle first. A seax, the blade worn thin and bright from fifty winters on the whetstone, the grip bound in new leather.
+
+        "Don't tell your brother. He'll want it, and he'll use it to cut cheese."
+      next: b_fathers_word
+
+- id: b_fathers_word
+  kind: spine
+  art: home_fjord
+  when: Winter, 829
+  title: Your father's word
+  text: |
+    Your father waits until the end of the winter to say it, which is how you know he has been thinking about it all winter.
+
+    "Ásgeir Kolsson is taking the Raven west in the spring, for Jarl Eystein. Forty oars." He doesn't look at you. He looks at the fire. "I've bought you one of them. It cost me a cow and a good deal of my pride."
+    [if flag.b_asgeir_coin]
+    "He remembered you," your father adds. "The boy at the scales. I don't know what you said to him."
+    [/if]
+    [break]
+    Hallbjörn is mending a harness on the other side of the fire, and doesn't look up, and is listening to every word.
+    [if flag.b_fought]
+    When your father has finished, Hallbjörn says, without looking up, "He'll do well. He hits hard, for a little one." It's the nearest he has ever come to praising you.
+    [elif flag.b_tricked]
+    When your father has finished, Hallbjörn says, without looking up, "Watch your back in that ship. They'll have heard you're a liar." Your mother tells him to hold his tongue. He holds it, mostly.
+    [elif flag.b_yielded]
+    When your father has finished, Hallbjörn puts the harness down. "I'll keep your place by the fire," he says, and then looks embarrassed that he said it.
+    [else]
+    When your father has finished, Hallbjörn says, "The sea-king," and goes back to his harness. Nobody laughs.
+    [/if]
+
+    Ormr coughs in his corner, a long time, and doesn't say anything at all.
+
+    You will be sixteen when the ice goes out. There is the rest of the winter to decide how you mean to leave.
+  choices:
+    - id: blessing
+      text: Ask for your father's blessing, and his old shield.
+      effects: [ { set: flag.b_blessing }, { add: { silver: 24, honour: 1 } } ]
+      result: |
+        Your father takes the shield down from the wall himself. The paint is mostly gone and the rim has been replaced twice. He holds it a moment before he gives it to you.
+
+        Then he puts something in your other hand: a mark of silver, wrapped in a scrap of wool.
+
+        "For the sign-on," he says. "And for when you need to buy your way out of something. You will."
+      next: m_landing
+    - id: sword
+      text: Take your grandfather's sword from the chest, without asking.
+      effects: [ { set: flag.b_sword }, { add: { honour: -1 } } ]
+      result: |
+        Your grandfather's sword has lain in the chest at the foot of your father's bed since before you were born, wrapped in oiled wool. It's a good sword. It's the only good thing in the house, apart from the cows.
+
+        You take it on the last night, and you're gone before light.
+
+        Nobody comes after you. Later, you'll understand why: your father saw you take it, and let you.
+      next: m_landing
+    - id: gyda
+      text: Go to Bárð's farm first, and make Gyða a promise.
+      effects: [ { set: flag.b_gyda_promise } ]
+      result: |
+        Gyða Bárðardóttir meets you behind her father's byre, where everybody in the district does their meeting. She is a year older than you, and taller, and has opinions about everything.
+
+        "Hallbjörn will ask my father for me," she says. "Next winter, or the one after. He's already been looking at the cows."
+
+        "Then don't let him."
+
+        "And wait for you? For how long?" She looks at you a long moment. "Come back with a ship of your own, sea-king, and we'll talk about it."
+
+        She kisses you, quickly, on the side of the mouth, and goes back in to the cows.
+      next: m_landing
+    - id: nothing
+      text: Say nothing to anyone. Go before dawn.
+      effects: [ { set: flag.b_slipped_away } ]
+      result: |
+        You go before dawn with your sea-chest on your shoulder, and the only one awake is Ormr, sitting in his corner.
+
+        He doesn't say anything. He lifts his one hand, and you lift yours, and that's all of it.
+
+        Your mother will be angry for a year. Your father, you think, will understand by noon.
+      next: m_landing

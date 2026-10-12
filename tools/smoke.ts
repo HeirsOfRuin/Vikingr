@@ -1,5 +1,5 @@
-// Browser smoke test against dist/ at phone size: new game, muster, a voyage, a fight if one comes,
-// every tab. Screenshots go to smoke-out/. Fails on console errors or a step that cannot be found.
+// Browser smoke test against dist/ at phone size: the younger son's year 830 played from the boyhood
+// scenes to the spring of 831, then every tab and a reload. Screenshots go to smoke-out/. Fails on console errors or a step that cannot be found.
 // Usage: npm run build && npm run smoke
 import { chromium, type Page } from 'playwright';
 import { createServer } from 'node:http';
@@ -36,17 +36,15 @@ const click = async (p: Page, text: string | RegExp) => {
   await b.waitFor({ timeout: 4000 });
   await b.click();
 };
-/** Clicks through reports, scenes and fights until one of the wanted buttons shows. */
-const until = async (wanted: RegExp, max = 60) => {
-  for (let i = 0; i < max; i++) {
-    if (await page.locator('button:not([disabled])', { hasText: wanted }).count()) return;
-    for (const t of [/^Continue$/, 'Let the men handle it', 'Let instinct take it', 'Sail on', /^Begin\.$/, /Drink, listen/, /Laugh it off/, /Leave the dead/, /Turn and fight/]) {
-      const b = page.locator('button:not([disabled])', { hasText: t }).first();
-      if (await b.count()) { await b.click(); break; }
-    }
-  }
-  throw new Error(`never reached ${wanted}`);
-};
+/** Headings worth a screenshot the first time they show (the year 830, start to spring). */
+const SHOTS: [RegExp, string][] = [
+  [/The ship that came home/, 'boyhood'], [/^The Raven$/, 'muster'], [/^At sea$/, 'at-sea'], [/The hall at Birsay/, 'birsay'],
+  [/^Iona$/, 'iona'], [/^The landing$/, 'iona-landing'], [/^The lough$/, 'bangor'], [/The shield-wall/, 'battle'], [/^Plunder:/, 'plunder'],
+  [/^The field$|^The strand$/, 'after-battle'], [/^Home$/, 'home'], [/The winter hall/, 'hall'], [/^Yule$/, 'yule'], [/^Heiðr$/, 'volva'],
+  [/^Thorgils$/, 'flyting'], [/^The name$/, 'the-name'], [/^Spring, 831$/, 'spring-card'], [/The ice goes out/, 'spring-831'],
+];
+/** Buttons to prefer, in order; otherwise the first enabled choice. Plunder leaves after two rounds. */
+const PREFER = [/^Continue/, 'Let the men handle it', 'Let instinct take it', /^Sail on$/, /^Row (out|on|home) with/, /Haul up/, /Take your share/, /Train with the men/];
 
 try {
   await page.goto(`http://localhost:${port}/`);
@@ -54,36 +52,24 @@ try {
   await click(page, 'Begin a new life');
   await snap('new-game');
   await click(page, /^Begin$/);
-  await snap('start-scene');
-  await until(/Put to sea/);
-  await snap('muster');
-  await click(page, /Sign on/);
-  await until(/Put to sea/);
-  await click(page, 'Buy provisions').catch(() => undefined);
-  await until(/Put to sea/);
-  await click(page, /Put to sea/);
-  await until(/Sail to Hjaltland/);
-  await snap('home-place');
-  await click(page, /Sail to Hjaltland/);
-  await snap('at-sea');
-  await until(/Sail to Orkneyjar/);
-  await snap('shetland');
-  await click(page, /Sail to Orkneyjar/);
-  await until(/Sail to Iona|Sail to Hjaltland/);
-  await snap('orkney');
-  if (await page.locator('button:not([disabled])', { hasText: /Sail to Iona/ }).count()) {
-    await click(page, /Sail to Iona/);
-    await until(/Raid Iona|Sail to Orkneyjar/);
-    await snap('iona');
-    if (await page.locator('button:not([disabled])', { hasText: /Raid Iona/ }).count()) {
-      await click(page, /Raid Iona/);
-      await snap('battle');
-      await click(page, /Hold the wall|Push|Throw spears/);
-      await snap('battle-round');
-      await until(/Sail to Orkneyjar|Sail to Bangor|Begin another life/);
-      await snap('after-raid');
+  const seen = new Set<string>();
+  let rounds = 0;
+  for (let step = 0; step < 900; step++) {
+    const h = ((await page.locator('main h2').first().textContent({ timeout: 2000 }).catch(() => '')) ?? '').trim();
+    for (const [re, name] of SHOTS) if (re.test(h) && !seen.has(name)) { seen.add(name); await snap(name); }
+    if (seen.has('spring-831') || (await page.locator('button', { hasText: 'Begin another life' }).count())) break;
+    if (h.startsWith('Plunder:')) {
+      await click(page, ++rounds > 2 ? /Back to the ships/ : /Strip the next house/);
+      continue;
     }
+    let clicked = false;
+    for (const t of PREFER) {
+      const b = page.locator('main button:not([disabled])', { hasText: t }).first();
+      if (await b.count()) { await b.click(); clicked = true; break; }
+    }
+    if (!clicked) await page.locator('main .choices button:not([disabled])').first().click({ timeout: 4000 });
   }
+  for (const need of ['boyhood', 'muster', 'birsay', 'bangor', 'home', 'yule']) if (!seen.has(need) && !(await page.locator('button', { hasText: 'Begin another life' }).count())) errors.push(`never reached: ${need}`);
   for (const t of ['Map', 'Hero', 'Crew', 'Saga']) {
     await page.locator('.tabs button', { hasText: t }).click();
     await snap(`tab-${t.toLowerCase()}`);

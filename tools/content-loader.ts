@@ -64,6 +64,9 @@ export function loadContent(root = ROOT): S.ContentBundle {
     scenes: byId(scenes, 'scene'),
     names: check(z.array(z.string()), read(reg('names.yaml')), 'registry/names.yaml'),
     art: byId(check(z.array(S.artEntry), read(reg('art.yaml')), 'registry/art.yaml'), 'art'),
+    boasts: byId(check(z.array(S.boastDef), read(reg('boasts.yaml')), 'registry/boasts.yaml'), 'boast'),
+    fates: byId(check(z.array(S.fateDef), read(reg('fates.yaml')), 'registry/fates.yaml'), 'fate'),
+    banter: check(z.array(S.banterLine), read(reg('banter.yaml')), 'registry/banter.yaml'),
   };
   const hash = createHash('sha1').update(JSON.stringify(bundle)).digest('hex').slice(0, 12);
   return { hash, ...bundle };

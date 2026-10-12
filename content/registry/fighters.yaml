@@ -44,3 +44,12 @@
   weapon: 2
   habits: { strike: 3, guard: 3 }
   desc: A big man in a brown robe with a hay-spear, standing in the gate because nobody else would.
+- id: steinarr
+  name: Steinarr
+  attrs: { str: 3, agi: 2, end: 3, wit: 3, pre: 2 }
+  weapons: 4
+  shield: 3
+  armour: 1
+  weapon: 2
+  habits: { strike: 3, guard: 2, feint: 2 }
+  desc: Ásgeir's second. A long, sour man with a broken nose, who has been to Ireland and wants everyone to know it.

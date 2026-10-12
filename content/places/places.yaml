@@ -51,7 +51,7 @@ places:
     desc: Colum Cille's island. Raided before your father's time and again since, and still the monks come back.
     known: false
     active: true
-    raid: { wealth: 288, defenders: 14, foe: monks_tenants, terrain: beach }
+    raid: { wealth: 720, defenders: 14, foe: monks_tenants, terrain: beach }
   - id: bangor
     name: Bangor
     lon: -5.67
@@ -62,7 +62,7 @@ places:
     desc: A great house of the Irish monks on Belfast Lough, with a king's levy close enough to come.
     known: false
     active: true
-    raid: { wealth: 480, defenders: 28, foe: ulster_levy, terrain: field }
+    raid: { wealth: 1500, defenders: 28, foe: ulster_levy, terrain: field }
   # ---- later phases ----
   - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
   - { id: kaupang, name: "Kaupang", lon: 10.05, lat: 59.0, kind: market, region: Vík, desc: "The market at Skíringssalr." }

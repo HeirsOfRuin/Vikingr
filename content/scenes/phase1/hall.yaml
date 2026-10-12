@@ -1,5 +1,6 @@
 # PLACEHOLDER hall scenes for the Phase 1 engine build.
 - id: p1_winter_quarrel
+  requires: [flag.placeholder_start]  # the Phase 1 sandbox starts only; the year 830 has its own
   kind: pool
   placeholder: true
   trigger: hall

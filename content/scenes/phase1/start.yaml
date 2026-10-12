@@ -1,18 +1,4 @@
 # PLACEHOLDER scenes for the Phase 1 engine build. Phase 2 replaces them with the real prologue.
-- id: p1_start_younger
-  kind: spine
-  placeholder: true
-  title: Spring, 830
-  text: |
-    [Placeholder prologue: the younger son. Phase 2 writes the boyhood scenes.]
-
-    Your brother has the farm. You have a borrowed karvi, the jarl's patience for one summer, and four men who will follow you as far as the silver goes.
-
-    "Well," says Ulf. "West, then?"
-  choices:
-    - id: go
-      text: Begin.
-      effects: [ { set: flag.placeholder_start }, { set: flag.owes_jarl } ]
 - id: p1_start_outlaw
   kind: spine
   placeholder: true

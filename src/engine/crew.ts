@@ -8,6 +8,11 @@ export function aliveMen(state: GameState): SwornMan[] {
   return state.men.filter((m) => m.alive);
 }
 
+/** Men fit to stand in a fight today. */
+export function fitMen(state: GameState): SwornMan[] {
+  return state.men.filter((m) => m.alive && (m.hurtUntil === null || m.hurtUntil <= state.day));
+}
+
 /** Everyone who eats: the crew, the sworn men and the hero. */
 export function mouths(state: GameState): number {
   return state.crew.men + aliveMen(state).length + 1;
@@ -48,6 +53,8 @@ export function newMan(content: ContentBundle, id: string): SwornMan {
     deeds: 0,
     nickname: null,
     diedOn: null,
+    sworn: true,
+    hurtUntil: null,
   };
 }
 

@@ -42,6 +42,32 @@ export interface SwornMan {
   deeds: number;
   nickname: string | null;
   diedOn: number | null;
+  sworn: boolean; // has given his oath to the hero (bench-mates have not)
+  hurtUntil: number | null; // sits out fights until this day
+}
+
+export interface Boast {
+  id: string;
+  sworn: number; // day
+  due: number;
+  state: 'open' | 'kept' | 'broken';
+}
+
+export interface Service {
+  captain: string;
+  route: string[]; // where the captain means to go next, in order
+  shares: number; // shares of the plunder the hero has earned (1 an oarsman; 2 for a deed)
+}
+
+export interface PlunderState {
+  place: string;
+  round: number;
+  alarm: number; // 0..10; at 10 the countryside arrives
+  taken: number;
+  captives: number;
+  burned: boolean;
+  log: string[];
+  next?: string; // scene to open when it is over
 }
 
 export interface Deed {
@@ -142,6 +168,7 @@ export interface BattleState {
   place: string | null;
   win?: string;
   lose?: string;
+  parted?: string;
   killed: number;
   lost: number;
 }
@@ -150,6 +177,7 @@ export type Pending =
   | { t: 'scene'; id: string; result?: string }
   | { t: 'duel'; duel: DuelState }
   | { t: 'battle'; battle: BattleState }
+  | { t: 'plunder'; plunder: PlunderState }
   | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string };
 
 export interface PlaceState {
@@ -204,4 +232,9 @@ export interface GameState {
   musterPool: number; // men still willing to sign on this spring
   position: Position; // where he stands in the next fight
   rearFights: number; // fights in a row fought from behind the wall
+  service: Service | null; // rowing in another man's ship
+  boasts: Boast[];
+  fates: Record<string, number>; // what will happen, rolled at the start (content/registry/fates.yaml)
+  omens: Record<string, number>; // what the signs say will happen: the fate, right seven times in ten
+  captives: number;
 }

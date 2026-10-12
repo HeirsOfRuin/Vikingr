@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadContent } from './content-loader';
-import type { ContentBundle } from '../src/content/schema';
+import type { ContentBundle, Effect } from '../src/content/schema';
 
 const guide = readFileSync(join(import.meta.dirname, '..', 'content', 'style-guide.md'), 'utf8');
 
@@ -29,7 +29,14 @@ export function texts(c: ContentBundle): { where: string; text: string }[] {
       add(w, ch.result);
       add(w, ch.success?.text);
       add(w, ch.failure?.text);
-      for (const e of [...(ch.effects ?? []), ...(ch.success?.effects ?? []), ...(ch.failure?.effects ?? [])]) if ('journal' in e) add(w, e.journal);
+      const walk = (es: Effect[] | undefined): void => {
+        for (const e of es ?? []) {
+          if ('if' in e) { walk(e.then); walk(e.else); }
+          else if ('journal' in e) add(w, e.journal);
+          else if ('nickname' in e) add(w, e.nickname);
+        }
+      };
+      walk(ch.effects); walk(ch.success?.effects); walk(ch.failure?.effects);
     }
   }
   for (const p of Object.values(c.places)) add(`place ${p.id}`, p.desc);
@@ -40,6 +47,8 @@ export function texts(c: ContentBundle): { where: string; text: string }[] {
   for (const f of Object.values(c.foes)) add(`foe ${f.id}`, f.desc);
   for (const s of Object.values(c.ships)) add(`ship ${s.id}`, s.desc);
   for (const r of Object.values(c.rivals)) add(`rival ${r.id}`, r.note);
+  c.banter.forEach((b, i) => add(`banter ${i} (${b.who})`, b.text));
+  for (const b of Object.values(c.boasts)) add(`boast ${b.id}`, b.text);
   return out;
 }
 

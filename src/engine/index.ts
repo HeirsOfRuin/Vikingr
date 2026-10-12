@@ -15,12 +15,16 @@ import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOut
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
 import { routes, runVoyage, startVoyage } from './voyage';
 import {
-  borrowShip, BUILD_TYPES, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, shareOut, winterHere,
+  borrowShip, BUILD_TYPES, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
   type HallWhat, type ShareHow,
 } from './season';
 import { formatSilver, plural } from './format';
+import { banter } from './banter';
+import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
+import { journal } from './journal';
+import { renderText } from './text';
 import { heal } from './hero';
-import { FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
+import { SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -47,7 +51,10 @@ export type Action =
   | { t: 'order'; order: Order }
   | { t: 'position'; pos: Position }
   | { t: 'battle_auto' }
-  | { t: 'slot'; man: string; slot: Position };
+  | { t: 'slot'; man: string; slot: Position }
+  | { t: 'follow' }
+  | { t: 'take_share' }
+  | { t: 'plunder'; what: PlunderWhat };
 
 export interface ActionOption {
   action: Action;
@@ -58,7 +65,7 @@ export interface ActionOption {
   group: string;
 }
 
-export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
+export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
 
 export interface View {
   screen: Screen;
@@ -102,9 +109,9 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     silver: bg.silver,
     loot: 0,
     provisions: 0,
-    ships: [{ id: 'borrowed', type: bg.ship, name: "The jarl's old karvi", hull: 80 }],
+    ships: [{ id: bg.service ? 'service' : 'borrowed', type: bg.ship, name: bg.service ? bg.service.ship_name : "The jarl's old karvi", hull: bg.service ? 90 : 80 }],
     crew: { men: bg.crew, quality: 0.6, morale: 6 },
-    men: bg.men.map((id) => newMan(content, id)),
+    men: bg.men.map((id) => ({ ...newMan(content, id), sworn: !bg.service })),
     at: 'home_fjord',
     voyage: null,
     deeds: [],
@@ -122,7 +129,18 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     musterPool: 0,
     position: 'wall',
     rearFights: 0,
+    service: bg.service ? { captain: bg.service.captain, route: [], shares: 1 } : null,
+    boasts: [],
+    fates: {},
+    omens: {},
+    captives: 0,
   };
+  // what will happen, and what the signs will say about it (DESIGN §12: omens right about seven times in ten)
+  const fateRng = new RngCursor(seedRng(opts.seed ^ 0x2f6b9a1d));
+  for (const f of Object.values(content.fates)) {
+    state.fates[f.id] = fateRng.float() < f.chance ? 1 : 0;
+    state.omens[f.id] = fateRng.float() < 0.7 ? state.fates[f.id]! : 1 - state.fates[f.id]!;
+  }
   state.hero.hp = hpMax(state, content);
   state.musterPool = 4 + 2 * effAttr(state, content, 'pre');
   // the first season's food comes from the farm and the jarl
@@ -138,7 +156,7 @@ const opt = (group: string, action: Action, label: string, enabled = true, reaso
 export function screenOf(state: GameState): Screen {
   if (state.death) return 'death';
   const p = state.pending;
-  if (p) return p.t === 'scene' ? 'scene' : p.t === 'report' ? 'report' : p.t;
+  if (p) return p.t;
   if (state.voyage) return 'voyage';
   if (state.phase === 'muster' && state.at === 'home_fjord') return 'muster';
   if (state.phase === 'return') return 'return';
@@ -194,6 +212,10 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'voyage': return [opt('', { t: 'voyage_on' }, 'Sail on')];
     case 'muster': {
+      if (state.service) {
+        const svc = state.service;
+        return [opt('Sail', { t: 'set_sail' }, `Row out with ${svc.captain}`, true, undefined, svc.route.length ? `Bound for ${content.places[svc.route[0]!]?.name ?? svc.route[0]}` : 'West, the way he went last year')];
+      }
       const out = homeActions(state, content);
       const doy = dateOf(state.day).doy;
       const canSail = state.ships.length > 0 && state.crew.men >= 6;
@@ -202,6 +224,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       return out;
     }
     case 'return': {
+      if (state.service) return [opt('Share-out', { t: 'take_share' }, `Take your share from ${state.service.captain}`)];
       const pot = state.loot;
       return [
         opt('Share-out', { t: 'share', how: 'generous' }, 'Share with an open hand', true, undefined, `Keep 15% of ${formatSilver(pot)}`),
@@ -213,27 +236,48 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const out: ActionOption[] = [];
       const home = state.at === 'home_fjord';
       const fc = feastCost(state);
-      out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
+      const lord = !state.service; // an oarsman eats at his father's table and does not hold feasts
+      if (lord) out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
+      else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
       for (const m of aliveMen(state)) out.push(opt('Gifts', { t: 'hall', what: 'gift', arg: m.id }, `Give ${m.name} an arm-ring`, state.silver >= ORTUG_PER_MARK, `You need ${formatSilver(ORTUG_PER_MARK)}.`, `Loyalty ${m.loyalty}/10`));
       out.push(opt('Hall', { t: 'hall', what: 'train' }, 'Train with the men'));
       out.push(opt('Hall', { t: 'hall', what: 'rest' }, 'Rest and heal'));
       if (state.flags.skald) out.push(opt('Hall', { t: 'hall', what: 'skald' }, 'Have the skald compose'));
       if (home) out.push(opt('Hall', { t: 'hall', what: 'blot' }, 'Hold a blót', state.silver >= 12, `You need ${formatSilver(12)}.`, formatSilver(12)));
-      if (home && !state.building) for (const t of BUILD_TYPES) {
+      if (home && lord && !state.building) for (const t of BUILD_TYPES) {
         const st = content.ships[t]!;
         out.push(opt('Ships', { t: 'hall', what: 'build', arg: t }, `Build a ${st.name.toLowerCase()}`, state.silver >= st.cost, `You need ${formatSilver(st.cost)}.`, formatSilver(st.cost)));
       }
-      if (home && state.flags.owes_jarl && state.ships.length) {
+      if (home && lord && state.flags.owes_jarl && state.ships.length) {
         const c = content.ships.karvi!.cost;
         out.push(opt('Ships', { t: 'hall', what: 'buy_ship' }, "Buy the karvi from the jarl", state.silver >= c, `You need ${formatSilver(c)}.`, formatSilver(c)));
       }
       return out;
+    }
+    case 'plunder': {
+      const pl = (p as { plunder: import('./state').PlunderState }).plunder;
+      const left = ALARM_MAX - pl.alarm;
+      const warn = left <= 3 ? 'The alarm is close to spreading' : undefined;
+      return [
+        opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? 'More silver; more noise'),
+        opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, 'Worth silver in Kaupang; slow and loud'),
+        opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
+        opt('Plunder', { t: 'plunder', what: 'leave' }, 'Back to the ships, now', true, undefined, `Carrying ${formatSilver(pl.taken)}`),
+      ];
     }
     case 'place': {
       const out: ActionOption[] = [];
       const at = state.at!;
       const place = content.places[at]!;
       const doy = dateOf(state.day).doy;
+      if (state.service) {
+        const svc = state.service;
+        const dest = svc.route[0];
+        if (dest && dest !== at) out.push(opt('Sail', { t: 'follow' }, `Row on with ${svc.captain}`, true, undefined, `Bound for ${content.places[dest]?.name ?? dest}`));
+        else if (at !== 'home_fjord') out.push(opt('Sail', { t: 'follow' }, `Row home with ${svc.captain}`, true, undefined, `Bound for ${content.places.home_fjord!.name}`));
+        else out.push(opt('Season', { t: 'end_season' }, 'Haul up the ship for the winter'));
+        return out;
+      }
       if (state.ships.length) {
         for (const r of routes(state, content, at)) {
           const short = state.provisions < mouths(state) * r.days;
@@ -308,6 +352,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
           next = o.next ?? next;
         }
       }
+      if (text) text = renderText(text, state, content);
       const pd = state.pending as Pending | null;
       if (pd) {
         if (text && pd.t === 'duel') pd.duel.log.unshift(text);
@@ -316,17 +361,21 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       else if (next) open(state, next);
       break;
     }
-    case 'sail': {
-      startVoyage(state, content, action.to);
-      const r = runVoyage(state, content, rng);
-      report('At sea', r.lines);
-      break;
-    }
+    case 'sail':
+    case 'follow':
     case 'voyage_on': {
+      if (action.t === 'sail') startVoyage(state, content, action.to);
+      if (action.t === 'follow') startVoyage(state, content, state.service?.route[0] ?? 'home_fjord', true);
       const r = runVoyage(state, content, rng);
-      report('At sea', r.lines);
+      const talk = banter(state, content, rng, 'sea', 0.6);
+      if (talk) r.lines.push(talk);
+      report('At sea', r.lines, undefined, { key: 'open_sea' });
       break;
     }
+    case 'take_share': report('The share-out', serviceShare(state, content)); break;
+    case 'plunder':
+      plunderAction(state, content, rng, action.what);
+      break;
     case 'raid':
       startRaid(state, content, rng, state.at!);
       break;
@@ -348,6 +397,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       state.provisions = Math.max(0, state.provisions - mouths(state) * (state.at === 'home_fjord' ? 0 : 3));
       break;
     case 'end_season':
+      // another man's ship comes home when he says; the captain keeps her out until the autumn
+      if (state.service) state.day = Math.max(state.day, dayOf(dateOf(state.day).year, LATE_SEASON_DOY));
       state.phase = 'return';
       break;
     case 'winter_here':
@@ -364,6 +415,12 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'refit': report('Muster', refit(state, content)); break;
     case 'borrow_ship': report('Muster', borrowShip(state)); break;
     case 'set_sail':
+      // the captain waits for the spring storms to blow out
+      if (state.service) {
+        state.day = Math.max(state.day, dayOf(dateOf(state.day).year, SAILING_DOY));
+        // a captain with nothing new in mind goes west the way he went last year (Phase 3 writes his choices)
+        if (!state.service.route.length) state.service.route = [...SERVICE_ROUTE];
+      }
       state.phase = 'sailing';
       break;
     case 'stay_home':
@@ -409,9 +466,17 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
   return state;
 }
 
-/** After any action: the season turns if it must, and anything queued fires. */
+/** After any action: boasts fall due, the season turns if it must, and anything queued fires. */
 function settle(state: GameState, content: ContentBundle, rng: RngCursor): void {
   if (!state.hero.alive || state.pending) return;
+  for (const b of state.boasts) {
+    if (b.state !== 'open' || b.due > state.day) continue;
+    b.state = 'broken';
+    state.honour = Math.max(-10, state.honour - 2);
+    journal(state, `The boast went unkept: ${content.boasts[b.id]?.text}`);
+    state.pending = { t: 'report', title: 'A boast unkept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'The year has turned, and it is not done. Men remember a boast longer than a deed.'] };
+    return;
+  }
   const doy = dateOf(state.day).doy;
   if (state.phase === 'sailing' && state.at === 'home_fjord' && !state.voyage && doy >= FORCE_RETURN_DOY) state.phase = 'return';
   trigger(state, content, rng, 'phase_start');

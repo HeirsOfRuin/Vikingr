@@ -1,0 +1,131 @@
+# Birsay (FRAME-PHASE2 §2.3): the hall, the evening, the ship's council.
+- id: o_hall
+  kind: place
+  trigger: arrive
+  at: [orkney]
+  once: true
+  requires: [service]
+  art: birsay
+  title: The hall at Birsay
+  text: |
+    Harek of Birsay keeps his hall on a tidal island, joined to the mainland by a causeway that the sea covers twice a day. You walk across it at low water with the weed slippery underfoot and the hall's smoke going straight up in the evening calm.
+
+    Inside it is warm and loud and smells of peat and wet dog and roasting mutton. Harek is a broad red man with a beard like a hedge, and he and Ásgeir greet each other like men who have cheated each other before and enjoyed it.
+    [break]
+    There is a lot to do in a hall in one evening, and only one evening.
+
+    An Orkneyman with a neck like a bull is challenging all comers to drink him under the table. In a corner by the fire, a lean man with ink-stained fingers is watching the crews come in and not drinking much: a skald, Ketill says, looking for a ship worth making verses about. Harek's daughter is pouring the ale, and has looked at you twice. And along the bench, the old men who have been south are telling each other where the silver is.
+  choices:
+    - id: drink
+      text: Take up the Orkneyman's challenge.
+      check: { skill: craft, attr: end, difficulty: 5 }
+      success:
+        text: |
+          The Orkneyman's name is Grjótgarð, and he drinks like a sea taking a ship. You match him horn for horn. Somewhere around the ninth horn the hall stops talking to watch. Somewhere around the twelfth Grjótgarð stands up, says something wise about seals, and falls into the fire.
+
+          They pull him out. He is not much burned, and he is very proud of you, and he tells everyone so all night, with his arm round your neck.
+        effects: [ { deed: { type: deed, text: Drank Grjótgarð of Orkney under the table, weight: 1, witnesses: 60 } }, { add: { crew.morale: 1 } } ]
+        next: o_council
+      failure:
+        text: |
+          You match him horn for horn until the seventh. Then you stand up to say something, and the floor of the hall turns over like a ship in a gale, and you are sick in Harek's hearth.
+
+          The hall cheers. Grjótgarð pats you on the head as he steps over you. In the morning Ulf tells you what you said before you passed out, and you make him swear never to tell anyone else, and he tells everyone else.
+        effects: [ { set: flag.o_hearth } ]
+        next: o_council
+    - id: skald
+      text: Go and sit by the skald.
+      check: { skill: lore, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          His name is Kálfr. He has made verses for two jarls and a king in Ireland, and been paid by one of them. He asks you what you have done. You tell him the truth, which is nothing, yet.
+
+          He likes that. "Everybody else in here has killed a hundred men and slept with the queen of the Franks," he says. "A man who has done nothing has the whole verse in front of him." When the Raven sails, Kálfr is on her, with his harp wrapped in oilcloth under Ketill's bench.
+        effects: [ { set: flag.skald }, { set: flag.o_kalfr } ]
+        next: o_council
+      failure:
+        text: |
+          The skald asks you what you have done, and you tell him about the whale, and then about your grandfather, and then about the whale again.
+
+          He listens politely and then goes and sits with Harek's men. You hear him later, by the fire, making a very short verse about a boy and a whale. It isn't kind, and it rhymes.
+        next: o_council
+    - id: daughter
+      text: Find out what Harek's daughter was looking at.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          Her name is Ingibjörg, and she was looking at you because you were the only man in the hall who hadn't tried to grab her.
+
+          You talk till the fire burns down. At the end of it she ties a red thread round your wrist, to bring you back to Orkney, she says, and then goes in before her father sees.
+
+          Ulf, who has been watching all night, can't decide whether to be jealous or proud, and manages both.
+        effects: [ { set: flag.o_ingibjorg }, { add: { man.ulf.loyalty: 1 } } ]
+        next: o_council
+      failure:
+        text: |
+          Her name is Ingibjörg, and she was looking at you because you had something on your face. She tells you so, and wipes it off with her thumb, and goes back to pouring ale, and you sit very still for some time.
+        next: o_council
+    - id: listen
+      text: Sit with the old men, and listen.
+      effects: [ { set: flag.o_listened }, { know: bangor }, { add: { skill.lore: 1 } } ]
+      result: |
+        You listen. Iona is picked over: the monks have been robbed so often they keep nothing in the house worth stealing, but there is always something, and the monks don't fight. Bangor, on its lough across in Ireland, is rich and fat and hasn't been touched in years, and the reason it hasn't been touched is the king of the Ulaid, who keeps his levy close, and who once nailed a Norseman to the abbey door by his hands.
+
+        "But the silver," says one old man, with his eyes closed. "The silver."
+      next: o_council
+
+- id: o_council
+  kind: spine
+  art: birsay
+  title: The ship's council
+  text: |
+    In the morning Ásgeir calls the ship together on the shingle below the hall, the way a captain does when he wants the men to agree to something he has already decided.
+
+    Steinarr, his second, speaks first. Steinarr is a long, sour man with a broken nose and a lot of silver on his arms, and he has been to Ireland. "Straight to Bangor," he says. "Iona's been picked clean three times over. We'll lose a week there for a few candlesticks. Bangor's where the silver is."
+
+    "And the king's levy," says Ketill.
+
+    "And the king's levy," says Steinarr, "which is why we have forty men and not four."
+
+    Ásgeir looks around the circle. His eyes stop on you.
+    [if flag.o_listened]
+    You heard the old men last night. You know about the abbey door.
+    [/if]
+  choices:
+    - id: iona
+      text: Speak for Iona first. Blood the new men on monks before they meet the levy.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          You say it plainly. Half the men in this ship have never been in a fight. Let them learn on monks, who don't fight back, before they learn on an Irish king's levy, who will.
+
+          There's a mutter of agreement from the benches, mostly from the new men. Steinarr looks at you as if you were something he had found in his boot. Ásgeir nods slowly.
+
+          "Iona," he says. "Then Bangor. We'll see what the young ones are made of."
+        effects: [ { set: flag.o_iona }, { set: flag.o_spoke }, { route: [iona, bangor] } ]
+      failure:
+        text: |
+          You say it. It comes out sounding like what it is: a boy who doesn't want to meet the levy yet.
+
+          Steinarr laughs. "The young one's frightened. Good. So am I. That's why I want to get it done." Ásgeir looks at you a moment longer, and then decides.
+
+          "Iona on the way," he says. "We'll go in if the weather's with us. Then Bangor." It isn't what you asked for. It isn't quite not.
+        effects: [ { set: flag.o_iona }, { route: [iona, bangor] } ]
+    - id: bangor
+      text: Back Steinarr. Straight to Bangor, while the summer's young.
+      effects: [ { set: flag.o_bangor_first }, { set: flag.o_spoke }, { route: [bangor] } ]
+      result: |
+        "Bangor," you say. "Why rob a poor man twice when there's a rich one who's never been robbed once?"
+
+        Steinarr looks surprised, and then pleased, and then suspicious, all in the space of a breath. Ásgeir laughs.
+
+        "The boy's right," he says. "Straight to Bangor. We'll wave to the monks as we go by."
+    - id: quiet
+      text: Keep quiet. It's Ásgeir's ship.
+      effects: [ { set: flag.o_iona }, { route: [iona, bangor] } ]
+      result: |
+        You keep quiet. So do most of the new men. Ásgeir lets the silence go on, and then decides, the way he had always meant to.
+
+        "Iona on the way, then Bangor," he says. "Steinarr, you'll have your king's levy. Be patient."
+
+        Steinarr isn't patient. You see him watching Ásgeir's back as the men break up, and you put that away to think about later.

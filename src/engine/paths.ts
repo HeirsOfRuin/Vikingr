@@ -30,6 +30,10 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   'fame.lasting': (s) => lastingFame(s),
   'fame.rank': (s, c) => fameRank(s, c),
   'hero.hp': (s) => s.hero.hp,
+  service: (s) => (s.service ? 1 : 0),
+  captives: (s) => s.captives,
+  nickname: (s) => !!s.hero.nickname,
+  shares: (s) => s.service?.shares ?? 0,
 };
 
 /** Paths that take a named value, and the names they take. */
@@ -52,9 +56,16 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     case 'skill': return state.hero.skills[a as Skill];
     case 'wound': return state.hero.wounds.some((w) => w.id === a);
     case 'known': return state.known.includes(a!);
+    case 'fate': return state.fates[a!] ?? 0;
+    case 'omen': return state.omens[a!] ?? 0;
+    case 'boast': {
+      const bt = state.boasts.find((x) => x.id === a);
+      return !bt ? 0 : bt.state === 'open' ? 1 : bt.state === 'kept' ? 2 : 3;
+    }
     case 'man': {
       const m = state.men.find((x) => x.id === a);
       if (b === 'present') return !!m && m.alive;
+      if (b === 'sworn') return !!m && m.alive && m.sworn;
       if (!m) return b === 'alive' ? false : 0;
       if (b === 'alive') return m.alive;
       if (b === 'loyalty') return m.loyalty;
@@ -76,7 +87,10 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'skill': return (SKILLS as readonly string[]).includes(a!) && !b ? null : `unknown skill "${a}"`;
     case 'wound': return content.injuries[a!] ? null : `unknown injury "${a}"`;
     case 'known': return content.places[a!] ? null : `unknown place "${a}"`;
-    case 'man': return content.men[a!] && ['present', 'alive', 'loyalty'].includes(b!) ? null : `bad sworn-man path "${path}"`;
+    case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn'].includes(b!) ? null : `bad sworn-man path "${path}"`;
+    case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;
+    case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
+    case 'boast': return content.boasts[a!] && !b ? null : `unknown boast "${a}" (declare it in content/registry/boasts.yaml)`;
   }
   return `unknown path "${path}"`;
 }

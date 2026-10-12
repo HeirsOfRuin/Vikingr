@@ -78,8 +78,44 @@ export function borrowShip(state: GameState): string[] {
 
 export type ShareHow = keyof typeof LEADER_SHARE;
 
+/** Captives go to the traders before the shares are counted. */
+/** At another man's oar, the share of the plunder that goes to the oars (the rest is the ship's and the captain's). */
+export const SERVICE_OARS_SHARE = 0.75;
+export const CAPTIVE_PRICE = 24; // about a mark a head (docs/ECONOMY.md)
+function sellCaptives(state: GameState, lines: string[]): void {
+  if (state.captives <= 0) return;
+  const price = state.captives * CAPTIVE_PRICE;
+  state.loot += price;
+  lines.push(`A trader from Kaupang takes the ${plural(state.captives, 'captive')} off your hands for ${formatSilver(price)}. Nobody watches them go except Hallvard.`);
+  journal(state, `Sold ${plural(state.captives, 'captive')} for ${formatSilver(price)}.`);
+  state.captives = 0;
+}
+
+/** At another man's oar: the captain divides, and you take your shares. */
+export function serviceShare(state: GameState, content: ContentBundle): string[] {
+  const lines: string[] = [];
+  sellCaptives(state, lines);
+  const svc = state.service!;
+  const pot = state.loot;
+  const heads = state.crew.men + aliveMen(state).length + 1;
+  const each = pot > 0 ? (pot * SERVICE_OARS_SHARE) / heads : 0; // a quarter to the ship and her captain, the rest to the oars
+  const mine = Math.round(each * svc.shares);
+  state.silver += mine;
+  state.loot = 0;
+  lines.push(pot > 0
+    ? `${svc.captain} divides it on the strand in front of everyone: a quarter to the ship, the rest to the oars. Your ${svc.shares > 1 ? `${svc.shares} shares come` : 'share comes'} to ${formatSilver(mine)}.`
+    : `${svc.captain} has nothing to divide but his thanks, and he is short of those too.`);
+  journal(state, `Your share of the summer: ${formatSilver(mine)}.`);
+  const { told, gained } = tellDeeds(state);
+  if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
+  startWinter(state, HALL_ACTIONS);
+  void content;
+  return lines;
+}
+
 export function shareOut(state: GameState, content: ContentBundle, how: ShareHow): string[] {
   const lines: string[] = [];
+  sellCaptives(state, lines);
   let pot = state.loot;
   if (state.flags.owes_jarl && pot > 0) {
     const cut = Math.round(pot * JARL_CUT);
@@ -128,7 +164,7 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
 
 // ---- the winter hall ----
 
-export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship';
+export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work';
 
 export function feastCost(state: GameState): number {
   return mouths(state) + FEAST_GUESTS;
@@ -194,6 +230,13 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       journal(state, 'Bought the karvi from the jarl.');
       break;
     }
+    case 'work': {
+      const pay = 5 + rng.int(4);
+      state.silver += pay;
+      learn(state, 'craft', 3);
+      lines.push(`You work the winter on your brother's farm: mending, hauling, sharpening, mucking out. He pays you ${formatSilver(pay)} and you both pretend it is a gift.`);
+      break;
+    }
     case 'blot': {
       state.silver -= 12;
       state.hamingja = Math.min(5, state.hamingja + 1);
@@ -205,8 +248,13 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
   clampMorale(state);
   state.hallLeft -= 1;
   state.day += HALL_ACTION_DAYS;
-  if (state.hallLeft <= 0) lines.push(...yearEnd(state, content, rng));
-  else trigger(state, content, rng, 'hall');
+  if (state.hallLeft <= 0) {
+    const card = yearEnd(state, content, rng);
+    // the spring card replaces the hall report, unless something else (a death, a scene) has the stage
+    if (!state.pending && state.hero.alive) state.pending = { t: 'report', title: `Spring, ${dateOf(state.day).year}`, lines: [...lines, ...card], art: state.at === 'home_fjord' ? 'home_fjord' : undefined };
+    return [];
+  }
+  trigger(state, content, rng, 'hall');
   return lines;
 }
 
@@ -217,7 +265,7 @@ export function winterHere(state: GameState): string[] {
 }
 
 /** Winter begins. It belongs to the year whose autumn it follows; spring comes on 1 March after it. */
-function startWinter(state: GameState, actions: number): void {
+export function startWinter(state: GameState, actions: number): void {
   const d = dateOf(state.day);
   state.flags._winter = d.doy >= 182 ? d.year : d.year - 1;
   state.phase = 'winter';
@@ -258,9 +306,29 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre');
   state.seasonRaids = [];
   state.phase = state.at === 'home_fjord' ? 'muster' : 'sailing';
-  lines.push(`Spring comes to the fjord: ${formatDate(state.day)}. You are ${age(state)} winters old.`);
-  if (untoldCount(state)) lines.push('Some of last year\'s deeds were never told. They are already being forgotten.');
+  lines.push(...chapterCard(state, content, year));
   journal(state, `Spring of ${year}.`);
-  trigger(state, content, rng, 'phase_start');
+  // spring's scenes open after the chapter card has been read (settle() triggers phase_start)
+  return lines;
+}
+
+/** Where he stands at the turn of the year (Adalia's chapter cards). */
+export function chapterCard(state: GameState, content: ContentBundle, year: number): string[] {
+  const lines: string[] = [];
+  const name = state.hero.nickname ? `${state.hero.name}, called ${state.hero.nickname}` : state.hero.name;
+  lines.push(`${formatDate(state.day)}. ${name}, ${age(state)} winters old.`);
+  const sworn = aliveMen(state).filter((m) => m.sworn);
+  const bench = aliveMen(state).filter((m) => !m.sworn);
+  if (state.service) lines.push(`An oarsman in ${state.service.captain}'s ship.`);
+  else if (state.ships.length) lines.push(`Master of ${state.ships.map((s) => `${s.name} (${content.ships[s.type]?.name.toLowerCase()})`).join(', ')}, with ${plural(state.crew.men, 'man', 'men')} at the oars.`);
+  else lines.push('No ship, and no bench in anyone else\'s.');
+  if (sworn.length) lines.push(`Sworn to you: ${sworn.map((m) => m.nickname ? `${m.name} ${m.nickname}` : m.name).join(', ')}.`);
+  if (bench.length) lines.push(`Bench-mates who have not sworn: ${bench.map((m) => m.name).join(', ')}.`);
+  const dead = state.men.filter((m) => !m.alive && m.diedOn !== null && dateOf(m.diedOn).year >= year - 1);
+  if (dead.length) lines.push(`Dead this year: ${dead.map((m) => m.name).join(', ')}.`);
+  lines.push(`Silver: ${formatSilver(state.silver)}. Fame: ${Math.round(livingFame(state))}.`);
+  const open = state.boasts.filter((b) => b.state === 'open');
+  if (open.length) lines.push(`Sworn over the cup, and not yet done: ${open.map((b) => content.boasts[b.id]?.text).join(' ')}`);
+  if (untoldCount(state)) lines.push('Some of last year\'s deeds were never told. They are already being forgotten.');
   return lines;
 }

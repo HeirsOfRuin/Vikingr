@@ -14,6 +14,8 @@ import { MapView } from './MapView';
 import { moraleWord } from './Panels';
 import { SceneArt } from '../scene/SceneArt';
 import { getValue } from '../../engine/paths';
+import { renderText } from '../../engine/text';
+import { PlunderView } from './Fights';
 
 const AFTERLIFE: Record<string, { title: string; text: string }> = {
   valhalla: { title: 'Valhalla', text: 'A woman in mail stands over the place where you fell, and you rise to meet her. The hall has five hundred and forty doors. Every one of them is open, and they are shouting your name.' },
@@ -40,7 +42,7 @@ const BREAK = /^\s*\[break\]\s*$/m;
 
 /** A scene read in beats: [break] lines split it into pages; the choices come on the last page. */
 function SceneView({ content, state, scene, onAct }: { content: ContentBundle; state: GameState; scene: Scene; onAct: (a: Action) => void }) {
-  const pages = scene.text.split(BREAK).map((t) => t.trim()).filter(Boolean);
+  const pages = renderText(scene.text, state, content).split(BREAK).map((t) => t.trim()).filter(Boolean);
   const [page, setPage] = useState(0);
   useEffect(() => setPage(0), [scene.id, state.day]);
   const last = page >= pages.length - 1;
@@ -49,6 +51,7 @@ function SceneView({ content, state, scene, onAct }: { content: ContentBundle; s
     <>
       <Art content={content} state={state} art={scene.art} />
       <div class="screen prose">
+        {scene.when && <div class="pagecount">{scene.when}</div>}
         <h2>{scene.title}</h2>
         <div class={scene.placeholder ? 'placeholder' : ''}>{paras(pages[Math.min(page, pages.length - 1)] ?? '')}</div>
         {last ? (
@@ -100,6 +103,16 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
   }
   if (p?.t === 'duel') return <div class="screen"><DuelView content={content} d={p.duel} options={options} onAct={onAct} /></div>;
   if (p?.t === 'battle') return <div class="screen"><BattleView content={content} b={p.battle} options={options} onAct={onAct} /></div>;
+  if (p?.t === 'plunder') {
+    const pl = content.places[p.plunder.place];
+    const burnt = `${p.plunder.place}_burning`;
+    return (
+      <>
+        <Art content={content} state={state} art={p.plunder.burned && content.art[burnt] ? burnt : pl?.art} />
+        <div class="screen"><PlunderView content={content} p={p.plunder} options={options} onAct={onAct} /></div>
+      </>
+    );
+  }
 
   const d = dateOf(state.day);
   const food = Math.floor(state.provisions / Math.max(1, mouths(state)));

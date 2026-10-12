@@ -1,0 +1,81 @@
+# A sworn man's death is mourned (engine: fights.ts queues mourn_<id> the day after he falls).
+- id: mourn_ketill
+  kind: queued
+  title: Ketill
+  text: |
+    You bury Ketill on a headland above the sea, with his axe and his shield and the oar he pulled for thirty summers, and a cairn of stones over him that the men carry up one at a time.
+
+    He never told you what he promised your father. You understand now that he kept it, whatever it was.
+  choices:
+    - id: words
+      text: Say the words over him yourself.
+      effects: [ { add: { man.ulf.loyalty: 1, man.hallvard.loyalty: 1, man.bersi.loyalty: 1, crew.morale: -1 } }, { set: flag.mourned_ketill } ]
+      result: |
+        You say them badly. Nobody minds.
+        [if man.ulf.alive]
+        Ulf cries openly, and doesn't care who sees.
+        [/if]
+        [if man.bersi.alive]
+        Bersi puts a coin under Ketill's tongue, a good one, and doesn't count it.
+        [/if]
+
+- id: mourn_ulf
+  kind: queued
+  title: Ulf
+  text: |
+    Ulf is dead, and the ship is quieter than it has ever been.
+
+    He wanted a name so badly. He wanted to be in a verse. You sit with him through the night before the burning, and you keep thinking of things he would have said, and then remembering that he won't.
+    [if flag.skald]
+    Kálfr sits with you. Toward morning he starts, very quietly, to make something.
+    [/if]
+  choices:
+    - id: verse
+      text: Ask the skald for a verse for him.
+      visible_if: flag.skald
+      effects: [ { man: { id: ulf, nickname: the Unafraid } }, { deed: { type: man_deed, text: Ulf the Unafraid is remembered in a verse, weight: 2 } }, { set: flag.mourned_ulf } ]
+      result: |
+        Kálfr makes it in the dawn, by the pyre. It is short, and it is about a man who laughed in the shield-wall, and it calls him Ulf the Unafraid.
+
+        He would have hated how short it is. He would have loved the name.
+    - id: name
+      text: Give him the name yourself, over the fire.
+      effects: [ { man: { id: ulf, nickname: Bangor-Wolf } }, { set: flag.mourned_ulf } ]
+      result: |
+        "Ulf Bangor-Wolf," you say, over the fire, loud enough for the whole ship. The men say it back. By the next summer they are saying it in Orkney.
+
+        He would have wanted something better. He would have taken it.
+
+- id: mourn_hallvard
+  kind: queued
+  title: Hallvard
+  text: |
+    Hallvard is dead. You find his silver hammer in the grass where he fell, the thong cut through, and you don't know whether it fell off before or after.
+
+    He saw signs in everything. He never saw this one, or never said.
+  choices:
+    - id: hammer
+      text: Wear his hammer.
+      effects: [ { add: { hamingja: 1 } }, { set: flag.hallvard_hammer } ]
+      result: You tie the hammer round your own neck. It is warm from the sun. It stays warm, somehow, all that summer.
+    - id: grave
+      text: Bury it with him.
+      effects: [ { add: { honour: 1 } }, { set: flag.mourned_hallvard } ]
+      result: You put the hammer in his hand and close his fingers on it. Whatever he was going to need it for, he'll have it.
+
+- id: mourn_bersi
+  kind: queued
+  title: Bersi
+  text: |
+    Bersi is dead. When they go through his sea-chest they find a tally-stick with every share he was ever owed cut into it, and a few that he wasn't, and at the bottom, wrapped in a rag, a little more silver than anyone would have guessed.
+
+    There is a woman in Hordaland, it turns out. Nobody knew. There is a child.
+  choices:
+    - id: send
+      text: Send the silver to the woman, all of it.
+      effects: [ { add: { honour: 1, man.ketill.loyalty: 1 } }, { set: flag.bersi_silver_sent } ]
+      result: You send it all, with a man you trust, and a message you take a long time over. Bersi would have told you you were overpaying. He would have been right.
+    - id: share
+      text: Put it in the common heap. That's the law of the ship.
+      effects: [ { add: { loot: 30 } }, { set: flag.bersi_silver_kept } ]
+      result: It goes in the heap with everything else. It's the law. Bersi would have done the same, and counted it twice.

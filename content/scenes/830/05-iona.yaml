@@ -1,0 +1,327 @@
+# Iona (FRAME-PHASE2 §2.4): the first raid. He rows in Ásgeir's ship: the captain decides; the hero can speak,
+# chooses his own place, and decides what he does with the people in front of him.
+- id: i_approach
+  kind: place
+  trigger: arrive
+  at: [iona]
+  once: true
+  requires: [service, flag.o_iona]
+  art: iona_dawn
+  title: Iona
+  text: |
+    You smell the island before you see it: peat smoke and wet grass, carried out over the water on the land wind. Then the mist thins, and there it is. A low green hump on a grey sea, a scatter of roofs, and a stone cross standing on the skyline like a man waiting for you.
+
+    Nobody speaks. Forty oars dip and rise and dip.
+    [break]
+    A bell starts ringing on the island. Thin and steady, the same note again and again.
+
+    "What's that?" Ulf whispers. For once he isn't grinning.
+
+    "They ring it for their prayers," says Ketill, at the oar behind you. "Morning prayers. They'll all be in the one house."
+
+    "Good of them," says Bersi. He has been sharpening the same knife since Orkney, and now he describes, in a low voice, exactly what he means to do with it. Hallvard tells him to shut his mouth. Bersi tells Hallvard where he can put his ravens.
+
+    Somebody near the prow is being quietly sick over the side.
+    [break]
+    Ásgeir comes down the ship between the benches, stepping over sea-chests and legs. He crouches by your oar, close enough that you can smell last night's ale on him and this morning's fish.
+
+    "Hall's boy. Your father says you've got eyes. What do you see?"
+
+    You look. A beach of white sand in the near bay. Smoke rising from the roofs. Low ground to the north, where the land dips behind a ridge. Men in brown walking between the houses toward the bell. The bell, which has started to ring faster.
+
+    Ásgeir waits. So does the whole ship.
+  choices:
+    - id: straight
+      text: Tell him what he wants to hear. Straight in, while they pray.
+      effects: [ { set: flag.i_straight } ]
+      result: |
+        Ásgeir grins. "That's what I see." He stands and raises his voice. "Straight in! Pull, you sons of goats!"
+
+        The ship leaps under you. On the island, the bell is still ringing.
+      next: i_landing
+    - id: north
+      text: Point out the low ground. Land behind the ridge and come at them from the side they aren't watching.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      next: i_landing
+      success:
+        text: |
+          Ásgeir looks where you are pointing. He looks a long moment. Then he cuffs your shoulder hard enough to hurt.
+
+          "Eyes," he says, to nobody in particular, and goes back to the steering-oar.
+
+          The ship swings north. You row along the shore with the ridge between you and the bell, and beach in a cove of black rocks where nothing is watching but a seal. By the time you come over the low ground, the bell has stopped.
+        effects: [ { set: flag.i_north } ]
+      failure:
+        text: |
+          "When you've a ship of your own," says Ásgeir, "you can take her round the back." The benches laugh. Ulf laughs loudest, then catches your eye and stops.
+
+          "Straight in! Pull!"
+        effects: [ { set: flag.i_rebuffed } ]
+    - id: bell
+      text: Say the bell has changed. Somebody has seen the ship.
+      check: { skill: lore, attr: wit, difficulty: 4 }
+      next: i_landing
+      success:
+        text: |
+          Ásgeir listens. The bell is ringing fast now, too fast for anybody's prayers.
+
+          "Huh," he says. He looks at Ketill, and Ketill nods. "They're carrying the good things out the back while we sit here admiring the view." He stands. "Ten men to the north beach with Ketill, to catch whatever comes out the back door. The rest of you, straight in. Pull!"
+        effects: [ { set: flag.i_warned } ]
+      failure:
+        text: |
+          "It's a bell, boy," says Ásgeir. "Bells ring." He stands. "Straight in! Pull!"
+
+          Behind you, Ketill says nothing, but you can hear him listening to it.
+    - id: shrug
+      text: Shrug. It's his ship.
+      result: |
+        Ásgeir looks at you a moment longer than is comfortable. "Hm," he says, and goes back to the stern.
+
+        "Straight in! Pull!"
+
+        "Next time he asks you something," Ketill says quietly, behind you, "have an answer."
+      next: i_landing
+
+- id: i_landing
+  kind: spine
+  art: iona_dawn
+  title: The landing
+  text: |
+    The keel hits sand with a jolt that throws you forward onto your oar. Men are already going over the side into water to the thigh, cold enough to stop your heart. Shields come off the rail. Somebody is shouting your name, or the name of somebody near you.
+    [break]
+    The sand is hard and wet and then soft and dry, and you are running, and the shield is heavier than it has ever been. The buildings are close now: timber and wattle, a little church of grey stone, the bell-house. Men in brown robes come out of the church and stop and look at you, as if you were weather.
+
+    Ahead of you, Ulf is already running, howling something without words. Ketill is at your left shoulder, steady as a door.
+
+    "Behind me," he says. "Stay behind my shoulder, boy."
+
+    There is a gate in a low turf wall, and a big man in a brown robe standing in it with a hay-spear. Somebody has to be first through.
+  choices:
+    - id: first
+      text: Go past Ketill and take the gate yourself.
+      danger: true
+      effects: [ { set: flag.i_first }, { fight: { foe: lay_brother, kind: duel, lethal: true, win: i_gate, lose: i_down } } ]
+      result: Ketill grabs for your belt and misses. Then there is nothing between you and the spear.
+    - id: shoulder
+      text: Stay behind Ketill's shoulder, as he says.
+      effects: [ { set: flag.i_ketill }, { add: { man.ketill.loyalty: 1 } } ]
+      result: |
+        Ketill goes through the gate the way a man goes through his own door. The spear comes at him and he takes it on the rim of his shield and turns it, and the man in the robe comes forward with it, off balance, close.
+
+        Ketill's axe takes him where the neck meets the shoulder. He sits down in the gateway as if he had decided to rest. It takes him a long while to die, and he spends it looking at you.
+
+        Ketill steps over him. "Come on," he says. You come on.
+      next: i_church
+    - id: ship
+      text: Stay with the ship. Somebody has to.
+      effects: [ { set: flag.i_ship }, { add: { honour: -1 } } ]
+      result: |
+        You stand in the shallows with your shield and watch the others run up the beach.
+
+        Bersi is guarding the ship too. "Somebody has to watch the plunder," he says.
+
+        "There isn't any plunder yet."
+
+        "Then somebody has to watch where it's going to be." He settles on a rock. Up at the gate, the screaming starts.
+
+        Later, when the men come back down the beach carrying silver and cloth and a cow, Ulf looks at the two of you sitting on your rock, and opens his mouth, and closes it again. It is the kindest thing he has ever done for you, and the worst.
+      next: i_after
+
+- id: i_gate
+  kind: spine
+  art: iona_dawn
+  title: Through the gate
+  text: |
+    The man in the gateway is down. You are standing over him, breathing like a bellows, and you can't remember the last part.
+
+    Your hands are shaking. Your sword arm is wet to the elbow and none of it is yours. There is a smell you have never smelled before and will never forget, copper and opened guts and the dung of a frightened man.
+
+    Somebody slaps your back hard enough to knock you forward a step. Ulf, laughing like a madman. "First through! First through, you mad bastard!"
+
+    Further back, on the beach, Ásgeir is watching. When you look round, he nods once, as if you had confirmed something.
+  choices:
+    - id: on
+      text: Go on, into the monastery.
+      effects: [ { deed: { type: first_over, text: First through the gate at Iona } }, { add: { man.ulf.loyalty: 1 } } ]
+      next: i_church
+
+- id: i_down
+  kind: spine
+  art: iona_dawn
+  title: The gate
+  text: |
+    You wake on the sand with your head in Ketill's lap and the sky going round.
+
+    "Lie still," he says. "You went at him like a bull at a gate, and he was the gate."
+
+    Up the beach, the screaming has stopped. Somebody is laughing, and somebody else is driving a cow down to the ships.
+  choices:
+    - id: lie
+      text: Lie still.
+      result: You lie still. Ketill keeps his hand on your chest, as if you might float off.
+      next: i_after
+
+- id: i_church
+  kind: spine
+  art: iona_dawn
+  title: The church
+  text: |
+    The church is small and dark and smells of wax and cold stone. There are perhaps a dozen monks in it, and more at the far end, by the altar, where somebody has lit every candle in the place as if light would help.
+
+    Ásgeir's men are already in among them. One monk has picked up a candlestick and is swinging it, and Steinarr kills him with one blow, almost absently, and steps over him to get to the altar.
+
+    The rest are on their knees. Their lips are moving. One of the old ones is looking straight at you.
+    [if flag.i_warned]
+    The altar has already been stripped. Whatever was on it went out the back, toward the north beach and Ketill's ten men.
+    [/if]
+  choices:
+    - id: captives
+      text: Rope the young ones together for the slave markets.
+      effects: [ { captives: 4 }, { set: flag.i_captives }, { add: { man.bersi.loyalty: 1, man.hallvard.loyalty: -1 } } ]
+      result: |
+        You take the young ones, the ones who will fetch something in Dublin or Kaupang. They don't fight. One of them keeps praying the whole time you are tying his hands, quick and low, in a language you don't know, and doesn't stop when you pull the knot tight.
+
+        Bersi helps, and counts as he goes. Hallvard doesn't help. He stands in the doorway and looks at the sky.
+      next: i_colman
+    - id: mercy
+      text: Kill any who fight. Let the old ones out the back.
+      effects: [ { set: flag.i_mercy }, { add: { honour: 1, man.hallvard.loyalty: 1, man.ulf.loyalty: -1 } } ]
+      result: |
+        Nobody fights. You stand in the little door at the back of the church and jerk your head at the old ones, and after a moment they understand, and go, shuffling, holding each other up, out into the wet grass and away toward the hill.
+
+        Ulf watches you do it. "What's the point of that?" he says.
+
+        You don't know. You did it anyway.
+      next: i_colman
+    - id: altar
+      text: Go for the altar silver while the others deal with the monks.
+      check: { skill: cunning, attr: agi, difficulty: 5 }
+      next: i_colman
+      success:
+        text: |
+          There is a little silver box under the altar cloth, the kind they keep a saint's finger in. You put it inside your tunic while everybody else is busy with the monks, and nobody sees.
+
+          It is theft, by the law of the ship: everything taken goes in the common heap. You know that. The box is warm against your skin all day.
+        effects: [ { set: flag.i_hid_silver }, { add: { silver: 18 } } ]
+      failure:
+        text: |
+          There is a little silver box under the altar cloth. You have it half inside your tunic when a hand closes on your wrist.
+
+          Steinarr. He takes the box and holds it up for the church to see. "The boy's started his own share," he says.
+
+          Ásgeir says nothing at all. He doesn't need to. Your share of Iona is half what it would have been, and every man in the ship knows why.
+        effects: [ { set: flag.i_caught_stealing }, { shares: 0.5 }, { add: { honour: -2 } } ]
+
+- id: i_colman
+  kind: spine
+  art: iona_dawn
+  title: The books
+  text: |
+    In a house by the church the men have found the books.
+
+    There are four of them, big as flagstones, with covers of leather and silver, and one with gold on it and red stones set in the gold. Ulf and two others are prising the covers off with their knives, and throwing the pages on the floor.
+
+    A monk is on his knees among the pages, picking them up as fast as they fall. He is perhaps thirty, with ink on his fingers, and when he sees you watching he says, in bad Norse, the Norse of a man who has learned it from traders:
+
+    "Take the gold. Leave the words. The words are no use to you."
+  choices:
+    - id: words
+      text: Take the covers. Give him back the pages.
+      effects: [ { set: flag.i_colman_spared }, { add: { skill.lore: 1, honour: 1 } } ]
+      result: |
+        You get the covers off, silver and gold and red stones, and you let the pages fall where he can reach them.
+
+        He gathers them against his chest like a man gathering a child out of a fire. "Colmán," he says, pointing to himself, as if it mattered that you should know. Then he is gone, out the back, into the grass.
+
+        Ulf looks at you. "He'll be back next year," he says, "with new ones."
+
+        "Then we'll come back for the covers," says Bersi.
+      next: i_after
+    - id: take
+      text: Take him. A monk who speaks Norse is worth more than one who doesn't.
+      effects: [ { set: flag.i_colman_taken }, { captives: 1 } ]
+      result: |
+        You take him by the collar and put him with the others. He doesn't fight. He keeps hold of a few pages, crushed against his chest, and nobody takes them off him, because nobody can see the point.
+
+        "Colmán," he tells you, on the beach, while they are tying his hands. As if it mattered. As if you should remember it.
+
+        You do.
+      next: i_after
+    - id: burn
+      text: Throw the pages on the fire. They're no use to anyone.
+      effects: [ { set: flag.i_burned_books }, { add: { man.bersi.loyalty: 1, man.hallvard.loyalty: -1 } } ]
+      result: |
+        You gather up an armful and throw them on the hearth. They are calfskin, and they don't burn well. They curl and blacken and stink, and the paint on them bubbles: a red bird, a blue man with a gold ring round his head.
+
+        The monk makes a sound you will hear again, some nights, for years. Then Steinarr hits him, and he stops making it.
+      next: i_after
+    - id: ask
+      text: Ask him what the words say.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      next: i_after
+      success:
+        text: |
+          He stares at you. Then he picks up a page and reads, slowly, putting it into Norse as he goes. It is something about a shepherd, and a valley of death, and not being afraid in it.
+
+          The men have stopped to listen. Even Ulf. When Colmán finishes there is a moment where nobody quite knows what to do.
+
+          Then Steinarr laughs, and kicks the page out of his hand, and it's over. But you remember the valley, and the not being afraid.
+        effects: [ { set: flag.i_colman_read }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: |
+          He stares at you as if you had asked him the price of his mother. Then Steinarr shoves him aside to get at the last book, and the moment is gone.
+
+- id: i_after
+  kind: spine
+  art: iona_burning
+  title: The strand
+  text: |
+    By noon it's done. The men come down to the beach with what Iona had: altar plate, cloth, candlesticks, the covers of four books, a few coins, a lot of cows. It is less than anyone hoped and more than anyone admits.
+    [if flag.i_captives || flag.i_colman_taken]
+    The captives sit in a row on the sand, roped, watching their island.
+    [/if]
+    [if flag.i_first]
+    Ásgeir walks down the strand, past the heap of plunder, and stops in front of you. "First through the gate," he says, loud enough for the ship. "Two shares, at the dividing." Steinarr spits.
+    [/if]
+
+    Behind you, Ásgeir's men are putting fire to the thatch.
+    [break]
+    The church roof catches slowly and then all at once, and the smoke goes up black into the grey sky and leans away east on the wind. You can feel the heat of it on the beach.
+
+    Hallvard is standing at the water's edge, looking at the smoke. "Their god's house," he says. "Burning. And the sea quite calm." He doesn't say what he thinks that means. He doesn't seem to know.
+  choices:
+    - id: watch
+      text: Watch it burn.
+      effects:
+        - { add: { loot: 400 } }
+        - { route: [bangor] }
+        - { deed: { type: raid, text: At the raid on Iona } }
+        - { if: flag.i_first, then: [ { shares: 2 } ] }
+      result: |
+        You watch it burn. It is a big fire for such a small church. Somewhere up on the hill, the monks who ran are watching it too.
+
+        When the tide turns you push off, and row south for Ireland with the smoke behind you for half the day.
+    - id: help
+      text: Go and help them burn it.
+      effects:
+        - { add: { loot: 400, man.ulf.loyalty: 1 } }
+        - { route: [bangor] }
+        - { deed: { type: raid, text: Fired the church on Iona } }
+        - { if: flag.i_first, then: [ { shares: 2 } ] }
+      result: |
+        You take a brand from the fire and put it to the eaves of the monks' long house. Ulf whoops. The thatch is wet underneath and burns badly, and you have to work at it, and by the time it catches you are black with smoke and grinning like an idiot.
+
+        When the tide turns you push off, and row south for Ireland with the smoke behind you for half the day.
+    - id: hallvard
+      text: Stand with Hallvard, and ask him what it means.
+      effects:
+        - { add: { loot: 400, man.hallvard.loyalty: 1, hamingja: 1 } }
+        - { route: [bangor] }
+        - { deed: { type: raid, text: At the raid on Iona } }
+        - { if: flag.i_first, then: [ { shares: 2 } ] }
+      result: |
+        "I don't know," Hallvard says. "Ormr would have known. Or he'd have said he did."
+
+        He takes the silver hammer from round his neck and holds it in his fist, looking at the smoke. "Maybe it means nothing. Maybe their god doesn't mind about houses." He puts the hammer back. "I'd mind."
+
+        When the tide turns you push off, and row south for Ireland with the smoke behind you for half the day.

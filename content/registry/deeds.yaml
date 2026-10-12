@@ -15,3 +15,4 @@
 - { id: open_handed, name: "An open-handed share", weight: 2 }
 - { id: man_deed, name: "A sworn man's deed", weight: 1 }
 - { id: deed, name: "A deed", weight: 2 }
+- { id: boast_kept, name: "A boast kept", weight: 4 }

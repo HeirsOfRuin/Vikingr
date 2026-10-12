@@ -1,0 +1,129 @@
+# The holmgang (FRAME-PHASE2 §2.8): the night before, the cloak, and what Thorgils's kin make of it.
+- id: y_holm_eve
+  kind: spine
+  art: home_fjord
+  when: Yule, 830
+  title: The night before
+  text: |
+    Nobody sleeps much. The news goes round the district in the dark the way news does, and by midnight there are men walking in from three valleys to see it.
+
+    The law is old and simple. A cloak five ells square, pegged out on the holm. Three shields each. The man who is challenged strikes first. The man who steps off the cloak with both feet has run, and the man who is wounded so his blood falls on the cloak can stop it there, by paying three marks to the other.
+    [break]
+    Ketill finds you behind the jarl's byre, where you have gone to be sick.
+
+    "He's big and he's slow," he says, "and he swings first and keeps swinging. Take it on the rim and let him tire." He spits. "Or don't fight him at all. There are other ways. There are always other ways, until there aren't."
+  choices:
+    - id: fight
+      text: Fight him at dawn.
+      danger: true
+      effects: [ { fight: { foe: thorgils, kind: holmgang, lethal: true, win: y_holm_won, lose: y_holm_lost } } ]
+      result: |
+        They peg out the cloak on the frozen turf below the hall at first light, with the whole of Yule standing round it, breathing smoke.
+
+        Thorgils steps onto it. He isn't grinning now. Neither are you.
+    - id: ketill
+      text: Let Ketill go to Thorgils's people tonight and settle it.
+      requires: ["man.ketill.alive", "man.ketill.loyalty >= 5"]
+      effects: [ { set: flag.y_ketill_peace }, { add: { man.ketill.loyalty: -1 } } ]
+      result: |
+        Ketill is gone an hour. When he comes back his knuckles are skinned, and he won't say why.
+
+        In the morning Thorgils stands up in the jarl's hall, white in the face, and says in front of everyone that he spoke in drink and spoke wrongly of an honest woman. Then he sits down and doesn't speak again.
+
+        It is over. You won. Everybody knows how. "You'll owe me for that one," says Ketill, flexing his hand, and you will.
+      next: y_name
+    - id: pay
+      text: Go to the jarl, and offer to let the law settle it with silver.
+      effects: [ { set: flag.y_withdrew }, { add: { honour: -2 } }, { if: "!nickname", then: [ { nickname: Grautr } ] } ]
+      result: |
+        The jarl listens, and his face doesn't change. He fines Thorgils a mark for the insult and you a mark for the challenge, and that is the law satisfied.
+
+        It isn't the hall satisfied. The hall wanted a fight, and you took it away from them, and they don't forgive that kind of thing quickly. On the way out, somebody behind you says "Porridge," quietly, and the men round him laugh.
+      next: y_name
+
+- id: y_holm_won
+  kind: spine
+  art: holmgang
+  when: Yule, 830
+  title: The cloak
+  text: |
+    Thorgils is down on the trampled snow, and the snow under him is going black in the dawn light. He is alive. He will keep the leg, probably. He will not stand on a bench to talk about you again.
+
+    His brothers carry him off. Somebody puts a cloak round your shoulders, and somebody else a cup in your hand, and it's a while before you notice that your hands won't stop shaking.
+  choices:
+    - id: in
+      text: Go back up to the hall.
+      effects:
+        - { deed: { type: holmgang_won, text: Beat Thorgils Hrappsson on the cloak at Yule } }
+        - { keep_boast: thorgils_words }
+        - { set: flag.y_holm_won }
+        - { queue: { scene: y_thorgils_kin, days: 6 } }
+        - { if: "!nickname", then: [ { nickname: Holm-Bear } ] }
+      result: |
+        The hall goes quiet when you come in, then louder than before. Ulf is already telling it, and in his version you are taller.
+
+        By noon they have a name for it. They call you Holm-Bear, which is more than you deserve and less than Ulf thinks you do.
+      next: y_name
+
+- id: y_holm_lost
+  kind: spine
+  art: holmgang
+  when: Yule, 830
+  title: The cloak
+  text: |
+    You are on your back in the snow, and the sky is going pale over the fjord, and Thorgils is standing over you breathing hard.
+
+    He could finish it. Everyone is waiting to see if he will. He looks at the jarl, and at the crowd, and spits in the snow beside your head.
+
+    "Porridge," he says, and walks away.
+  choices:
+    - id: up
+      text: Get up.
+      effects: [ { set: flag.y_holm_lost }, { if: "!nickname", then: [ { nickname: Grautr } ] } ]
+      result: It takes you three tries. Nobody helps, except Ketill, who waits until nobody is looking.
+      next: y_name
+
+- id: y_thorgils_kin
+  kind: queued
+  requires: [flag.y_holm_won]
+  art: home_fjord
+  title: Thorgils's brothers
+  text: |
+    Thorgils's brothers come to your father's farm a week after Yule: Grímr and Ozurr Hrappsson, big men like him, with four of their farmhands behind them carrying spears they don't quite point at anyone.
+
+    Thorgils will live, Grímr says. He will walk with a stick. A man who can't walk behind a plough can't keep a farm, and his brother's farm is the family's farm. The law calls that a lasting injury, and the law puts a price on it.
+
+    Your father stands in the doorway behind you and says nothing. It is your affair. He has made that very clear.
+  choices:
+    - id: pay
+      text: Pay what the law asks. Two marks.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, honour: 1 } }, { set: flag.thorgils_paid } ]
+      result: |
+        You count it out on the chopping block in front of the house: two marks, most of what you have. Grímr weighs it, and nods, and takes it.
+
+        "That's that, then," he says. It is, more or less. The Hrappssons nod to you at the Thing after that, and once, years later, Ozurr buys you a drink.
+    - id: refuse
+      text: Refuse. He stepped onto the cloak of his own will.
+      effects: [ { set: flag.thorgils_feud }, { add: { honour: 1 } } ]
+      result: |
+        "He stepped onto the cloak," you say. "So did I. The law says the cloak settles it."
+
+        Grímr chews on that. "The law says a lot of things," he says, and goes. His farmhands follow him, and one of them, at the gate, looks back at your father's byre as if he were measuring it.
+
+        Your father shuts the door. "Well," he says. "Now we'll see."
+    - id: thing
+      text: Tell them to bring it to the Thing in spring, and you'll answer it there.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          "Bring it to the Thing," you say. "Let the law-speaker say what a holmgang costs. If he says I owe, I'll pay."
+
+          It's the right answer, and they know it, and they can't argue with it in front of their own farmhands. They go. In spring the law-speaker hears it and says the cloak settled it, and the Hrappssons go home with nothing but the law, which is a thin thing to carry.
+        effects: [ { set: flag.thorgils_thing_won }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: |
+          "Bring it to the Thing," you say. Grímr laughs. "We will. And everybody there will remember who wouldn't pay."
+
+          They go. In spring the law-speaker hears it and says you owe a mark, and you pay it, and everyone remembers anyway.
+        effects: [ { set: flag.thorgils_thing_lost }, { add: { silver: -24 } } ]

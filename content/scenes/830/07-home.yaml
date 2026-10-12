@@ -1,0 +1,289 @@
+# The way home and the homecoming (FRAME-PHASE2 §2.5–2.6): the September storm, the fjord, the brother,
+# Gyða, the captives, and Ormr's last winter.
+- id: s_storm_home
+  kind: pool
+  trigger: sea
+  once: true
+  requires: [service, flag.bg_left, fate.storm_home]
+  art: storm
+  title: The equinox gale
+  text: |
+    It comes out of the south-west on the third day, the way the old men say the autumn storms always come: a long swell first, oily and slow, and a sky like a bruise, and then the wind.
+
+    By noon the sea is higher than the mast. The Raven climbs each wave as if it were a hill, hangs at the top with her oars in the air, and goes down the other side like a sledge.
+    [break]
+    Somebody is shouting for bailers. Somebody else is shouting for Thor. In the stern the steering-oar is jumping in its withy like a live thing, and it takes two men to hold it.
+  choices:
+    - id: bail
+      text: Get down in the bilge and bail.
+      check: { skill: seamanship, attr: end, difficulty: 4 }
+      success:
+        text: |
+          You bail. You bail until your arms stop belonging to you and the bucket is a part of your hand. Bersi bails beside you, counting the buckets out loud, and when he gets to a thousand he starts again.
+
+          At dawn the wind drops. The Raven is half full of water and nobody is missing. Bersi says it was four thousand, three hundred and twelve buckets. Nobody argues.
+        effects: [ { deed: { type: storm_survived, text: Bailed the Raven through the equinox gale } }, { add: { man.bersi.loyalty: 1 } } ]
+      failure:
+        text: |
+          You bail until you can't, and then somebody takes the bucket off you and you lie in the bilge water and are sick.
+
+          At dawn the wind drops. Two men are gone: a wave came over the side in the dark and took them, and nobody saw it happen. Nobody even heard.
+        effects: [ { add: { crew.men: -2, crew.morale: -1 } } ]
+    - id: oar
+      text: Go aft and put your weight on the steering-oar.
+      check: { skill: seamanship, attr: str, difficulty: 5 }
+      success:
+        text: |
+          You hold it with the captain all night, and you learn more about the Raven in that night than in the whole summer: how she wants to turn her shoulder to the big ones, how she warns you, a breath before, through the oar.
+
+          At dawn the wind drops. The captain takes his hands off the loom and looks at them, and then at you, and nods.
+        effects: [ { deed: { type: storm_survived, text: Held the Raven's steering-oar through the equinox gale } }, { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: |
+          A sea takes the stern and the oar kicks like a horse and throws you across the deck into the strakes. You hear your ribs go.
+
+          At dawn the wind drops. You are alive, and the Raven is alive, and that will have to do.
+        effects: [ { injury: cracked_ribs } ]
+    - id: hammer
+      text: Hold on next to Hallvard, and pray with him.
+      effects: [ { add: { hamingja: 1, man.hallvard.loyalty: 1 } } ]
+      result: |
+        Hallvard has his silver hammer in his fist and his eyes shut, and his lips moving. You put your hand over his. He doesn't open his eyes, but he starts again from the beginning, louder, so that you can follow.
+
+        At dawn the wind drops. Hallvard opens his eyes and looks at the sky as if it owed him something, and the sky, for once, seems to agree.
+
+- id: h_return
+  kind: place
+  trigger: arrive
+  at: [home_fjord]
+  once: true
+  requires: [flag.bg_left]
+  art: home_fjord
+  title: Home
+  text: |
+    You come up the fjord on a still grey afternoon [if month >= 9]in early autumn[elif month == 8]at the end of summer[else]in high summer, with the hay still standing[/if], and the Raven is low in the water.
+    [if flag.bg_command]
+    You are standing at her steering-oar.
+    [/if]
+
+    You remember being eight on the shingle, watching a ship come in like this. There are boys on the shingle now, watching you. One of them has his mouth open.
+    [break]
+    The whole district is on the landing.
+    [if fate.asgeir_falls && !flag.bg_covered]
+    Ásgeir's wife is at the front. She sees the stern of the Raven, and who is standing in it, and who isn't, and she doesn't make a sound. She turns and walks back up the hill.
+    [elif fate.asgeir_falls]
+    They carry Ásgeir up the shingle on a door, cursing them for every jolt. His wife walks beside him, holding his good hand, and doesn't look at anyone.
+    [/if]
+    Your mother finds you before your father does. Your father comes after, slowly, and looks you up and down, and puts his hand on the back of your neck the way he used to when you were small, and leaves it there.
+
+    Hallbjörn is standing behind them.
+    [if flag.b_fought]
+    He looks at your arms, and the scar, and the silver at your belt, the way a man looks at a horse he used to be able to ride.
+    [elif flag.b_tricked]
+    He looks at the silver at your belt and works out what it's worth, and you watch him do it.
+    [elif flag.b_yielded]
+    He grins at you. He actually grins.
+    [else]
+    He nods. "Sea-king," he says, and this time he doesn't make it sound like a joke. Not quite.
+    [/if]
+  choices:
+    - id: embrace
+      text: Go past your father and take your brother in your arms.
+      effects: [ { set: flag.h_brother_close }, { add: { honour: 1 } } ]
+      result: |
+        He is stiff as a post for a moment. Then he hits you on the back hard enough to rattle your teeth, which is the same thing.
+
+        "You stink of fish," he says. "Come up to the house."
+      next: h_gyda
+    - id: farm
+      text: Ask him how the farm did this summer.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      next: h_gyda
+      success:
+        text: |
+          He tells you, because you asked like a man who wanted to know. The hay was poor. The barley was worse. Two cows died in the spring and the third is going the same way. Father has borrowed against the autumn calves from Bárð.
+
+          "We'll manage," he says. He means: we won't. You tell him there'll be silver from the share-out, and he looks away, and says nothing, and doesn't refuse.
+        effects: [ { set: flag.h_brother_debt } ]
+      failure:
+        text: |
+          "It did well enough," he says, "for a farm with one son on it," and goes up to the house.
+        effects: [ { set: flag.h_brother_cold } ]
+    - id: silver
+      text: Let him see what you brought home, and say nothing.
+      effects: [ { set: flag.h_brother_envy } ]
+      result: |
+        You let him look. You let everyone look: the arm-ring, the hacksilver in the pouch, the Irish brooch on your cloak.
+
+        Hallbjörn looks longest of anyone, and then goes up to the house without a word. Your mother watches him go, and then looks at you, and you wish you had done it some other way.
+      next: h_gyda
+
+- id: h_gyda
+  kind: spine
+  art: home_fjord
+  title: Gyða
+  text: |
+    [if fate.gyda_waits && flag.b_gyda_promise]
+    Gyða is waiting at the back of the crowd, at the edge of the shingle, with her arms folded, exactly where she was in the spring. As if she had not moved all summer.
+
+    "Well," she says, when you come up. "Where's your ship, sea-king?"
+    [elif fate.gyda_waits]
+    Gyða Bárðardóttir is at the back of the crowd. She was at the back of every crowd last spring, too, but you didn't notice her then. You notice her now. So, apparently, does she.
+    [elif flag.b_gyda_promise]
+    Gyða isn't on the landing. Your mother tells you, carefully, at supper.
+
+    Hallbjörn asked Bárð for her at midsummer, as she said he would. Bárð said yes. They are to be married at the winter nights, and she has gone to her aunt's to sew.
+
+    Hallbjörn is across the fire from you while your mother tells it. He doesn't look up.
+    [else]
+    Gyða Bárðardóttir is on the landing, beside your brother. She is wearing a new brooch, and Hallbjörn is standing very close to her, and your mother tells you at supper that they are to be married at the winter nights.
+    [/if]
+  choices:
+    - id: walk
+      text: Walk her home along the shore.
+      visible_if: "fate.gyda_waits"
+      effects:
+        - { set: flag.gyda_courting }
+        - { if: flag.b_gyda_promise, then: [ { add: { honour: 1 } } ] }
+        - { if: "captives >= 1", then: [ { queue: { scene: h_captives, days: 0 } } ] }
+      result: |
+        You walk her home the long way, along the shore, and tell her about the summer: the whale and Iona and Bangor and the gale. Not all of it. She can tell when you're leaving something out, and she lets you.
+
+        At her father's gate she says, "My father will want to know what you've got. Cows. Land. Silver."
+
+        "I've got a summer."
+
+        "That's a start," Gyða says, and goes in.
+    - id: wish
+      text: Wish them well, and mean it if you can.
+      visible_if: "!fate.gyda_waits"
+      effects:
+        - { set: flag.gyda_lost }
+        - { add: { honour: 1 } }
+        - { if: "captives >= 1", then: [ { queue: { scene: h_captives, days: 0 } } ] }
+      result: |
+        You find Hallbjörn in the byre the next morning and wish him well. He looks at you a long time, trying to find the knife in it.
+
+        There isn't one. Or if there is, you've put it somewhere even you can't find it. He nods. "She'd have waited," he says, "if you'd asked her to." He is wrong. You let him be.
+    - id: brood
+      text: Say nothing. Drink.
+      visible_if: "!fate.gyda_waits"
+      effects:
+        - { set: flag.gyda_lost }
+        - { set: flag.h_brother_feud }
+        - { if: "captives >= 1", then: [ { queue: { scene: h_captives, days: 0 } } ] }
+      result: |
+        You say nothing. You drink, and keep drinking, and in the small hours you say something to Hallbjörn across the fire that you can't take back.
+
+        He gets up and goes out. In the morning neither of you mentions it. Neither of you forgets it, either.
+
+- id: h_captives
+  kind: queued
+  requires: ["captives >= 1"]
+  art: home_fjord
+  title: The captives
+  text: |
+    The captives are in Bárð's empty byre, waiting for the trader from Kaupang. They are fed once a day. They sleep in a heap for the warmth, and in the mornings one of them leads the others in prayer, in a language nobody on the farm understands, and the farm dogs sit outside the door and listen.
+    [if flag.i_colman_taken && !flag.bg_colman_freed]
+    Colmán is one of them. When you look in, he looks back, and says your name, which you never told him.
+    [/if]
+    [break]
+    The trader is due before the share-out. He pays by the head, and he isn't fussy about whose.
+    [if service]
+    They are not yours to sell. They are the ship's, and the price will go into the heap with the rest. But you took them, and the captain would let you have them against your share, if you asked.
+    [/if]
+  choices:
+    - id: sell
+      text: Let the trader have them.
+      result: |
+        The trader comes, and looks at their teeth, and pays. They walk down to his ship in a line, roped at the neck, and the one who led the prayers is still praying.
+
+        Hallvard watches them go. He is the only one who does.
+      effects: [ { set: flag.h_captives_sold }, { if: "flag.i_colman_taken && !flag.bg_colman_freed", then: [ { set: flag.colman_sold } ] } ]
+    - id: thralls
+      text: Keep them as thralls on your father's farm.
+      effects:
+        - { set: flag.h_thralls }
+        - { captives: -99 }
+        - { if: service, then: [ { add: { man.bersi.loyalty: -1 } } ] }
+        - { if: "flag.i_colman_taken && !flag.bg_colman_freed", then: [ { set: flag.colman_kept } ] }
+      result: |
+        You give them to your father. He looks at them a long time, the way he looks at weather, and then puts them to work: cutting turf, carrying water, mucking out the byre they slept in.
+
+        Hallbjörn likes having them. Your mother doesn't, and won't say why. In the winter, one of them, the youngest, runs off across the snow toward the sea, and is found three days later, frozen, a mile short of it.
+    - id: colman
+      text: Keep Colmán. Sell the rest.
+      visible_if: "flag.i_colman_taken && !flag.bg_colman_freed"
+      effects: [ { set: flag.colman_kept }, { captives: -1 } ]
+      result: |
+        You take Colmán out of the byre and give him a place by the fire. Your father wants to know what use a monk is. You don't know yet. He speaks Irish and Latin and some Frankish, and he reads, and he watches everything.
+
+        "Why?" Colmán asks you, the first night.
+
+        You don't know that either.
+    - id: free
+      text: Put Colmán on a trader's ship bound for Dublin, and pay his passage.
+      visible_if: "flag.i_colman_taken && !flag.bg_colman_freed"
+      requires: ["silver >= 4"]
+      effects: [ { set: flag.colman_freed_home }, { captives: -1 }, { add: { silver: -4, honour: 1, man.hallvard.loyalty: 1, man.ulf.loyalty: -1 } } ]
+      result: |
+        You pay the trader four ørtugar to take one man to Dublin and put him ashore there unharmed, and you tell him what you'll do if he doesn't.
+
+        Colmán stands on the trader's deck with his hands free, looking at them. "I will pray for you," he says.
+
+        "Don't," you say. "Not where anyone can hear."
+
+        Ulf thinks you've gone soft. Hallvard thinks the opposite, and won't say why.
+
+- id: h_ormr
+  kind: phase
+  trigger: hall
+  once: true
+  requires: [fate.ormr_dies, "place == home_fjord", "phase == winter", "!flag.placeholder_start"]
+  art: hearth_ormr
+  title: Ormr's last story
+  text: |
+    Ormr is dying. Everybody knows it, including Ormr, who has been complaining that it is taking too long.
+
+    He has asked for you. You sit by his bench in the corner, where he has sat every winter of your life, and he looks at you with eyes gone milky at the edges.
+
+    "Tell it," he says. "The summer. All of it. Don't make it better."
+    [break]
+    So you tell it: the bench and the whale, Iona, Bangor, the gale.
+    [if flag.i_first]
+    He grunts at the gate. "First through. Fool. Good."
+    [/if]
+    [if flag.i_mercy || flag.i_colman_spared]
+    At the monks he is quiet, and you can hear the fire.
+    [/if]
+    [if flag.bg_command]
+    At the steering-oar he laughs until he coughs, and coughs until your mother comes.
+    [/if]
+
+    When you've finished he lies back.
+    [if flag.b_ormr_seax]
+    "The seax," he says. "Did it bite?" You tell him it did. He nods, satisfied.
+    [elif flag.b_ormr_trick]
+    "The rim," he says. "Did you turn them on the rim?" You tell him you did. He nods, satisfied.
+    [elif flag.b_ormr_tree]
+    "Their god," he says. "On his tree. Did you see him?" You tell him you saw a lot of monks. He nods, as if that were an answer.
+    [else]
+    "Was it worth it?" he says. It's what you asked him, once.
+    [/if]
+  choices:
+    - id: truth
+      text: Tell him the truth. You don't know yet.
+      effects: [ { set: flag.ormr_dead }, { add: { skill.lore: 1 } } ]
+      result: |
+        "Good," Ormr says. "Nobody knows the first year. Ask me again in twenty." He shuts his eyes. "I'll be in the hall. I'll keep you a bench."
+
+        He dies in the night, quietly, which annoys everyone, because he had promised a better death than that. They bury him in the hill above the fjord with his axe across his knees, and his stump in his lap, and a cup of the jarl's ale, and it rains.
+    - id: lie
+      text: Tell him it was everything he said it would be.
+      effects: [ { set: flag.ormr_dead }, { add: { hamingja: 1 } } ]
+      result: |
+        He looks at you a long time, and you think he can see right through it. Then he smiles, the first time you have seen him smile in years.
+
+        "Liar," he says, contentedly. "Good. You'll need that."
+
+        He dies in the night. They bury him in the hill above the fjord with his axe across his knees, and a cup of the jarl's ale, and it rains.

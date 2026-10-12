@@ -1,0 +1,462 @@
+# Yule 830 (FRAME-PHASE2 §2.7): the jarl's hall, the boast cup, the völva, the flyting, and the name.
+# The hall's noise (flag.y_hall, 0-2) drives the crowd in the picture. flag.y_score counts flyting exchanges won.
+- id: y_feast
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["place == home_fjord", "phase == winter", "!flag.placeholder_start", { any: ["!fate.ormr_dies", seen.h_ormr] }]
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 830
+  title: Yule
+  text: |
+    Jarl Eystein's hall at Yule is so full of smoke and bodies and noise that the walls seem to lean outward. There is a boar on the spit, and ale strong enough to stand a spoon in, and three dogs fighting over something under the high table that may once have been a goose.
+
+    Ulf has told the story of the summer four times since the boar came in. Each time he is in it more. By the fourth telling he took Bangor more or less alone, with you holding his cloak.
+    [if !man.ulf.alive]
+    Ulf isn't here to tell it. Somebody else tells it instead, badly, and leaves out the best parts, and you find you can't listen.
+    [/if]
+    [break]
+    Then the jarl stands, and the hall goes quiet, and the bragarfull comes round.
+
+    It is a great horn, rimmed with silver, older than the hall. Each man who takes it stands up on his bench and swears what he will do in the year to come, and drinks, and the hall remembers. A man who keeps his boast is talked about. A man who breaks it is talked about longer.
+
+    The horn comes down the bench to you. It is heavier than it looks.
+  choices:
+    - id: ship
+      text: Swear you will stand at your own steering-oar before next Yule.
+      visible_if: service
+      effects: [ { boast: own_ship }, { add: { flag.y_hall: 1 } } ]
+      result: |
+        "Before next Yule," you say, "I'll stand at my own steering-oar." It sounds bigger out loud than it did in your head.
+
+        A few men laugh. More bang the tables. Ásgeir's old crew bang loudest.
+      next: y_volva
+    - id: first
+      text: Swear you will be first over the wall next summer, wherever you go.
+      effects: [ { boast: first_over }, { add: { flag.y_hall: 1 } } ]
+      result: |
+        "Next summer," you say, "wherever we go, I'll be first over the wall."
+
+        Ketill closes his eyes briefly. Ulf stands up on the bench beside you and swears the same thing, louder, and the hall roars at the pair of you.
+      next: y_volva
+    - id: cup
+      text: Swear you will drink from an Irish king's own cup.
+      effects: [ { boast: irish_cup }, { add: { flag.y_hall: 2 } } ]
+      result: |
+        "I've seen their abbeys," you say. "Next I'll see their kings. And I'll drink from one of their cups, the one he keeps for himself, before I'm done."
+
+        That gets a roar. The jarl raises his own cup to you. It is not clear whether he is mocking you.
+      next: y_volva
+    - id: father
+      text: Swear you will put three marks of silver in your father's hand.
+      effects: [ { boast: father_silver } ]
+      result: |
+        "My father bought my oar with a cow and his pride," you say. "I'll put three marks of silver in his hand for it."
+
+        It isn't the kind of boast the hall likes best; there's nobody to kill in it. But the old men nod, and at the end of the bench your father looks down into his cup and stays looking.
+      next: y_volva
+    - id: none
+      text: Drink, and swear nothing.
+      effects: [ { add: { man.ketill.loyalty: 1 } } ]
+      result: |
+        You drink, and pass the horn on, and say nothing. There's a mutter down the benches.
+
+        "Good," says Ketill, under the noise. "A man who boasts at sixteen spends the rest of his life paying for it."
+      next: y_volva
+
+- id: y_volva
+  kind: spine
+  art: volva
+  when: Yule, 830
+  title: Heiðr
+  text: |
+    On the third night of Yule the völva comes.
+
+    Her name is Heiðr, and she has been travelling from hall to hall since before the jarl was born. She wears a blue cloak set with stones, and a hood of black lambskin lined with white cat's fur, and gloves of catskin, and she carries a staff with a brass knob on it. She eats the hearts of every kind of beast in the hall, which is a lot of hearts.
+
+    Then they set her on the high seat, and the women sing the warding-songs, and she goes away somewhere behind her own eyes.
+    [break]
+    She sees for the jarl first: a good harvest and a bad wife, which makes the hall laugh, and the jarl not. She sees for the farmers. Then her eyes come round the hall and stop on you, and she says, in a voice like a door opening:
+
+    [if omen.brother_feud]
+    "Two sons, one field. Blood on the home field before the field is ploughed. Whose blood, the field doesn't say."
+    [else]
+    "Two sons, one field. The elder keeps it. The younger keeps his brother. That is rarer than you'd think."
+    [/if]
+
+    Her eyes move along the bench.
+    [if man.ulf.alive && omen.ulf_glory]
+    "The loud one," she says, and Ulf sits up. "They will sing about you. You will not hear it."
+    [elif man.ulf.alive]
+    "The loud one," she says, and Ulf sits up. "You will grow fat and grey and tell lies about all this to your grandsons. They won't believe a word."
+    [/if]
+    [if man.bersi.alive && omen.bersi_betrays]
+    "The one who counts. One day you will count him, too, and he will come to a good price." Bersi laughs, a little too loud.
+    [/if]
+    [break]
+    Then her eyes go past all of you, through the wall, out over the sea.
+
+    "Ships," she says. "Ships wintering in Ireland, digging in, building their towns on the Irish rivers. A sea-king in the west, a king in the east with a hundred ships, and the Franks paying silver by the cartload to make the ships go away. This is the age," Heiðr says. "There won't be another. Take what you can carry."
+
+    And then she is an old woman on a high seat, asking for ale.
+  choices:
+    - id: ask
+      text: Ask her how you will die.
+      effects: [ { set: flag.y_asked_death }, { add: { hamingja: 1 } } ]
+      result: |
+        The hall goes quiet. You aren't supposed to ask that.
+
+        Heiðr turns her milky eyes on you and keeps them there until the fire settles. "Not in a bed," she says. "Not old. Not soon." She drinks. "Is that enough for you?"
+
+        It is not, but it will have to be.
+      next: y_flyting
+    - id: pay
+      text: Put silver in her lap for a better look.
+      requires: ["silver >= 3"]
+      effects: [ { add: { silver: -3, hamingja: 1, man.hallvard.loyalty: 1 } }, { set: flag.y_paid_volva } ]
+      result: |
+        You put three ørtugar in her lap. She weighs them in her catskin glove without looking.
+
+        "You're wondering," she says, "whether any of it is true." She gives you back one of the coins. "Some of it. That's the trouble with it."
+      next: y_flyting
+    - id: laugh
+      text: Laugh. She'll say anything for a heart and a bed.
+      effects: [ { add: { hamingja: -1, man.hallvard.loyalty: -1, flag.y_hall: 1 } } ]
+      result: |
+        You laugh, and a few of the younger men laugh with you. Hallvard doesn't. He looks at you as if you had pissed on the hearth.
+
+        Heiðr doesn't look at you at all. That is worse.
+      next: y_flyting
+    - id: quiet
+      text: Say nothing. Remember every word.
+      result: You say nothing. But later, lying awake in the dark of the hall with forty men snoring round you, you find you can recite all of it.
+      next: y_flyting
+
+- id: y_flyting
+  kind: spine
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 830
+  title: Thorgils
+  text: |
+    On the last night of Yule, Thorgils Hrappsson stands up on his bench.
+
+    He is a big man, red in the face from the fire and the ale, with a voice made for shouting at cattle. The hall goes quiet the way a hall does when it smells a fight coming.
+
+    "Look at him," says Thorgils, and points at you with a rib-bone. "Hall's second son. Went west with Ásgeir for silver. Came home with a sunburn and a cough.
+    [if flag.o_bangor_first]
+    I hear the Irish were so frightened of him that they finished their dinner before they ran."
+    [else]
+    I hear the monks of Iona were so frightened of him that they finished their prayers before they ran."
+    [/if]
+
+    Somebody laughs. Then a few more. Every face in the hall turns to see what you'll do.
+  choices:
+    - id: insult
+      text: Answer with something about Thorgils.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          "Better a sunburn than what you brought back from Kaupang, Thorgils. The girls there still talk about you." You let it hang. "Not for long, mind. Nothing about you takes long."
+
+          The hall roars. Ulf falls off the bench. Thorgils goes a darker red, which you would not have said was possible.
+        effects: [ { add: { flag.y_score: 1, flag.y_hall: 2 } } ]
+        next: y_flyting_2
+      failure:
+        text: |
+          "Better a sunburn than... than whatever you've got, Thorgils."
+
+          It comes out wrong, too quick and too quiet. Thorgils cups a hand to his ear. "What's that? Speak up, boy. You sound like the monks."
+
+          The hall laughs, and not with you.
+        effects: [ { add: { flag.y_hall: 1 } } ]
+        next: y_flyting_2
+    - id: boast
+      text: Tell the hall what you did this summer.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          You stand. You are taller than you were in the spring, and the hall sees it.
+          [if flag.i_first]
+          "I was first through the gate at Iona while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask Ásgeir's men who was first."
+          [elif flag.bg_command]
+          "I brought the Raven home from Ireland while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask her crew who stood at the steering-oar."
+          [else]
+          "I stood in the wall at Bangor while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask the Irish."
+          [/if]
+
+          A growl of approval goes round the benches. Somebody bangs a cup on the table, then everybody does.
+        effects: [ { add: { flag.y_score: 1, flag.y_hall: 1 } } ]
+        next: y_flyting_2
+      failure:
+        text: |
+          You stand. "This summer I was..."
+          [if flag.i_ship]
+          "Sitting on a rock," says Thorgils. "Minding a boat. We heard." He has done his asking about. The hall howls.
+          [elif flag.o_hearth]
+          "Being sick in Harek's hearth," says Thorgils. "We heard. They heard it in Shetland." He has done his asking about. The hall howls.
+          [else]
+          "Rowing," says Thorgils. "So was the man in front of you. What's his name? Nobody knows." The hall howls.
+          [/if]
+        effects: [ { add: { flag.y_hall: 2 } } ]
+        next: y_flyting_2
+    - id: turn
+      text: Turn it on your bench-mates. Let Ulf answer.
+      requires: [man.ulf.alive]
+      check: { skill: command, attr: pre, difficulty: 3 }
+      success:
+        text: |
+          "Ulf. How many oars did Thorgils pull last summer?"
+
+          Ulf, who has been waiting his whole life for this question, climbs onto the table. "He pulled the one his mother handed him," he says, "and he's still not sure which end goes in the water."
+
+          The hall roars. You raise your cup to Ulf. It was your joke; the hall knows whose it was.
+        effects: [ { add: { flag.y_score: 1, flag.y_hall: 2 } } ]
+        next: y_flyting_2
+      failure:
+        text: |
+          "Ulf. Tell them how many oars Thorgils pulled last summer."
+
+          Ulf opens his mouth, then shuts it. He is very drunk. "Was it... two?"
+
+          "He sends his men to fight for him," Thorgils tells the hall. "Even the talking."
+        effects: [ { add: { flag.y_hall: 1 } } ]
+        next: y_flyting_2
+    - id: laugh
+      text: Laugh, as if it were a good joke, and drink.
+      effects: [ { add: { flag.y_hall: 1 } } ]
+      result: |
+        You laugh and raise your cup to him. A few men laugh with you. More of them are watching to see whether Thorgils is done.
+
+        He isn't.
+      next: y_flyting_2
+
+- id: y_flyting_2
+  kind: spine
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 830
+  title: Thorgils
+  text: |
+    Thorgils waits for the noise to settle. He has done this before. He takes a long drink, wipes his mouth on his sleeve, and starts again, slower.
+
+    "A second son," he says, "is a man who eats what his brother leaves in the pot. Twenty winters of cold porridge, and now he goes a-viking to find something warm to eat. I'd go too, boy. But I've got a farm."
+    [if flag.gyda_lost]
+    He lets that settle. "And now his brother's got the girl as well."
+    [/if]
+  choices:
+    - id: insult
+      text: Give him the farm back with interest.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          "You've got a farm," you agree. "Three cows, a wet field and a wife who sleeps in the byre to get away from you. Your cows are the only things on it that have seen the sea. They swam for it."
+
+          It goes round the hall like fire through dry heather. Even the jarl laughs, and the jarl laughs about once a winter.
+        effects: [ { add: { flag.y_score: 1, flag.y_hall: 2 } } ]
+        next: y_ahead
+      failure:
+        text: |
+          "At least I..." You can feel it go wrong before it's out. "At least I don't... have a farm."
+
+          There is a pause in which you could hear a feather land.
+
+          "He's proud of it," says Thorgils. "Proud of having nothing. Give him a cup, somebody. He's earned that much."
+        effects: [ { add: { flag.y_hall: 2 } } ]
+        next: y_behind
+    - id: porridge
+      text: Agree with him, and make the porridge your own.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          "Cold porridge," you say. "Every winter. My brother's leavings." You put a hand on your heart. "That's why I can row from Hordaland to Ireland without stopping, Thorgils, and you get out of breath climbing onto your bench."
+
+          The hall loves a man who can take a blow and give one back. They pound the tables. Somebody starts a chant of "Por-ridge! Por-ridge!", and it is, somehow, on your side.
+        effects: [ { add: { flag.y_score: 1, flag.y_hall: 2 } } ]
+        next: y_ahead
+      failure:
+        text: |
+          "Cold porridge," you say. "It made me strong."
+
+          "It made you short," says Thorgils, and the hall, which has been waiting for something it can repeat, takes up the chant. "Por-ridge! Por-ridge!" It is not on your side.
+        effects: [ { add: { flag.y_hall: 2 } } ]
+        next: y_behind
+    - id: silent
+      text: Say nothing. Hold his eye until he looks away.
+      check: { skill: weapons, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You don't answer. You look at him. You keep looking.
+
+          The hall goes quiet again, a different kind of quiet. Thorgils laughs, but it comes out thin, and he is the one who looks away first, at his cup.
+        effects: [ { add: { flag.y_score: 1 } } ]
+        next: y_ahead
+      failure:
+        text: |
+          You don't answer. You look at him.
+
+          Thorgils looks back, and yawns, enormously, and the hall laughs at the yawn.
+        effects: [ { add: { flag.y_hall: 1 } } ]
+        next: y_behind
+
+- id: y_ahead
+  kind: spine
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 830
+  title: Thorgils
+  text: |
+    Thorgils is losing, and he knows it, and a man who is losing a flyting does one of two things. He sits down, or he goes too far.
+
+    He goes too far.
+
+    "Hall's boy," he says, loud and ugly. "Your father had two sons, and the second came out the wrong end of the wrong woman. Ask your mother who she was keeping warm the winter Hall was in Ireland."
+
+    The laughter stops as if somebody had cut its throat. Ketill puts his cup down. Ulf has stopped grinning. On the high seat, the jarl leans forward to see what you'll do.
+  choices:
+    - id: finish
+      text: Finish it with words. Make the hall laugh at him one last time.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          "Thorgils," you say, quite gently, "when a man runs out of things to say about me, and starts on my mother, it's because he's run out of things to say about himself. Sit down. You've lost, and the ale's getting warm."
+
+          For a heartbeat nobody moves. Then the jarl laughs, a big bark of a laugh, and the whole hall comes down on Thorgils like a wave. He sits. Somebody throws a crust at him.
+
+          By the time the ale runs out, the hall has a name for you. They are calling you Hvassi: the Sharp. Ulf says it most, and loudest, and he means it.
+        effects: [ { deed: { type: deed, text: Won the Yule flyting against Thorgils Hrappsson, weight: 3 } }, { add: { flag.y_hall: 2 } }, { nickname: Hvassi }, { set: flag.y_won } ]
+        next: y_name
+      failure:
+        text: |
+          You start well, and then it gets away from you, and you hear yourself say something about his mother in return, and it's a poor thing beside his.
+
+          The hall doesn't laugh. It mutters. Thorgils grins, because a draw is the best he could hope for now, and he knows it.
+        next: y_name
+    - id: hit
+      text: Put down your cup. Tell him to say it again, outside, with a shield on his arm.
+      effects: [ { set: flag.y_challenged } ]
+      result: |
+        The jarl does not stop it. A thing like that, said in front of a hall, can only be answered on the cloak.
+
+        "Tomorrow," says the jarl. "Sober. On the holm below the hall, by the law." He looks at you both. "Unless somebody finds a better answer before then."
+      next: y_holm_eve
+    - id: jarl
+      text: Look to the jarl. It's his hall and his peace.
+      effects: [ { set: flag.y_jarl_ended } ]
+      result: |
+        Jarl Eystein lets the silence go on just long enough for everyone to feel it. Then he says, "Thorgils. Sit down, or go home."
+
+        Thorgils sits. The hall breathes out. You won, and everyone saw you win, and everyone also saw who ended it. It isn't quite the same thing.
+      next: y_name
+
+- id: y_behind
+  kind: spine
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 830
+  title: Thorgils
+  text: |
+    The hall is laughing, and it is laughing at you. Thorgils has the room in his hand. He spreads his arms like a skald at the end of a good verse.
+
+    "No more?" he says. "Nothing? The great raider, beaten by a farmer with a cup of ale." He sits down, grinning, and the noise rolls on over your head.
+
+    Ulf won't look at you. Bersi is looking at you as if he's working out what you're worth now. Ketill pushes his own cup across the table to you.
+  choices:
+    - id: last
+      text: One more try. Stand up and win the hall back.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          You stand on the bench. It takes a while for them to see you. Then you say, "Thorgils is right. I'm a second son, and I eat porridge, and I went west and came home with a cough. And next summer I'm going west again, and he'll still be here, telling you about it."
+
+          It isn't a joke. It lands like one anyway. Somebody shouts "Porridge!" and this time it's a cheer.
+
+          By the end of the night the name has stuck, and so has the cheer. They call you Grautr: Porridge. It sounds like an insult, and it isn't, quite.
+        effects: [ { add: { flag.y_hall: 2 } }, { nickname: Grautr } ]
+        next: y_name
+      failure:
+        text: |
+          You stand on the bench. Nobody turns round. You sit down again.
+
+          By the end of the night the name has stuck. They call you Grautr: Porridge. Thorgils says it most, and loudest, and he means it.
+        effects: [ { nickname: Grautr }, { add: { honour: -1 } } ]
+        next: y_name
+    - id: hit
+      text: Thorgils has made you a joke. Make him bleed for it, on the cloak.
+      effects: [ { set: flag.y_challenged } ]
+      result: |
+        "Holmgang," you say, and the hall goes quiet.
+
+        "Tomorrow," says the jarl, before Thorgils can answer. "Sober. On the holm below the hall, by the law." Thorgils is still grinning, but his eyes have changed.
+      next: y_holm_eve
+    - id: drink
+      text: Drink Ketill's ale. There will be other winters.
+      result: |
+        You drink Ketill's ale. Then you drink your own.
+
+        "Every man who ever got a name," says Ketill, under the noise, "got laughed at first." He thinks about it. "Not every man who got laughed at got a name."
+
+        By the end of the night the hall has forgotten the flyting, mostly. Thorgils hasn't. Neither have you.
+      next: y_name
+
+# Yule ends. If the hall hasn't named him yet, it names him now, from what it has heard (FRAME-PHASE2 decision 5).
+- id: y_name
+  kind: spine
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 830
+  title: The name
+  text: |
+    Yule ends the way it always ends: with the ale gone and the boar a skeleton and the jarl's floor covered in sleeping men and dogs.
+    [if nickname]
+    By morning everyone in the district knows what they are calling you. Your mother has heard it. Your father pretends he hasn't.
+    [elif flag.i_first]
+    Somewhere in the last night of it, the hall decides what to call you. It comes from Ulf, who has told the story of the gate at Iona so many times that the gate is now three times the size and made of iron. They call you Gate-Breaker.
+    [elif flag.bg_command]
+    Somewhere in the last night of it, the hall decides what to call you. A boy of sixteen who brought a forty-oar ship home from Ireland: they call you Raven, after her, and they don't mean it unkindly.
+    [elif fate.asgeir_falls && flag.bg_covered]
+    Somewhere in the last night of it, the hall decides what to call you. Ásgeir's men tell it: the boy who stood at his shoulder and took the spear on his shield. They call you Skjöldr: the Shield.
+    [elif flag.i_burned_books]
+    Somewhere in the last night of it, the hall decides what to call you. Somebody heard about the books at Iona. They call you Book-Burner, and laugh, and Hallvard doesn't.
+    [elif flag.i_ship]
+    Somewhere in the last night of it, the hall decides what to call you. Thorgils has heard about the rock on the beach at Iona. They call you Boat-Minder. It will take you years to make it sound like anything else.
+    [elif flag.o_hearth]
+    Somewhere in the last night of it, the hall decides what to call you. Ulf has told everyone about Harek's hearth. They call you Hearth-Spewer, and Ulf is very pleased with himself.
+    [elif flag.s_seasick]
+    Somewhere in the last night of it, the hall decides what to call you. Somebody from the Raven remembers the first day out. They call you Green-Gills.
+    [elif flag.m_soap]
+    Somewhere in the last night of it, the hall decides what to call you. The story of the jarl's chest has got round. They call you Soap.
+    [else]
+    Somewhere in the last night of it, the hall decides what to call you. You did nothing very foolish and nothing very grand, and you didn't talk much about either. They call you the Quiet. It could be worse.
+    [/if]
+  choices:
+    - id: home
+      text: Walk home through the snow.
+      effects:
+        - if: nickname
+          then: []
+          else:
+            - if: flag.i_first
+              then: [ { nickname: Gate-Breaker } ]
+              else:
+                - if: flag.bg_command
+                  then: [ { nickname: Raven } ]
+                  else:
+                    - if: "fate.asgeir_falls && flag.bg_covered"
+                      then: [ { nickname: Skjöldr } ]
+                      else:
+                        - if: flag.i_burned_books
+                          then: [ { nickname: Book-Burner } ]
+                          else:
+                            - if: flag.i_ship
+                              then: [ { nickname: Boat-Minder } ]
+                              else:
+                                - if: flag.o_hearth
+                                  then: [ { nickname: Hearth-Spewer } ]
+                                  else:
+                                    - if: flag.s_seasick
+                                      then: [ { nickname: Green-Gills } ]
+                                      else:
+                                        - if: flag.m_soap
+                                          then: [ { nickname: Soap } ]
+                                          else: [ { nickname: the Quiet } ]
+      result: |
+        You walk home through the snow with the stars out, and the fjord frozen at the edges, and your breath going up like smoke.
+        [if man.ulf.alive]
+        Ulf walks with you as far as the turning to his father's farm, saying your new name over and over, trying out different ways of shouting it.
+        [/if]
