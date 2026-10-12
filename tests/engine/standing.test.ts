@@ -42,6 +42,19 @@ describe('standing in the ports', () => {
     expect(tierAt(s, content, 'bangor')).toBe('hostile');
   });
 
+  it('word travels: the Church carries a sacked monastery furthest, kin carry a sacked hall less far, and both fade with distance', () => {
+    const s = captainAt('bangor');
+    onRaided(s, content, 'bangor', {}); // a monastery
+    expect(standing(s, content, 'armagh')).toBe(-2 - 2); // 72 km, Gaelic
+    expect(standing(s, content, 'lindisfarne')).toBe(-2 - 1); // 270 km, English: the Church tells them too
+    expect(standing(s, content, 'paris')).toBe(baseStanding(content, 'paris')); // too far to care
+    const t = captainAt('conaille');
+    onRaided(t, content, 'conaille', {}); // a king's hall: only his kin hear, and not far
+    expect(standing(t, content, 'armagh')).toBe(-2 - 1);
+    expect(standing(t, content, 'lindisfarne')).toBe(baseStanding(content, 'lindisfarne'));
+    expect(standing(t, content, 'orkney')).toBe(3);
+  });
+
   it('a hostile port fights you if you land: no rest, no food, no cattle, no winter; only a fight ashore', () => {
     const s = captainAt('bangor');
     s.places.bangor!.standing = -8;

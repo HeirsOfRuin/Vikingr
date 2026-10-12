@@ -75,7 +75,7 @@
   choices:
     - id: walk
       text: Leave your sword in the ship, and go up with him.
-      effects: [ { set: flag.colman_friend }, { standing: { place: iona, n: 3 } }, { add: { skill.lore: 1, honour: 1, man.hallvard.loyalty: -1 } } ]
+      effects: [ { set: flag.colman_friend }, { standing: { place: iona, n: 3 } }, { spread: { from: iona, n: 1, church: true } }, { add: { skill.lore: 1, honour: 1, man.hallvard.loyalty: -1 } } ]
       result: |
         You leave your sword with Ketill, who looks at you as if you'd taken leave of your senses, and go up the beach with Colmán.
 

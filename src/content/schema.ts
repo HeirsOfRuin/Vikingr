@@ -59,6 +59,7 @@ const baseEffect = z.union([
   z.object({ captain: z.string() }).strict(),
   z.object({ sell_captives: z.number().int().min(1) }).strict(),
   z.object({ recruit: z.number().int().min(1) }).strict(),
+  z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
   z.object({ ship: z.object({ type: id, name: z.string(), crew: z.number().int().min(0) }).strict() }).strict(),

@@ -33,7 +33,7 @@ export const RESUPPLY_PRICE: Record<Tier, number | null> = { hostile: null, unfr
 /** Men who will sign on in a summer, at a port whose people would row in a Norse ship. */
 export const HIRE_POOL: Record<Tier, number> = { hostile: 0, unfriendly: 0, wary: 0, friendly: 4, allied: 8 };
 const HIRING_PEOPLES: People[] = ['norse', 'danish', 'swedish'];
-/** What a raid does: at the place, and to every other place of the same people. */
+/** What a raid does: at the place, and (kin) the word that spreads from it at full strength (see spread()). */
 export const RAID_HIT = { place: -5, burned: -2, captives: -1, failed: -3, kin: -2 } as const;
 
 export function baseStanding(content: ContentBundle, id: string): number {
@@ -73,13 +73,55 @@ export function shiftPeople(state: GameState, content: ContentBundle, people: Pe
   for (const p of Object.values(content.places)) if (p.people === people && p.id !== except) shiftStanding(state, content, p.id, n);
 }
 
-/** A raid, won or failed: the place remembers, and so do its kin along the coast. */
+// ---- how word travels (the author, 2026-10-12: "the church would definitely spread opinions, but to a
+// lesser extent the further away it is; the other cultures would do the same to a lesser extent") ----
+
+/** Peoples inside the Church's web of letters, pilgrims and abbots. */
+export const CHRISTIAN: People[] = ['gael', 'english', 'frankish', 'frisian'];
+export const SPREAD = {
+  /** Kin carry word at this share of full strength, fading by e every kinKm. */
+  kinShare: 0.6,
+  kinKm: 300,
+  /** The Church carries word of a sacked monastery at full strength to the victim's own people, at
+   *  otherChristian to the other Christian peoples, fading by e every churchKm. */
+  otherChristian: 0.6,
+  churchKm: 500,
+} as const;
+
+export function kmBetween(a: { lon: number; lat: number }, b: { lon: number; lat: number }): number {
+  const r = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * r;
+  const dLon = (b.lon - a.lon) * r;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLon / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(h));
+}
+
+/** How much of a change at `from` reaches `to`: 0..1. */
+export function spreadWeight(content: ContentBundle, from: string, to: string, church: boolean): number {
+  const a = content.places[from]!;
+  const b = content.places[to]!;
+  if (from === to || b.kind === 'home') return 0;
+  const d = kmBetween(a, b);
+  let w = b.people === a.people ? SPREAD.kinShare * Math.exp(-d / SPREAD.kinKm) : 0;
+  if (church && CHRISTIAN.includes(b.people)) w = Math.max(w, (b.people === a.people ? 1 : SPREAD.otherChristian) * Math.exp(-d / SPREAD.churchKm));
+  return w;
+}
+
+/** Word of something done at `from` travels: n at full strength, less the further and the stranger. */
+export function spread(state: GameState, content: ContentBundle, from: string, n: number, church: boolean): void {
+  for (const q of Object.keys(content.places)) {
+    const v = Math.round(n * spreadWeight(content, from, q, church));
+    if (v) shiftStanding(state, content, q, v);
+  }
+}
+
+/** A raid, won or failed: the place remembers; its kin hear, and if it was a church, the Church tells everyone. */
 export function onRaided(state: GameState, content: ContentBundle, id: string, how: { burned?: boolean; captives?: boolean; failed?: boolean }): void {
   const p = content.places[id];
   if (!p) return;
   const hit = how.failed ? RAID_HIT.failed : RAID_HIT.place + (how.burned ? RAID_HIT.burned : 0) + (how.captives ? RAID_HIT.captives : 0);
   shiftStanding(state, content, id, hit);
-  shiftPeople(state, content, p.people, RAID_HIT.kin + (how.burned ? -1 : 0), id);
+  spread(state, content, id, RAID_HIT.kin + (how.burned ? -1 : 0), p.kind === 'monastery');
 }
 
 /** The turn of the year: a third of the way back toward where each place started. Grudges fade, slowly. */

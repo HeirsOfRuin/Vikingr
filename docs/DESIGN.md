@@ -425,7 +425,10 @@ Only Norse, Danish and Swedish ports will put men on his benches.
 **What moves it:**
 - **A raid, at the place:** −5. Burning it is a further −2, and taking captives a further −1.
 - **A raid beaten off:** −3 at the place.
-- **The rest of the same people:** −2 for any raid on one of them, −3 if it was burned. One Irish house's grief is heard all along the coast. Other peoples don't care.
+- **Word travels, and fades with distance** (the author, 2026-10-12: "the church would definitely spread opinions, but to a lesser extent the further away it is; the other cultures would do the same to a lesser extent"). A raid sends −2 outward, −3 if the place was burned. Each place takes a share, rounded, and a share under half a point is lost:
+  - **Kin:** places of the same people take 60% of it, falling by e (to about 37%) every 300 km. So a raid on Conaille costs 1 at Armagh, Dublin and Bangor, and nothing in England.
+  - **The Church:** a sacked monastery is heard of across the Christian peoples (Gaels, English, Franks, Frisians). Its own people take the full strength and the others 60%, falling by e every 500 km. Burning Iona costs 2 at Bangor, Conaille and Dublin, 1 at Lindisfarne and York, and nothing at London or Paris.
+  - **Content can send word on purpose** with `spread: { from, n, church }`. A king killed in his doorway sends −3 through his kin. Sparing the Lindisfarne book, and walking unarmed with Colmán, each send +1 through the Church.
 - **Taking cattle:** −2.
 - **Fighting your way ashore:** −1.
 - **Buying food:** +1, up to 3 above where the place started.

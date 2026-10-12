@@ -138,7 +138,7 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
       <p class="muted">Fame {Math.round(livingFame(state))}. Lasting fame {lastingFame(state)}. A deed counts only once it has been told: at a feast, by a skald, or by the men who saw it.</p>
       <div class="card">
         <h3>Your name in the ports</h3>
-        <p class="muted small">What each place you know thinks of you. A raid is remembered at the place, and along the coast by its own people. Fair trade and kept faith mend it, slowly; so does time.</p>
+        <p class="muted small">What each place you know thinks of you. A raid is remembered at the place, and heard of by its kin nearby; a sacked church is heard of further, because the Church writes letters. Fair trade and kept faith mend it, slowly; so does time.</p>
         <table class="ports sans small">
           <tbody>
             {Object.values(content.places).filter((p) => p.active && p.kind !== 'home' && state.known.includes(p.id)).map((p) => {

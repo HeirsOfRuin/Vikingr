@@ -10,7 +10,7 @@ import { startVoyage } from './voyage';
 import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
-import { onRaided, shiftPeople, shiftStanding } from './standing';
+import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
 
 function addTo(state: GameState, path: string, n: number): void {
   switch (path) {
@@ -112,6 +112,8 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const n = Math.min(room, e.recruit);
         if (n > 0) { addRecruits(state, n); journal(state, `${n} men signed on.`); }
       }
+    } else if ('spread' in e) {
+      spread(state, content, e.spread.from, e.spread.n, !!e.spread.church);
     } else if ('raided' in e) {
       const { place, ...how } = e.raided;
       onRaided(state, content, place, how);

@@ -76,6 +76,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         for (const p of e.route) if (!content.places[p]?.active) errors.push(`${where}: route place "${p}" is not an active place`);
       } else if ('plunder' in e) {
         sceneRef(where, e.plunder.next);
+      } else if ('spread' in e) {
+        if (!content.places[e.spread.from]) errors.push(`${where}: unknown place "${e.spread.from}"`);
       } else if ('raided' in e) {
         if (!content.places[e.raided.place]) errors.push(`${where}: unknown place "${e.raided.place}"`);
       } else if ('standing' in e) {

@@ -168,7 +168,7 @@
       effects:
         - { deed: { type: killed_champion, text: Killed Máel Brigte king of Conaille in his own doorway, weight: 6 } }
         - { set: flag.c_ulaid_feud }
-        - { standing: { people: gael, n: -2 } }
+        - { spread: { from: conaille, n: -3 } }
         - { add: { honour: -1 } }
         - { plunder: { next: c_after } }
       result: The men go through the ringfort like fire through a hayrick. Nobody comes to stop them. There is nobody left to come.

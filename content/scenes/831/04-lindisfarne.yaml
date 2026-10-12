@@ -95,7 +95,7 @@
         Bersi says the Northumbrians will pay a hundred pounds of silver for it. Bersi has never seen a hundred pounds of silver.
     - id: leave
       text: Leave the book. Take everything else.
-      effects: [ { set: flag.l_spared_book }, { add: { honour: 1, hamingja: 1 } }, { standing: { place: lindisfarne, n: 2 } }, { plunder: { next: l_after } } ]
+      effects: [ { set: flag.l_spared_book }, { add: { honour: 1, hamingja: 1 } }, { standing: { place: lindisfarne, n: 2 } }, { spread: { from: lindisfarne, n: 1, church: true } }, { plunder: { next: l_after } } ]
       result: |
         You don't know why. Something about the old man's arms. You turn your back on the altar and go out to strip the houses, and the men who saw you look at each other, and then follow you.
 
