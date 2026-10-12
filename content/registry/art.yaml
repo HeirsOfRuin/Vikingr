@@ -3,33 +3,35 @@
 - id: hearth_ormr
   title: Ormr One-Hand at the hearth
   fx:
-    - { kind: fire, rect: [164, 74, 40, 54] }
-    - { kind: fire, rect: [166, 126, 36, 34] }
-    - { kind: glow, at: [182, 108], radius: 120 }
-    - { kind: fire, rect: [348, 52, 16, 20] }
-    - { kind: sparks, at: [182, 108], spread: 10, rate: 0.5 }
-    - { kind: smoke, at: [180, 70], spread: 14, rate: 0.6 }
+    - { kind: fire, rect: [168, 82, 40, 40] }
+    - { kind: glow, at: [188, 104], radius: 115 }
+    - { kind: fire, rect: [382, 38, 12, 14] }
+    - { kind: fire, rect: [80, 68, 10, 12] }
+    - { kind: fire, rect: [214, 64, 10, 10] }
+    - { kind: fire, rect: [246, 66, 10, 10] }
+    - { kind: sparks, at: [188, 100], spread: 10, rate: 0.5 }
+    - { kind: smoke, at: [184, 72], spread: 10, rate: 0.6 }
 - id: iona_dawn
   title: Iona at dawn, from the sea
   fx:
-    - { kind: water, rect: [120, 98, 280, 62] }
-    - { kind: birds, rect: [120, 10, 270, 60], count: 3 }
+    - { kind: water, rect: [0, 118, 400, 42] }
+    - { kind: birds, rect: [40, 8, 300, 50], count: 3 }
+    - { kind: smoke, at: [134, 52], spread: 3, rate: 0.15 }
+    - { kind: smoke, at: [232, 64], spread: 3, rate: 0.15 }
 - id: yule_hall
   title: The hall at Yule
   fx:
-    - { kind: fire, rect: [72, 28, 14, 20] }
-    - { kind: fire, rect: [170, 26, 16, 20] }
-    - { kind: fire, rect: [198, 20, 16, 22] }
-    - { kind: fire, rect: [248, 24, 16, 18] }
-    - { kind: fire, rect: [303, 24, 16, 18] }
-    - { kind: fire, rect: [341, 50, 14, 14] }
-    - { kind: fire, rect: [198, 66, 18, 24] }
-    - { kind: fire, rect: [220, 86, 18, 16] }
-    - { kind: glow, at: [205, 70], radius: 110 }
-    - { kind: sparks, at: [207, 80], spread: 6, rate: 0.3 }
-    - { kind: smoke, at: [206, 22], spread: 8, rate: 0.3 }
-    - { kind: crowd, rect: [0, 58, 190, 102] }
-    - { kind: crowd, rect: [252, 58, 148, 102] }
+    - { kind: fire, rect: [224, 100, 48, 38] }
+    - { kind: glow, at: [248, 118], radius: 120 }
+    - { kind: fire, rect: [54, 38, 8, 10] }
+    - { kind: fire, rect: [168, 52, 8, 10] }
+    - { kind: fire, rect: [306, 48, 8, 10] }
+    - { kind: fire, rect: [336, 36, 8, 10] }
+    - { kind: fire, rect: [346, 38, 8, 10] }
+    - { kind: sparks, at: [248, 108], spread: 8, rate: 0.35 }
+    - { kind: smoke, at: [248, 62], spread: 10, rate: 0.35 }
+    - { kind: crowd, rect: [0, 70, 215, 90] }
+    - { kind: crowd, rect: [272, 56, 128, 104] }
 - { id: title, title: A longship leaving the fjord }
 - { id: home_fjord, title: The home fjord }
 - { id: ship_home, title: The ship that came home }

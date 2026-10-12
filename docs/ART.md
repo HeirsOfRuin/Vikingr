@@ -60,8 +60,16 @@ Add "**no horned helmets**" to every prompt with people in it.
 ## Received (2026-10-11)
 All 14 arrived as one contact sheet (`art/src/_sheet-v1.png`), cut into `art/src/<key>.png` and converted. Every one survives conversion.
 
+## Received (2026-10-12): round 2
+A second contact sheet (`art/src/_sheet-v2.png`), three bands of about 6:1, and two standalone versions of Ormr's hearth.
+- **`iona_dawn`: replaced.** It now shows a timber church, beehive cells and a high cross, which is right for 830. The band is cropped to the island (`cx` 0.79 in `art/art.json`), so the ship in the foreground is left out.
+- **`yule_hall`: replaced.** The standing man with his arm out reads as Thorgils in the flyting. Crop `cx` 0.42.
+- **`hearth_ormr`: replaced** with the wider standalone version (2172 × 724, crop `cx` 0.55). The 2:1 version is kept as `art/src/_hearth_ormr-alt.png`. It is the darkest scene in the game; the boy is mostly silhouette at phone size.
+- The animation regions for all three were re-mapped in `content/registry/art.yaml` and checked in the built app.
+- **For future sheets:** bands of about 6:1 lose more than half their width when cropped to the game's 2.5:1. Standalone images at about 2.5:1 or 3:1, like the Ormr ones, keep the whole composition.
+
 **Worth regenerating when credits allow** (historical accuracy, not quality):
-- `iona_dawn` and `iona_burning`: a stone abbey with a tower and spire. That is the later medieval abbey. In 830 Iona was timber churches, a small stone chapel at most, beehive huts and high crosses.
+- ~~`iona_dawn`~~ (done) and `iona_burning`: a stone abbey with a tower and spire. That is the later medieval abbey. In 830 Iona was timber churches, a small stone chapel at most, beehive huts and high crosses.
 - `birsay`: a stone manor house. In 830 it would be turf and timber halls, with a Pictish settlement and later a Norse one.
 - `bangor_field`: a stone town behind the field. In 830 Bangor was a timber monastery inside an earthwork enclosure.
 - `muster`: several ships appear to have two masts. Viking ships had one.

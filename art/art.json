@@ -1,1 +1,20 @@
-{ "holmgang": { "cx": 0.36 }, "storm": { "cx": 0.55 }, "iona_burning": { "cx": 0.45 } }
+{
+ "holmgang": {
+  "cx": 0.36
+ },
+ "storm": {
+  "cx": 0.55
+ },
+ "iona_burning": {
+  "cx": 0.45
+ },
+ "iona_dawn": {
+  "cx": 0.79
+ },
+ "yule_hall": {
+  "cx": 0.42
+ },
+ "hearth_ormr": {
+  "cx": 0.55
+ }
+}

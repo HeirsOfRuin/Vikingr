@@ -26,7 +26,7 @@ const MIME: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg'
 const args = process.argv.slice(2);
 const sheetAt = args.indexOf('--sheet');
 const sheet = sheetAt >= 0 ? args[sheetAt + 1] : null;
-const wanted = args.filter((a, i) => !a.startsWith('--') && i !== sheetAt + 1);
+const wanted = args.filter((a, i) => !a.startsWith('--') && !(sheetAt >= 0 && i === sheetAt + 1));
 const centres = existsSync(join(ROOT, 'art', 'art.json')) ? (JSON.parse(readFileSync(join(ROOT, 'art', 'art.json'), 'utf8')) as Record<string, { cx?: number; cy?: number }>) : {};
 const sources = readdirSync(SRC)
   .filter((f) => MIME[extname(f).toLowerCase()] && !f.startsWith('_'))
