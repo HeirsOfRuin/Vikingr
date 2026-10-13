@@ -231,7 +231,13 @@ export const itemDef = z.object({
 }).strict();
 export type ItemDef = z.infer<typeof itemDef>;
 
-export const boastDef = z.object({ id, text: z.string(), days: z.number().int().min(1) }).strict();
+export const BOAST_STATS = ['raids', 'plunder', 'battlesWon', 'duelsWon', 'legs'] as const;
+/** A boast the engine can keep by itself: a count reached since it was sworn, or a condition come true. */
+const boastGoal = z.union([
+  z.object({ stat: z.enum(BOAST_STATS), n: z.number().int().min(1) }).strict(),
+  z.object({ when: condInput }).strict(),
+]);
+export const boastDef = z.object({ id, text: z.string(), days: z.number().int().min(1), goal: boastGoal.optional(), repeat: z.boolean().optional() }).strict();
 export type BoastDef = z.infer<typeof boastDef>;
 export const fateDef = z.object({ id, chance: z.number().min(0).max(1), desc: z.string() }).strict();
 export type FateDef = z.infer<typeof fateDef>;

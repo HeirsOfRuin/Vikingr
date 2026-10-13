@@ -19,6 +19,8 @@ import {
 export const JARL_CUT = 0.25;
 export const PROVISION_DAYS = 40;
 export const FEAST_GUESTS = 10;
+/** The benches a captain fills each spring when the hero rows for him. */
+export const SERVICE_CREW = 26;
 
 // ---- muster ----
 
@@ -329,6 +331,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
     journal(state, `Launched ${name}, a ${t.name.toLowerCase()}.`);
     state.building = null;
   }
+  // at another man's oar: the captain fills his empty benches from the muster, as every captain does
+  if (state.service) state.crew.men = Math.max(state.crew.men, SERVICE_CREW);
   state.crew.morale = Math.round((state.crew.morale + 6) / 2);
   clampMorale(state);
   state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster;

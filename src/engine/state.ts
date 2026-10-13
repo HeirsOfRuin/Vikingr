@@ -62,6 +62,10 @@ export interface Boast {
   sworn: number; // day
   due: number;
   state: 'open' | 'kept' | 'broken';
+  /** The count a { stat } goal is measured from. */
+  base?: number;
+  /** The day it was kept or broken: the Yule reckoning tells the year's. */
+  closed?: number;
 }
 
 export interface Service {

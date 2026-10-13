@@ -20,6 +20,7 @@
 - { id: king_horn, name: "The king of Conaille's horn", kind: keepsake, trophy: true, desc: "A drinking-horn rimmed and tipped with silver, out of Máel Brigte's hall." }
 - { id: lindisfarne_book, name: "The Lindisfarne book", kind: keepsake, trophy: true, desc: "Painted pages of birds and beasts biting their own tails, in a jewelled cover. The monks would pay a great deal to have it back." }
 - { id: papar_bell, name: "The papar's bell", kind: keepsake, trophy: true, desc: "A small bronze hand-bell, green with age, from an islet off Skye. Nobody likes it in the ship." }
+- { id: asta_ring, name: "A twisted arm-ring from Kaupang", kind: keepsake, desc: "Three strands of silver wire twisted like a rope, by a woman with burn-scarred hands. Better work than anything on the beach." }
 - { id: faroes_down, name: "A bale of Faroese eider down", kind: keepsake, trophy: true, desc: "Light as smoke, warm as a fire. Proof you went where the map was blank." }
 # ship fittings: one of each per ship, fitted to his own ship
 - { id: new_sail, name: "A new sail", kind: fitting, price: 96, sold: [shipwright], desc: "Red and white wadmal, greased against the wet. She will run a tenth faster." }

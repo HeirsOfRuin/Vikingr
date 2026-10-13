@@ -29,3 +29,8 @@
   quality: 1
   doctrine: { missiles: 3, flank: 2, give: 2, push: 1 }
   desc: A small king's household and his cattle-lords. Javelins, horses on the flanks, and a hall to fall back to.
+- id: merchant_crew
+  name: A merchant's crew
+  quality: 0
+  doctrine: { hold: 3, missiles: 2, give: 1 }
+  desc: Traders and their hired men. They will fight for the cargo, but not for long.

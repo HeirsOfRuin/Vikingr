@@ -198,3 +198,19 @@ ex_double_share: { description: "Promised a double share to keep an expedition g
 f_traded: { description: "Traded with Grímr on the Faroes" }
 f_land_claimed: { description: "Set up stones on land in the Faroes" }
 f_heard_snaeland: { description: "Heard of Snæland, beyond the Faroes" }
+# ---- wives (content/scenes/world/wives.yaml) ----
+betrothed: { description: "Promised to a bride; the wedding is at the next winter nights at home" }
+ingibjorg_betrothed: { description: "Betrothed to Ingibjörg of Birsay" }
+ingibjorg_refused: { description: "Told Harek he would not be back to ask for Ingibjörg" }
+wife_ingibjorg: { description: "Married Ingibjörg Hareksdóttir" }
+thorunn_betrothed: { description: "Betrothed to Þórunn of Skye" }
+thorunn_refused: { description: "Would not take Þórunn's terms" }
+thorunn_wool: { description: "Got half of Þórunn's wool money in the bargain" }
+wife_thorunn: { description: "Married Þórunn Kolbeinsdóttir" }
+asta_met: { description: "Met Ásta, the silversmith's widow at Kaupang" }
+asta_betrothed: { description: "Betrothed to Ásta of Kaupang" }
+asta_refused: { description: "Turned down Ásta's proposition" }
+wife_asta: { description: "Married Ásta the silversmith's widow" }
+# ---- the household (content/scenes/world/winter.yaml) ----
+child_son: { description: "A son born to him" }
+child_daughter: { description: "A daughter born to him" }

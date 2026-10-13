@@ -80,3 +80,30 @@
   weapon: 2
   habits: { strike: 3, guard: 3, feint: 1 }
   desc: Thorgils's elder brother. He fights the way he farms, steadily and without imagination, and he does not stop.
+- id: ivarr_dane
+  name: Ívarr the Dane
+  attrs: { str: 4, agi: 2, end: 3, wit: 2, pre: 3 }
+  weapons: 3
+  shield: 2
+  armour: 0
+  weapon: 1
+  habits: { strike: 4, guard: 2, feint: 1 }
+  desc: A trader with a bull's neck and a debt he says he paid. He fights with his fists and his forehead, and enjoys it.
+- id: local_champion
+  name: The local champion
+  attrs: { str: 3, agi: 3, end: 3, wit: 2, pre: 3 }
+  weapons: 4
+  shield: 3
+  armour: 1
+  weapon: 2
+  habits: { strike: 3, guard: 3, feint: 2 }
+  desc: The best fighter in the district, and the district wants to see whether he still is.
+- id: beach_brawler
+  name: A big man off a fishing boat
+  attrs: { str: 4, agi: 2, end: 3, wit: 1, pre: 2 }
+  weapons: 2
+  shield: 1
+  armour: 0
+  weapon: 1
+  habits: { strike: 5, guard: 1 }
+  desc: Large, drunk, and certain. He has a gutting-knife he hasn't drawn yet.

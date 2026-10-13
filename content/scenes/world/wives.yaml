@@ -1,0 +1,368 @@
+# Wives (FRAME-FOUNDATION §4.2). Gyða is the story's; these three are for the years after it.
+# Each is met, asked for, and brought home to a wedding at the winter nights. One betrothal at a time.
+# Ingibjörg brings Orkney; Þórunn brings land and hands; Ásta brings silver and Kaupang.
+
+# ---- Gyða, if the story left it hanging ----
+- id: g_gyda_last
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter >= 832", "place == home_fjord", flag.gyda_courting, "!married"]
+  weight: 10
+  art: home_fjord
+  title: Bárð's scales
+  text: |
+    Bárð comes to your door himself this time, in the first snow, which he has never done before. He doesn't come in.
+
+    "A year more, you said," he says. "It's been more than a year. She's twenty. Her mother's started looking at widowers." He spits, carefully, away from your door. "Have you got it or haven't you?"
+  choices:
+    - id: pay
+      text: Weigh out four marks on his own scales.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { set: flag.married_gyda }, { clear: flag.gyda_courting } ]
+      next: w1_feast
+    - id: no
+      text: Tell him the truth. You haven't.
+      effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_lost }, { add: { honour: -1 } } ]
+      result: |
+        Bárð nods, as if you had told him the price of hay. "Well," he says. "Then that's that."
+
+        She is married by midwinter to a farmer from the next valley with good land and a bad knee. When you pass the farm in spring she is in the yard with a bucket, and she looks at you the whole way past, and you don't look away either.
+
+# ---- Ingibjörg Hareksdóttir, at Birsay ----
+- id: g_ingibjorg_meet
+  kind: place
+  trigger: arrive
+  at: [orkney]
+  once: true
+  requires: ["year >= 832", "!flag.o_ingibjorg", "!married", "!flag.betrothed"]
+  weight: 2
+  art: birsay
+  title: Harek's daughter
+  text: |
+    In Harek's hall at Birsay the ale is poured by his daughter, which is an honour, and she makes sure every man knows it.
+
+    Ingibjörg is eighteen or so, fair, sharp-chinned, with her father's habit of looking at a man as if she were pricing him. When she gets to you she stops, and pours slowly, and asks who you are and how many ships you have, in that order.
+  choices:
+    - id: answer
+      text: Tell her. Then ask how many she has.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          She laughs out loud, and her father looks up from the high seat. "None," she says. "That's what husbands are for." She comes back to your end of the bench three times that night, which is two more than the ale needs.
+        effects: [ { set: flag.ingibjorg_waiting }, { set: flag.o_ingibjorg } ]
+      failure:
+        text: |
+          She doesn't laugh. "Ask me again when you've got an answer worth hearing," she says, and moves on down the bench. But she looks back once, from the fire.
+        effects: [ { set: flag.ingibjorg_waiting }, { set: flag.o_ingibjorg } ]
+    - id: drink
+      text: Thank her for the ale and say nothing else.
+      result: She moves on down the bench. Her father's hall is full of men who say nothing else.
+
+- id: g_ingibjorg_ask
+  kind: place
+  trigger: arrive
+  at: [orkney]
+  cooldown_days: 300
+  requires: ["year >= 832", "!married", "!flag.betrothed", "!flag.gyda_courting", "!service", { any: [flag.ingibjorg_waiting, flag.ingibjorg_promised] }, "!flag.ingibjorg_told", "!flag.ingibjorg_refused"]
+  weight: 3
+  art: birsay
+  title: Harek's price
+  text: |
+    Harek receives you at the high seat, with his beard in his fist and his daughter behind him pretending to mend something.
+
+    "I know why you've come," he says. "Everyone in the hall knows why you've come. Sit down." He looks you over, slowly, from boots to hair. "Six marks. And a name I've heard of before you told me it. My daughter will have her own high seat, not a bench in her husband's father's house."
+    [if flag.ingibjorg_promised]
+    "You came back," he says, more quietly. "I'll say that for you. Most of them don't."
+    [/if]
+  choices:
+    - id: pay
+      text: Weigh out six marks, here, in front of the hall.
+      requires: ["silver >= 144", "fame.living >= 20"]
+      effects: [ { add: { silver: -144 } }, { set: flag.betrothed }, { set: flag.ingibjorg_betrothed }, { standing: { place: orkney, n: 1 } } ]
+      result: |
+        The silver goes on the scales one piece at a time, and the hall counts it aloud, and when it's done Harek nods once and takes your hand.
+
+        "She'll come over to you on my knarr before the winter nights," he says. "With her mother's loom, and her chest, and two of my men to see she gets there. If she doesn't like it, she'll come back on the same knarr." Behind him Ingibjörg has stopped pretending to mend.
+    - id: argue
+      text: Tell him a man's name is made at sea, not in Birsay, and he'll hear it soon enough.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          Harek laughs, which he does about once a year. "He talks like a jarl," he says to the hall. "Let's see if he fights like one. Six marks, and you can bring the name with you after."
+        effects: [ { set: flag.ingibjorg_promised }, { add: { flag.y_hall: 1 } } ]
+      failure:
+        text: |
+          Harek doesn't laugh. "Every man who sits there tells me that," he says. "Come back when I don't need telling."
+    - id: leave
+      text: Not this year.
+      result: Ingibjörg watches you go. She doesn't look surprised, and she doesn't look pleased about not being surprised.
+    - id: give_up
+      text: Tell him you won't be back to ask.
+      effects: [ { set: flag.ingibjorg_refused } ]
+      result: |
+        Harek shrugs. Ingibjörg doesn't. She leaves the hall before you do, and you don't see her again before you sail.
+
+- id: g_wed_ingibjorg
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["place == home_fjord", "phase == winter", flag.ingibjorg_betrothed]
+  weight: 10
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: The Orkney bride
+  text: |
+    Harek's knarr comes up the fjord in the first frost with a red sail, and the whole district comes down to the shore to look at her.
+
+    Ingibjörg steps off it as if she owned the fjord, which by the end of the winter she very nearly does. Her chest is iron-bound. Her mother's loom comes off in pieces and takes four men. The two Orkneymen who brought her look at your house, and then at each other, and say nothing, carefully.
+    [break]
+    The wedding is the biggest anyone in the fjord can remember: three days, two oxen, and a fight on the second night that nobody can afterwards explain. Harek has sent a dowry in the chest, and a message with it: "So she isn't ashamed."
+
+    Late on the third night she finds you by the door, looking at the stars over the fjord.
+
+    "It's smaller than Birsay," she says. "Everything here is smaller than Birsay." She takes your arm. "We'll fix that."
+  choices:
+    - id: wed
+      text: "We will."
+      effects:
+        - { wife: Ingibjörg }
+        - { clear: flag.betrothed }
+        - { clear: flag.ingibjorg_betrothed }
+        - { set: flag.wife_ingibjorg }
+        - { add: { silver: 72, hamingja: 1 } }
+        - { standing: { place: orkney, n: 3 } }
+        - { standing: { place: shetland, n: 1 } }
+        - { deed: { type: deed, text: "Married Ingibjörg, daughter of Harek of Birsay", weight: 4, witnesses: 80 } }
+      result: She means it. By spring she has rearranged the house, your mother, and two of your neighbours. Orkney ships put in at your shore now, on their way south, because Harek's daughter lives there.
+
+# ---- Þórunn Kolbeinsdóttir, on Skye ----
+- id: g_thorunn_meet
+  kind: place
+  trigger: arrive
+  at: [skye]
+  once: true
+  requires: ["year >= 832", "!seen.sk_thorunn", "!flag.sk_land_offer", "!flag.sk_thorunn_friend", "!married", "!flag.betrothed"]
+  weight: 2
+  title: The widow with the sheep
+  text: |
+    Kolbeinn's daughter is in the byre, mucking out, and she doesn't stop when you come in.
+
+    Þórunn is perhaps twenty-five, tall, dark, with forearms like a smith's. Her husband drowned crossing the loch in weather he'd been told not to cross it in. She tells you so straight away, as if it were a warning.
+
+    "My father wants me married to a man with a ship," she says. "So that when he dies, there's a ship. I want to be left alone with my sheep." She leans on her fork. "What do you want?"
+  choices:
+    - id: sheep
+      text: Ask about the sheep.
+      effects: [ { set: flag.sk_thorunn_friend }, { add: { skill.trade: 1 } } ]
+      result: It's the right question. She talks about the sheep most of the afternoon, and by the end of it you know more about Hebridean wool than you meant to, and she likes you, a little, and says so.
+    - id: offer
+      text: Tell her you might come back. A man needs somewhere to stop rowing.
+      effects: [ { set: flag.sk_land_offer } ]
+      result: |
+        She looks at you a long moment. "Then come back," she says. "With the ship. And we'll see." She goes back to the dung.
+
+- id: g_thorunn_ask
+  kind: place
+  trigger: arrive
+  at: [skye]
+  cooldown_days: 300
+  requires: ["year >= 832", "!married", "!flag.betrothed", "!flag.gyda_courting", "!service", { any: [flag.sk_land_offer, flag.sk_thorunn_friend] }, "!flag.thorunn_refused", "standing.skye >= 0"]
+  weight: 3
+  title: Þórunn's terms
+  text: |
+    Þórunn is on the hill above the steading when your ship comes in, with a crook and a dog, and she watches you all the way up the beach before she comes down.
+
+    "You came back," she says. "With the ship." She looks at it with a farmer's eye. "Her steering-oar wants re-hanging."
+    [break]
+    She sets out her terms in the byre, the way her father sets out a price, and she has clearly been thinking about them for a year.
+
+    "I'll sell my valley to my brother. He's wanted it since my husband drowned. That's enough silver to buy land where you are. I bring my two thralls, who are Irish and lazy and mine, and forty ewes. I keep the wool money. And when you're at sea, the farm is mine to run, and nobody tells me how." She folds her arms. "Well?"
+  choices:
+    - id: yes
+      text: Agree. All of it.
+      effects: [ { set: flag.betrothed }, { set: flag.thorunn_betrothed }, { standing: { place: skye, n: 1 } } ]
+      result: |
+        "Good," she says, and shakes your hand like a man selling a horse, and then kisses you, not like a man selling a horse at all. "I'll come over in the autumn with the ewes. Have somewhere to put them."
+    - id: wool
+      text: Agree, but the wool money goes in the common chest.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          She argues for most of an hour, and enjoys it, and in the end gives you half the wool money and calls you a thief. Kolbeinn, listening from the doorway, says it's the best bargain anyone's ever got out of her.
+        effects: [ { set: flag.betrothed }, { set: flag.thorunn_betrothed }, { set: flag.thorunn_wool } ]
+      failure:
+        text: |
+          "Then marry a woman who doesn't own anything," she says, and goes back up the hill. You find her again before you sail, and agree to all of it, and she says she knew you would.
+        effects: [ { set: flag.betrothed }, { set: flag.thorunn_betrothed } ]
+    - id: no
+      text: Tell her you're not a man to be told how to run his farm.
+      effects: [ { set: flag.thorunn_refused } ]
+      result: |
+        "No," she agrees. "You're not." She whistles up the dog and goes back to the sheep, and doesn't come down again before you sail.
+
+- id: g_wed_thorunn
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["place == home_fjord", "phase == winter", flag.thorunn_betrothed]
+  weight: 10
+  art: home_fjord
+  title: Forty ewes
+  text: |
+    She comes over in a borrowed knarr in the autumn gales, with two thralls, a dog, a chest, and forty ewes, of which thirty-eight arrive, and she is furious about the other two for a week.
+
+    The wedding is small and loud. She drinks your father under the table, which nobody has done in twenty years, and dances with your mother, which nobody has done ever.
+    [if base == father]
+    The silver from her valley buys the old Ketilsstead at the head of the fjord, with a bad roof and a good field. She is on the roof herself the morning after the wedding, with a mallet.
+    [else]
+    The silver from her valley goes into the farm. The ewes go into the byre. Your thralls go into a state of fear, and stay there.
+    [/if]
+  choices:
+    - id: wed
+      text: Help her with the roof.
+      effects:
+        - { wife: Þórunn }
+        - { clear: flag.betrothed }
+        - { clear: flag.thorunn_betrothed }
+        - { set: flag.wife_thorunn }
+        - { if: "base == father", then: [ { base: farm } ], else: [ { add: { silver: 144 } } ] }
+        - { add: { thralls: 2 } }
+        - { standing: { place: skye, n: 3 } }
+        - { deed: { type: deed, text: "Married Þórunn Kolbeinsdóttir of Skye", weight: 2, witnesses: 30 } }
+      result: You're on the roof together until dark. She is better at it than you, and tells you so, and is right.
+
+# ---- Ásta, the silversmith's widow, at Kaupang ----
+- id: g_asta_meet
+  kind: place
+  trigger: arrive
+  at: [kaupang]
+  once: true
+  requires: ["year >= 832", "!married", "!flag.betrothed"]
+  weight: 3
+  title: The silversmith's booth
+  text: |
+    The silversmith's booth at the end of the beach has a new name over it this year: the smith's own, cut in runes, with "his widow" cut underneath, smaller, by a different hand.
+
+    The widow is at the bench with a hammer the size of a spoon, working a twisted arm-ring. Ásta is thirty, small, quick, with burn-scars on the backs of both hands and a set of scales that are, she tells you before you ask, accurate. "Unlike everyone else's on this beach."
+    [break]
+    She doesn't look up while you look at her work. When you pick up an arm-ring she says the price without turning round. When you put it down she says a lower price, still without turning round.
+  choices:
+    - id: haggle
+      text: Haggle for the arm-ring.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          She turns round for that. You go at it for half the afternoon, and she enjoys it, and you get the ring for a price that makes her shake her head and laugh.
+
+          "Come back," she says, "when you've got something worth selling. I'll cheat you properly then."
+        effects: [ { add: { silver: -12 } }, { item: { id: asta_ring } }, { set: flag.asta_met } ]
+      failure:
+        text: |
+          She takes you apart, politely, piece by piece, and you walk away with the ring at a price you could have paid at the start, and the distinct feeling she's been laughing at you the whole time.
+
+          She has. She waves as you go.
+        effects: [ { add: { silver: -24 } }, { item: { id: asta_ring } }, { set: flag.asta_met } ]
+    - id: talk
+      text: Ask her how a widow keeps a booth on a beach like this.
+      effects: [ { set: flag.asta_met } ]
+      result: |
+        "Badly," she says. "Men who owed my husband don't owe his widow, they think. Men who want the booth think I'll sell it if they stand in front of it long enough." She shows you the hammer. "I don't sell."
+    - id: leave
+      text: Leave her to her work.
+      result: She doesn't look up as you go. You get the feeling she's priced you anyway.
+
+- id: g_asta_ask
+  kind: place
+  trigger: arrive
+  at: [kaupang]
+  cooldown_days: 300
+  requires: ["year >= 832", flag.asta_met, "!married", "!flag.betrothed", "!flag.gyda_courting", "!flag.asta_refused", "fame.living >= 12"]
+  weight: 3
+  title: A proposition
+  text: |
+    Ásta puts down the hammer when she sees you this time, which you've learned is a sign.
+
+    "I'll be plain," she says. "I'm a widow with a booth, money owed me, and a beach full of men who think I'll be easier to rob than my husband was. I need a husband men are afraid of. You need a wife who can count." She ticks it off on scarred fingers. "I've asked about you. You'll do."
+    [break]
+    "There's a Dane called Ívarr who owes me twelve marks for work my husband did, and tells everyone he paid it. Get it out of him, and I'll believe you can keep the rest. Or put four marks in my husband's strongbox, so I know you're not marrying me for it." She folds her arms. "Either."
+  choices:
+    - id: ivarr
+      text: Go and find Ívarr.
+      danger: true
+      effects: [ { fight: { foe: ivarr_dane, kind: duel, lethal: false, win: g_asta_won, lose: g_asta_lost } } ]
+    - id: silver
+      text: Put four marks in the strongbox.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { set: flag.betrothed }, { set: flag.asta_betrothed } ]
+      result: |
+        She weighs it on her own scales, twice, and writes something on a stick with a knife. "That's yours," she says. "It'll still be yours when I'm your wife, which is more than most husbands can say." She'll come north before the winter nights, she says, when the booth is let.
+    - id: no
+      text: Tell her you're nobody's hired fist.
+      effects: [ { set: flag.asta_refused } ]
+      result: |
+        "No," she says. "You're not cheap enough." She picks up the hammer again. That's the end of it.
+
+- id: g_asta_won
+  kind: spine
+  title: Ívarr pays
+  text: |
+    You find Ívarr at the Danish end of the beach and tell him, in front of his crew, what he owes and to whom. He tells you to go and drown. Then he tells you a great deal more, until you knock him down.
+
+    He pays. Not twelve marks: nine, and a cloak, and the promise of the rest by midsummer, made on his knees in the shingle with half the beach watching.
+
+    Ásta counts it twice on her own scales. Then she looks at your knuckles, and at you.
+
+    "Well," she says. "That's settled, then."
+  choices:
+    - id: done
+      text: It is.
+      effects: [ { set: flag.betrothed }, { set: flag.asta_betrothed }, { standing: { place: kaupang, n: 1 } }, { deed: { type: deed, text: "Beat a debt out of Ívarr the Dane on the beach at Kaupang", weight: 2 } } ]
+      result: She'll come north before the winter nights, she says, when the booth is let. "And Ívarr's other three marks are a wedding present. Collect them on the way."
+
+- id: g_asta_lost
+  kind: spine
+  title: Ívarr doesn't pay
+  text: |
+    Ívarr knocks you down in the shingle in front of his crew, and then, because he's in a good mood, helps you up again.
+
+    Ásta watches you come back up the beach with blood in your beard. She doesn't say anything for a while.
+
+    "Well," she says at last. "You went. That's more than the last three did." She looks at the strongbox. "The other way's still open."
+  choices:
+    - id: pay
+      text: Put four marks in the strongbox.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { set: flag.betrothed }, { set: flag.asta_betrothed } ]
+      result: She weighs it twice and writes it on a stick. "I'll come north before the winter nights," she says. "Wash your face first."
+    - id: later
+      text: Another year.
+      result: '"Another year," she agrees, and goes back to her bench. Ívarr waves to you from the Danish end of the beach every time you pass.'
+
+- id: g_wed_asta
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["place == home_fjord", "phase == winter", flag.asta_betrothed]
+  weight: 10
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: The Kaupang widow
+  text: |
+    Ásta comes north on a trader's ship with her anvil, her scales, her strongbox, and a cat, and looks at the fjord as if she were working out what it would fetch.
+
+    The district doesn't know what to make of her. She doesn't spin, she doesn't weave, and she has opinions about the price of everything. By midwinter half the farms are bringing her their broken brooches, and she is mending them for silver, and the other half are pretending they disapprove.
+    [break]
+    At the wedding she gives you a ring she made: plain, heavy, with your name on the inside where only you will see it. Then she gives you the strongbox key.
+
+    "Don't lose it," she says. "I've got another."
+  choices:
+    - id: wed
+      text: Put the key on a thong round your neck.
+      effects:
+        - { wife: Ásta }
+        - { clear: flag.betrothed }
+        - { clear: flag.asta_betrothed }
+        - { set: flag.wife_asta }
+        - { add: { silver: 240 } }
+        - { standing: { place: kaupang, n: 3 } }
+        - { deed: { type: deed, text: "Married Ásta, the silversmith's widow of Kaupang", weight: 2, witnesses: 30 } }
+      result: She watches you do it and nods, satisfied. The strongbox has ten marks in it. It will have more by spring.

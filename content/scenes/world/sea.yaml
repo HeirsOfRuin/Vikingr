@@ -1,0 +1,229 @@
+# Sea events that repeat (FRAME-FOUNDATION §5): the sandbox after the written story. From 832 on.
+# At most one breaks into a leg (SEA_EVENTS_PER_LEG); cooldowns keep any one from coming round too soon.
+
+- id: g_sea_merchant
+  kind: pool
+  trigger: sea
+  chance: 0.08
+  cooldown_days: 150
+  requires: ["year >= 832", "!service"]
+  art: open_sea
+  title: A fat knarr
+  text: |
+    A knarr, low in the water and wallowing, alone. Frisian, by the cut of her sail. She sees you a long way off and puts her helm over, and she isn't fast enough, and everybody aboard both ships knows it.
+
+    The men have stopped rowing to look at her. Then they look at you.
+  choices:
+    - id: trade
+      text: Come alongside with your shields down, and trade.
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          They don't believe it at first. When they do, they're so relieved that they trade like men at a funeral feast: wine, good cloth, a crate of Rhineland glass, for some of your hacksilver and a promise to tell nobody you saw them.
+        effects: [ { add: { loot: 60, crew.morale: 1 } }, { standing: { people: frisian, n: 1 } } ]
+      failure:
+        text: |
+          They don't believe it, and they're right not to: by the time the haggling is done, half your men are muttering that you could have had the lot for nothing. You get some wine.
+        effects: [ { add: { loot: 15, crew.morale: -1 } } ]
+    - id: take
+      text: Run her down and take her.
+      danger: true
+      effects: [ { battle: { foe: merchant_crew, men: 14, terrain: ship, win: g_sea_merchant_won } }, { standing: { people: frisian, n: -2 } } ]
+    - id: pass
+      text: Let her go.
+      result: |
+        You let her go. The men watch her all afternoon, getting smaller, and nobody says anything to you about it, which says enough.
+      effects: [ { add: { crew.morale: -1, honour: 1 } } ]
+
+- id: g_sea_merchant_won
+  kind: spine
+  art: open_sea
+  title: The cargo
+  text: |
+    It is short and ugly. The traders fight for their cargo for exactly as long as they think they might keep it, and then they throw down their axes and sit on the deck with their hands on their heads.
+
+    The cargo is wine, cloth, glass, and a locked chest that takes half an hour and an axe to open.
+  choices:
+    - id: strip
+      text: Take everything, and the ship as well, and sell the crew.
+      effects: [ { add: { loot: 180 } }, { captives: 4 }, { add: { honour: -1 } } ]
+      result: You put a prize crew aboard the knarr and sail her to the next market, with the traders tied in her hold. They don't weep. They're traders; they know the price of things, themselves included.
+    - id: cargo
+      text: Take the cargo and let them sail home empty.
+      effects: [ { add: { loot: 130 } } ]
+      result: They watch you unload them in silence. When you cast them off, their skipper calls something across the water in Frisian. Somebody says it was a blessing. Nobody believes him.
+
+- id: g_sea_rivals
+  kind: pool
+  trigger: sea
+  chance: 0.06
+  cooldown_days: 200
+  requires: ["year >= 832"]
+  art: open_sea
+  title: Shields along her side
+  text: |
+    A longship has been closing on you since dawn: shields along her rail, no answer to your hail, and a man in the bow with a spear over his shoulder, watching.
+
+    Northmen, after the same silver you are. And it's quicker to take it from a ship coming home than to row all the way to Ireland for it.
+    [if service]
+    {captain} is already calling for the shields.
+    [/if]
+  choices:
+    - id: fight
+      text: Turn and meet them.
+      danger: true
+      effects: [ { battle: { foe: rival_crew, men: 22, terrain: ship } } ]
+    - id: run
+      text: Crowd on sail and run for it.
+      visible_if: "!service"
+      danger: true
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: You run before the wind with every man bailing, and by evening a squall comes down between you and them, and when it lifts they're gone.
+        effects: [ { add: { crew.morale: -1 } } ]
+      failure:
+        text: They have the faster ship. They come up on your quarter at dusk with the men too tired to lift their arms, and you fight anyway.
+        effects: [ { add: { crew.morale: -1 } }, { battle: { foe: rival_crew, men: 24, terrain: ship } } ]
+    - id: hail
+      text: Stand in the bow and call out your name.
+      requires: ["fame.living >= 25"]
+      effects: [ { add: { honour: 1, crew.morale: 1 } } ]
+      result: |
+        You call it out across the water, and your father's, and what men call you. There is a long silence on the other ship. Then the spear comes down off the man's shoulder, and the shields come off the rail, and they sheer off and go looking for someone they haven't heard of.
+
+        Your men talk about it for the rest of the voyage.
+
+- id: g_sea_wreck
+  kind: pool
+  trigger: sea
+  chance: 0.06
+  cooldown_days: 200
+  requires: ["year >= 832"]
+  art: open_sea
+  title: Wreckage
+  text: |
+    Planks, first, riding the swell. Then a sea-chest. Then a mast with the sail still bent to it, and three men clinging to it, one of them waving, two of them not.
+  choices:
+    - id: save
+      text: Pull them out.
+      effects: [ { days: 1 }, { if: "!service", then: [ { add: { crew.men: 2 } } ] }, { add: { hamingja: 1 } } ]
+      result: |
+        The waving one lives, and one of the others, after you've thumped the water out of him. They're Hebrideans, off a trader that turned over in the night. The third has been dead for hours.
+        [if service]
+        They sign on with {captain} for the voyage home.
+        [else]
+        They have nothing but their lives, so they give you those: they'll row for you, they say, until the debt's paid. It'll be years.
+        [/if]
+    - id: chest
+      text: Haul in the sea-chest first.
+      effects: [ { add: { loot: 30, hamingja: -1 } }, { days: 1 } ]
+      result: |
+        The chest has hacksilver in it, and a good knife. By the time you come round for the mast, there is nobody on it.
+
+        Nobody aboard says anything. Nobody needs to.
+    - id: leave
+      text: Leave the dead to Rán. You're far from land and short of water.
+      effects: [ { add: { crew.morale: -1 } } ]
+      result: The waving man stops waving when he sees you go by. He doesn't shout. That's worse.
+
+- id: g_sea_overboard
+  kind: pool
+  trigger: sea
+  chance: 0.06
+  cooldown_days: 200
+  requires: ["year >= 832", "crew.men >= 8"]
+  art: storm
+  title: Man overboard
+  text: |
+    A big sea comes over the bow in the grey of the morning, and when it's gone, so is one of the men from the forward benches. You see his head once, already thirty yards astern, and an arm, and then nothing but the grey water rolling.
+  choices:
+    - id: dive
+      text: Strip off and go in after him with a line.
+      danger: true
+      check: { skill: seamanship, attr: end, difficulty: 5 }
+      success:
+        text: |
+          The cold stops your heart for a beat, and then you're swimming. You find him by luck, by his hair, and the men haul the two of you in like a pair of seals. He's sick all over your feet. He'll never forget it, and nor will the men.
+        effects: [ { deed: { type: man_deed, text: "Went into the sea after a drowning man, and brought him back", weight: 3 } }, { add: { crew.morale: 2 } } ]
+      failure:
+        text: |
+          You go in, and the cold takes the breath out of you, and you never see him. They haul you back over the side blue and shaking. You lie in the bilge for a day, and when you can stand again, there's an empty bench forward.
+        effects: [ { add: { crew.men: -1 } }, { injury: cracked_ribs } ]
+    - id: turn
+      text: Bring her round, and get a line to him.
+      visible_if: "!service"
+      check: { skill: command, attr: wit, difficulty: 4 }
+      success:
+        text: You bring her round in a sea that wants to roll her over, and the third line they throw lands across his arms. He comes aboard like a landed cod, and lies there swearing at Rán for an hour.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: You bring her round too slowly. By the time she answers, there's nothing to throw a line to.
+        effects: [ { add: { crew.men: -1, crew.morale: -1 } } ]
+    - id: hold
+      text: Hold your course. Rán takes what she takes.
+      effects: [ { add: { crew.men: -1, crew.morale: -2 } } ]
+      result: You hold your course. Somebody forward is saying the dead man's name over and over, until somebody else tells him to stop.
+
+- id: g_sea_whale
+  kind: pool
+  trigger: sea
+  chance: 0.05
+  cooldown_days: 300
+  requires: ["year >= 832"]
+  art: open_sea
+  title: Stranded
+  text: |
+    On a skerry off the point there's a whale, a big one, stranded on the ebb and dying, with the gulls already on it.
+
+    A stranded whale belongs to whoever owns the shore. This shore doesn't look as if anybody owns it. Nobody you can see, anyway.
+  choices:
+    - id: butcher
+      text: Put in and butcher it.
+      effects: [ { days: 2 }, { add: { provisions: 120, crew.morale: 1 } } ]
+      result: |
+        Two days of blood, blubber and gulls, up to your knees in it. The ship stinks for a month. Nobody goes hungry for longer than that.
+    - id: oil
+      text: Butcher it, and boil down the blubber to sell.
+      check: { skill: craft, attr: end, difficulty: 4 }
+      success:
+        text: Three days of the foulest work any of you has ever done, and at the end of it twelve casks of oil that will fetch good silver in any market from here to Kaupang.
+        effects: [ { days: 3 }, { add: { provisions: 80, loot: 70 } } ]
+      failure:
+        text: Three days of the foulest work any of you has ever done, and half the casks leak. You get some meat and a smell you'll never get out of your beard.
+        effects: [ { days: 3 }, { add: { provisions: 80, loot: 15 } } ]
+    - id: leave
+      text: Leave it. Somebody owns every shore.
+      result: You leave it to the gulls. That evening three boats come round the point, rowing hard, and start arguing over it before they've beached.
+
+- id: g_sea_calm
+  kind: pool
+  trigger: sea
+  chance: 0.05
+  cooldown_days: 200
+  requires: ["year >= 832"]
+  art: open_sea
+  title: Flat calm
+  text: |
+    The wind dies at noon and doesn't come back. The sea goes flat and oily, the sail hangs like a wet cloak, and the sun comes down on the ship like a hand.
+    [if service]
+    {captain} looks at the sky, and at the men, and back at the sky.
+    [/if]
+  choices:
+    - id: row
+      text: Out oars. Row through it.
+      visible_if: "!service"
+      effects: [ { progress: 1 }, { add: { crew.morale: -1 } } ]
+      result: You row all afternoon and half the night in heat that makes the tar run. The men curse you steadily. The ship moves.
+    - id: wait
+      text: Ship the oars and wait for wind. Fish.
+      effects: [ { days: 2 }, { add: { provisions: 30, crew.morale: 1 } } ]
+      result: Two days of lying on the benches, dangling lines, telling lies.[if man.ulf.alive] Ulf's are the best.[/if] On the third morning the wind comes back out of the west as if nothing had happened.
+    - id: whistle
+      text: Whistle for the wind, like your grandfather did.
+      check: { skill: lore, attr: pre, difficulty: 5 }
+      success:
+        text: You whistle, low and tuneless, the way the old men do. Nobody laughs. Within the hour there's a cat's-paw on the water to the west, and then a wind. The older men look at you differently after that.
+        effects: [ { progress: 1 }, { add: { hamingja: 1 } } ]
+      failure:
+        text: You whistle. Somebody laughs. You stop. The calm lasts two more days, and they're all your fault.
+        effects: [ { days: 2 }, { add: { crew.morale: -1 } } ]

@@ -2,7 +2,9 @@
 //   {name}      the hero's given name          {fullname}  given name and patronymic
 //   {nick}      his nickname, or his given name if he has none yet
 //   {captain}   the man at the steering-oar when he rows in another man's ship; {ship} the ship he is in
+//   {wife}      his wife's name                {reckoning} the Yule reckoning of this year's boasts
 //   [if cond]...[elif cond]...[else]...[/if]   (not nested; cond uses the condition grammar, with && and ||)
+import { reckoning } from './boasts';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { test, validateCond } from './conditions';
@@ -37,6 +39,8 @@ export function renderText(text: string, state: GameState, content: ContentBundl
     .replace(/\{nick\}/g, state.hero.nickname ?? given)
     .replace(/\{captain\}/g, state.service?.captain ?? 'the captain')
     .replace(/\{ship\}/g, state.ships[0]?.name ?? 'the ship')
+    .replace(/\{wife\}/g, state.base.wife ?? 'your wife')
+    .replace(/\{reckoning\}/g, () => reckoning(state, content))
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n');
 }
@@ -47,6 +51,6 @@ export function checkText(text: string, content: ContentBundle): string[] {
   for (const m of text.matchAll(IF)) for (const b of branches(m[2]!, m[1]!)) if (b.cond) errs.push(...validateCond(b.cond.trim(), content));
   const stray = text.replace(IF, '').match(/\[(?:if|elif|else|\/if)[^\]]*\]/);
   if (stray) errs.push(`unbalanced ${stray[0]}`);
-  for (const m of text.matchAll(/\{([a-z]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship'].includes(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
+  for (const m of text.matchAll(/\{([a-z]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning'].includes(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
   return errs;
 }

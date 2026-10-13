@@ -1,4 +1,5 @@
 import type { ContentBundle } from '../../content/schema';
+import { goalProgress } from '../../engine/boasts';
 import { SKILLS, ATTRS } from '../../content/schema';
 import type { GameState, Position } from '../../engine/state';
 import type { Action } from '../../engine/index';
@@ -92,7 +93,7 @@ export function HeroPanel({ content, state, onAct }: { content: ContentBundle; s
         <div class="card">
           <h3>Boasts sworn over the cup</h3>
           {state.boasts.map((b) => (
-            <p key={b.id}>{content.boasts[b.id]?.text} <span class="muted small sans">— {b.state === 'open' ? `due by ${formatDate(b.due)}` : b.state === 'kept' ? 'kept' : 'broken'}</span></p>
+            <p key={b.id}>{content.boasts[b.id]?.text} <span class="muted small sans">— {b.state === 'open' ? `due by ${formatDate(b.due)}${goalProgress(state, content, b) ? `; ${goalProgress(state, content, b)}` : ''}` : b.state === 'kept' ? 'kept' : 'broken'}</span></p>
           ))}
         </div>
       )}
@@ -177,7 +178,7 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
       <p class="muted">{def.desc}</p>
       <div class="card">
         <dl class="kv">
-          <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : 'No wife yet.'}</dd>
+          <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : state.flags.betrothed ? 'Betrothed; the wedding is at the winter nights.' : 'No wife yet.'}{state.flags.child_son ? ` A son${state.flags.child_daughter ? ' and a daughter' : ''}.` : ''}</dd>
           <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> — captives you keep instead of selling</span>}</dd>
           <dt>Each winter</dt><dd>{formatSilver(winterYield(state)) || 'nothing'}{b.wife ? <span class="muted"> (a quarter more, for her running of it)</span> : null}</dd>
           <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small"> — safe from the sea</span></dd>

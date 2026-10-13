@@ -22,6 +22,8 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   phase: (s) => s.phase,
   place: (s) => s.at ?? 'sea',
   'at.kind': (s, c) => (s.at ? c.places[s.at]?.kind ?? 'none' : 'sea'),
+  /** Standing where he is now (0 at sea): for scenes that fire in any port. */
+  'at.standing': (s, c) => (s.at ? standing(s, c, s.at) : 0),
   background: (s) => s.hero.background,
   ships: (s) => s.ships.length,
   'crew.men': (s) => s.crew.men,
@@ -109,7 +111,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
 
 /** Paths an { add } effect may change. */
 export function checkAddPath(content: ContentBundle, path: string): string | null {
-  if (['silver', 'loot', 'honour', 'hamingja', 'provisions', 'crew.men', 'crew.morale'].includes(path)) return null;
+  if (['silver', 'loot', 'honour', 'hamingja', 'provisions', 'crew.men', 'crew.morale', 'thralls'].includes(path)) return null;
   const [ns, a, b] = path.split('.');
   if (ns === 'flag') return content.flags[a!] ? null : `undeclared flag "${a}"`;
   if (ns === 'skill' || ns === 'attr') return checkPath(content, path);

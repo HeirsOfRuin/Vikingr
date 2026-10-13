@@ -14,6 +14,7 @@ import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, 
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
+import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, HALL_PRICE, keepCaptives, newBase, thrallRoom } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop } from './items';
 import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
@@ -674,10 +675,14 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
 function settle(state: GameState, content: ContentBundle, rng: RngCursor): void {
   if (!state.hero.alive || state.pending) return;
   for (const b of state.boasts) {
+    if (!goalMet(state, content, b)) continue;
+    keepBoast(state, content, b);
+    state.pending = { t: 'report', title: 'A boast kept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'It is done. Men will say so at Yule, and for a long time after.'] };
+    return;
+  }
+  for (const b of state.boasts) {
     if (b.state !== 'open' || b.due > state.day) continue;
-    b.state = 'broken';
-    state.honour = Math.max(-10, state.honour - 2);
-    journal(state, `The boast went unkept: ${content.boasts[b.id]?.text}`);
+    breakBoast(state, content, b);
     state.pending = { t: 'report', title: 'A boast unkept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'The year has turned, and it is not done. Men remember a boast longer than a deed.'] };
     return;
   }

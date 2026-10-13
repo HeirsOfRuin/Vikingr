@@ -1,0 +1,352 @@
+# Winter events that repeat (FRAME-FOUNDATION §5), and a Yule every year from 832.
+# They fire after a hall action at home; each at most once a winter.
+
+# ---- Yule ----
+- id: g_yule
+  kind: phase
+  trigger: hall
+  cooldown_days: 200
+  requires: ["winter >= 832", "place == home_fjord", { any: ["month == 12", "month <= 2"] }]
+  weight: 5
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: Yule
+  text: |
+    [if base == hall]
+    Yule in your own hall: your boar on the spit, your ale in the vats, your posts with the beasts biting their own tails, and men you've never met crowding in at the door because your name is said there.
+    [elif service]
+    Yule in the jarl's hall again, on the benches with the oarsmen: the boar, the smoke, the dogs, the noise.
+    [else]
+    Yule in the jarl's hall: the boar, the smoke, the dogs, the noise. You sit higher up the benches than you did, among men who know your name.
+    [/if]
+    [if married]
+    {wife} sits beside you, and watches the hall the way a hawk watches a field.
+    [/if]
+    [break]
+    Before the bragarfull comes round, last year's boasts are reckoned, as is the custom, one by one, so the hall can hear who kept his word.
+
+    {reckoning}
+
+    Then the horn comes to you.
+  choices:
+    - id: raids
+      text: Swear that two places will pay you this summer, in silver or in blood.
+      visible_if: "boast.yule_raids != 1 && !service"
+      effects: [ { boast: yule_raids }, { add: { flag.y_hall: 1 } } ]
+      result: The hall bangs the tables. Two is a number men can count, and they will.
+    - id: plunder
+      text: Swear you'll bring home ten marks of plunder before next Yule.
+      visible_if: "boast.yule_plunder != 1"
+      effects: [ { boast: yule_plunder }, { add: { flag.y_hall: 1 } } ]
+      result: Somebody whistles. Ten marks is a farm. The hall starts working out where it might come from.
+    - id: wall
+      text: Swear you'll stand in two shield-walls before next Yule, and walk off the field both times.
+      visible_if: "boast.yule_shieldwall != 1"
+      effects: [ { boast: yule_shieldwall }, { add: { flag.y_hall: 1 } } ]
+      result: The old men nod. That one's harder than it sounds, and they know it, and they know you know it.
+    - id: duel
+      text: Swear you'll beat a man in single combat before next Yule.
+      visible_if: "boast.yule_duel != 1"
+      effects: [ { boast: yule_duel }, { add: { flag.y_hall: 2 } } ]
+      result: Every young man in the hall looks at you, and then at each other, and starts thinking.
+    - id: farm
+      text: Swear that by next Yule you'll sit at your own hearth, on your own land.
+      visible_if: "base == father && boast.yule_farm != 1"
+      effects: [ { boast: yule_farm }, { add: { flag.y_hall: 1 } } ]
+      result: Your father, down the benches, raises his cup without a word. Your mother doesn't.
+    - id: hall
+      text: Swear that next Yule you'll feast them all in a hall of your own.
+      visible_if: "base == farm && boast.yule_hall != 1"
+      effects: [ { boast: yule_hall }, { add: { flag.y_hall: 2 } } ]
+      result: That gets a roar. Every man in the place means to hold you to it, because every man in the place means to drink your ale.
+    - id: wife
+      text: Swear you'll bring a wife home before next Yule.
+      visible_if: "!married && !flag.betrothed && boast.yule_wife != 1"
+      effects: [ { boast: yule_wife }, { add: { flag.y_hall: 2 } } ]
+      result: The women at the back of the hall look at each other. The men start offering advice, most of it about their own sisters.
+    - id: ships
+      text: Swear that by next Yule three ships will follow your steering-oar.
+      visible_if: "ships >= 1 && ships <= 2 && !service && boast.yule_ships != 1"
+      effects: [ { boast: yule_ships }, { add: { flag.y_hall: 2 } } ]
+      result: The captains at the top of the hall stop laughing at something else to look at you. Three ships is a fleet.
+    - id: none
+      text: Drink, and swear nothing this year.
+      result: You drink and pass it on. A man with a name doesn't have to buy one every winter. Some of the hall thinks so, anyway.
+
+# ---- the household ----
+- id: g_w_son
+  kind: phase
+  trigger: hall
+  chance: 0.3
+  once: true
+  requires: ["winter >= 832", "place == home_fjord", married]
+  art: home_fjord
+  title: A son
+  text: |
+    {wife} has her pains in the dark of the year, in the middle of a snowstorm, with the women of the district packed into the house and every man sent out into the byre to stay out of the way.
+
+    You sit in the byre with the cows and your father and a jug, for a night and most of a day. Then the door opens, and the midwife holds something up in the lamplight, red and furious and shouting.
+
+    A son. Alive, and loud, and his mother alive too.
+    [break]
+    He is laid on the floor at your feet, as is the custom, and the whole house waits. If you pick him up, he's yours: named, and fed, and an heir. Then you have to name him.
+  choices:
+    - id: father
+      text: Name him for your father.
+      effects: [ { set: flag.child_son }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him, and named for his grandfather", weight: 1 } } ]
+      result: You pick him up, and say your father's name over him, and sprinkle him with water from the bowl. Your father goes out of the house for a while, and comes back with his eyes red, and blames the smoke.
+    - id: ormr
+      text: Name him Ormr, for the old man who taught you the sword.
+      effects: [ { set: flag.child_son }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him, and named Ormr", weight: 1 } } ]
+      result: You pick him up and say the name over him. It suits him already. He has the old man's way of looking at you as if you'd just said something stupid.
+    - id: own
+      text: Give him a name of his own. Let him make it mean something.
+      effects: [ { set: flag.child_son }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him", weight: 1 } } ]
+      result: You pick him up and give him a new name, one nobody in either family has had. {wife} approves. "He'll have enough of your name," she says, "without having to wear it too."
+
+- id: g_w_daughter
+  kind: phase
+  trigger: hall
+  chance: 0.25
+  once: true
+  requires: ["winter >= 833", "place == home_fjord", married, flag.child_son]
+  art: home_fjord
+  title: A daughter
+  text: |
+    This time it's quick, and quiet, and in the middle of an ordinary afternoon. You come in from the boatshed with tar on your hands, and {wife} is sitting up by the fire with a daughter already at the breast, and the midwife on her way home.
+
+    "You took your time," {wife} says.
+  choices:
+    - id: hold
+      text: Wash your hands, and hold her.
+      effects: [ { set: flag.child_daughter }, { add: { hamingja: 1 } } ]
+      result: She's very small, and she grips your finger with a strength that surprises you, and doesn't let go. Your son, from the doorway, looks at her with deep suspicion.
+
+- id: g_w_wife_word
+  kind: phase
+  trigger: hall
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", married, "base == father"]
+  art: home_fjord
+  title: A word by the fire
+  text: |
+    {wife} waits until your mother has gone out to the byre, and then sits down opposite you with her hands folded, which is never good.
+
+    "I married a man," she says, "not a bench in his father's house. Your mother and I can't share a hearth another winter. One of us will kill the other, and I'm younger."
+  choices:
+    - id: promise
+      text: Promise her a farm of your own by next winter.
+      effects: [ { boast: yule_farm } ]
+      result: She looks at you a long time. "I'll hold you to that," she says, "harder than any jarl's hall." She will.
+    - id: patience
+      text: Ask her for patience.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: She gives it to you, with conditions. The conditions take most of the evening.
+      failure:
+        text: She gives you a look that would cut sail-cloth, and doesn't speak to you for three days. Your mother is delighted.
+        effects: [ { add: { hamingja: -1 } } ]
+
+# ---- thralls ----
+- id: g_w_thrall_run
+  kind: phase
+  trigger: hall
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", "thralls >= 2"]
+  art: home_fjord
+  title: A thrall gone
+  text: |
+    In the morning one of the thralls is gone: the youngest, the one who never learned more than ten words of Norse. His tracks go up the valley in the new snow, toward the high pass, toward nothing.
+
+    He'll die up there, most likely. Or he'll get over, and find a ship, and get home, and tell them all about you.
+  choices:
+    - id: chase
+      text: Take two men and the dogs, and bring him back.
+      check: { skill: cunning, attr: end, difficulty: 4 }
+      success:
+        text: You find him at the foot of the pass, half-frozen, sitting in the snow, waiting. He doesn't fight. He gets up and walks back down with you without a word, and works harder than ever after, and never looks you in the eye again.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: The snow comes on again by noon and fills his tracks, and you come back at dark with frozen feet and nothing else.
+        effects: [ { add: { thralls: -1 } } ]
+    - id: let
+      text: Let him go. If he gets home, he's earned it.
+      effects: [ { add: { thralls: -1, honour: 1 } } ]
+      result: You let him go. The other thralls watch you all that day, trying to work out what it means. So does your household.
+
+- id: g_w_thrall_free
+  kind: phase
+  trigger: hall
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["winter >= 833", "place == home_fjord", "thralls >= 1"]
+  art: home_fjord
+  title: The price of freedom
+  text: |
+    One of your thralls comes to you in the byre: an older man, Irish, who's worked for you three summers and has, it turns out, been saving. Every bit of silver a guest left him, every egg he sold on the side. He has it in a rag: about a mark.
+
+    "A man can buy himself," he says, in careful Norse. "That is the law. I asked."
+  choices:
+    - id: sell
+      text: Take his mark, and give him his freedom.
+      effects: [ { add: { thralls: -1, silver: 24, honour: 1 } } ]
+      result: You take him to the thing at midsummer, and say it in front of witnesses, and he's a freedman. He stays on the farm afterwards, for wages, and works no differently, except that now he whistles.
+    - id: gift
+      text: Give him his freedom, and let him keep his mark.
+      effects: [ { add: { thralls: -1, honour: 1, hamingja: 1 } }, { deed: { type: deed, text: "Freed a thrall for nothing", weight: 1 } } ]
+      result: He doesn't understand at first. When he does, he sits down in the straw and doesn't say anything at all. The district thinks you're mad. The district talks about it all winter.
+    - id: refuse
+      text: Tell him a thrall's silver is his master's.
+      effects: [ { add: { silver: 24, honour: -1 } } ]
+      result: You take the rag. He watches you take it, and nods, as if it were what he'd expected. He works the same afterwards. He doesn't save anything, any more.
+
+# ---- the district ----
+- id: g_w_sickness
+  kind: phase
+  trigger: hall
+  chance: 0.12
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", "crew.men >= 6", "!service"]
+  art: home_fjord
+  title: The coughing sickness
+  text: |
+    It starts in a farm down the fjord and comes up it like a tide: a cough, a fever, a sweat. The old and the young go first. Then it gets into your men, who are wintering in the boatshed and the byres, crammed together like herring.
+  choices:
+    - id: tend
+      text: Tend them yourself. Broth, fires, and the old women's herbs.
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: You spend a month among the sick, boiling, burning, and listening to coughing. Most of them live. They don't forget who sat up with them.
+        effects: [ { add: { crew.men: -1, crew.morale: 2 } } ]
+      failure:
+        text: You do everything the old women say, and it isn't enough. You bury four of them in the frozen ground, with a pick, and catch it yourself at the end of it.
+        effects: [ { add: { crew.men: -4 } }, { days: 20 } ]
+    - id: blot
+      text: Hold a blót, and ask for it to pass.
+      effects: [ { add: { silver: -12, crew.men: -3, hamingja: 1 } } ]
+      result: The godi kills a goat and sprinkles the blood. The sickness takes three of your men anyway. The godi says it would have been more without the goat. You can't prove it wouldn't.
+    - id: scatter
+      text: Send the men home to their own farms till spring.
+      effects: [ { add: { crew.men: -2, crew.morale: -1 } } ]
+      result: They go grumbling. Two of them don't come back in spring, sick or sulking, nobody's sure which. The rest do, and none of them coughing.
+
+- id: g_w_wedding
+  kind: phase
+  trigger: hall
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", "crew.men >= 8", "!service"]
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: A wedding on the benches
+  text: |
+    One of your oarsmen, a quiet lad from the next valley, is marrying a farmer's daughter at the winter nights. He asks you, red to the ears, if you'll come. His father-in-law wants to see the captain his daughter's husband rows for.
+  choices:
+    - id: gift
+      text: Go, and give them a cow.
+      effects: [ { add: { silver: -12, crew.morale: 2 } } ]
+      result: The cow goes down well. So do you. The bride's father spends half the feast telling people you're an old friend. The lad will row for you till he dies.
+    - id: go
+      text: Go, and drink their health.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: You drink their health several times, and make a speech, and the bride's mother kisses you. It's a good night.
+    - id: busy
+      text: Send your good wishes. You have work to do.
+      result: He takes it well. He takes everything well. But he looks at you differently, in spring, at the oars.
+
+- id: g_w_skald
+  kind: phase
+  trigger: hall
+  chance: 0.12
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", "fame.living >= 15"]
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: A wandering skald
+  text: |
+    A skald comes up the fjord on foot in the snow, with a harp on his back and his cloak full of holes: an Icelander, he says, though nobody's sure Iceland is a place. He's heard of you. He'd like to be fed for the winter, and in return he'd like to make you immortal.
+  choices:
+    - id: verse
+      text: Feed him, and have him make a verse of your deeds.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { deed: { type: deed, text: "A wandering skald made a verse of his deeds", weight: 3, witnesses: 60 } } ]
+      result: |
+        He takes three weeks over it, eating steadily, and then stands up at the fire one night and gives it to the hall: eight lines, your name in the third, the sea in the fifth, and blood in all the others. It's very good. He'll sing it in every hall between here and the Danes, he says. You believe him.
+    - id: keep
+      text: Offer him a place in your household.
+      visible_if: "!flag.skald"
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { set: flag.skald } ]
+      result: He bites the silver, then grins, showing three teeth. "Give me something to make verses about," he says.
+    - id: send
+      text: Feed him one night, and send him on.
+      result: He goes on up the valley next morning. In the spring you hear he made a verse about your hospitality. It doesn't rhyme anything flattering.
+
+- id: g_w_old_man
+  kind: phase
+  trigger: hall
+  chance: 0.12
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", "!service", "fame.living >= 15"]
+  art: home_fjord
+  title: An old man's land
+  text: |
+    Old Svertingr from the head of the fjord dies at midwinter, at eighty, in his bed, which annoys him; he always said he'd go at sea. He leaves two sons and one farm, and by the funeral ale the sons have stopped speaking to each other, and by the next morning one of them has an axe.
+
+    Somebody has to settle it before the thing at midsummer, or somebody will settle it with the axe. They come to you, both of them, because you have a ship and a name and no stake in it.
+  choices:
+    - id: split
+      text: Split the land down the stream, and make them swear to it.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: You walk the land with both of them in the snow, and split it down the stream, and make them both swear on their father's mound. Neither of them is happy. That's how you know it's fair.
+        effects: [ { deed: { type: deed, text: "Settled the quarrel over Svertingr's land", weight: 2, witnesses: 40 } }, { standing: { place: home_fjord, n: 1 } } ]
+      failure:
+        text: You split it, and the elder says you've given the younger the better grazing, and walks out. The axe comes out again in spring. Nobody dies, quite. Nobody thanks you.
+        effects: [ { add: { honour: -1 } } ]
+    - id: elder
+      text: Give it all to the elder son. That's the old way.
+      effects: [ { standing: { place: home_fjord, n: 1 } } ]
+      result: The elder son thanks you. The younger son comes to you a week later with his sea-chest and asks for a bench on your ship. He rows angry. Angry men row well.
+    - id: buy
+      text: Buy the younger son out yourself, and add his share to your own land.
+      visible_if: "base != father"
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { add: { thralls: 1 } } ]
+      result: You pay him three marks and he goes off south with it, happy enough. His share comes with a strip of shore and an old thrall who goes with the land, and the elder son becomes your neighbour, which is probably the end of your peace.
+
+- id: g_w_horses
+  kind: phase
+  trigger: hall
+  chance: 0.12
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord"]
+  art: home_fjord
+  title: The horse-fight
+  text: |
+    There's a horse-fight at the thing-field, the big one before Yule: stallions set on each other over a mare in season, the owners behind them with goads, half the district round the ring betting, drinking, and shouting.
+
+    A red stallion from up the valley has won four times this winter, and his owner hasn't stopped talking about it.
+  choices:
+    - id: bet
+      text: Bet a mark against the red horse.
+      requires: ["silver >= 24"]
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: The red horse is tired, and you saw it, and nobody else did. He goes down on his knees in the third round, and you take a mark off his owner and two off the men who backed him.
+        effects: [ { add: { silver: 48 } } ]
+      failure:
+        text: The red horse wins again. His owner takes your mark with a smile you'd like to remove.
+        effects: [ { add: { silver: -24 } } ]
+    - id: goad
+      text: Take a goad and stand behind the other horse yourself.
+      danger: true
+      check: { skill: weapons, attr: agi, difficulty: 5 }
+      success:
+        text: You're in the ring with the horses, shouting, goading, ducking hooves, and the red stallion goes down. The crowd carries you out of the ring on its shoulders. The red horse's owner shoves you, and gets knocked down for it, and the whole district agrees he had it coming.
+        effects: [ { add: { flag.y_hall: 1 } }, { deed: { type: deed, text: "Goaded the winning horse at the thing-field", weight: 1, witnesses: 100 } } ]
+      failure:
+        text: A hoof takes you in the chest, and the next thing you know you're lying in the snow outside the ring with your ribs on fire and the whole district laughing.
+        effects: [ { injury: cracked_ribs } ]
+    - id: watch
+      text: Just watch, and drink.
+      result: You watch, and drink, and see two fights between the owners, one of which is better than anything the horses manage.

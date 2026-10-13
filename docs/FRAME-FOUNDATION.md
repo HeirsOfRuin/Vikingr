@@ -47,7 +47,7 @@
 
   | Base | How he gets it | Thralls it can work |
   |---|---|---|
-  | **His father's farm** | Where he starts | 2 |
+  | **His father's farm** | Where he starts | 4 |
   | **A farm of his own** | Buy one (8 marks), build a house across the fjord (in the story), or take up Þórunn's offer on Skye (later) | 6 |
   | **A hall** | Build one on his farm (24 marks, and a name men know) | 12 |
 
@@ -62,6 +62,18 @@
   - more men coming to his muster.
 - **The Home tab** shows all of it.
 
+### 4.2 Wives (built)
+Gyða is the story's. Three more are for the years after it, one betrothal at a time. Each is met, asked for, and brought home to a wedding at the winter nights.
+
+| Wife | Where | What she asks | What she brings |
+|---|---|---|---|
+| **Gyða Bárðardóttir** | Home | Bárð's price (2–4 marks), or eloping. If the story leaves it open, Bárð comes for an answer in winter 832 | Love, and nothing else |
+| **Ingibjörg Hareksdóttir** | Birsay, Orkney | A ship of his own, 6 marks, and a name (living fame 20) | 3 marks of dowry; standing with Orkney +3 and Shetland +1; a deed worth 4 |
+| **Þórunn Kolbeinsdóttir** | Skye | Her terms: she keeps her wool money and runs the farm while he is at sea | Her valley sold to buy a farm (or 6 marks if he has one); two thralls; standing with Skye +3 |
+| **Ásta, the silversmith's widow** | Kaupang | Collect twelve marks from Ívarr the Dane (a duel), or put 4 marks in her strongbox | 10 marks; standing with Kaupang +3 |
+
+Married, a son may be born (named for his father, for Ormr, or his own name), then a daughter. A wife at his father's farm will push him for a farm of his own.
+
 ## 5. Play beyond the written story
 After spring 832 the sandbox carries on, with content that repeats:
 - **Sea events:** a merchant to trade with or rob, a rival ship, wreckage, a man overboard, a whale-stranding, and so on.
@@ -69,3 +81,11 @@ After spring 832 the sandbox carries on, with content that repeats:
 - **Winter events:** a sickness, a thrall's escape, a wedding among the crew, a skald's visit, an old man's death, a horse-fight.
 - **A Yule every year:** the boasts are reckoned and new ones sworn, from a pool.
 - **Measured:** ten-year bot lives must keep meeting content, not just empty sailing.
+
+### 5.1 What was built
+- **Sea (6):** a fat knarr (trade, rob, let go), a rival crew, wreckage with survivors, a man overboard, a stranded whale, a flat calm.
+- **Port (5):** a cargo to carry (or steal), a feast invitation, a fight on the beach, the district champion's challenge, a slaver at the market. These fire in any port, scaled by standing there; the written place scenes always go first.
+- **Winter at home (11):** Yule, a son, a daughter, a wife's word, a thrall who runs, a thrall who buys his freedom, the coughing sickness, a crew wedding, a wandering skald, an old man's land, the horse-fight.
+- **Spring:** while he still rows for another man, a ship for sale each year (8 marks), or the jarl's old karvi for a quarter of the plunder. The captain he rows for now fills his benches each spring, so service does not wither.
+- **Yule every year:** last year's boasts are reckoned aloud (kept, broken, still open), and new ones sworn from a pool: two raids, ten marks of plunder, two shield-walls won, a duel won, land of his own, a hall, a wife, three ships. The engine keeps them when the goal is met; the Saga shows how far along a counted one is.
+

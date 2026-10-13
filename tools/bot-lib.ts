@@ -95,7 +95,7 @@ export class Bot {
       }
       case 'muster': {
         if (state.service) return pick((a) => a.t === 'set_sail') ?? enabled[0]!.action;
-        if (this.policy !== 'homebody' && state.silver > 120 && !this.shopped.has(state.day)) { this.shopped.add(state.day); const s = pick((a) => a.t === 'shop'); if (s) return s; }
+        if (this.policy !== 'homebody' && state.silver > (state.base.level === 'father' && !state.service ? FARM_PRICE + 120 : 120) && !this.shopped.has(state.day)) { this.shopped.add(state.day); const s = pick((a) => a.t === 'shop'); if (s) return s; }
         if (this.policy === 'homebody') return pick((a) => a.t === 'stay_home')!;
         return pick((a) => a.t === 'borrow_ship') ?? pick((a) => a.t === 'recruit') ?? pick((a) => a.t === 'refit') ?? pick((a) => a.t === 'provision') ?? pick((a) => a.t === 'set_sail') ?? enabled[0]!.action;
       }
@@ -129,7 +129,7 @@ export class Bot {
     const sk = h('skald'); if (sk && state.deeds.some((d) => d.told !== null && !d.verse)) return sk;
     if (state.flags.owes_jarl && state.silver > 260) { const b = h('buy_ship'); if (b) return b; }
     const hang = pick((a) => a.t === 'hang'); if (hang) return hang;
-    if (state.silver > FARM_PRICE + 150) { const b = h('buy_farm'); if (b) return b; }
+    if (state.silver > FARM_PRICE + 24) { const b = h('buy_farm'); if (b) return b; }
     if (state.silver > HALL_PRICE + 150) { const b = h('build_hall'); if (b) return b; }
     if (state.silver > 700 && state.ships.length < 3) { const b = h('build', 'snekkja'); if (b) return b; }
     if (state.silver > 120 && state.hamingja < 2) { const b = h('blot'); if (b) return b; }

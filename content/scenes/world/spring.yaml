@@ -1,0 +1,40 @@
+# Spring after the written story (FRAME-FOUNDATION §5): a way out of another man's ship, every year he is still in one.
+
+- id: g_spring_ship
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 300
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", service]
+  weight: 3
+  art: muster
+  title: A ship for sale
+  text: |
+    Thorkell Long-Chin died at Yule, and his widow is selling his karvi on the jarl's landing: twenty-eight oars, a patched sail, a good keel, and a smell of old fish that will never come out. She wants eight marks, and she wants them before somebody from the next fjord comes and offers seven.
+
+    {captain} sees you looking at her. "You've rowed for me long enough to know how it's done," he says. "Maybe too long. A man can get used to a bench."
+    [break]
+    The jarl's steward is on the landing too, watching who looks at what. The jarl has an old karvi of his own hauled up behind the boatshed, and a habit of lending it out, for a quarter of what it brings home.
+  choices:
+    - id: buy
+      text: Weigh out eight marks for Thorkell's karvi.
+      requires: ["silver >= 192"]
+      effects:
+        - { add: { silver: -192 } }
+        - { ship: { type: karvi, name: Long-Chin, crew: 12 } }
+        - { deed: { type: deed, text: "Bought a ship of his own and stood at her steering-oar", weight: 3 } }
+      result: |
+        She counts it twice, and gives you the steering-oar herself, the way it's done. Twelve men from the district come down to the landing by evening to look at you, and at her, and put their sea-chests aboard. You'll need more. You'll find them.
+
+        {captain} shakes your hand. "Don't sail too close to me," he says. "I'd hate to have to rob you."
+    - id: jarl
+      text: Ask the jarl for the loan of his old karvi.
+      requires: ["fame.living >= 12"]
+      effects:
+        - { ship: { type: karvi, name: "The jarl's old karvi", crew: 10 } }
+        - { set: flag.owes_jarl }
+      result: |
+        The steward looks you up and down, and goes up to the hall, and comes back with the jarl's answer: yes, for a quarter of the summer's plunder, and the ship back in the autumn with no new holes in her. Ten men sign on. The rest you'll have to find.
+    - id: bench
+      text: Stay at your oar another year.
+      result: |
+        You put your sea-chest under your old bench. {captain} doesn't say anything. Neither do you. Thorkell's widow sells the karvi to the man from the next fjord, for seven marks.

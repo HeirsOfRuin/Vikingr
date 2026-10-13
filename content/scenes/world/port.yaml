@@ -1,0 +1,154 @@
+# Port events that repeat (FRAME-FOUNDATION §5). From 832 on, in any port but home; the written
+# place scenes go first (they carry no chance), these fill the landfalls between.
+
+- id: g_port_cargo
+  kind: pool
+  trigger: arrive
+  chance: 0.25
+  cooldown_days: 200
+  requires: ["year >= 832", "!service", "at.standing >= 0", "ships >= 1"]
+  at_kind: [market, town, hall]
+  title: A cargo
+  text: |
+    A trader finds you on the beach before your keel is dry: a thin man with a pack of tally-sticks and a load he needs moving faster than his own ship can move it. Wool and iron, he says, and a little amber. He'll pay in silver, half now.
+
+    He looks at your ship, and your men, and your shields. "Nobody robs a ship like yours," he says. It's meant as a compliment.
+  choices:
+    - id: carry
+      text: Take the cargo. Silver is silver.
+      effects: [ { add: { silver: 48 } }, { days: 4 } ]
+      result: It costs you four days of loading, unloading, and listening to him count. He pays the second half without arguing, which surprises everyone, him included.
+    - id: haggle
+      text: Take it, for more.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: He squeals, and pays. It costs you four days, and earns you more than a raid on some islands would.
+        effects: [ { add: { silver: 80 } }, { days: 4 } ]
+      failure:
+        text: He finds another ship. You watch him load it, and he waves to you as it goes.
+    - id: rob
+      text: Take the cargo, and keep it.
+      effects: [ { add: { loot: 90, honour: -2 } }, { standing: { n: -4 } }, { days: 1 } ]
+      result: |
+        You load it, row round the point, and keep rowing. By the time he understands, you're a sail on the horizon. It's quick money. Word of it will be slower, and will last longer.
+    - id: no
+      text: You're not a carter.
+      result: He bows, as if you'd said something wise, and goes to find a carter.
+
+- id: g_port_feast
+  kind: pool
+  trigger: arrive
+  chance: 0.25
+  cooldown_days: 200
+  requires: ["year >= 832", "at.standing >= 2"]
+  at_kind: [hall, market, island, town]
+  art: { key: yule_hall, laughter: flag.y_hall }
+  title: An invitation
+  text: |
+    The man who holds the land here sends down to the shore to say there's a feast in his hall tonight, and room on the benches for a captain with a name and the men who row for him.
+
+    It's an honour. It's also a chance for every man in the district to look at you, and decide.
+    [if service]
+    {captain} takes the high bench. You take whatever's left, near the door, where the draught is.
+    [/if]
+  choices:
+    - id: go
+      text: Go, and drink with them.
+      effects: [ { add: { crew.morale: 1 } }, { standing: { n: 1 } } ]
+      result: |
+        It's a good feast: a pig, a lot of ale, a skald who knows three verses about your father's jarl and makes up a fourth on the spot. Nobody dies. In the morning, half the district comes down to see you off.
+    - id: tell
+      text: Go, and when the horn comes round, tell them what you did last summer.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You tell it well, with the blood and the silver in the right order, and the hall goes quiet in the right places. By the end, men are telling it back to each other. They'll be telling it next winter too, in halls you'll never see.
+        effects: [ { deed: { type: deed, text: "Told his deeds in a stranger's hall, and was believed", weight: 2, witnesses: 60 } }, { standing: { n: 1 } }, { add: { flag.y_hall: 1 } } ]
+      failure:
+        text: |
+          You tell it, and somebody at the bottom of the hall says he heard it differently, and then three people are shouting, and the lord of the hall has to bang his cup to stop it. Nobody draws a knife. It's close.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: decline
+      text: Thank him, and stay with the ship.
+      effects: [ { standing: { n: -1 } } ]
+      result: The messenger's face doesn't change. His master's will, when he hears.
+
+- id: g_port_brawl
+  kind: pool
+  trigger: arrive
+  chance: 0.2
+  cooldown_days: 200
+  requires: ["year >= 832", "at.standing >= -1"]
+  at_kind: [market, town, hall, island]
+  title: A fight on the beach
+  text: |
+    It starts over a woman, or a dice game, or a fish; by the time you get there nobody can say. Half your crew and twice as many locals are rolling about in the shingle, and somebody has a broken head, and somebody else has found a boat-hook.
+
+    A big man off a fishing boat stands over one of yours with a gutting-knife he hasn't drawn yet, and looks round for whoever's in charge.
+  choices:
+    - id: stop
+      text: Wade in and stop it.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You don't shout. You walk into the middle of it and pick men up by the collar, yours and theirs alike, and set them on their feet, until there's nobody left to pick up. The locals look at you with something like respect. Your men look at you with something like resentment. That's the right way round.
+        effects: [ { standing: { n: 1 } }, { add: { skill.command: 1 } } ]
+      failure:
+        text: Somebody hits you with a fish. After that, nobody can stop it, least of all you. It ends when everyone's too tired to go on, and the local headman wants silver for the broken heads.
+        effects: [ { add: { silver: -24, crew.morale: 1 } }, { standing: { n: -1 } } ]
+    - id: him
+      text: Square up to the big man with the knife.
+      danger: true
+      effects: [ { fight: { foe: beach_brawler, kind: duel, lethal: false } } ]
+    - id: watch
+      text: Let them get it out of their systems.
+      effects: [ { add: { crew.morale: 1 } }, { standing: { n: -2 } } ]
+      result: They do, eventually. Your men come back aboard bloody and happy. The locals don't come down to the shore again while you're there, not even to sell you fish.
+
+- id: g_port_champion
+  kind: pool
+  trigger: arrive
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["year >= 832", "fame.living >= 20", "at.standing >= -1"]
+  at_kind: [hall, island, town]
+  title: A challenge
+  text: |
+    Word of your name got here before you did. The district's best man, a broad, scarred farmer who's killed four men and says so, comes down to the shore with his friends to see what you look like.
+
+    "They say you're good," he says. "I'm better. Let's see. With the blunt end, so nobody needs to pay for anybody."
+  choices:
+    - id: fight
+      text: Take your shield and your blunt end.
+      danger: true
+      effects: [ { fight: { foe: local_champion, kind: duel, lethal: false } } ]
+    - id: laugh
+      text: Laugh, and offer to drink with him instead.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: He laughs too, after a moment. By the end of the night you're sworn friends, or as sworn as two men can be who'll never see each other again.
+        effects: [ { standing: { n: 1 } } ]
+      failure:
+        text: He doesn't laugh. "So it's all talk," he says, loud enough for the beach. It goes round the district by nightfall.
+        effects: [ { standing: { n: -1 } }, { add: { honour: -1 } } ]
+
+- id: g_port_slaver
+  kind: pool
+  trigger: arrive
+  chance: 0.5
+  cooldown_days: 60
+  requires: ["year >= 832", "captives >= 1", "!service"]
+  at_kind: [market, town]
+  title: The man with the scales
+  text: |
+    A slaver comes down the beach to look at your captives before the ship's even made fast: a soft-handed, careful man who looks at their teeth and their hands and feels their arms like a farmer at a horse fair, and doesn't look at their faces at all.
+
+    "A mark a head," he says. "For the young ones. Less for the others."
+  choices:
+    - id: sell
+      text: Sell them here.
+      effects: [ { sell_captives: 26 } ]
+      result: The silver is weighed out. The captives go up the beach on a rope. One of them looks back. Most of them don't.
+    - id: keep
+      text: Keep them. They'll fetch more at home, or work there.
+      result: The slaver shrugs, and goes to look at somebody else's.

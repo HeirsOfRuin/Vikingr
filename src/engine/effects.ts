@@ -11,7 +11,8 @@ import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
 import { giveItem, loseItem } from './items';
-import { BASE_LEVELS, keepCaptives } from './base';
+import { BASE, BASE_LEVELS, keepCaptives } from './base';
+import { keepBoast, swearBoast } from './boasts';
 import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
 
 function addTo(state: GameState, path: string, n: number): void {
@@ -23,6 +24,7 @@ function addTo(state: GameState, path: string, n: number): void {
     case 'provisions': state.provisions = Math.max(0, state.provisions + n); return;
     case 'crew.men': state.crew.men = Math.max(0, state.crew.men + n); return;
     case 'crew.morale': state.crew.morale += n; clampMorale(state); return;
+    case 'thralls': state.base.thralls = Math.max(0, Math.min(BASE[state.base.level].thralls, state.base.thralls + n)); return;
   }
   const [ns, a, b] = path.split('.');
   if (ns === 'flag') state.flags[a!] = (state.flags[a!] ?? 0) + n;
@@ -78,15 +80,10 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       state.hero.nickname = e.nickname;
       journal(state, `Men call you ${e.nickname} now.`);
     } else if ('boast' in e) {
-      const def = content.boasts[e.boast]!;
-      if (!state.boasts.some((b) => b.id === e.boast)) state.boasts.push({ id: e.boast, sworn: state.day, due: state.day + def.days, state: 'open' });
-      journal(state, `You swore over the cup: ${def.text}`);
+      swearBoast(state, content, e.boast);
     } else if ('keep_boast' in e) {
       const b = state.boasts.find((x) => x.id === e.keep_boast && x.state === 'open');
-      if (b) {
-        b.state = 'kept';
-        addDeed(state, content, { type: 'boast_kept', text: `Kept his boast: ${content.boasts[b.id]!.text}`, witnesses: state.crew.men });
-      }
+      if (b) keepBoast(state, content, b);
     } else if ('command' in e) {
       if (state.service) {
         journal(state, `You took command of ${state.ships[0]?.name ?? 'the ship'}.`);
@@ -134,6 +131,9 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       const { place, ...how } = e.raided;
       onRaided(state, content, place, how);
     } else if ('standing' in e) {
+      // neither place nor people: the place he is in now
+      const here = !e.standing.place && !e.standing.people ? state.at : null;
+      if (here) shiftStanding(state, content, here, e.standing.n);
       if (e.standing.place) shiftStanding(state, content, e.standing.place, e.standing.n);
       if (e.standing.people) shiftPeople(state, content, e.standing.people, e.standing.n, e.standing.place);
     } else if ('captain' in e) { if (state.service) state.service.captain = e.captain; }

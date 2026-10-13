@@ -89,7 +89,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.places[e.raided.place]) errors.push(`${where}: unknown place "${e.raided.place}"`);
       } else if ('standing' in e) {
         if (e.standing.place && !content.places[e.standing.place]) errors.push(`${where}: unknown place "${e.standing.place}"`);
-        if (!e.standing.place && !e.standing.people) errors.push(`${where}: standing needs a place or a people`);
+        // neither place nor people: the port he is in (a no-op at sea)
       } else if ('ship' in e) {
         if (!content.ships[e.ship.type]) errors.push(`${where}: unknown ship type "${e.ship.type}"`);
       } else if ('voyage' in e) {
@@ -245,6 +245,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     cond(`banter line ${i + 1}`, b.requires);
     text(`banter line ${i + 1}`, b.text);
   });
+  for (const b of Object.values(content.boasts)) if (b.goal && 'when' in b.goal) cond(`boast ${b.id}`, b.goal.when);
 
   // rivals
   for (const r of Object.values(content.rivals)) {
