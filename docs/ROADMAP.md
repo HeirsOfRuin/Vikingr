@@ -132,7 +132,7 @@ Each step follows the usual process: a short frame doc for approval, then the bu
   - `fame.ts` (legends read live captain fame);
   - a new Allies section in the Saga tab.
 
-## Step 4: Hosts (battles larger than one crew)
+## Step 4: Hosts (battles larger than one crew) — built 2026-10-13 (`docs/FRAME-HOSTS-FRISIA.md`)
 **Problem.** Every fight is one crew against about the same number. Real 9th-century turning points were fleets of 10 to 100 ships: Dorestad 834, the Irish wars of the 830s, Dublin 841, Paris 845.
 
 **Build:**
@@ -155,7 +155,7 @@ Each step follows the usual process: a short frame doc for approval, then the bu
   - battle UI, scene renderer;
   - `tools/measure-battle.ts` (host cells: equal hosts, ambush, an ally deserting).
 
-## Step 5: The story, 833–835 ("The Frisian Road")
+## Step 5: The story, 833–835 ("The Frisian Road") — built 2026-10-13 (`docs/FRAME-HOSTS-FRISIA.md`)
 **Problem.** The written story stops at spring 832. The repeatable content carries a life, but it doesn't give it a saga.
 
 **Build (the Adalia method: frame, calibration, writing):**

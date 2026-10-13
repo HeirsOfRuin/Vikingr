@@ -1,0 +1,54 @@
+# The Frisian Road, 835: the chapter closes, and the road divides.
+
+- id: fr_835
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 10
+  requires: ["year >= 835", "place == home_fjord", "phase == muster", seen.fr_833]
+  art: muster
+  when: Spring, 835
+  title: The road from here
+  text: |
+    The ice goes out of the fjord for the sixth spring since you first rowed out of it, at sixteen, on somebody else's bench. You're twenty-one.
+    [if flag.fr_jarl_hakon]
+    Jarl Hákon holds his first spring council with the doors open and the ale running, and calls you up to sit at his right hand, where his brother used to sit.
+    [elif flag.fr_jarl_eirik]
+    Jarl Eiríkr holds his first spring council with the doors shut. He calls the captains up one at a time. When it's your turn, he looks at you a long while before he says anything at all.
+    [else]
+    The jarl's hall is full of captains and news, as it is every spring.
+    [/if]
+    [break]
+    The news this spring is all roads.
+
+    The Franks' rivers: the Seine, the Loire, the Garonne, running inland to cities and abbeys richer than Dorestad, with nobody watching them but monks. A Danish fleet wintered on an island at the mouth of the Loire last year, they say, and nobody came to throw it off.
+
+    Ireland: a Norseman called Turgeis has come to Ulster with a great fleet, and means, they say, to make himself king of all the Norse in Ireland, and then of the Irish too.
+    [if flag.fr_jarl_eirik]
+    And Hákon Eysteinsson went to Ireland, too, and nobody has heard from him since.
+    [/if]
+
+    And the east: Birka, Ladoga, the rivers that go south to the end of the world, and the silver that comes back up them.
+    [break]
+    {name}, with [if ships >= 2]ships[else]a ship[/if] of your own and a name men say at the door: where now?
+  choices:
+    - id: frankia
+      text: The Frankish rivers. Where the Danes went, and found nobody watching.
+      effects: [ { set: flag.fr_road_frankia }, { know: walcheren }, { know: dorestad }, { add: { crew.morale: 1 } } ]
+      result: |
+        The hall bangs the tables. The Franks are rich and fighting each other: every man in the hall knows that's the best kind of neighbour. You'll need more ships than you have, and allies, and luck. You've had all three before.
+    - id: ireland
+      text: Ireland. Turgeis, and whatever comes after Turgeis.
+      effects: [ { set: flag.fr_road_ireland }, { know: armagh }, { know: conaille } ]
+      result: |
+        Ireland, then. A king's country, full of kings. A man with ships and men could do worse than to be useful to one of them, or to the Norseman who means to be king of all of them.
+    - id: east
+      text: The east. Birka, and the rivers beyond it.
+      effects: [ { set: flag.fr_road_east }, { know: birka } ]
+      result: |
+        The old men at the bottom of the hall look up at that. The east is a long road, and a strange one, and the men who come back from it come back changed, and rich, or don't come back at all.
+    - id: home
+      text: Home. A hall, sons, land. Let other men go looking for the end of the world.
+      effects: [ { set: flag.fr_road_home }, { add: { hamingja: 1 } } ]
+      result: |
+        There's a silence. Then the oldest man in the hall, who rowed with your grandfather, laughs, and says, "He's the first sensible one in thirty years," and the hall laughs with him, and nobody believes you'll stick to it. You're not sure you believe it yourself.

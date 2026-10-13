@@ -1,0 +1,244 @@
+# The Frisian Road, 834: Dorestad, and the death of Jarl Eystein.
+
+- id: fr_834
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 10
+  requires: ["year >= 834", "place == home_fjord", "phase == muster", seen.fr_833]
+  art: muster
+  when: Spring, 834
+  title: The war-arrow from Denmark
+  text: |
+    [if flag.ubbi_done || captain.ubbi.rel >= 3]
+    A Danish boat comes up the fjord before the ice is properly out, with a man in the bow holding up a split arrow, and a ring of Danish silver on his arm the size of a fist. He asks for you by name.
+
+    "From Ubbi," he says. "Dorestad. Midsummer. Thirty ships, and the king's peace on all of them. He says: you said you'd think about it. You've had a year."
+    [elif captain.eyvindr.rel >= 3]
+    Eyvindr Skreyja's ship comes up the fjord before the ice is properly out, with Eyvindr in the bow roaring your name at the cliffs.
+
+    "Dorestad!" he shouts, before he's even ashore. "Thirty Danish ships, and King Horik's own hersirs, and the emperor's sons too busy to notice! Are you coming or are you going to sit here and grow barley?"
+    [else]
+    The news comes up the coast with the first Danish trader of the year. King Horik's hersirs are gathering ships at Hedeby and Ribe: thirty of them, some say, forty, others say. Nobody says where they're going. Everybody knows. Dorestad, the richest market in the north, with the emperor's sons at each other's throats and nobody on the walls.
+
+    Nobody has asked you. Nobody needs to. A man with a ship can join any fleet that'll have him.
+    [/if]
+    [break]
+    [if favour >= 3]
+    The jarl sends for you before you've answered. He's thinner than in the winter, and he doesn't get up. "Go," he says. "Bring me back something the Franks will miss. I'd like to hear about it." He coughs. "Soon."
+    [elif flag.fr_jarl_hakon || flag.fr_backs_eirik]
+    Eiríkr, at his father's right hand, says nothing, which in Eiríkr is a kind of permission.
+    [/if]
+  choices:
+    - id: sail
+      text: Send the arrow back with your answer. Dorestad, at midsummer.
+      visible_if: "!service"
+      effects: [ { set: flag.fr_dorestad_sworn }, { know: ribe }, { know: dorestad }, { add: { crew.morale: 2 } } ]
+      result: |
+        You send it back with your own mark cut into the shaft. By the next morning every man in the district knows, and by the end of the week your muster is the biggest it's ever been. Men will row a long way to see Dorestad burn.
+    - id: west
+      text: Tell them you've your own road this summer.
+      effects: [ { set: flag.fr_west } ]
+      result: The messenger shrugs and goes. Dorestad will burn without you. You'll hear about it all winter, from men who were there, and you'll smile, and say nothing.
+    - id: oar
+      text: Find a place at a Danish oar, since you have no ship of your own.
+      visible_if: service
+      effects: [ { set: flag.fr_dorestad_sworn }, { know: dorestad } ]
+      result: "{captain} has already decided: you're going. The whole ship is going. Nobody is staying at home this summer."
+
+- id: do_fleet
+  kind: place
+  trigger: arrive
+  at: [dorestad]
+  once: true
+  weight: 20
+  requires: ["year == 834", flag.fr_dorestad_sworn, "month <= 8"]
+  art: muster
+  title: Dorestad
+  text: |
+    You come up the Rhine on the flood with the Danish fleet around you: thirty-four ships, you count, and then stop counting. The river is wide and brown and slow, and the land either side is so flat that the masts of the fleet are the tallest things in the world.
+
+    And then, round a long bend, Dorestad.
+    [break]
+    It goes on for a mile. A mile of jetties out into the river, one after another, with warehouses behind them, and a street behind the warehouses, and churches, and a mint, and the count's toll-house, and a fort on a mound where the old Roman fort was. More houses than you've ever seen in one place. More ships at the jetties than in all of Norway.
+
+    And between the river and the town, drawn up in three blocks along the jetties, with banners, the count's men, and the townsmen, and the Franks of the garrison, waiting.
+    [if flag.ubbi_done || captain.ubbi.met]
+    Ubbi finds you before you've tied up. "My left," he says, grinning. "Like old times."
+    [/if]
+    [if flag.fr_dorestad_ways]
+    You know this place. You've never seen it, and you know it: there's the ford over the old river that Hessel drew in the sand, unwatched, exactly where he said.
+    [/if]
+  choices:
+    - id: jetties
+      text: Take your place in the line, on the jetties, beside the Danes.
+      danger: true
+      effects:
+        - { if: flag.fr_dorestad_ways, then: [ { host: { title: "The jetties at Dorestad", foe: frisian_levy, terrain: field, men: 30, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 50 }, { name: "Horik's hersirs", men: 70, foe_men: 45 } ], role: wing, reserve: { us: 0, them: 15 }, raid: true, win: do_after, lose: do_beaten } } ], else: [ { host: { title: "The jetties at Dorestad", foe: frisian_levy, terrain: field, men: 40, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 60 }, { name: "Horik's hersirs", men: 70, foe_men: 50 } ], role: wing, reserve: { us: 0, them: 40 }, raid: true, win: do_after, lose: do_beaten } } ] }
+    - id: ford
+      text: Take your men over the ford Hessel drew, and come at the count's men from behind.
+      visible_if: flag.fr_dorestad_ways
+      danger: true
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          The ford is knee-deep and unwatched, exactly as he said. You come up out of the old river behind the count's centre as the Danes hit the jetties, and the centre doesn't so much break as evaporate.
+        effects:
+          - { deed: { type: front_deed, text: "Took his men over the old ford at Dorestad, and into the count's back", weight: 5, witnesses: 600 } }
+          - { host: { title: "Behind the count's line", foe: frisian_levy, terrain: field, men: 20, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 45 }, { name: "Horik's hersirs", men: 70, foe_men: 40 } ], role: wing, reserve: { us: 0, them: 0 }, raid: true, win: do_after, lose: do_beaten } }
+      failure:
+        text: |
+          Someone has been watching the ford after all. Hessel, you think later, sold it to more than one man, and one of them was the count. You come up out of the river into javelins, and have to fight your way back to the line.
+        effects:
+          - { host: { title: "The ford at Dorestad", foe: frisian_levy, terrain: ford, men: 40, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 60 }, { name: "Horik's hersirs", men: 70, foe_men: 50 } ], role: wing, reserve: { us: 0, them: 40 }, raid: true, win: do_after, lose: do_beaten } }
+    - id: ships
+      text: Hold your ships in the river, and go in when the line's broken.
+      effects: [ { add: { honour: -1 } }, { ally: { id: ubbi, rel: -2 } }, { add: { loot: 200 } }, { set: flag.fr_dorestad_done } ]
+      result: |
+        You watch from the river while the Danes go in. It's over by noon. When you come ashore there's still plenty lying about, and you take your share of it.
+
+        Ubbi sees you come ashore. He doesn't say anything. He doesn't have to.
+
+- id: do_after
+  kind: spine
+  art: iona_burning
+  title: Dorestad burning
+  text: |
+    By evening Dorestad is burning from one end to the other, a mile of fire along the river, and the smoke goes up so high and so black that men say afterwards they saw it from Utrecht, from the sea, from England.
+
+    The Danes are drunk on Frankish wine from the warehouses, and singing, and fighting each other over bolts of cloth. Somebody has found the mint, and is throwing handfuls of new pennies into the river for the joy of it.
+    [break]
+    Ubbi finds you on the jetties at dusk, with his face black with smoke and his beard singed, and puts a horn of wine in your hand.
+
+    "The richest market in the north," he says, looking at it burning. "And nobody watching it." He laughs, and then stops laughing, and drinks. "Next year there'll be less of it. And the year after that, less. And then one day there won't be anything here at all but the river." He shrugs. "Drink."
+  choices:
+    - id: mint
+      text: Go down to the mint, and take the coin-die. The emperor's own name.
+      effects:
+        - { item: { id: dorestad_coin } }
+        - { keep_boast: dorestad }
+        - { set: flag.fr_dorestad_done }
+        - { deed: { type: deed, text: "Was at the burning of Dorestad, and took the emperor's coin-die from the mint", weight: 6, witnesses: 800 } }
+        - { ally: { id: ubbi, rel: 2 } }
+        - { standing: { people: frisian, n: -4 } }
+      result: |
+        It's an iron block the size of your fist, with the emperor's name cut backwards in its face, sitting on the anvil where the moneyer dropped it when he ran. Every penny struck in Dorestad for thirty years came off this. Now it's yours.
+
+        Ubbi laughs till he cries when he sees it.
+    - id: drink
+      text: Drink with Ubbi, and watch it burn.
+      effects:
+        - { keep_boast: dorestad }
+        - { set: flag.fr_dorestad_done }
+        - { deed: { type: deed, text: "Was at the burning of Dorestad", weight: 5, witnesses: 800 } }
+        - { ally: { id: ubbi, rel: 3 } }
+        - { standing: { people: frisian, n: -3 } }
+      result: |
+        You drink with Ubbi all night on the jetty, with the town burning behind you, and he tells you about his father, and his father's father, and a woman in Ribe, and by dawn you're sworn brothers, or as near as two drunk men can make it.
+    - id: people
+      text: Go into the burning streets and see what's left of the people.
+      effects:
+        - { keep_boast: dorestad }
+        - { set: flag.fr_dorestad_done }
+        - { add: { honour: 1 } }
+        - { captives: 6 }
+        - { deed: { type: deed, text: "Was at the burning of Dorestad", weight: 5, witnesses: 800 } }
+      result: |
+        There's a church at the end of the long street with its door barred and people inside, praying. The Danes are piling brushwood against the door. You stop them, with your sword out and your men behind you, and let the people out, and take six of the youngest to the ships, and let the rest go into the marshes. The Danes think you're mad, and greedy, in that order. Some of the people you let go will be alive at the end of the year. That's more than would have been.
+
+- id: do_beaten
+  kind: spine
+  title: The jetties
+  text: |
+    The count's men are better than anyone said, and there are more of them, and the Franks of the garrison fight like men who know what happens to them if they don't. Your part of the line goes back off the jetty and into the river, and the Danes go back with it, and the fleet pulls off into midstream with the dead floating round it.
+
+    Dorestad doesn't burn today.
+  choices:
+    - id: away
+      text: Pull downriver with the fleet.
+      effects: [ { set: flag.fr_dorestad_beaten }, { add: { crew.morale: -2 } }, { raided: { place: dorestad, failed: true } } ]
+      result: |
+        Ubbi is silent all the way down the river. At the mouth he says, "Next year," the way a man says the name of somebody he means to kill. You believe him.
+
+- id: do_ruins
+  kind: place
+  trigger: arrive
+  at: [dorestad]
+  once: true
+  requires: ["year >= 834", "!flag.fr_dorestad_sworn", "!seen.do_fleet"]
+  title: What the Danes left
+  text: |
+    [if year == 834]
+    The Danes were here before you. A mile of jetties along the Rhine, and half of them burned to the waterline. The warehouses behind them are black shells. In the long street, people are picking through the ashes of their houses, and they stop, and watch your ship come in, with the faces of people who can't believe it's happening again.
+    [else]
+    Dorestad is still here, but less of it. The jetties have been rebuilt, some of them, in raw new timber; the long street has gaps in it like a mouth with teeth knocked out. The Frisians watch your ship come in with the faces of people who have learned what masts mean.
+    [/if]
+  choices:
+    - id: trade
+      text: Tie up at a jetty and trade, as if nothing had happened.
+      effects: [ { standing: { place: dorestad, n: 1 } } ]
+      result: They trade with you, because they have to. The prices are very good, because they have to be. Nobody looks you in the eye.
+    - id: pick
+      text: Pick over what the Danes left.
+      effects: [ { add: { loot: 120, honour: -1 } }, { standing: { place: dorestad, n: -2 } } ]
+      result: The Danes left more than you'd have thought. A burned warehouse with its cellar full of wine; a church with its altar silver hidden under the floor, badly. The townspeople watch you take it, and say nothing, because there's nothing left to say.
+
+# ---- winter 834: the death of Jarl Eystein ----
+- id: fr_eystein
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 10
+  requires: ["winter >= 834", "place == home_fjord", seen.fr_833]
+  art: hearth_ormr
+  when: Winter, 834
+  title: The jarl's ship
+  text: |
+    Jarl Eystein dies in the dark of the year, in his bed, with his sons on either side of him and a priest from somewhere in Frankia he'd let stay the winter, whom both his sons pretend not to see.
+
+    They bury him the old way, all the same: in his own ship, the old karvi he lent you once, hauled up the hill on rollers by fifty men, with his sword and his shield and his horse and his dogs and a slave-girl who goes up the gangplank on her own feet, singing, and doesn't come down. The mound takes a week to raise. The whole district stands on it when it's done.
+    [break]
+    And then the thing.
+
+    Every free man in the district, on the thing-field below the mound, with their weapons, in the snow. Eiríkr stands on one side of the law-rock and Hákon on the other, and the lawspeaker asks the question: who will the district have?
+    [if flag.fr_backs_hakon]
+    Hákon catches your eye across the field. You promised him your voice.
+    [elif flag.fr_backs_eirik]
+    Eiríkr looks at you once, and then away. He knows what you told him at Yule. He's counting on it, the way he counts on everything: without thanks.
+    [/if]
+  choices:
+    - id: hakon
+      text: Step up to the law-rock and speak for Hákon.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You speak for him: for a jarl like a summer, a jarl who'll look outward, west and south, to where the silver is. You've been where the silver is; they all know it. When you finish, men are shouting Hákon's name before the lawspeaker can ask again.
+
+          Hákon Eysteinsson is jarl. He takes you by both hands on the law-rock, in front of everyone. Eiríkr walks off the field without a word and takes ship for Denmark within the month.
+        effects: [ { set: flag.fr_jarl_hakon }, { set: flag.fr_eystein_dead }, { favour: 4 }, { deed: { type: deed, text: "Spoke Hákon Eysteinsson into the high seat at the thing", weight: 4, witnesses: 400 } } ]
+      failure:
+        text: |
+          You speak for him, and it isn't enough. Eiríkr has the older men, and the older men have the votes. When the lawspeaker asks again, it's Eiríkr's name they shout.
+
+          Eiríkr Eysteinsson is jarl. He looks at you from the law-rock and doesn't look away. Hákon takes ship for Ireland within the month, with whoever will follow him, and doesn't say goodbye.
+        effects: [ { set: flag.fr_jarl_eirik }, { set: flag.fr_eystein_dead }, { favour: -6 } ]
+    - id: eirik
+      text: Stand with Eiríkr. He's the elder, and the elder son is the law.
+      effects: [ { set: flag.fr_jarl_eirik }, { set: flag.fr_eystein_dead }, { if: flag.fr_backs_hakon, then: [ { favour: -2 }, { add: { honour: -2 } } ], else: [ { favour: 3 } ] } ]
+      result: |
+        You stand with Eiríkr, and the older men see you do it, and it settles them. Eiríkr Eysteinsson is jarl before noon.
+        [if flag.fr_backs_hakon]
+        Hákon looks at you across the field as his brother is named. He doesn't say anything. He takes ship for Ireland within the month, and on the beach, before he goes, he says to one of your men: tell him I won't forget. Your man tells you. You didn't need telling.
+        [else]
+        He thanks you the way he does everything, without warmth: "You chose right." It's the nearest to friendship Eiríkr gets. Hákon takes ship for Ireland within the month.
+        [/if]
+    - id: silent
+      text: Keep your mouth shut, and let the district choose.
+      effects: [ { set: flag.fr_jarl_eirik }, { set: flag.fr_eystein_dead }, { if: flag.fr_backs_hakon, then: [ { add: { honour: -1 } }, { favour: -2 } ], else: [ { favour: -1 } ] } ]
+      result: |
+        The district chooses Eiríkr, as districts usually choose the elder son. You stand in the snow with your mouth shut while they shout his name.
+        [if flag.fr_backs_hakon]
+        Hákon never speaks to you again. He takes ship for Ireland within the month.
+        [else]
+        Hákon takes ship for Ireland within the month, to find a jarldom of his own. Eiríkr watches you on the thing-field and says nothing, and goes on watching.
+        [/if]

@@ -230,3 +230,29 @@ birka_east: { description: "Heard of the river road east at Birka" }
 # ---- the fleet (content/scenes/world/fleet.yaml) ----
 fl_gave_ship: { description: "Gave a ship to the sworn man who steered her" }
 fl_promised_ship: { description: "Promised a sworn shipmaster his ship after one more summer" }
+# ---- the Frisian Road, 833-835 (content/scenes/833) ----
+fr_frisia: { description: "Went to look at the Frisian coast in 833" }
+fr_west: { description: "Went west to Armagh in 833" }
+fr_jarl: { description: "Sailed where the jarl needed him in 833" }
+fr_dorestad_ways: { description: "Knows Dorestad's ways: the ford, the jetties, the watch (Hessel)" }
+wa_looked: { description: "Looked inland from the dyke at Walcheren" }
+ar_tribute: { description: "Took tribute from the comarb of Patrick" }
+ar_bell: { description: "Took the bell-shrine of Patrick" }
+ar_spared_bell: { description: "Left the old monk his bell at Armagh" }
+ar_burned: { description: "Burned the church of Patrick at Armagh" }
+ar_beaten: { description: "Was beaten off Patrick's hill" }
+fr_backs_hakon: { description: "Promised Hákon his voice at the thing" }
+fr_backs_eirik: { description: "Told Eiríkr what his brother was saying" }
+fr_neutral: { description: "Stood with neither of the jarl's sons" }
+fr_dorestad_sworn: { description: "Sworn to sail for Dorestad in 834" }
+fr_dorestad_done: { description: "Was at the sack of Dorestad, 834" }
+fr_dorestad_beaten: { description: "Was beaten at Dorestad" }
+fr_eystein_dead: { description: "Jarl Eystein is dead" }
+fr_jarl_hakon: { description: "Hákon Eysteinsson is jarl" }
+fr_jarl_eirik: { description: "Eiríkr Eysteinsson is jarl" }
+fr_road_frankia: { description: "Looks to the Frankish rivers after 835" }
+fr_road_ireland: { description: "Looks to Ireland after 835" }
+fr_road_east: { description: "Looks east after 835" }
+fr_road_home: { description: "Looks to his own land and hall after 835" }
+rg_saw_turgeis: { description: "Saw Turgeis's fleet go north" }
+rg_met_turgeis: { description: "Spoke with Turgeis at sea" }

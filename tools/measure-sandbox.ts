@@ -21,6 +21,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   const base: Record<string, number> = {};
   let kept = 0, broken = 0, sworn = 0, lives832 = 0, children = 0;
   const byBoast: Record<string, [number, number]> = {};
+  const story: Record<string, number> = {};
   let felags = 0, metCaps = 0, favourSum = 0, traded = 0, tradeDeeds = 0;
   let twoShips = 0, prizes = 0, bought = 0, deserted = 0, lostInStorm = 0, maxShips = 0;
   for (let i = 0; i < runs; i++) {
@@ -56,6 +57,10 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
     prizes += s.journal.filter((j) => / as a prize\./.test(j.text)).length;
     bought += s.journal.filter((j) => /secondhand/.test(j.text)).length;
     deserted += s.journal.filter((j) => /sailed off with/.test(j.text)).length;
+    for (const [k, id] of [['council 833', 'fr_833'], ['Hessel', 'fr_hessel'], ['Armagh', 'ar_approach'], ['the sons', 'fr_sons'], ['war-arrow 834', 'fr_834'], ['Dorestad fleet', 'do_fleet'], ['Dorestad ruins', 'do_ruins'], ['jarl dies', 'fr_eystein'], ['road 835', 'fr_835']] as const) if (s.seen[id] !== undefined) story[k] = (story[k] ?? 0) + 1;
+    if (s.flags.fr_dorestad_done) story['Dorestad burned'] = (story['Dorestad burned'] ?? 0) + 1;
+    if (s.flags.fr_jarl_hakon) story['Hákon jarl'] = (story['Hákon jarl'] ?? 0) + 1;
+    if (s.flags.fr_jarl_eirik) story['Eiríkr jarl'] = (story['Eiríkr jarl'] ?? 0) + 1;
     felags += s.journal.filter((j) => /^Swore félag/.test(j.text)).length;
     metCaps += s.journal.filter((j) => /^Met /.test(j.text)).length;
     favourSum += s.favour ?? 0;
@@ -76,6 +81,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   console.log('  wives: ' + Object.entries(wives).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', ') + `; a son ${pct(children, lives832)}`);
   console.log(`  fleet: ${pct(twoShips, lives832)} ever had two ships or more (most at the end: ${maxShips}); prizes ${prizes}, bought ${bought}, sailed off by a hired man ${deserted}, scattered and lost ${lostInStorm}`);
   console.log(`  allies: ${(metCaps / Math.max(1, lives832)).toFixed(1)} captains met a life, ${felags} félags sworn, the jarl's favour at the end ${(favourSum / Math.max(1, lives832)).toFixed(1)} on average; trade: ${pct(traded, lives832)} of lives traded, ${tradeDeeds} rich-voyage deeds`);
+  console.log('  the Frisian Road: ' + Object.entries(story).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', '));
   console.log('  land: ' + Object.entries(base).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', '));
   console.log(`  Yule boasts on the books at the end: ${sworn} (kept ${kept}, broken ${broken}); by boast, kept/broken: ` + Object.entries(byBoast).map(([k, [a, b]]) => `${k.slice(5)} ${a}/${b}`).join(', '));
   const never = Object.keys(content.scenes).filter((id) => id.startsWith('g_') && !fired[id]);

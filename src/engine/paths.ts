@@ -1,7 +1,7 @@
 // Value paths used by conditions ("skill.weapons >= 3") and effects ({ add: { silver: -24 } }).
 // One resolver for reading and one checker for the validator, so a path that
 // reads also validates, and an unknown path fails the build.
-import { ATTRS, SKILLS, PHASES, PLACE_KINDS, type Attr, type ContentBundle, type Skill } from '../content/schema';
+import { ATTRS, SKILLS, PHASES, PLACE_KINDS, PEOPLES, type Attr, type ContentBundle, type Skill } from '../content/schema';
 import type { GameState } from './state';
 import { dateOf } from './calendar';
 import { effAttr, age } from './hero';
@@ -46,6 +46,9 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   favour: (s) => s.favour ?? 0,
   allies: (s, c) => Object.keys(c.captains).filter((id) => { const x = captain(s, c, id); return x.met && x.alive && x.rel >= 3; }).length,
   partner: (s) => (s.partner && s.partner.year === dateOf(s.day).year ? 1 : 0),
+  /** Where his ship is bound, at sea; and who lives there (regional sea events). */
+  bound: (s) => s.voyage?.to ?? '',
+  'bound.people': (s, c) => (s.voyage ? c.places[s.voyage.to]?.people ?? '' : ''),
   'cargo.lots': (s) => Object.values(s.cargo ?? {}).reduce((n, c) => n + c.lots, 0),
   'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
   'masters.hired': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('hired:')).length,
@@ -60,6 +63,8 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'at.kind') return ['sea', 'none', ...PLACE_KINDS];
   if (path === 'background') return Object.keys(content.backgrounds);
   if (path === 'base') return ['father', 'farm', 'hall'];
+  if (path === 'bound') return ['', ...Object.keys(content.places)];
+  if (path === 'bound.people') return ['', ...PEOPLES];
   return undefined;
 }
 

@@ -3,6 +3,7 @@
 import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
 import { hold, holdRoom, SECONDHAND } from '../src/engine/fleet';
 import { buyPrice, sellPrice } from '../src/engine/trade';
+import { partner } from '../src/engine/allies';
 import type { ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
 import { act, listActions, newGame, screenOf, type Action, type ActionOption } from '../src/engine/index';
@@ -202,7 +203,9 @@ export class Bot {
     const goingHome = doy >= LATE_SEASON_DOY - 20 || (hungry && at !== 'home_fjord');
     let target: string | null = null;
     if (!goingHome) {
-      const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id));
+      // no single crew goes up against a town: big places only with a partner beside him
+      const strength = state.crew.men + (partner(state, content) ? 40 : 0);
+      const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id) && content.places[id]!.raid!.defenders <= strength * 1.8);
       targets.sort((a, b) => hops(state, content, at, a) - hops(state, content, at, b));
       target = targets[0] ?? state.known.find((id) => !this.visited.has(id) && content.places[id]?.active) ?? null;
     }

@@ -44,3 +44,8 @@
   quality: 1
   doctrine: { push: 2, wedge: 2, hold: 2, missiles: 1 }
   desc: Hard men off three or four ships, caught on a beach with their plunder half-loaded. They fight like men with nowhere to run.
+- id: airgialla_men
+  name: The king of Airgialla's men
+  quality: 1
+  doctrine: { missiles: 3, flank: 2, hold: 2, give: 1 }
+  desc: "The hosting of the Airgialla, called out to defend Patrick's church: javelin-men, horse on the wings, and monks behind them singing."

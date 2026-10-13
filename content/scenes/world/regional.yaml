@@ -1,0 +1,145 @@
+# Regional sea events (docs/FRAME-HOSTS-FRISIA.md §Regional events): where the ship is bound decides the sea.
+
+# ---- the Frisian coast ----
+- id: rg_flats
+  kind: pool
+  trigger: sea
+  chance: 0.25
+  cooldown_days: 120
+  requires: ["year >= 832", "bound.people == frisian", "!service"]
+  art: open_sea
+  title: The flats
+  text: |
+    The tide goes out from under you between one breath and the next. One moment there's a fathom of brown water under the keel; the next there's sand, and the ship settles on it with a long groan and lies over on her side, and the sea is a grey line a mile off and getting further.
+
+    A Frisian is walking toward you across the flats, barefoot, with a basket of cockles, as if this happened every day. To him, it does.
+  choices:
+    - id: wait
+      text: Sit it out. The tide always comes back.
+      effects: [ { days: 1 } ]
+      result: It does, in the night, all at once, faster than a horse can run, and lifts the ship off the sand as if she weighed nothing. You lose a day, and a little dignity.
+    - id: frisian
+      text: Pay the cockle-man to show you the channels.
+      requires: ["silver >= 6"]
+      effects: [ { add: { silver: -6 } }, { progress: 1 } ]
+      result: He takes your silver without surprise and walks ahead of the ship when the tide comes back, waist-deep, pointing. You'd never have found the channel. You'd never have known it was there.
+    - id: dig
+      text: Get the men over the side and drag her.
+      check: { skill: seamanship, attr: str, difficulty: 4 }
+      success:
+        text: Twenty men hauling, up to their knees in sucking mud, and she comes off the bank and into the channel just as the tide turns. The men are filthy and proud of themselves.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: She doesn't move. The men do, mostly downward, into the mud. You wait for the tide anyway, and now everyone's filthy.
+        effects: [ { days: 1 }, { add: { crew.morale: -1 } } ]
+
+# ---- Danish waters ----
+- id: rg_horik
+  kind: pool
+  trigger: sea
+  chance: 0.2
+  cooldown_days: 200
+  requires: ["year >= 832", "bound.people == danish", "!service"]
+  art: open_sea
+  title: The king's ship
+  text: |
+    A big ship with a gilded vane and a red-and-white sail comes out from behind an island and lies across your course, and a man in the bow in a good cloak hails you in the king's name.
+
+    King Horik's sea-reeve. Every ship that passes the king's islands pays the king's peace, he says. Or doesn't pass.
+  choices:
+    - id: pay
+      text: Pay the king's peace.
+      requires: ["silver >= 12"]
+      effects: [ { add: { silver: -12 } }, { standing: { people: danish, n: 1 } } ]
+      result: He weighs it on scales that are probably honest, gives you a little bronze token stamped with a ship, and tells you to show it at Hedeby. The Danes are a tidy people.
+    - id: name
+      text: Tell him your name, and Ubbi's.
+      requires: [{ any: [flag.ubbi_done, "captain.ubbi.rel >= 3"] }]
+      effects: [ { standing: { people: danish, n: 1 } } ]
+      result: The sea-reeve's face changes. "Ubbi's Norwegian," he says, and laughs. "Go on, then." The red-and-white sail swings away.
+    - id: run
+      text: Crowd on sail and go round him.
+      danger: true
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: You go round him in a squall, close under the island, closer than he dares follow. Behind you he's shouting your name, which means he's learned it.
+        effects: [ { standing: { people: danish, n: -1 } } ]
+      failure:
+        text: His ship is faster, and his men are king's men. You pay in the end, twice over, and the whole king's ship laughs at you.
+        effects: [ { add: { silver: -24 } }, { standing: { people: danish, n: -1 } } ]
+
+- id: rg_pilot
+  kind: pool
+  trigger: sea
+  chance: 0.15
+  cooldown_days: 200
+  requires: ["year >= 832", "bound.people == danish || bound.people == swedish || bound.people == frisian"]
+  art: open_sea
+  title: A pilot
+  text: |
+    A little boat comes alongside at dawn with an old man in it, and he climbs aboard without being asked and sits down by the steering-oar as if he owned it.
+
+    He knows these waters, he says: every bank, every rock, every channel between every island from here to wherever you're going. He'd like a little silver, and a lot of ale, and a lift home after.
+  choices:
+    - id: hire
+      text: Give him the steering-oar.
+      requires: ["silver >= 6"]
+      effects: [ { add: { silver: -6, skill.seamanship: 1 } }, { progress: 1 } ]
+      result: He takes you through channels you'd never have dared, singing, and drinks a cask of your ale doing it, and leaves you a day ahead of where you'd have been and a good deal wiser about the Danish islands.
+    - id: no
+      text: Thank him, and put him back in his boat.
+      result: He goes without complaint. He'll be in some other ship's stern by noon, singing.
+
+# ---- the Irish Sea ----
+- id: rg_turgeis
+  kind: pool
+  trigger: sea
+  chance: 0.2
+  cooldown_days: 300
+  requires: ["bound.people == gael", "year >= 834"]
+  art: open_sea
+  title: Turgeis's sails
+  text: |
+    Sails to the south: one, and then a dozen, and then too many to count, going north up the Irish coast in a long line with the wind behind them.
+
+    Norse ships. Not Danes: you can tell by the sails, and by the way they keep their line. A fleet like that in the Irish Sea means one man. Turgeis. The one who means to be king of all the Norse in Ireland, and then of the Irish too.
+  choices:
+    - id: watch
+      text: Lie off and watch them go by.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.rg_saw_turgeis } ]
+      result: It takes them half the afternoon to go by. Sixty ships, Hallvard says, counting on his fingers. Eighty. Somebody else says a hundred. You'll be telling it at Yule, and it'll be two hundred by then.
+    - id: hail
+      text: Close and hail them, and find out what they want with Ireland.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          A long ship drops back to look at you. The man in her stern is lean and grey and very still, and he asks who you are, and listens to the answer as if he were weighing it. He doesn't give his own name. He doesn't need to. "Ireland is mine," he says pleasantly. "Come and help me take it, if you like. Or keep out of my way." The long ship goes back to its place in the line.
+        effects: [ { set: flag.rg_met_turgeis }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: Three ships drop back out of the line toward you, with shields along their rails, and you decide very quickly that you didn't want to know after all.
+        effects: [ { add: { crew.morale: -1 } } ]
+
+- id: rg_pilgrims
+  kind: pool
+  trigger: sea
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["year >= 832", "bound.people == gael"]
+  art: open_sea
+  title: The pilgrims
+  text: |
+    A curragh, far out from land: a frame of laths with hides stretched over it, and in it six men in brown, rowing very slowly, singing, with no sail, and no food that you can see, and no idea at all of where the nearest land is.
+
+    Irish monks. Going out into the ocean for God, to find an island to pray on, or to drown. Either will do, apparently.
+  choices:
+    - id: rob
+      text: There's nothing to rob. Leave them.
+      result: You leave them to God and the sea. Some of your men watch them out of sight. One of them, an Islesman with an Irish mother, crosses himself, and then looks round quickly to see if anybody saw.
+    - id: food
+      text: Throw them a cask of water and some dried fish.
+      effects: [ { add: { provisions: -10, hamingja: 1 } } ]
+      result: They bless you, all six of them, solemnly, with their hands raised, and then go on rowing into nothing. Whatever their god is, he's had his eye on you now.
+    - id: take
+      text: Take them aboard. Monks sell.
+      effects: [ { captives: 6 }, { add: { honour: -1 } } ]
+      result: They come aboard without a fight. They go on singing in the bilge all the way to market, and nobody can make them stop.

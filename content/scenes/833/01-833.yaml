@@ -1,0 +1,229 @@
+# The Frisian Road, 833 (docs/FRAME-HOSTS-FRISIA.md §Step 5): the emperor's sons, the jarl's sons, Hessel, Armagh.
+
+- id: fr_833
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 10
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", seen.sp_832]
+  art: yule_hall
+  when: Spring, 833
+  title: The emperor's sons
+  text: |
+    The news comes up the coast with the first Frisian trader of the year, and by the time it reaches the jarl's hall it has grown in the telling, but not by much.
+
+    The emperor of the Franks has been taken by his own sons. They met him in a field in Alsace with their armies, and his army looked at theirs, and in the night it walked across to them, man by man, until the old man was left in his tent with his priests. They're calling it the Field of Lies. The emperor is in a monastery. His sons are already quarrelling over his coat.
+    [break]
+    "Which means," says Jarl Eystein, slowly, from the high seat, "that there's nobody watching the Frankish coast. Nobody at all." He coughs. He's been coughing since Yule, and he's thinner than he was. "Somebody should go and look at it."
+
+    His sons are either side of him. Eiríkr, the elder, broad and dark and forty, who has never once looked at you without remembering that a boy of sixteen brought his father's ship home when he'd asked for her himself. And Hákon, the younger, quick and fair, who pours the ale and smiles at everyone and misses nothing.
+    [if flag.ubbi_dorestad]
+    You think of Ubbi on his barrel on the beach at Hedeby. Dorestad will still be there, he said, with nobody watching it.
+    [/if]
+  choices:
+    - id: frisia
+      text: Say you'll go and look at the Frisian coast, and see what the emperor's sons have left lying about.
+      effects: [ { set: flag.fr_frisia }, { know: ribe }, { know: walcheren }, { know: dorestad }, { favour: 1 } ]
+      result: |
+        The jarl nods. Hákon raises his cup to you across the hall. Eiríkr doesn't. "Look carefully," he says. "The Danes have been looking at it for years, and they're better at looking than we are."
+    - id: west
+      text: Say you'll go west. Armagh is the richest church in Ireland, and Ireland has no emperor to lose.
+      effects: [ { set: flag.fr_west }, { know: conaille }, { know: armagh } ]
+      result: |
+        "Armagh," says the jarl, and the hall goes quiet, because everyone knows the name. Saint Patrick's own house: the church every other church in Ireland pays tithe to. "It's been plundered three times in one summer, and it's still rich. It always comes back." He looks at you a long moment. "So do its kings."
+    - id: jarl
+      text: Tell him you'll sail where he needs you this summer. He looks as if he needs someone.
+      effects: [ { set: flag.fr_jarl }, { favour: 2 } ]
+      result: |
+        The hall doesn't like that answer as much as the jarl does. But the jarl likes it a good deal. Hákon, pouring, catches your eye and gives you the smallest nod. Eiríkr looks at the two of you, and then at the floor.
+
+- id: fr_hessel
+  kind: place
+  trigger: arrive
+  at: [ribe, walcheren, hedeby]
+  once: true
+  weight: 4
+  requires: ["year >= 833", "year <= 834", { any: [flag.fr_frisia, flag.ubbi_dorestad, flag.ribe_dorestad] }]
+  title: Hessel the Frisian
+  text: |
+    He finds you on the beach at dusk: a short, round, clean-shaven Frisian in a good blue cloak, with a merchant's soft hands and a smuggler's eyes, who knows your name and your ship and how many men you have, and wants you to know that he knows.
+
+    His name is Hessel. He trades out of Dorestad, he says, and has for twenty years, and in all that time the count has never once paid him what he owed. "So now," he says, smiling, "I sell what I know. And what I know is Dorestad."
+    [break]
+    He knows where the jetties are weakest, which ford over the old Rhine the count's men don't watch, and when the night watch on the toll-house changes. He knows how many men the count left behind when he rode south to fight for the emperor's sons. "Fewer than you think," he says. "More than you'd like. Three marks."
+  choices:
+    - id: pay
+      text: Pay him three marks.
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { set: flag.fr_dorestad_ways } ]
+      result: |
+        He counts it twice, and draws Dorestad for you in the wet sand with a stick: the river, the jetties, the long street, the churches, the count's hall on its mound, the ford. Then he scuffs it out with his foot, carefully, and goes.
+
+        You remember all of it. You'll be dreaming of it.
+    - id: threaten
+      text: Tell him he'll tell you for nothing, or you'll ask the count what he thinks of men who sell his town.
+      check: { skill: cunning, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          He stops smiling. For a long moment he weighs you, and then he draws it anyway, very fast, in the sand, without a word, and goes off up the beach without looking back. He won't sell to you again. He won't need to.
+        effects: [ { set: flag.fr_dorestad_ways }, { add: { honour: -1 } } ]
+      failure:
+        text: |
+          He laughs at you. "The count," he says, "would hang you first and thank me after." He walks off up the beach. You hear later he sold it to a Dane for four marks.
+    - id: no
+      text: Tell him you don't buy towns from men who'd sell their own.
+      effects: [ { add: { honour: 1 } } ]
+      result: '"Then you''ll buy it in blood," Hessel says, quite cheerfully, "like everyone else." He goes to find a Dane.'
+
+- id: wa_landing
+  kind: place
+  trigger: arrive
+  at: [walcheren]
+  once: true
+  title: Walcheren
+  text: |
+    Walcheren is a long low island in the mouths of the Scheldt, so flat that the sea seems to be higher than the land, which in a bad winter it is. There are dykes, and sheep on the dykes, and a church on a mound, and the count's toll-house at the harbour with the count's banner over it and, as far as you can see, nobody under the banner at all.
+
+    The Frisians on the dyke watch you come in with the patient faces of people who've seen a great many ships, and buried a great many people.
+  choices:
+    - id: look
+      text: Walk up onto the dyke and look inland, toward the rivers.
+      effects: [ { set: flag.wa_looked }, { add: { skill.lore: 1 } } ]
+      result: From the dyke you can see half the world, because there's nothing in the way of it. Rivers, and rivers, and more rivers, silver in the evening light, all of them running inland toward the Franks. Every one of them is a road.
+    - id: toll
+      text: Go and see who's minding the count's toll-house.
+      result: Nobody is. A goat, and a ledger nobody has written in since spring. The count's men have gone south to fight for one son of the emperor against another. The goat looks at you without interest.
+
+# ---- the western road: Armagh ----
+- id: ar_approach
+  kind: place
+  trigger: arrive
+  at: [armagh]
+  once: true
+  weight: 10
+  requires: ["!service"]
+  art: iona_dawn
+  title: Patrick's hill
+  text: |
+    Armagh stands on its hill above a country of little green hills and little brown lakes: a ring of earth, and inside it a town of churches, round towers, workshops and schools, and the great stone church of Patrick at the top, white in the morning sun.
+
+    It's not a monastery the way Iona was a monastery. It's a city of God, with its own king's household to keep it, and the bells are already going from every tower, and down the slope toward you, in good order, comes the hosting of the Airgialla: horsemen on the wings, javelin-men in the centre, and behind them, monks, singing.
+    [if partner]
+    {ally}'s men are already forming on your flank, without being asked, the way men do who've done this before.
+    [/if]
+  choices:
+    - id: host
+      text: Form the line. Your men in the centre, your partner's on the flank, and go up the hill.
+      visible_if: partner
+      danger: true
+      effects:
+        - { if: "ships >= 2", then: [ { host: { title: "The hosting of the Airgialla", foe: airgialla_men, terrain: field, men: 40, wings: [ { name: "The flank", ally: true, foe_men: 30 } ], role: host, reserve: { us: 12, them: 20 }, raid: true, win: ar_after, lose: ar_beaten } } ], else: [ { host: { title: "The hosting of the Airgialla", foe: airgialla_men, terrain: field, men: 40, wings: [ { name: "The flank", ally: true, foe_men: 30 } ], role: host, reserve: { us: 0, them: 20 }, raid: true, win: ar_after, lose: ar_beaten } } ] }
+    - id: alone
+      text: Go up the hill with your own men, alone.
+      visible_if: "!partner"
+      danger: true
+      effects: [ { battle: { foe: airgialla_men, men: 55, terrain: field, raid: true, win: ar_after, lose: ar_beaten } } ]
+    - id: night
+      text: Wait for dark, and go over the bank on the far side while they're singing.
+      danger: true
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: |
+          They sing until midnight, and then they sleep, most of them, in their armour, on the slope facing the river where your ships are. You come over the bank on the other side with your shoes off, and you're inside the church of Patrick before the first bell rings.
+        effects: [ { plunder: { next: ar_after } } ]
+      failure:
+        text: |
+          A dog. There's always a dog. By the time you're over the bank there are torches everywhere, and the hosting of the Airgialla is coming round the hill at a run.
+        effects: [ { battle: { foe: airgialla_men, men: 50, terrain: rampart, raid: true, win: ar_after, lose: ar_beaten } } ]
+    - id: tribute
+      text: Send a man up the hill under a green branch. Patrick's peace has a price. Name it.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          The comarb of Patrick himself comes down to the river: an old, thin, terrible man in white, who looks at you the way you'd look at weather. He pays. Silver, and a great deal of it, in a leather bag with his seal on it, for a year's peace for Patrick's church. "God sees you," he says, as he hands it over. You don't doubt it.
+        effects: [ { add: { loot: 500 } }, { deed: { type: deed, text: "Took tribute from the comarb of Patrick at Armagh", weight: 5, witnesses: 200 } }, { set: flag.ar_tribute } ]
+      failure:
+        text: |
+          The man comes back down the hill with his green branch broken over his back. Patrick's peace is not for sale, it seems. Not to you. The singing gets louder.
+        effects: [ { add: { crew.morale: -1 } } ]
+
+- id: ar_after
+  kind: spine
+  art: iona_burning
+  title: Patrick's church
+  text: |
+    Inside the great church of Patrick it's cool and dim and smells of beeswax and old stone, and there's more silver on the altar than in the whole of Hordaland.
+
+    And behind the altar, in a niche of its own, with three candles burning in front of it, there's a bell. An iron hand-bell, small and plain, in a case of gilt bronze and silver worked so finely you can't see where one beast ends and the next begins. A monk is kneeling in front of it, very old, with his arms round it. He doesn't look up.
+  choices:
+    - id: bell
+      text: Take the bell-shrine. A man who's taken Patrick's bell has a name for ever.
+      effects: [ { item: { id: patrick_bell } }, { add: { honour: -1 } }, { spread: { from: armagh, n: -4, church: true } }, { deed: { type: deed, text: "Took the bell-shrine of Patrick from Armagh", weight: 6, witnesses: 200 } }, { set: flag.ar_bell } ]
+      result: |
+        The old monk doesn't let go. In the end two men have to lift him, still holding on, and set him down outside the door, where he sits in the grass with his empty arms in front of him.
+
+        Every church in Ireland will curse you by name before the summer's out. Every hall in the north will drink to it.
+    - id: leave
+      text: Take the silver, and leave the old man his bell.
+      effects: [ { add: { honour: 1, hamingja: 1 } }, { set: flag.ar_spared_bell } ]
+      result: |
+        You take the altar plate, and the candlesticks, and the silver from the chests in the sacristy. You leave the bell. The old monk looks up at you at last, as you go, and says something in Irish that sounds like a blessing, and might be.
+
+        Hallvard, if he's with you, will talk about that for years.
+    - id: burn
+      text: Strip it, and burn it, the way the Irish kings burn each other's churches.
+      effects: [ { add: { honour: -2 } }, { spread: { from: armagh, n: -5, church: true } }, { deed: { type: deed, text: "Burned the church of Patrick at Armagh", weight: 4, witnesses: 200 } }, { set: flag.ar_burned } ]
+      result: The roof goes up like a beacon, and the smoke stands over Ulster all afternoon. They'll see it in Dublin. They'll talk about it in Rome.
+
+- id: ar_beaten
+  kind: spine
+  title: Patrick's hill
+  text: |
+    The hosting of the Airgialla is better than any Irish levy you've met: javelins in the face, horse on the flanks, and a king's household at the centre that doesn't give an inch. In the end it's your line that goes back down Patrick's hill, step by step, and into the boats, with the monks still singing behind it.
+  choices:
+    - id: away
+      text: Row back down the river.
+      effects: [ { set: flag.ar_beaten }, { add: { crew.morale: -1 } }, { raided: { place: armagh, failed: true } } ]
+      result: Nobody speaks until you're at the sea. Then somebody says, "Patrick," the way you'd say the name of a man who'd beaten you fairly, and nobody argues.
+
+# ---- winter 833: the jarl's sons ----
+- id: fr_sons
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 8
+  requires: ["winter == 833", "place == home_fjord", { any: ["month == 12", "month <= 2"] }]
+  art: { key: yule_hall, laughter: flag.y_hall }
+  when: Yule, 833
+  title: The jarl's sons
+  text: |
+    The jarl isn't at the high seat for Yule this year. He's in his bed behind the hall, coughing, and the high seat is empty, and everybody keeps looking at it.
+
+    Eiríkr sits at its right hand, where he always sits. Hákon sits at its left. Between them the empty seat looks like a question nobody wants to ask aloud.
+    [break]
+    It's Eiríkr who asks it, in the end, with the bragarfull in his hand and too much ale in him. He stands up and looks down the hall at you, and says, loud enough for everyone: "There are men in this hall who think a ship makes a jarl. A boy finds a ship on a field in Ireland, and now he sits where my father's hirdmen sat. I'd like to know what he thinks he's owed."
+
+    The hall goes very quiet. Later, when Eiríkr's gone out to piss, Hákon slides along the bench to you.
+
+    "My father won't see the spring," he says, very low. "When he dies, the thing will choose between my brother and me. My brother will be a jarl like a winter. I'd rather be one like a summer. I need men who'll stand up at the thing and say so." He looks at you. "I'd remember them."
+  choices:
+    - id: hakon
+      text: Tell Hákon he'll have your voice at the thing.
+      effects: [ { set: flag.fr_backs_hakon } ]
+      result: He grips your hand under the table, hard, and slides back along the bench before his brother comes back in. Eiríkr comes back in. He looks at the two of you, and then away. He knows. Everyone will know.
+    - id: eirik
+      text: Go and find Eiríkr outside, and tell him what his brother's been saying.
+      effects: [ { set: flag.fr_backs_eirik }, { add: { honour: -1 } } ]
+      result: |
+        Eiríkr hears you out in the snow behind the byre. He doesn't thank you. He isn't the kind of man who thanks people. But he looks at you differently afterwards, the way a man looks at a tool he's found unexpectedly sharp. "I'll remember this," he says. Both of you know it's true in more than one way.
+    - id: answer
+      text: Answer Eiríkr, in front of the hall. Calmly.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You stand up. "I'm owed nothing," you say. "I brought your father's ship home full, and I'll do it again for whoever sits in that seat, if he wants me to. Does that answer you?" There's a silence, and then somebody at the bottom of the hall bangs his cup on the table, and then everybody does. Eiríkr sits down. He doesn't look at you again all night.
+        effects: [ { set: flag.fr_neutral }, { add: { flag.y_hall: 2 } } ]
+      failure:
+        text: |
+          You stand up and say something, and Eiríkr says something back, and it's better than yours. The hall laughs at you. Hákon doesn't. That stings more, somehow.
+        effects: [ { set: flag.fr_neutral }, { add: { honour: -1 } } ]

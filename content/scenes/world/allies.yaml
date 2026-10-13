@@ -289,11 +289,11 @@
   art: yule_hall
   title: The jarl's gift
   text: |
-    At the midwinter feast Jarl Eystein calls you up to the high seat, in front of everyone, and puts a turf in your hands: a square of earth, cut from a field, with the grass still on it.
+    At the midwinter feast [if flag.fr_jarl_hakon]Jarl Hákon[elif flag.fr_jarl_eirik]Jarl Eiríkr, who has never liked you,[else]Jarl Eystein[/if] calls you up to the high seat, in front of everyone, and puts a turf in your hands: a square of earth, cut from a field, with the grass still on it.
 
     "The old Hallsteinn farm, at the head of the long valley," he says. "Its man died without sons. It's mine to give, and I give it to you, to hold from me, for as long as you sail when I call."
   choices:
     - id: take
       text: Take the turf, and kneel.
-      effects: [ { base: farm }, { favour: 1 }, { deed: { type: deed, text: "Was given land by Jarl Eystein", weight: 4, witnesses: 100 } } ]
+      effects: [ { base: farm }, { favour: 1 }, { deed: { type: deed, text: "Was given land by the jarl", weight: 4, witnesses: 100 } } ]
       result: You kneel, and he puts his hand on your head, the old way. The hall roars. Your father, down the benches, doesn't roar. He's too busy looking at the ceiling, very hard, for some reason.
