@@ -238,6 +238,8 @@ export interface GameState {
   hallLeft: number;
   hero: Hero;
   honour: number;
+  /** A fallen sworn man's id → the oarsman who took his bench (scenes written before the death name him instead). */
+  standIns?: Record<string, string>;
   hamingja: number;
   silver: number;
   loot: number;

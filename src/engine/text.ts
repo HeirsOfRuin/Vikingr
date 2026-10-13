@@ -27,13 +27,37 @@ function branches(body: string, firstCond: string): { cond: string | null; text:
   }
 }
 
-export function renderText(text: string, state: GameState, content: ContentBundle): string {
+export interface RenderOpts {
+  /** Name the dead as themselves (mourning scenes). */
+  keepDead?: boolean;
+}
+
+/** Sworn men who have died, and the oarsman who took each one's bench: scenes written before the death name him instead. */
+function standIns(state: GameState, content: ContentBundle, opts?: RenderOpts): [RegExp, string, string][] {
+  if (opts?.keepDead) return [];
+  return state.men
+    .filter((m) => !m.alive && state.standIns?.[m.id])
+    .map((m) => [new RegExp(`\\b${content.men[m.id]?.name ?? m.name}\\b`, 'g'), state.standIns![m.id]!, m.id]);
+}
+
+export function renderText(text: string, state: GameState, content: ContentBundle, opts?: RenderOpts): string {
   const given = state.hero.name.split(' ')[0] ?? state.hero.name;
+  const subs = standIns(state, content, opts);
+  // a passage written around a man (its condition names him) keeps his name: the author meant him
   const out = text.replace(IF, (_all, cond: string, body: string) => {
-    for (const b of branches(body, cond)) if (b.cond === null || test(b.cond.trim(), state, content)) return b.text;
+    const keep = subs.filter(([, , id]) => body.includes(`man.${id}`) || cond.includes(`man.${id}`));
+    for (const b of branches(body, cond)) {
+      if (b.cond !== null && !test(b.cond.trim(), state, content)) continue;
+      let t = b.text;
+      for (const [re, , id] of keep) t = t.replace(re, `\u0001${id}\u0001`);
+      return t;
+    }
     return '';
   });
-  return out
+  let res = out;
+  for (const [re, name] of subs) res = res.replace(re, name);
+  for (const [, , id] of subs) res = res.replace(new RegExp(`\u0001${id}\u0001`, 'g'), content.men[id]?.name ?? id);
+  return res
     .replace(/\{name\}/g, given)
     .replace(/\{fullname\}/g, state.hero.name)
     .replace(/\{nick\}/g, state.hero.nickname ?? given)

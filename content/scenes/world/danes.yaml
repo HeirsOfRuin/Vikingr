@@ -1,0 +1,219 @@
+# The Danish and Swedish markets (playtest 3): Hedeby, Ribe, Birka, and Ubbi's summer on the Frisian coast.
+# History: Horik I is king of the Danes (from 827); the emperor's sons are at war (833); Danish fleets raid
+# Frisia through the 830s, and sack Dorestad in 834. Ansgar's mission is at Birka from 829 to about 831.
+
+- id: hd_market
+  kind: place
+  trigger: arrive
+  at: [hedeby]
+  once: true
+  title: Hedeby
+  text: |
+    Hedeby sits at the bottom of a long narrow fjord, behind a wall of earth higher than a house, in a half-circle, with a gate in it and a stream running through the middle. Inside the wall there are more houses than in your whole district, packed in rows along plank streets, and more smoke, and more people, and more noise than you have heard in your life.
+
+    There are ships from everywhere: Frisian traders, round-bellied and slow; Swedes with furs from the east; a Saxon with a cargo of millstones. There is a mint, and a man in it striking coins with a ship on one side and a stag on the other.
+    [break]
+    And at the water-gate there is a man with a staff and a wax tablet and six spearmen behind him: King Horik's toll-reeve, who takes a tenth of what comes in, and a tenth of what goes out, and looks at your ship and your shields with deep professional interest.
+
+    "Norwegian," he says. It isn't a question. "The king likes to know who's in his harbour."
+  choices:
+    - id: pay
+      text: Pay the king's toll, and give him your name.
+      effects: [ { add: { silver: -12 } }, { standing: { place: hedeby, n: 2 } } ]
+      result: He writes it on the wax, and your ship, and the number of your men. Then he wipes it smooth again, smiling, because the king has a long memory and doesn't need wax. You're welcome in Hedeby, he says, for as long as you pay.
+    - id: ubbi
+      text: Tell him you're here for Ubbi.
+      visible_if: "flag.ubbi_sworn || flag.ubbi_offer"
+      effects: [ { standing: { place: hedeby, n: 2 } } ]
+      result: His face changes. "Ubbi's men don't pay toll," he says, "until they've been to Frisia. After that they pay double." He waves you through.
+    - id: argue
+      text: Tell him a free man's ship pays no Dane for leave to tie up.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: He looks at you a long moment, and then laughs, and writes something on the wax that makes the spearmen laugh too. "Tie up," he says. "The king likes a man with a mouth. He likes to see what happens to them."
+        effects: [ { add: { honour: 1 } } ]
+      failure:
+        text: The spearmen step forward. You pay, in the end, and a little more for the trouble, and the whole water-gate watches you do it.
+        effects: [ { add: { silver: -24 } }, { standing: { place: hedeby, n: -1 } } ]
+
+- id: hd_ubbi
+  kind: place
+  trigger: arrive
+  at: [hedeby]
+  cooldown_days: 200
+  weight: 10
+  requires: [flag.ubbi_sworn, "!flag.ubbi_done", "!flag.ubbi_broken", "!service", "month >= 4", "month <= 8"]
+  title: Ubbi's fleet
+  text: |
+    There are twelve longships drawn up on the beach below the wall, with men swarming over them like flies over a carcass, and a red-bearded man standing on the stem-post of the biggest, roaring at all of them.
+
+    He sees your sail and stops roaring. Then he jumps down into the shallows and wades out to meet you, up to his waist, laughing.
+
+    "The Norwegian!" Ubbi shouts. "I said he'd come! Hrafn, you owe me a cow!"
+    [break]
+    He tells you over a horn of Frankish wine on the beach. The emperor's sons are at each other's throats again. The count who holds the Frisian coast has taken his household south to fight for one of them, and left his dykes and his terps and his churches with nobody but farmers to mind them.
+
+    "Twelve ships," Ubbi says. "Thirteen with yours. We sail on the next fair wind. A full share for every bench, and you'll stand on my left, where I can see you."
+  choices:
+    - id: sail
+      text: Clasp his hand. You said you'd come, and you came.
+      effects: [ { days: 6 }, { standing: { place: hedeby, n: 2 } }, { queue: { scene: hd_frisia, days: 0 } } ]
+      result: The next fair wind comes two days later. Thirteen ships go down the Schlei together in a line, with yours on Ubbi's left, and the whole of Hedeby on the wall to watch them go.
+    - id: shares
+      text: Ask for two shares for your own bench, before you'll go.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          Ubbi stares at you, and then roars with laughter and slaps the man next to him. "Two shares! The Norwegian wants two shares!" He holds out his hand. "Done. Earn them."
+        effects: [ { set: flag.ubbi_double }, { days: 6 }, { queue: { scene: hd_frisia, days: 0 } } ]
+      failure:
+        text: |
+          "One share, like everybody," says Ubbi, not laughing. "Or stay here and sell fish." You go. Of course you go.
+        effects: [ { days: 6 }, { queue: { scene: hd_frisia, days: 0 } } ]
+    - id: break
+      text: Tell him you've changed your mind.
+      effects: [ { set: flag.ubbi_broken }, { add: { honour: -2 } }, { standing: { place: hedeby, n: -3 } } ]
+      result: |
+        Ubbi doesn't shout. That's the worst of it. He looks at you, and then at your ship, and then turns his back and wades back to his own, and the men on the beach watch you all the way out of the harbour.
+
+        Every Dane in Hedeby will know by nightfall. Every Dane in Denmark, by Yule.
+
+- id: hd_frisia
+  kind: queued
+  art: bangor_field
+  title: The Frisian shore
+  text: |
+    The Frisian coast is not a coast. It's a grey line of mud and sand and channels, with islands that are only islands at high water, and churches standing up out of the flat land on mounds, and the sea coming in across it twice a day faster than a horse can run.
+
+    Ubbi knows it. He takes the fleet in through the channels at dawn on the flood, and puts you ashore below a terp with a church on top and a village round it and a road running inland along the dyke.
+    [break]
+    The count's men are not all gone. Forty of them come down the dyke road at a run, with a priest on a mule behind them holding up a cross, and form a line across the road where it's too narrow for the Danes to go round.
+
+    You are on Ubbi's left. The dyke road is in front of you.
+  choices:
+    - id: fight
+      text: Lock shields and take the dyke road.
+      danger: true
+      effects: [ { battle: { foe: frisian_levy, men: 36, terrain: field, win: hd_frisia_won, lose: hd_frisia_lost } } ]
+    - id: flank
+      text: Take your men round through the mud, waist-deep, and come at them from the side.
+      danger: true
+      check: { skill: cunning, attr: end, difficulty: 5 }
+      success:
+        text: An hour in mud to the waist, with the tide coming. You come up out of a ditch onto their flank as Ubbi's line hits their front, and they break all at once.
+        next: hd_frisia_won
+        effects: [ { set: flag.hd_flanked } ]
+      failure:
+        text: The mud is deeper than it looked, and the tide faster. By the time you claw your way out of the ditch, half-drowned, Ubbi's line is already locked with them, and you go in tired.
+        effects: [ { battle: { foe: frisian_levy, men: 36, terrain: field, win: hd_frisia_won, lose: hd_frisia_lost } } ]
+
+- id: hd_frisia_won
+  kind: spine
+  art: iona_burning
+  title: The terp
+  text: |
+    The Frisians break and run back along the dyke, and the Danes go up the terp after them, and the church on top of it is full of what churches are always full of.
+    [if flag.hd_flanked]
+    Ubbi finds you afterwards, still black with mud to the chest, and kisses you on both cheeks in front of his whole fleet. "Out of a ditch!" he keeps saying. "Out of a ditch, like a troll!"
+    [else]
+    Ubbi finds you afterwards with the blood still wet on you. "On my left," he says, "where I could see you." He doesn't say anything else. He doesn't need to.
+    [/if]
+    [break]
+    The fleet works up the coast for a month: three more terps, a market at a river-mouth, a monastery on an island that has seen Danes before and has nothing left. At the end of it the beach at Hedeby is covered in silver and cloth and wine and people, and Ubbi divides it standing on a barrel.
+  choices:
+    - id: share
+      text: Take your share, and the king's silver ring.
+      effects:
+        - { set: flag.ubbi_done }
+        - { set: flag.ubbi_dorestad }
+        - { if: flag.ubbi_double, then: [ { add: { loot: 420 } } ], else: [ { add: { loot: 300 } } ] }
+        - { days: 30 }
+        - { if: "!item.ubbi_ring", then: [ { item: { id: ubbi_ring } } ] }
+        - { deed: { type: deed, text: "Raided the Frisian coast with Ubbi's Danes, on his left hand", weight: 5, witnesses: 400 } }
+        - { standing: { people: danish, n: 2 } }
+        - { standing: { people: frisian, n: -3 } }
+      result: |
+        Ubbi puts the ring on your arm himself: thick, twisted, Danish silver, the king's own gift to the men who sail for him.
+
+        "Next year," he says, low, so only you can hear, "the emperor's sons will still be fighting. And Dorestad will still be there, with nobody watching it." He grins. "Think about it."
+
+- id: hd_frisia_lost
+  kind: spine
+  art: bangor_field
+  title: The dyke road
+  text: |
+    The dyke road is too narrow, and the Frisians know it. Your wall goes back step by step, and then breaks, and you're in the ditch with the water rising and men you know drowning in it.
+
+    Ubbi's line holds. It's the Danes, in the end, who take the terp, and the church, and the silver, while you're pulling your men out of the mud.
+  choices:
+    - id: share
+      text: Take what share he gives you.
+      effects:
+        - { set: flag.ubbi_done }
+        - { add: { loot: 120, honour: -1 } }
+        - { days: 30 }
+        - { standing: { people: frisian, n: -2 } }
+      result: |
+        Ubbi gives you a full share for every bench, as he promised, in front of everyone, and says nothing about the dyke road. That's harder to bear than anything he could say. He doesn't ask you to stand on his left again.
+
+- id: ribe_market
+  kind: place
+  trigger: arrive
+  at: [ribe]
+  once: true
+  title: Ribe
+  text: |
+    Ribe is older than Hedeby and smaller and smells worse: a strip of workshops along a river on the flat west side of Jutland, where the Frisian ships come in on the tide with wine and glass and pots and quernstones and go out again with whatever the north has.
+
+    Everybody here seems to be a Frisian, or married to one. They speak a Norse you can almost follow, and a Frisian you can't, and they look at your shields with the polite blankness of people who've been raided by men like you and would rather not mention it.
+  choices:
+    - id: drink
+      text: Drink with the Frisian skippers, and listen.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          They warm up, eventually, over a lot of their own wine. Dorestad, they tell you, half proud and half afraid: the biggest market in the north, a mile of jetties along the Rhine, and the emperor's toll-house, and churches, and nobody on the walls since the emperor's sons fell out. One of them says, very drunk, that a man with a fleet could take it in an afternoon. The others hush him.
+        effects: [ { set: flag.ribe_dorestad }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: They drink your ale and tell you about the price of herring. You learn a great deal about the price of herring.
+    - id: wine
+      text: Buy a cask of Rhenish wine for the jarl.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { standing: { place: home_fjord, n: 1 } } ]
+      result: The cask goes home in the bilge, wrapped in a sail. At Yule, the jarl drinks it in one evening, and asks where you got it, and remembers.
+    - id: walk
+      text: Walk the workshops, and look.
+      effects: [ { add: { skill.craft: 1 } } ]
+      result: Glass-beads, combs of antler, brooches cast in clay moulds by the dozen. Everything here is made a hundred at a time, by people who don't look up. You have never seen anything like it.
+
+- id: birka_market
+  kind: place
+  trigger: arrive
+  at: [birka]
+  once: true
+  title: Birka
+  text: |
+    Birka is on an island in a lake as big as a sea, a day's row from the open water through a maze of other islands, with a hill-fort above it and a harbour below and the king of the Swedes' hall on the next island over.
+
+    The silver here is different. It comes from the east, in round coins with writing on them that nobody can read, cut into pieces and weighed. A fur trader shows you one with the writing still crisp, and says it came from a city further east than anyone in this harbour has been, on a river further east than that.
+    [break]
+    And in the middle of the market there is a monk: a Frank, thin and dark, standing on a box and talking about his god in bad Norse to anyone who'll listen. Nobody is stopping him. A few people are listening. The king, they say, has given him leave.
+
+    His name is Ansgar.
+  choices:
+    - id: listen
+      text: Stop, and listen to the monk.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.birka_ansgar } ]
+      result: |
+        He talks about a god who was hanged on a tree and came back, which sounds familiar, and a world where the poor go first, which doesn't. Afterwards he asks your name, and where you're from, and writes it down on a scrap of parchment, and thanks you as if you'd done him a kindness.
+        [if man.hallvard.alive]
+        Hallvard watches the whole thing with his arms folded, and spits when it's over, and is quiet for the rest of the day.
+        [/if]
+    - id: furs
+      text: Talk to the fur traders about the river road east.
+      effects: [ { add: { skill.trade: 1 } }, { set: flag.birka_east } ]
+      result: They tell you about it gladly, because they want you to go and be robbed instead of them. Ladoga, the portages, the river-Slavs, the Khazars, the city of the great king at the end of it all. Months, there and back. More silver than you can imagine, if you live.
+    - id: hall
+      text: Go up to the hill-fort and pay your respects.
+      effects: [ { standing: { place: birka, n: 2 } }, { add: { silver: -12 } } ]
+      result: The king's reeve takes your gift and your name, and gives you a seat at the bottom of the hall that night, and the Swedes are friendlier to you afterwards. Swedes, you find, are much like Norwegians, but they think the opposite.

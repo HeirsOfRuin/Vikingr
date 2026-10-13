@@ -34,3 +34,8 @@
   quality: 0
   doctrine: { hold: 3, missiles: 2, give: 1 }
   desc: Traders and their hired men. They will fight for the cargo, but not for long.
+- id: frisian_levy
+  name: The Frisian count's men
+  quality: 1
+  doctrine: { hold: 3, missiles: 2, push: 1, give: 1 }
+  desc: Freemen of the dykes and terps, with a count's mounted household behind them. They know their own mudflats better than you do.

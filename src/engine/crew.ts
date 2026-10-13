@@ -18,6 +18,18 @@ export function mouths(state: GameState): number {
   return state.crew.men + aliveMen(state).length + 1;
 }
 
+/** What the ship can spend on its own needs: his silver, and, in his own ship, the plunder heap. */
+export function purse(state: GameState): number {
+  return state.silver + (state.service ? 0 : state.loot);
+}
+
+/** The ship's costs (food, sign-on gifts, a refit) come off the heap before the share-out, as any captain's would; then out of his own silver. */
+export function payShip(state: GameState, n: number): void {
+  const heap = state.service ? 0 : Math.min(n, state.loot);
+  state.loot -= heap;
+  state.silver = Math.max(0, state.silver - (n - heap));
+}
+
 /** Men the fleet can carry. */
 export function capacity(state: GameState, content: ContentBundle): number {
   return state.ships.reduce((s, sh) => s + (content.ships[sh.type]?.crew ?? 0), 0);

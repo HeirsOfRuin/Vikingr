@@ -44,7 +44,7 @@ const BREAK = /^\s*\[break\]\s*$/m;
 
 /** A scene read in beats: [break] lines split it into pages; the choices come on the last page. */
 function SceneView({ content, state, scene, onAct }: { content: ContentBundle; state: GameState; scene: Scene; onAct: (a: Action) => void }) {
-  const pages = renderText(scene.text, state, content).split(BREAK).map((t) => t.trim()).filter(Boolean);
+  const pages = renderText(scene.text, state, content, { keepDead: scene.id.startsWith('mourn_') }).split(BREAK).map((t) => t.trim()).filter(Boolean);
   const [page, setPage] = useState(0);
   useEffect(() => setPage(0), [scene.id, state.day]);
   const last = page >= pages.length - 1;

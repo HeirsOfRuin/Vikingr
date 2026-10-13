@@ -39,7 +39,13 @@ export function listen(state: GameState, content: ContentBundle, rng: RngCursor,
   state.rumoured.push(id);
   journal(state, `Heard of ${p.name} from the old sailors at ${content.places[at]!.name}.`);
   const out = [`An old man with one eye and a cup in each hand tells you of ${p.name}.`, p.rumour ?? p.desc];
-  out.push(p.active ? 'Nobody you know has the way there. It is on your map now, faint, where he said it would be.' : 'It is a long way beyond anywhere you could take a ship this year. But it is on your map now, faint, where he said it would be.');
+  const road = content.legs.find((l) => !l.expedition && (l.a === id || l.b === id) && state.known.includes(l.a === id ? l.b : l.a));
+  const from = road ? content.places[road.a === id ? road.b : road.a]!.name : null;
+  out.push(!p.active
+    ? 'It is a long way beyond anywhere you could take a ship this year. But it is on your map now, faint, where he said it would be.'
+    : from
+      ? `He tells you the way, too: from ${from}, ${road!.days} days, ${road!.kind === 'open' ? 'over open sea' : road!.kind === 'river' ? 'up the river and over the portage' : 'along the coast'}. It is on your map now.`
+      : 'Nobody you know has the way there; it would take an expedition to find it. It is on your map now, faint, where he said it would be.');
   return out;
 }
 

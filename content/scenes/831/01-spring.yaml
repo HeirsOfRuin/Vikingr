@@ -131,6 +131,13 @@
 
           Gyða has heard all of it through the wall. "Well done," she says. "Shall I tell him you'd like to try for five?"
         effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_high } ]
+    - id: release
+      text: Tell her the truth. You won't have three marks, and you won't ask her to wait.
+      effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_declined }, { add: { honour: 1 } } ]
+      result: |
+        She hears you out with her arms folded. When you've finished she's quiet a long while.
+
+        "That's the first honest thing anyone's said to me all winter," she says at last. "I'd rather you'd lied." She goes back in. By the time you sail, she's stopped coming to the landing.
     - id: away
       text: Ask her to come away with you now, and let Bárð keep his scales.
       effects: [ { set: flag.gyda_eloped }, { add: { honour: -1 } }, { wife: Gyða } ]

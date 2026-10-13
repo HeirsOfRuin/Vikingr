@@ -5,11 +5,12 @@ import { DUEL_MOVES, SKILLS } from '../content/schema';
 import type { GameState, Pending, Position } from './state';
 import { RngCursor, seedRng } from './rng';
 import { dateOf, dayOf } from './calendar';
-import { test, unmetLabel } from './conditions';
+import { condPaths, test, unmetLabel } from './conditions';
+import type { CondInput } from '../content/schema';
 import { applyEffects } from './effects';
 import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
-import { addRecruits, aliveMen, capacity, mouths, newMan } from './crew';
+import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse } from './crew';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
@@ -43,8 +44,8 @@ export type Action =
   | { t: 'hire' }
   | { t: 'land' }
   | { t: 'listen' }
-  | { t: 'hoard_in' }
-  | { t: 'hoard_out' }
+  | { t: 'hoard_in'; n?: number }
+  | { t: 'hoard_out'; n?: number }
   | { t: 'hang'; item: string }
   | { t: 'keep_thralls' }
   | { t: 'shop' }
@@ -175,6 +176,15 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
 
 // ---- view ----
 
+/** A choice that needs a sworn man who is dead is not offered at all: greyed out, it reads like a ghost. */
+function needsTheDead(state: GameState, req: CondInput | undefined): boolean {
+  if (!req) return false;
+  return condPaths(req).some((p) => {
+    const [ns, id] = p.split('.');
+    return ns === 'man' && state.men.some((m) => m.id === id && !m.alive);
+  });
+}
+
 const opt = (group: string, action: Action, label: string, enabled = true, reason?: string, hint?: string): ActionOption => ({ group, action, label, enabled, reason, hint });
 
 export function screenOf(state: GameState): Screen {
@@ -213,9 +223,18 @@ function shopOption(state: GameState, content: ContentBundle): ActionOption[] {
 export function baseActions(state: GameState, content: ContentBundle): ActionOption[] {
   if (state.at !== 'home_fjord' || state.voyage) return [];
   const out: ActionOption[] = [];
-  const keep = Math.max(0, state.silver - 24);
-  out.push(opt('Your base', { t: 'hoard_in' }, 'Bury silver in your hoard', keep > 0, 'You have nothing to spare.', keep > 0 ? `${formatSilver(keep)}, keeping a mark in hand` : undefined));
-  out.push(opt('Your base', { t: 'hoard_out' }, 'Dig up your hoard', state.base.hoard > 0, 'The hoard is empty.', state.base.hoard > 0 ? formatSilver(state.base.hoard) : undefined));
+  // bury a mark, half, or all but a mark; dig up a mark, or the lot
+  const MARK = ORTUG_PER_MARK;
+  const spare = Math.max(0, state.silver - MARK);
+  if (state.silver < MARK * 2) out.push(opt('Your base', { t: 'hoard_in' }, 'Bury silver in your hoard', false, 'You have nothing to spare.'));
+  else {
+    out.push(opt('Your base', { t: 'hoard_in', n: MARK }, 'Bury a mark in your hoard', true, undefined, formatSilver(MARK)));
+    const half = Math.floor(state.silver / 2);
+    if (half > MARK) out.push(opt('Your base', { t: 'hoard_in', n: half }, 'Bury half your silver', true, undefined, formatSilver(half)));
+    if (spare > half) out.push(opt('Your base', { t: 'hoard_in', n: spare }, 'Bury all but a mark', true, undefined, formatSilver(spare)));
+  }
+  if (state.base.hoard > MARK) out.push(opt('Your base', { t: 'hoard_out', n: MARK }, 'Dig up a mark from your hoard', true, undefined, `${formatSilver(state.base.hoard)} buried`));
+  out.push(opt('Your base', { t: 'hoard_out' }, 'Dig up the whole hoard', state.base.hoard > 0, 'The hoard is empty.', state.base.hoard > 0 ? formatSilver(state.base.hoard) : undefined));
   for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall`));
   return out;
 }
@@ -228,10 +247,10 @@ function homeActions(state: GameState, content: ContentBundle): ActionOption[] {
     n > 0 ? undefined : room <= 0 ? 'Your ships are full.' : state.musterPool <= 0 ? 'No one else in the district will sign on this year.' : 'You cannot pay the sign-on gifts.',
     `${formatSilver(3)} each`));
   const pc = provisionCost(state);
-  out.push(opt('Muster', { t: 'provision' }, 'Buy provisions', pc.need > 0 && state.silver > 0,
-    pc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver.', pc.need > 0 ? `${formatSilver(pc.cost)} for 40 days` : undefined));
+  out.push(opt('Muster', { t: 'provision' }, 'Buy provisions', pc.need > 0 && purse(state) > 0,
+    pc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', pc.need > 0 ? `${formatSilver(pc.cost)} for 40 days` : undefined));
   const rc = refitCost(state);
-  if (state.ships.length) out.push(opt('Muster', { t: 'refit' }, 'Refit the ships', rc > 0 && state.silver >= rc, rc <= 0 ? 'The ships are sound.' : `You need ${formatSilver(rc)}.`, rc > 0 ? formatSilver(rc) : undefined));
+  if (state.ships.length) out.push(opt('Muster', { t: 'refit' }, 'Refit the ships', rc > 0 && purse(state) >= rc, rc <= 0 ? 'The ships are sound.' : `You need ${formatSilver(rc)}.`, rc > 0 ? formatSilver(rc) : undefined));
   if (!state.ships.length) out.push(opt('Muster', { t: 'borrow_ship' }, "Borrow a ship from the jarl", true, undefined, 'For a quarter of the plunder'));
   return out;
 }
@@ -255,10 +274,10 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     case 'scene': {
       const scene = content.scenes[(p as { id: string }).id]!;
       return scene.choices
-        .filter((c) => test(c.visible_if, state, content))
+        .filter((c) => test(c.visible_if, state, content) && !needsTheDead(state, c.requires))
         .map((c) => {
           const ok = test(c.requires, state, content);
-          return opt('', { t: 'choose', id: c.id }, c.text, ok, ok ? undefined : `Requires ${unmetLabel(c.requires!, state, content)}`, c.check ? checkBand(state, content, c.check) : undefined);
+          return opt('', { t: 'choose', id: c.id }, renderText(c.text, state, content), ok, ok ? undefined : `Requires ${unmetLabel(c.requires!, state, content)}`, c.check ? checkBand(state, content, c.check) : undefined);
         });
     }
     case 'duel': {
@@ -376,7 +395,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them`));
         } else {
           const rc = resupplyCost(state, content, at);
-          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && state.silver + state.loot > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
           if (content.places[at]!.market) out.push(...shopOption(state, content));
           const year = dateOf(state.day).year;
           if (GUEST_DAYS[tier] > 0) out.push(opt('Here', { t: 'guest' }, 'Ask for guest-right', state.places[at]?.guested !== year, 'You have had their hospitality this year.', `Food for ${GUEST_DAYS[tier]} days, free, once a year`));
@@ -455,7 +474,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
           next = o.next ?? next;
         }
       }
-      if (text) text = renderText(text, state, content);
+      if (text) text = renderText(text, state, content, { keepDead: scene.id.startsWith('mourn_') });
       const pd = state.pending as Pending | null;
       if (pd) {
         if (text && pd.t === 'duel') pd.duel.log.unshift(text);
@@ -484,12 +503,10 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       break;
     case 'resupply': {
       const rc = resupplyCost(state, content, state.at!)!;
-      // his own silver first; then the ship's stores are bought out of the heap, as any captain would
-      const pay = Math.min(rc.cost, state.silver + state.loot);
+      // the ship's stores are bought out of the heap, as any captain's would; then out of his own silver
+      const pay = Math.min(rc.cost, purse(state));
       const got = rc.cost ? Math.round((rc.need * pay) / rc.cost) : 0;
-      const own = Math.min(pay, state.silver);
-      state.silver -= own;
-      state.loot -= pay - own;
+      payShip(state, pay);
       state.provisions += got;
       state.day += 1;
       // a paying customer is remembered kindly, up to a point
@@ -518,17 +535,19 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       equip(state, content, action.uid);
       break;
     case 'hoard_in': {
-      const n = Math.max(0, state.silver - 24);
+      const n = Math.max(0, Math.min(state.silver, action.n ?? state.silver - ORTUG_PER_MARK));
       state.silver -= n;
       state.base.hoard += n;
       journal(state, `Buried ${formatSilver(n)} in the hoard.`);
       break;
     }
-    case 'hoard_out':
-      state.silver += state.base.hoard;
-      journal(state, `Dug up ${formatSilver(state.base.hoard)} from the hoard.`);
-      state.base.hoard = 0;
+    case 'hoard_out': {
+      const n = Math.min(state.base.hoard, action.n ?? state.base.hoard);
+      state.silver += n;
+      state.base.hoard -= n;
+      journal(state, `Dug up ${formatSilver(n)} from the hoard.`);
       break;
+    }
     case 'hang':
       hangTrophy(state, content, action.item);
       break;
@@ -560,7 +579,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     }
     case 'hire': {
       const n = hireable(state, content, state.at!);
-      state.silver -= n * SIGN_ON_GIFT;
+      payShip(state, n * SIGN_ON_GIFT);
       addRecruits(state, n);
       const ps = state.places[state.at!]!;
       ps.hired = (ps.hired ?? 0) + n;

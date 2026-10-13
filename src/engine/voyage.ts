@@ -1,5 +1,6 @@
 // Sailing: the place graph, and legs resolved day by day (wind, provisions,
 // storms, encounters). A voyage stops when something happens and resumes after.
+import { benchHeir } from './fights';
 import type { ContentBundle, Leg } from '../content/schema';
 import type { GameState, Wind } from './state';
 import type { RngCursor } from './rng';
@@ -27,8 +28,9 @@ export function routes(state: GameState, content: ContentBundle, from: string, a
   return content.legs
     .filter((l) => l.a === from || l.b === from)
     .map((leg) => ({ leg, to: leg.a === from ? leg.b : leg.a }))
-    // uncharted water is sailed only as an expedition, until the far end is charted
-    .filter((r) => content.places[r.to]?.active && (r.leg.expedition ? state.known.includes(r.to) && state.known.includes(from) : any || state.known.includes(r.to)))
+    // uncharted water is sailed only as an expedition, until the far end is charted; a rumour of a place on a
+    // known sea road is enough to find it
+    .filter((r) => content.places[r.to]?.active && (r.leg.expedition ? state.known.includes(r.to) && state.known.includes(from) : any || state.known.includes(r.to) || state.rumoured.includes(r.to)))
     .map((r) => ({ ...r, days: Math.round((r.leg.days / (speed * AVG_PROGRESS)) * 10) / 10 }));
 }
 
@@ -137,6 +139,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
           m.diedOn = state.day;
           lines.push(`${m.name} is not among the men pulled from the water.`);
           journal(state, `${m.name} drowned.`);
+          (state.standIns ??= {})[m.id] = benchHeir(state, content);
         }
       }
       const survive = 0.35 + 0.05 * effAttr(state, content, 'end') + 0.03 * state.hero.skills.seamanship + 0.02 * state.hamingja;

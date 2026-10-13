@@ -86,6 +86,13 @@
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.married_gyda } ]
       next: w1_feast
+    - id: withdraw
+      text: Tell Bárð you won't be putting silver on his scales.
+      effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_declined }, { add: { honour: -1 } } ]
+      result: |
+        Bárð looks at you for a long moment, and then at his daughter, and then puts the scales away without a word.
+
+        Gyða doesn't cry. She walks you to the door, very straight, and says, "Well. Now I know." She's married by spring to a man from the next valley. She's civil to you at the thing, and never more than civil, and that's the end of it.
     - id: plead
       text: Ask Bárð for one more summer.
       check: { skill: speech, attr: pre, difficulty: 5 }

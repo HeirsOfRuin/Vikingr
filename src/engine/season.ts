@@ -5,7 +5,7 @@ import type { GameState } from './state';
 import type { RngCursor } from './rng';
 import { dateOf, dayOf, nextDoy, formatDate } from './calendar';
 import { addDeed, composeVerse, livingFame, tellDeeds, untoldCount } from './fame';
-import { addLoyalty, addRecruits, aliveMen, capacity, clampMorale, mouths, SHIP_NAMES } from './crew';
+import { addLoyalty, addRecruits, aliveMen, capacity, clampMorale, mouths, payShip, purse, SHIP_NAMES } from './crew';
 import { effAttr, heal, learn, strawDeathCheck, kill, age } from './hero';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
@@ -25,13 +25,13 @@ export const SERVICE_CREW = 26;
 // ---- muster ----
 
 export function recruitable(state: GameState, content: ContentBundle): number {
-  return Math.max(0, Math.min(state.musterPool, capacity(state, content) - state.crew.men - aliveMen(state).length, Math.floor(state.silver / SIGN_ON_GIFT)));
+  return Math.max(0, Math.min(state.musterPool, capacity(state, content) - state.crew.men - aliveMen(state).length, Math.floor(purse(state) / SIGN_ON_GIFT)));
 }
 
 export function recruit(state: GameState, content: ContentBundle): string[] {
   const n = recruitable(state, content);
   if (n <= 0) return ['No one else will sign on.'];
-  state.silver -= n * SIGN_ON_GIFT;
+  payShip(state, n * SIGN_ON_GIFT);
   state.musterPool -= n;
   addRecruits(state, n);
   state.day += 5;
@@ -47,9 +47,9 @@ export function provisionCost(state: GameState): { need: number; cost: number } 
 
 export function provision(state: GameState): string[] {
   const { need, cost } = provisionCost(state);
-  const pay = Math.min(cost, state.silver);
+  const pay = Math.min(cost, purse(state));
   const got = cost ? Math.round((need * pay) / cost) : 0;
-  state.silver -= pay;
+  payShip(state, pay);
   state.provisions += got;
   state.day += 2;
   return [`Dried fish, barley, butter and ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`];
@@ -61,8 +61,8 @@ export function refitCost(state: GameState): number {
 
 export function refit(state: GameState, content: ContentBundle): string[] {
   const cost = refitCost(state);
-  if (cost > state.silver) return ['You cannot pay the shipwright.'];
-  state.silver -= cost;
+  if (cost > purse(state)) return ['You cannot pay the shipwright.'];
+  payShip(state, cost);
   for (const s of state.ships) s.hull = 100;
   state.day += 5;
   learn(state, 'craft', 2);

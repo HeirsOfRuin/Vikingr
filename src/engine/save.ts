@@ -2,6 +2,7 @@
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { kitFromFlags } from './items';
+import { benchHeir } from './fights';
 import { newBase } from './base';
 
 export const SAVE_FORMAT = 'vikingr-save';
@@ -49,6 +50,8 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
   state.crew.gear ??= 0;
   state.base ??= newBase();
   kitFromFlags(state, content, state.hero.background);
+  // sworn men who fell before bench-heirs existed get one, so old scenes stop naming them
+  for (const m of state.men) if (!m.alive && !state.standIns?.[m.id]) (state.standIns ??= {})[m.id] = benchHeir(state, content);
   for (const id of Object.keys(content.places)) {
     const p = content.places[id]!;
     state.places[id] ??= { wealth: p.raid?.wealth ?? 0, defence: 1, raided: 0, lastRaided: null };

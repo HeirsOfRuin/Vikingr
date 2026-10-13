@@ -91,7 +91,9 @@ describe('the base', () => {
 
   it('the hoard is buried at home and survives a shipwreck; the sea-chest does not', () => {
     let s = winterHome();
-    s = act(content, s, { t: 'hoard_in' });
+    s = act(content, s, { t: 'hoard_in', n: 1000 });
+    expect(s.base.hoard).toBe(1000);
+    s = act(content, s, { t: 'hoard_in', n: 1000 - 24 }); // all but a mark
     expect(s.silver).toBe(24);
     expect(s.base.hoard).toBe(2000 - 24);
     s = act(content, s, { t: 'hoard_out' });

@@ -214,3 +214,16 @@ wife_asta: { description: "Married Ásta the silversmith's widow" }
 # ---- the household (content/scenes/world/winter.yaml) ----
 child_son: { description: "A son born to him" }
 child_daughter: { description: "A daughter born to him" }
+gyda_declined: { description: "Chose not to court Gyða, or withdrew" }
+h_jarl_trust: { description: "Jarl Eystein accepted his account of Bangor and trusts him with the Raven" }
+h_jarl_doubt: { description: "Jarl Eystein let him keep the Raven, without trusting him" }
+h_asgeir_widow: { description: "Gave Ásgeir's share to his widow on the landing" }
+# ---- the Danish and Swedish markets (content/scenes/world/danes.yaml) ----
+ubbi_done: { description: "Raided the Frisian coast with Ubbi" }
+ubbi_broken: { description: "Broke his word to Ubbi at Hedeby" }
+ubbi_double: { description: "Got two shares out of Ubbi" }
+ubbi_dorestad: { description: "Ubbi spoke of Dorestad, next year" }
+hd_flanked: { description: "Came out of the ditch onto the Frisians' flank" }
+ribe_dorestad: { description: "Heard of Dorestad's empty walls from the Frisians at Ribe" }
+birka_ansgar: { description: "Listened to Ansgar the monk at Birka" }
+birka_east: { description: "Heard of the river road east at Birka" }

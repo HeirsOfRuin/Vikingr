@@ -94,7 +94,7 @@ places:
     people: norse
     standing: 2
     region: Vík
-    tells: [karmoy]
+    tells: [karmoy, hedeby]
     rumours: [hedeby, birka, dorestad, aldeigjuborg]
     desc: "The market at Skíringssalr: a beach of booths and smoke under the king's hall, where Danes, Frisians and Swedes sell everything, and buy everything, including people."
     known: false
@@ -142,12 +142,12 @@ places:
     raid: { wealth: 1300, defenders: 26, foe: conaille_men, terrain: field }
   # ---- later phases ----
   - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, people: norse, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
-  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes." }
-  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland.", rumour: "A Danish market on the west side of Jutland, older than Hedeby, where the Frisian ships come in with wine and cloth." }
-  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read." }
-  - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings." }
-  - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea." }
-  - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast." }
+  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes.", standing: 0, active: true, market: true, tells: [ribe], rumours: [birka, dorestad, truso] }
+  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland.", rumour: "A Danish market on the west side of Jutland, older than Hedeby, where the Frisian ships come in with wine and cloth.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [dorestad, walcheren] }
+  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [gotland, aldeigjuborg, uppsala] }
+  - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings.", rumour: "The Swedes' great temple, he says, a day inland from Birka: a hall roofed with gold, and three great mounds of the old kings, and a grove where they hang the sacrifices every ninth year, men and horses and dogs together." }
+  - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea.", rumour: "A rich island in the middle of the eastern sea, he says, where every farmer buries his silver in the floor and the traders come from every shore of the Baltic." }
+  - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast.", rumour: "An amber market at the mouth of a river on the far side of the eastern sea, he says, among people who speak no tongue anyone in Hedeby knows, and sell amber by the sack." }
   - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves." }
   - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky." }
   - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain." }
@@ -158,7 +158,7 @@ places:
   - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, people: english, kind: island, region: Kent, desc: "An island in the mouth of the Thames." }
   - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, people: english, kind: market, region: Mercia, desc: "The market on the Thames." }
   - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, people: frisian, kind: market, region: Frisia, desc: "The richest market of the Frankish north.", rumour: "The richest market of the Franks, on the Rhine, so rich they say the streets are paved with broken pots. The emperor's sons are fighting each other, and nobody is guarding it." }
-  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth." }
+  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth.", rumour: "An island in the mouths of the Scheldt, he says, flat as a table, with a church and a count's tollhouse, and the Frisian ships going past it all summer to the markets up the rivers." }
   - { id: noirmoutier, name: "Noirmoutier", lon: -2.25, lat: 47.0, people: frankish, kind: monastery, region: Frankia, desc: "A monastery island off the Loire." }
   - { id: nantes, name: "Nantes", lon: -1.55, lat: 47.22, people: frankish, kind: town, region: Frankia, desc: "A city on the Loire." }
   - { id: rouen, name: "Rouen", lon: 1.1, lat: 49.44, people: frankish, kind: town, region: Frankia, desc: "A city on the Seine." }
@@ -184,3 +184,9 @@ legs:
   - { a: shetland, b: faroes, days: 3, kind: open, expedition: true }
   - { a: orkney, b: faroes, days: 4, kind: open, expedition: true }
   - { a: home_fjord, b: faroes, days: 5, kind: open, expedition: true }
+  # the Danish and Swedish markets (playtest 3: Ubbi's Hedeby, and rumours that lead somewhere)
+  - { a: kaupang, b: hedeby, days: 4, kind: coastal }
+  - { a: hedeby, b: ribe, days: 2, kind: river }
+  - { a: home_fjord, b: ribe, days: 4, kind: open }
+  - { a: hedeby, b: birka, days: 7, kind: coastal }
+  - { a: kaupang, b: birka, days: 8, kind: coastal }

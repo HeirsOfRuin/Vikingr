@@ -3,7 +3,7 @@
 import type { ContentBundle, People } from '../content/schema';
 import type { GameState } from './state';
 import { journal } from './journal';
-import { aliveMen, capacity, mouths } from './crew';
+import { aliveMen, capacity, mouths, purse } from './crew';
 import { PROVISION_ORTUG_PER, SIGN_ON_GIFT } from './tuning';
 
 export const STANDING_MIN = -10;
@@ -162,5 +162,5 @@ export function resupplyCost(state: GameState, content: ContentBundle, id: strin
 /** Men he can hire here now: willing, with benches for them, and with the sign-on gift in his purse. */
 export function hireable(state: GameState, content: ContentBundle, id: string): number {
   const room = Math.max(0, capacity(state, content) - state.crew.men - aliveMen(state).length);
-  return Math.max(0, Math.min(canHire(state, content, id), room, Math.floor(state.silver / SIGN_ON_GIFT)));
+  return Math.max(0, Math.min(canHire(state, content, id), room, Math.floor(purse(state) / SIGN_ON_GIFT)));
 }

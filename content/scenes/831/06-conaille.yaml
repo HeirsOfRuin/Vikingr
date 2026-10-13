@@ -194,6 +194,20 @@
         - { queue: { scene: c_ransom, days: 2 } }
         - { plunder: { next: c_after } }
       result: You get up. It takes a while. The king, tied hand and foot in the yard, watches you do it with something like sympathy.
+    - id: cup
+      text: Get up. Go into his hall, and drink from his cup.
+      effects:
+        - { set: flag.c_king_taken }
+        - { set: flag.c_drank }
+        - { keep_boast: irish_cup }
+        - { captives: 2 }
+        - { deed: { type: deed, text: "Drank from Máel Brigte's cup in his own hall, with his marks still on his face", weight: 4 } }
+        - { queue: { scene: c_ransom, days: 2 } }
+        - { plunder: { next: c_after } }
+      result: |
+        You get up, and walk into his hall with blood running into your beard, and pick up the horn from the high table with both hands. The ale is warm and sour and you can barely taste it through the blood.
+
+        The men cheer. They know who knocked whom down in that doorway, and so does the king, watching from the yard. But you swore it over the cup, and now it's done, and a boast doesn't ask how.
 
 - id: c_beaten
   kind: spine

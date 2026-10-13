@@ -165,6 +165,9 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
       m.diedOn = state.day;
       lines.push(`${m.name} is dead.`);
       journal(state, `${m.name} fell${b.place ? ' at ' + (content.places[b.place]?.name ?? b.place) : ''}.`);
+      const heir = benchHeir(state, content);
+      (state.standIns ??= {})[m.id] = heir;
+      journal(state, `${heir} took ${m.name}'s bench.`);
       // a death is mourned, if a scene has been written for it
       if (content.scenes[`mourn_${m.id}`]) state.queue.push({ scene: `mourn_${m.id}`, day: state.day + 1 });
     }
@@ -288,4 +291,11 @@ export function startRaid(state: GameState, content: ContentBundle, rng: RngCurs
   state.seasonRaids.push(placeId);
   startBattle(state, content, { foe: p.raid.foe, men, terrain: p.raid.terrain, context: 'raid', place: placeId });
   if (state.pending?.t === 'battle') state.pending.battle.log.unshift(surprise ? 'You come in with the dawn and most of them are still asleep.' : 'They saw your sails. They are waiting.');
+}
+
+/** A name for the oarsman who takes a fallen sworn man's bench: one nobody aboard already answers to. */
+export function benchHeir(state: GameState, content: ContentBundle): string {
+  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0]]);
+  const free = content.names.filter((n) => !taken.has(n));
+  return free[(state.day * 7 + state.men.length * 13) % Math.max(1, free.length)] ?? 'Grim';
 }
