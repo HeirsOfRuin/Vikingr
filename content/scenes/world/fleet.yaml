@@ -1,0 +1,143 @@
+# The fleet (docs/FRAME-FLEET.md): who has the steering-oar of every ship but yours, and what that costs.
+
+- id: fl_master
+  kind: queued
+  requires: ["ships >= 2", "!service", "masters.hired >= 1"]
+  art: muster
+  title: A ship needs a master
+  text: |
+    {newship} sits on the shingle with her oars stowed and nobody in her stern. A ship without a man at her steering-oar is a heap of planks that happens to float.
+
+    For now {newmaster} has her: a steersman you've hired, who knows his work and wants his three shares for it, and whose loyalty is to the silver. That's how most of the ships in the north are steered. It isn't how the good ones are.
+    [break]
+    Your sworn men know what this is. They're very carefully not looking at you.
+  choices:
+    - id: ketill
+      text: Give her to Ketill.
+      visible_if: "man.ketill.sworn && !man.ketill.master"
+      effects: [ { master: ketill } ]
+      result: |
+        Ketill looks at the steering-oar for a long moment, as if it might bite him. "Forty years I've rowed," he says. "Nobody ever asked me to steer." He takes it, finally, in both hands, the way a man picks up a child he's afraid of dropping. He'll be the most careful shipmaster in the north. He'll never lose her.
+    - id: ulf
+      text: Give her to Ulf.
+      visible_if: "man.ulf.sworn && !man.ulf.master"
+      effects: [ { master: ulf } ]
+      result: |
+        Ulf whoops so loud the gulls go up off the whole beach. He is in her stern before you've finished speaking, roaring orders at men who haven't come aboard yet. She'll be the fastest ship in the fleet, and the first into everything, and you'll have to keep one eye on her always.
+    - id: hallvard
+      text: Give her to Hallvard.
+      visible_if: "man.hallvard.sworn && !man.hallvard.master"
+      effects: [ { master: hallvard } ]
+      result: |
+        Hallvard doesn't take her at once. He walks round her twice, and touches her stem-post, and says something to it under his breath. Then he nods. "She'll do," he says. "She's lucky. I can feel it." The men, who'd follow Hallvard's luck into a whirlpool, are delighted.
+    - id: bersi
+      text: Give her to Bersi.
+      visible_if: "man.bersi.sworn && !man.bersi.master"
+      effects: [ { master: bersi } ]
+      result: |
+        Bersi's first act as a shipmaster is to count everything in her: oars, rope, casks, men. His second is to tell you exactly what she's worth, to the ørtug. "I'll bring her home full," he says. "Of everything." You believe him. That's what worries you.
+    - id: hired
+      text: Leave her with {newmaster}. Hired men don't sulk.
+      result: |
+        {newmaster} nods, as if he'd expected nothing else, and goes off to see about her rigging. Your sworn men go back to their own work. Nobody says anything. Some of them think it, though.
+
+- id: fl_hired_price
+  kind: pool
+  trigger: arrive
+  chance: 0.12
+  cooldown_days: 300
+  requires: ["masters.hired >= 1", "!service"]
+  title: The steersman's price
+  text: |
+    {newmaster} finds you on the beach at dusk, with two of the men from his ship standing a little behind him in a way that is meant to look accidental.
+
+    "There's a Dane in the harbour," he says, "who'll give me four shares and no questions to bring a ship like mine into his fleet. I'd rather stay. But a man has to eat." He doesn't say whose ship he means. He doesn't have to.
+  choices:
+    - id: pay
+      text: Give him two marks now, and his four shares.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } } ]
+      result: He takes it, and thanks you, and you both know he'll be back next year with the same Dane in another harbour.
+    - id: face
+      text: Tell him the ship is yours, and he's welcome to swim to the Dane.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You don't raise your voice. You just look at the two men behind him until they find somewhere else to be. {newmaster} laughs, uneasily. "It was worth asking," he says. It wasn't, and he knows it now.
+        effects: [ { add: { skill.command: 1 } } ]
+      failure:
+        text: |
+          He shrugs. In the morning his ship is gone from the beach, and half her crew with her, and the Dane's fleet sails at noon with one more hull in it than it had yesterday.
+        effects: [ { desert: true }, { add: { crew.morale: -1 } } ]
+    - id: replace
+      text: Put one of your sworn men in his place, tonight.
+      visible_if: "sworn.free >= 1"
+      effects: [ { if: "man.ketill.sworn && !man.ketill.master", then: [ { master: ketill } ], else: [ { if: "man.hallvard.sworn && !man.hallvard.master", then: [ { master: hallvard } ], else: [ { if: "man.bersi.sworn && !man.bersi.master", then: [ { master: bersi } ], else: [ { master: ulf } ] } ] } ] } ]
+      result: |
+        You give the steering-oar to a man who's sworn to you, in front of everyone, before the sun's down. {newmaster} watches, and then goes to find the Dane on his own. You hope the Dane enjoys him.
+
+- id: fl_ambition
+  kind: phase
+  trigger: hall
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["winter >= 832", "place == home_fjord", "masters.sworn >= 1"]
+  art: home_fjord
+  title: A ship of his own
+  text: |
+    {mastername} comes to you at the end of an evening, when the hall has gone quiet and the fire is low, and sits down across from you without being asked, which he has never done before.
+
+    "I've steered her two summers now," he says. "Or as good as. I know every plank of her." He turns his cup round in his hands. "A man gets to thinking. About his own name. About a ship that's his, and not lent."
+    [break]
+    He doesn't ask. He's waiting for you to make him ask.
+  choices:
+    - id: give
+      text: Give her to him. Freely, as a ring-giver should.
+      effects: [ { give_ship: master }, { add: { honour: 2 } }, { deed: { type: ring_giving, text: "Gave a ship to the man who steered her", weight: 6, witnesses: 60 } }, { set: flag.fl_gave_ship } ]
+      result: |
+        You tell him she's his. Not lent: his. He stares at you, and then gets up, and goes out into the snow, and you hear him laughing out there in the dark like a madman.
+
+        In the spring he sails her away to find his own name. Every hall in the north hears that you gave a ship away. It's worth more than the ship, men say. They may even be right.
+    - id: promise
+      text: "Tell him: one more summer at your side, and she's his."
+      effects: [ { add: { crew.morale: 1 } }, { set: flag.fl_promised_ship } ]
+      result: He nods slowly. "One more summer," he says. He'll hold you to it, the way you'd hold him to an oath. That's only fair.
+    - id: refuse
+      text: Tell him she's yours, and so is he.
+      effects: [ { if: "man.ketill.master", then: [ { man: { id: ketill, loyalty: -3 } } ] }, { if: "man.ulf.master", then: [ { man: { id: ulf, loyalty: -3 } } ] }, { if: "man.hallvard.master", then: [ { man: { id: hallvard, loyalty: -3 } } ] }, { if: "man.bersi.master", then: [ { man: { id: bersi, loyalty: -3 } } ] } ]
+      result: |
+        He takes it well. That is, he finishes his ale, and says "Well," and goes to bed. He's at his oar in the spring as always. He doesn't sit across from you uninvited again.
+
+- id: fl_quarrel
+  kind: pool
+  trigger: arrive
+  chance: 0.15
+  cooldown_days: 300
+  requires: ["ships >= 3", "!service"]
+  title: Two shipmasters
+  text: |
+    Two of your shipmasters are on the beach with their crews lined up behind them, and the argument has gone past words to the stage where men start taking off their cloaks.
+
+    It started over who beached first, or who took whose water, or a woman in the last port. By now it doesn't matter. What matters is that sixty armed men are watching to see what you'll do.
+  choices:
+    - id: judge
+      text: Walk between them, hear them both, and judge it.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: You hear them both out, one after the other, in front of everyone, and split it down the middle so that each of them is equally unhappy. They shake hands. Neither means it. It's enough.
+        effects: [ { add: { skill.command: 1 } } ]
+      failure:
+        text: You judge it, and one of them thinks you've judged it for the other, and takes his ship out of the bay without a word. He's waiting at the next landfall, sulking, a day ahead of you.
+        effects: [ { add: { crew.morale: -1 } }, { days: 1 } ]
+    - id: fight
+      text: Let them settle it with fists, here and now.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The whole fleet makes a ring. It's a good fight, and a long one, and at the end of it they're both too tired to remember what it was about. They get drunk together that night. Men are simple.
+    - id: shout
+      text: Tell them that the next man to take his cloak off will row home naked.
+      check: { skill: command, attr: pre, difficulty: 4 }
+      success:
+        text: There's a pause. Then somebody laughs, and then everybody does, and the cloaks stay on.
+      failure:
+        text: Somebody takes his cloak off anyway, to see if you mean it. You do. He rows two days in the spray, and the fleet has never been happier.
+        effects: [ { add: { crew.morale: 1 } } ]

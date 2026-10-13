@@ -1,5 +1,6 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
+import { stow } from './fleet';
 import type { BattleTerrain, ContentBundle } from '../content/schema';
 import type { BattleState, DuelSide, DuelState, GameState } from './state';
 import type { RngCursor } from './rng';
@@ -252,8 +253,9 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     ps.raided += 1;
     ps.lastRaided = state.day;
     onRaided(state, content, b.place, { failed: !won });
-    state.loot += take;
-    state.stats.plunder += take;
+    const left = stow(state, content, take);
+    state.stats.plunder += take - left;
+    if (left) lines.push(`The ships are full: ${formatSilver(left)} stays on the strand.`);
     if (won) {
       state.stats.raids += 1;
       addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}`, witnesses, mult });
@@ -266,8 +268,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
       journal(state, `Beaten off at ${pl.name}.`);
     }
   } else if (won && b.context === 'sea') {
-    const take = b.them.start * 3;
-    state.loot += take;
+    const take = b.them.start * 3 - stow(state, content, b.them.start * 3);
     state.stats.plunder += take;
     lines.unshift(`Their ship is yours to strip: ${formatSilver(take)} in silver and gear.`);
   } else {

@@ -1,6 +1,7 @@
 // Reference players. They do not need to play well; they need to play consistently,
 // so two runs are comparable (game-building skill, Part 2 #5).
 import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
+import { hold, SECONDHAND } from '../src/engine/fleet';
 import type { ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
 import { act, listActions, newGame, screenOf, type Action, type ActionOption } from '../src/engine/index';
@@ -84,6 +85,12 @@ export class Bot {
         return pick((a) => a.t === 'battle_auto')!;
       }
       case 'shop': {
+        // a second hull when rich: a knarr if the holds are the trouble, else a karvi (docs/FRAME-FLEET.md)
+        if (state.ships.length < 2 && !state.service) {
+          const want = state.loot > hold(state, content) * 0.8 ? 'knarr' : 'karvi';
+          const h = opts.find((o) => o.enabled && o.action.t === 'buy_hull' && o.action.type === want);
+          if (h && state.silver - Math.round(content.ships[want]!.cost * SECONDHAND) > 150) return h.action;
+        }
         // buy what a sensible captain would, keeping a mark in hand
         const prefer = ['arm', 'helmet', 'mail', 'caulking', 'new_sail', 'shield_rack', 'frankish_sword', 'carved_prow'];
         for (const want of prefer) {

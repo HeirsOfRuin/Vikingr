@@ -1,5 +1,6 @@
 // Plunder against the alarm (DESIGN §11.3, step 3). After the assault, each round takes more,
 // and the countryside wakes. Leave in time, or lose what you are carrying getting back to the ships.
+import { stow } from './fleet';
 import type { ContentBundle } from '../content/schema';
 import type { GameState, PlunderState } from './state';
 import type { RngCursor } from './rng';
@@ -72,7 +73,11 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
   ps.lastRaided = state.day;
   ps.defence = Math.min(3, ps.defence * (p.burned ? 1.8 : 1.5));
   if (p.burned) ps.wealth = Math.round(ps.wealth * 0.5);
-  state.loot += taken;
+  const left = stow(state, content, taken);
+  if (left) {
+    taken -= left;
+    lines.push(`The ships are full. You leave ${formatSilver(left)} on the strand, and the men who carried it there look back at it all the way out of the bay.`);
+  }
   state.stats.plunder += taken;
   state.stats.raids += 1;
   if (p.captives) state.captives += p.captives;

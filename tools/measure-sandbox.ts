@@ -21,6 +21,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   const base: Record<string, number> = {};
   let kept = 0, broken = 0, sworn = 0, lives832 = 0, children = 0;
   const byBoast: Record<string, [number, number]> = {};
+  let twoShips = 0, prizes = 0, bought = 0, deserted = 0, lostInStorm = 0, maxShips = 0;
   for (let i = 0; i < runs; i++) {
     let s: GameState = newGame(content, { background: 'younger_son', seed: 9000 + i, name: 'Bot' });
     const bot = new Bot(policy, new RngCursor(seedRng((9000 + i) ^ 0x5bd1e995)));
@@ -48,6 +49,13 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
     wives[s.base.wife ?? '(none)'] = (wives[s.base.wife ?? '(none)'] ?? 0) + 1;
     base[s.base.level] = (base[s.base.level] ?? 0) + 1;
     if (s.flags.child_son) children++;
+    const most = Math.max(s.ships.length, ...s.journal.map((j) => (/^(Took .* as a prize|Bought .*secondhand|Launched )/.test(j.text) ? 2 : 0)));
+    if (most >= 2) twoShips++;
+    maxShips = Math.max(maxShips, s.ships.length);
+    prizes += s.journal.filter((j) => / as a prize\./.test(j.text)).length;
+    bought += s.journal.filter((j) => /secondhand/.test(j.text)).length;
+    deserted += s.journal.filter((j) => /sailed off with/.test(j.text)).length;
+    lostInStorm += s.journal.filter((j) => /lost in a storm, with all hands/.test(j.text)).length;
     for (const b of s.boasts) if (b.id.startsWith('yule_')) {
       sworn++;
       if (b.state === 'kept') kept++;
@@ -60,6 +68,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   console.log(`\n${policy}: ${runs} lives × ${years} years; ${lives832} reached spring 832`);
   console.log('  scenes met per living year after 832: ' + Object.entries(perYear).sort().map(([y, v]) => `${y} ${(v.scenes / Math.max(1, v.lives)).toFixed(1)} (${v.lives})`).join(', '));
   console.log('  wives: ' + Object.entries(wives).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', ') + `; a son ${pct(children, lives832)}`);
+  console.log(`  fleet: ${pct(twoShips, lives832)} ever had two ships or more (most at the end: ${maxShips}); prizes ${prizes}, bought ${bought}, sailed off by a hired man ${deserted}, scattered and lost ${lostInStorm}`);
   console.log('  land: ' + Object.entries(base).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', '));
   console.log(`  Yule boasts on the books at the end: ${sworn} (kept ${kept}, broken ${broken}); by boast, kept/broken: ` + Object.entries(byBoast).map(([k, [a, b]]) => `${k.slice(5)} ${a}/${b}`).join(', '));
   const never = Object.keys(content.scenes).filter((id) => id.startsWith('g_') && !fired[id]);

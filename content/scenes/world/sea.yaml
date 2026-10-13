@@ -44,6 +44,11 @@
 
     The cargo is wine, cloth, glass, and a locked chest that takes half an hour and an axe to open.
   choices:
+    - id: prize
+      text: Keep the knarr, put a prize crew aboard, and sell her crew.
+      visible_if: "ships <= 4"
+      effects: [ { add: { loot: 120 } }, { captives: 4 }, { add: { honour: -1 } }, { prize: { type: knarr, name: The Frisian } } ]
+      result: You put twelve men aboard her under a hired steersman, with the traders tied in her hold, and she wallows along in your wake for the rest of the voyage. She's slow, and ugly, and her hold would swallow a church.
     - id: strip
       text: Take everything, and the ship as well, and sell the crew.
       effects: [ { add: { loot: 180 } }, { captives: 4 }, { add: { honour: -1 } } ]
@@ -72,7 +77,7 @@
     - id: fight
       text: Turn and meet them.
       danger: true
-      effects: [ { battle: { foe: rival_crew, men: 22, terrain: ship } } ]
+      effects: [ { battle: { foe: rival_crew, men: 22, terrain: ship, win: g_sea_rivals_won } } ]
     - id: run
       text: Crowd on sail and run for it.
       visible_if: "!service"
@@ -83,7 +88,7 @@
         effects: [ { add: { crew.morale: -1 } } ]
       failure:
         text: They have the faster ship. They come up on your quarter at dusk with the men too tired to lift their arms, and you fight anyway.
-        effects: [ { add: { crew.morale: -1 } }, { battle: { foe: rival_crew, men: 24, terrain: ship } } ]
+        effects: [ { add: { crew.morale: -1 } }, { battle: { foe: rival_crew, men: 24, terrain: ship, win: g_sea_rivals_won } } ]
     - id: hail
       text: Stand in the bow and call out your name.
       requires: ["fame.living >= 25"]
@@ -92,6 +97,30 @@
         You call it out across the water, and your father's, and what men call you. There is a long silence on the other ship. Then the spear comes down off the man's shoulder, and the shields come off the rail, and they sheer off and go looking for someone they haven't heard of.
 
         Your men talk about it for the rest of the voyage.
+
+- id: g_sea_rivals_won
+  kind: spine
+  art: open_sea
+  title: Her stern
+  text: |
+    The last of them go over the side or throw down their axes, and the rival ship lies against yours, grinding, with her deck slippery and her oars every which way like a dead beetle's legs.
+
+    She's a good ship. Better kept than yours, some of the men are muttering.
+  choices:
+    - id: prize
+      text: Take her. Put a steersman in her, and men at her oars.
+      visible_if: "!service && ships <= 4"
+      effects: [ { prize: { type: karvi, name: Sea-Thief } }, { add: { crew.morale: 1 } } ]
+      result: The men name her Sea-Thief before you've finished speaking, which is either a joke or a warning. Her own survivors watch from the bilge. Two of them ask, that evening, if they can row for you.
+    - id: oaths
+      text: Offer her survivors a choice. Swear to you, or swim.
+      visible_if: "!service"
+      effects: [ { add: { crew.men: 5, honour: 1 } } ]
+      result: Five of them swear, with the water lapping round their knees in the waterlogged bilge. The rest swim for it. Most of them make the shore.
+    - id: burn
+      text: Burn her, so every ship on this coast sees the smoke.
+      effects: [ { deed: { type: deed, text: "Burned a rival's longship at sea", weight: 2 } } ]
+      result: She goes up like a torch, and the smoke stands over the sea all afternoon. Every crew on this coast will know whose work it was by nightfall.
 
 - id: g_sea_wreck
   kind: pool

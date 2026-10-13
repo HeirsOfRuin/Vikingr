@@ -1,5 +1,6 @@
 // Sailing: the place graph, and legs resolved day by day (wind, provisions,
 // storms, encounters). A voyage stops when something happens and resumes after.
+import { scatter } from './fleet';
 import { benchHeir } from './fights';
 import type { ContentBundle, Leg } from '../content/schema';
 import type { GameState, Wind } from './state';
@@ -118,6 +119,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
   state.stats.storms += 1;
   lines.push('A storm. Black water over the bows, the sail split, men bailing with helmets.');
   state.provisions = Math.round(state.provisions * 0.85);
+  scatter(state, content, rng, lines);
   let lostMen = 0;
   for (let i = state.ships.length - 1; i >= 0; i--) {
     const ship = state.ships[i]!;

@@ -1,4 +1,5 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { addShip, appoint, desert, FLEET_MAX, hiredShip, PRIZE_HULL, shipOf, stow, swornShip } from './fleet';
 import type { ContentBundle, Effect } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
@@ -15,10 +16,10 @@ import { BASE, BASE_LEVELS, keepCaptives } from './base';
 import { keepBoast, swearBoast } from './boasts';
 import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
 
-function addTo(state: GameState, path: string, n: number): void {
+function addTo(state: GameState, content: ContentBundle, path: string, n: number): void {
   switch (path) {
     case 'silver': state.silver = Math.max(0, state.silver + n); return;
-    case 'loot': state.loot = Math.max(0, state.loot + n); return;
+    case 'loot': if (n > 0) stow(state, content, n); else state.loot = Math.max(0, state.loot + n); return;
     case 'honour': state.honour = Math.max(-10, Math.min(10, state.honour + n)); return;
     case 'hamingja': state.hamingja = Math.max(-5, Math.min(5, state.hamingja + n)); return;
     case 'provisions': state.provisions = Math.max(0, state.provisions + n); return;
@@ -44,7 +45,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     }
     if ('set' in e) state.flags[e.set.replace(/^flag\./, '')] = 1;
     else if ('clear' in e) delete state.flags[e.clear.replace(/^flag\./, '')];
-    else if ('add' in e) for (const [k, v] of Object.entries(e.add)) addTo(state, k, v);
+    else if ('add' in e) for (const [k, v] of Object.entries(e.add)) addTo(state, content, k, v);
     else if ('deed' in e) addDeed(state, content, { ...e.deed, witnesses: e.deed.witnesses ?? state.crew.men });
     else if ('injury' in e) addWound(state, content, e.injury, 'what happened');
     else if ('man' in e) {
@@ -118,6 +119,28 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       state.base.wife = e.wife;
     } else if ('base' in e) {
       if (BASE_LEVELS.indexOf(e.base) > BASE_LEVELS.indexOf(state.base.level)) state.base.level = e.base;
+    } else if ('prize' in e) {
+      if (!state.service && state.ships.length < FLEET_MAX) {
+        const sh = addShip(state, content, { type: e.prize.type, name: e.prize.name, hull: PRIZE_HULL });
+        journal(state, `Took ${sh.name} as a prize.`);
+      }
+    } else if ('master' in e) {
+      const ship = hiredShip(state) ?? state.ships[state.ships.length - 1];
+      if (ship && state.ships.length > 1) appoint(state, content, ship.id, e.master);
+    } else if ('desert' in e) {
+      desert(state, content);
+    } else if ('give_ship' in e) {
+      const sid = e.give_ship === 'master' ? swornShip(state)?.master?.split(':')[1] ?? '' : e.give_ship;
+      const ship = shipOf(state, sid);
+      const m = state.men.find((x) => x.id === sid);
+      if (ship && m) {
+        const cap = content.ships[ship.type]?.crew ?? 0;
+        const total = capacity(state, content);
+        state.crew.men = Math.max(0, state.crew.men - Math.round((state.crew.men * cap) / Math.max(1, total)));
+        state.ships.splice(state.ships.indexOf(ship), 1);
+        state.men = state.men.filter((x) => x !== m);
+        journal(state, `Gave ${ship.name} to ${m.name}, and he sailed her away as his own.`);
+      }
     } else if ('keep_captives' in e) {
       keepCaptives(state);
     } else if ('lose_item' in e) {

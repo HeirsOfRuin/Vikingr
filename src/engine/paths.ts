@@ -41,6 +41,9 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   base: (s) => s.base.level,
   thralls: (s) => s.base.thralls,
   married: (s) => (s.base.wife ? 1 : 0),
+  'masters.sworn': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('man:') && s.men.some((m) => m.alive && `man:${m.id}` === x.master)).length,
+  'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
+  'masters.hired': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('hired:')).length,
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */
   winter: (s) => s.flags._winter ?? 0,
 };
@@ -78,6 +81,7 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
       const m = state.men.find((x) => x.id === a);
       if (b === 'present') return !!m && m.alive;
       if (b === 'sworn') return !!m && m.alive && m.sworn;
+      if (b === 'master') return !!m && m.alive && state.ships.some((x) => x.master === `man:${m.id}`);
       if (!m) return b === 'alive' ? false : 0;
       if (b === 'alive') return m.alive;
       if (b === 'loyalty') return m.loyalty;
@@ -99,7 +103,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'skill': return (SKILLS as readonly string[]).includes(a!) && !b ? null : `unknown skill "${a}"`;
     case 'wound': return content.injuries[a!] ? null : `unknown injury "${a}"`;
     case 'known': return content.places[a!] ? null : `unknown place "${a}"`;
-    case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn'].includes(b!) ? null : `bad sworn-man path "${path}"`;
+    case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn', 'master'].includes(b!) ? null : `bad sworn-man path "${path}"`;
     case 'item': return content.items[a!] && !b ? null : `unknown item "${a}"`;
     case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;
     case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;

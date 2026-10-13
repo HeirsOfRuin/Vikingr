@@ -54,8 +54,10 @@ try {
   await click(page, /^Begin$/);
   const seen = new Set<string>();
   let rounds = 0;
-  for (let step = 0; step < 900; step++) {
+  let last = '';
+  for (let step = 0; step < 1400; step++) {
     const h = ((await page.locator('main h2').first().textContent({ timeout: 2000 }).catch(() => '')) ?? '').trim();
+    last = h;
     for (const [re, name] of SHOTS) if (re.test(h) && !seen.has(name)) { seen.add(name); await snap(name); }
     if (seen.has('spring-831') || (await page.locator('button', { hasText: 'Begin another life' }).count())) break;
     if (h.startsWith('Plunder:')) {
@@ -73,7 +75,7 @@ try {
       await ((await safe.count()) ? safe : page.locator('main .choices button:not([disabled])').first()).click({ timeout: 4000 });
     }
   }
-  for (const need of ['boyhood', 'muster', 'birsay', 'bangor', 'home', 'yule']) if (!seen.has(need) && !(await page.locator('button', { hasText: 'Begin another life' }).count())) errors.push(`never reached: ${need}`);
+  for (const need of ['boyhood', 'muster', 'birsay', 'bangor', 'home', 'yule']) if (!seen.has(need) && !(await page.locator('button', { hasText: 'Begin another life' }).count())) errors.push(`never reached: ${need} (last screen: "${last}")`);
   for (const t of ['Map', 'Hero', 'Crew', 'Saga']) {
     await page.locator('.tabs button', { hasText: t }).click();
     await snap(`tab-${t.toLowerCase()}`);

@@ -1,5 +1,6 @@
 // The year at home: spring muster, the autumn share-out and homecoming,
 // the winter hall, and the turn of the year.
+import { addShip, masterShares, MUSTER_PER_SHIP } from './fleet';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
@@ -128,7 +129,13 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   }
   const keep = Math.round(pot * LEADER_SHARE[how]);
   const heads = state.crew.men + aliveMen(state).length;
-  const each = heads ? (pot - keep) / heads : 0;
+  // the shipmasters take their extra shares out of the men's part (docs/FRAME-FLEET.md)
+  const ms = masterShares(state);
+  const each = heads ? (pot - keep) / (heads + ms.shares) : 0;
+  if (ms.shares && pot > 0) {
+    lines.push(`The shipmasters take ${plural(ms.shares, 'extra share')}: ${formatSilver(each * ms.shares)}.`);
+    for (const id of ms.sworn) { const m = state.men.find((x) => x.id === id); if (m) addLoyalty(m, 1); }
+  }
   state.silver += keep;
   state.loot = 0;
   const ratio = each / SHARE_EXPECTED;
@@ -326,7 +333,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   if (state.building) {
     const t = content.ships[state.building]!;
     const name = SHIP_NAMES[(state.ships.length + state.stats.legs) % SHIP_NAMES.length]!;
-    state.ships.push({ id: `ship${state.day}`, type: t.id, name, hull: 100 });
+    addShip(state, content, { type: t.id, name, hull: 100 });
     lines.push(`The new ${t.name.toLowerCase()} is launched. You name her ${name}.`);
     journal(state, `Launched ${name}, a ${t.name.toLowerCase()}.`);
     state.building = null;
@@ -335,7 +342,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   if (state.service) state.crew.men = Math.max(state.crew.men, SERVICE_CREW);
   state.crew.morale = Math.round((state.crew.morale + 6) / 2);
   clampMorale(state);
-  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster;
+  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1);
   // the farm's winter
   const y = takeWinterYield(state);
   if (y) lines.push(y);

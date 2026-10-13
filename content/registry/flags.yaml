@@ -227,3 +227,6 @@ hd_flanked: { description: "Came out of the ditch onto the Frisians' flank" }
 ribe_dorestad: { description: "Heard of Dorestad's empty walls from the Frisians at Ribe" }
 birka_ansgar: { description: "Listened to Ansgar the monk at Birka" }
 birka_east: { description: "Heard of the river road east at Birka" }
+# ---- the fleet (content/scenes/world/fleet.yaml) ----
+fl_gave_ship: { description: "Gave a ship to the sworn man who steered her" }
+fl_promised_ship: { description: "Promised a sworn shipmaster his ship after one more summer" }

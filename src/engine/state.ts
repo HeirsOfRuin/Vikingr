@@ -31,6 +31,8 @@ export interface Ship {
   hull: number; // 0..100
   /** Fittings from the shipwright (FRAME-FOUNDATION §2). */
   fittings?: string[];
+  /** Who has her steering-oar, if she is not the flagship: "man:<sworn id>" or "hired:<name>" (docs/FRAME-FLEET.md). */
+  master?: string;
 }
 
 /** One thing he owns. A weapon counts its deeds; at enough of them, the men give it a name. */

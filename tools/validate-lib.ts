@@ -79,6 +79,14 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
       } else if ('item' in e || 'lose_item' in e) {
         const iid = 'item' in e ? e.item.id : e.lose_item;
         if (!content.items[iid]) errors.push(`${where}: unknown item "${iid}"`);
+      } else if ('prize' in e) {
+        if (!content.ships[e.prize.type]) errors.push(`${where}: unknown ship type "${e.prize.type}"`);
+      } else if ('master' in e) {
+        if (e.master !== 'hired' && !content.men[e.master]) errors.push(`${where}: master must be "hired" or a sworn man, not "${e.master}"`);
+      } else if ('desert' in e) {
+        /* nothing to check */
+      } else if ('give_ship' in e) {
+        if (e.give_ship !== 'master' && !content.men[e.give_ship]) errors.push(`${where}: unknown sworn man "${e.give_ship}"`);
       } else if ('wife' in e || 'base' in e || 'keep_captives' in e) {
         /* nothing to check */
       } else if ('progress' in e) {
@@ -154,6 +162,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     ...Object.values(content.scenes).filter((s) => s.trigger || s.calibration).map((s) => s.id),
     // queued by the engine when a sworn man dies (fights.ts)
     ...Object.keys(content.scenes).filter((id) => id.startsWith('mourn_')),
+    // queued by the engine itself: a ship joining the fleet (src/engine/fleet.ts addShip)
+    'fl_master',
   ];
   while (queue.length) {
     const id = queue.pop()!;

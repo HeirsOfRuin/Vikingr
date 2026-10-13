@@ -1,5 +1,6 @@
 import type { ContentBundle } from '../../content/schema';
 import { goalProgress } from '../../engine/boasts';
+import { freeSworn, hold, MASTER_SHARES, masterOf } from '../../engine/fleet';
 import { SKILLS, ATTRS } from '../../content/schema';
 import type { GameState, Position } from '../../engine/state';
 import type { Action } from '../../engine/index';
@@ -108,12 +109,26 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
       <h2>Ships and men</h2>
       <div class="card">
         <h3>Ships</h3>
-        {state.ships.length ? state.ships.map((s) => (
-          <div key={s.id}>
-            {s.name} <span class="muted small">— {content.ships[s.type]?.name}, sound {Math.max(0, s.hull)}%</span>
-            <Bar value={s.hull} max={100} kind="sea" />
-          </div>
-        )) : <p class="empty">You have no ship.</p>}
+        {state.ships.length ? state.ships.map((s, i) => {
+          const m = masterOf(state, s);
+          const free = freeSworn(state);
+          const inPort = !state.voyage && !state.service;
+          return (
+            <div key={s.id} style={{ marginBottom: 8 }}>
+              {s.name} <span class="muted small">— {content.ships[s.type]?.name}, sound {Math.max(0, s.hull)}%</span>
+              <Bar value={s.hull} max={100} kind="sea" />
+              {!state.service && <p class="small" style={{ margin: '2px 0' }}>{i === 0 ? 'Your own steering-oar.' : m ? (m.kind === 'sworn' ? `${m.name} has her steering-oar (${MASTER_SHARES.sworn} extra shares).` : `${m.name}, a hired steersman, has her (${MASTER_SHARES.hired} extra shares).`) : 'Nobody at her steering-oar.'}</p>}
+              {i > 0 && inPort && free.length > 0 && (
+                <div class="row sans small">
+                  {free.map((id) => (
+                    <button key={id} class="choice" style={{ minHeight: 32, padding: '4px 8px' }} onClick={() => onAct({ t: 'appoint', ship: s.id, man: id })}>Give her to {content.men[id]?.name}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        }) : <p class="empty">You have no ship.</p>}
+        {!state.service && state.ships.length > 0 && <p class="small">The holds carry {formatSilver(hold(state, content))} of plunder; {formatSilver(state.loot)} aboard.</p>}
         {state.building && <p class="muted small">Building over the winter: a {content.ships[state.building]?.name.toLowerCase()}.</p>}
         {!state.service && state.ships[0] && (
           <p class="small">Fitted with: {state.ships[0].fittings?.length ? state.ships[0].fittings.map((f) => content.items[f]?.name.toLowerCase()).join(', ') : <span class="muted">nothing yet. The shipwright at home, or at a market, can change that.</span>}</p>

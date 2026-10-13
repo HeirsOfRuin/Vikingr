@@ -10,7 +10,8 @@ import type { CondInput } from '../content/schema';
 import { applyEffects } from './effects';
 import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
-import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse } from './crew';
+import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
+import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
@@ -72,6 +73,8 @@ export type Action =
   | { t: 'position'; pos: Position }
   | { t: 'battle_auto' }
   | { t: 'slot'; man: string; slot: Position }
+  | { t: 'buy_hull'; type: string }
+  | { t: 'appoint'; ship: string; man: string }
   | { t: 'follow' }
   | { t: 'take_share' }
   | { t: 'plunder'; what: PlunderWhat };
@@ -215,7 +218,7 @@ function shopOption(state: GameState, content: ContentBundle): ActionOption[] {
   const shops = shopsHere(state, content);
   if (!shops.length) return [];
   const label = shops.includes('smith') ? 'Visit the smith and the shipwright' : 'Walk the market booths';
-  const n = forSale(state, content, shops).length + (armCost(state) !== null && !state.service ? 1 : 0);
+  const n = forSale(state, content, shops).length + (armCost(state) !== null && !state.service ? 1 : 0) + (shops.includes('shipwright') ? hullsForSale(state, content).length : 0);
   return [opt('Trade', { t: 'shop' }, label, n > 0, 'There is nothing here you need.', `${n} things worth looking at`)];
 }
 
@@ -348,6 +351,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const out = forSale(state, content, shops).map((d) => opt(d.kind === 'fitting' ? 'The shipwright' : shops.includes('smith') ? 'The smith' : 'The booths', { t: 'buy', item: d.id }, `Buy ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}`, state.silver >= d.price!, `You need ${formatSilver(d.price!)}.`, formatSilver(d.price!)));
       const ac = armCost(state);
       if (ac !== null && !state.service) out.push(opt('Your men', { t: 'arm' }, `Arm the men: ${gearWord(Math.floor(state.crew.gear) + 1)}`, state.silver >= ac, `You need ${formatSilver(ac)}.`, `${formatSilver(ac)} for ${state.crew.men} men`));
+      // secondhand hulls on a market beach (docs/FRAME-FLEET.md)
+      if (shops.includes('shipwright')) for (const h of hullsForSale(state, content)) {
+        const st = content.ships[h.type]!;
+        out.push(opt('Ships', { t: 'buy_hull', type: h.type }, `Buy a secondhand ${st.name.toLowerCase()}`, state.silver >= h.price, `You need ${formatSilver(h.price)}.`, `${formatSilver(h.price)}; ${st.crew} men, carries ${formatSilver((st.cargo ?? 1) * CARGO_UNIT)}`));
+      }
       out.push(opt('', { t: 'continue' }, 'Done'));
       return out;
     }
@@ -441,7 +449,7 @@ function sameAction(a: Action, b: Action): boolean {
 
 export function act(content: ContentBundle, input: GameState, action: Action): GameState {
   const allowed = listActions(input, content).find((o) => sameAction(o.action, action));
-  if (action.t !== 'slot' && action.t !== 'equip' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
+  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
   const state = structuredClone(input);
   const rng = new RngCursor(state.rng);
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
@@ -516,6 +524,16 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     }
     case 'shop':
       state.pending = { t: 'shop', shops: shopsHere(state, content) };
+      break;
+    case 'buy_hull': {
+      const name = SHIP_NAMES[(state.ships.length * 3 + state.day) % SHIP_NAMES.length]!;
+      const line = buyHull(state, content, action.type, state.ships.some((s) => s.name === name) ? `${name} the Second` : name);
+      state.pending = { t: 'shop', shops: (state.pending as { shops: Shop[] }).shops };
+      state.shopNote = line;
+      break;
+    }
+    case 'appoint':
+      if (!state.voyage && !state.service) appoint(state, content, action.ship, action.man);
       break;
     case 'buy': {
       const lines = buy(state, content, action.item);
