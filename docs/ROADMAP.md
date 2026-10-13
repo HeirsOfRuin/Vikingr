@@ -69,7 +69,7 @@ Each step follows the usual process: a short frame doc for approval, then the bu
   - `content/scenes/world/fleet.yaml`;
   - `tools/bot-lib.ts` (buy a second ship when rich, promote the most loyal man).
 
-## Step 2: Trade
+## Step 2: Trade — built 2026-10-13 (`docs/FRAME-TRADE-ALLIES.md`)
 **Problem.** Markets sell kit and buy captives, and that's all. A trader's life ("the knarr, prices that move", DESIGN §21a) is a promised career path.
 
 **Build:**
@@ -99,7 +99,7 @@ Each step follows the usual process: a short frame doc for approval, then the bu
   - `places.yaml`, `goods.yaml`;
   - `tools/measure-trade.ts` (is a knarr circuit worth a raid?).
 
-## Step 3: Allies (shipmasters and jarls)
+## Step 3: Allies (shipmasters and jarls) — built 2026-10-13 (`docs/FRAME-TRADE-ALLIES.md`)
 **Problem.** The world has no other captains with their own lives. The jarl is a voice, not a power.
 
 **Build:**

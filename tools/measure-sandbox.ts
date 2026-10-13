@@ -21,6 +21,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   const base: Record<string, number> = {};
   let kept = 0, broken = 0, sworn = 0, lives832 = 0, children = 0;
   const byBoast: Record<string, [number, number]> = {};
+  let felags = 0, metCaps = 0, favourSum = 0, traded = 0, tradeDeeds = 0;
   let twoShips = 0, prizes = 0, bought = 0, deserted = 0, lostInStorm = 0, maxShips = 0;
   for (let i = 0; i < runs; i++) {
     let s: GameState = newGame(content, { background: 'younger_son', seed: 9000 + i, name: 'Bot' });
@@ -55,6 +56,11 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
     prizes += s.journal.filter((j) => / as a prize\./.test(j.text)).length;
     bought += s.journal.filter((j) => /secondhand/.test(j.text)).length;
     deserted += s.journal.filter((j) => /sailed off with/.test(j.text)).length;
+    felags += s.journal.filter((j) => /^Swore félag/.test(j.text)).length;
+    metCaps += s.journal.filter((j) => /^Met /.test(j.text)).length;
+    favourSum += s.favour ?? 0;
+    traded += s.journal.some((j) => /trade this year/.test(j.text)) || Object.keys(s.cargo ?? {}).length ? 1 : 0;
+    tradeDeeds += s.journal.filter((j) => /profit in trade this year/.test(j.text)).length;
     lostInStorm += s.journal.filter((j) => /lost in a storm, with all hands/.test(j.text)).length;
     for (const b of s.boasts) if (b.id.startsWith('yule_')) {
       sworn++;
@@ -69,6 +75,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   console.log('  scenes met per living year after 832: ' + Object.entries(perYear).sort().map(([y, v]) => `${y} ${(v.scenes / Math.max(1, v.lives)).toFixed(1)} (${v.lives})`).join(', '));
   console.log('  wives: ' + Object.entries(wives).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', ') + `; a son ${pct(children, lives832)}`);
   console.log(`  fleet: ${pct(twoShips, lives832)} ever had two ships or more (most at the end: ${maxShips}); prizes ${prizes}, bought ${bought}, sailed off by a hired man ${deserted}, scattered and lost ${lostInStorm}`);
+  console.log(`  allies: ${(metCaps / Math.max(1, lives832)).toFixed(1)} captains met a life, ${felags} félags sworn, the jarl's favour at the end ${(favourSum / Math.max(1, lives832)).toFixed(1)} on average; trade: ${pct(traded, lives832)} of lives traded, ${tradeDeeds} rich-voyage deeds`);
   console.log('  land: ' + Object.entries(base).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', '));
   console.log(`  Yule boasts on the books at the end: ${sworn} (kept ${kept}, broken ${broken}); by boast, kept/broken: ` + Object.entries(byBoast).map(([k, [a, b]]) => `${k.slice(5)} ${a}/${b}`).join(', '));
   const never = Object.keys(content.scenes).filter((id) => id.startsWith('g_') && !fired[id]);

@@ -7,6 +7,7 @@ import { journal } from './journal';
 import { formatSilver, plural } from './format';
 import { addLoyalty, aliveMen } from './crew';
 import { benchHeir } from './fights';
+import { partnerHold } from './allies';
 
 /** Plunder a ship carries per point of `cargo` in ships.yaml, in ørtugar. */
 export const CARGO_UNIT = 500;
@@ -63,7 +64,7 @@ export function desert(state: GameState, content: ContentBundle): Ship | undefin
 /** What the holds will carry, in ørtugar. At another man's oar it is his problem. */
 export function hold(state: GameState, content: ContentBundle): number {
   if (state.service || !state.ships.length) return Infinity;
-  return state.ships.reduce((n, s) => n + (content.ships[s.type]?.cargo ?? 1) * CARGO_UNIT, 0);
+  return state.ships.reduce((n, s) => n + (content.ships[s.type]?.cargo ?? 1) * CARGO_UNIT, 0) + partnerHold(state, content);
 }
 
 export function holdRoom(state: GameState, content: ContentBundle): number {

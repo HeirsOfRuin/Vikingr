@@ -64,6 +64,7 @@ export function loadContent(root = ROOT): S.ContentBundle {
     scenes: byId(scenes, 'scene'),
     names: check(z.array(z.string()), read(reg('names.yaml')), 'registry/names.yaml'),
     art: byId(check(z.array(S.artEntry), read(reg('art.yaml')), 'registry/art.yaml'), 'art'),
+    captains: byId(check(z.array(S.captainDef), read(reg('captains.yaml')), 'registry/captains.yaml'), 'captain'),
     goods: byId(check(z.array(S.goodDef), read(reg('goods.yaml')), 'registry/goods.yaml'), 'good'),
     boasts: byId(check(z.array(S.boastDef), read(reg('boasts.yaml')), 'registry/boasts.yaml'), 'boast'),
     items: byId(check(z.array(S.itemDef), read(reg('items.yaml')), 'registry/items.yaml'), 'item'),

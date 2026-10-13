@@ -91,7 +91,7 @@
   choices:
     - id: yes
       text: Clasp his hand. Next spring, Hedeby.
-      effects: [ { set: flag.ubbi_sworn }, { know: hedeby } ]
+      effects: [ { set: flag.ubbi_sworn }, { know: hedeby }, { favour: -1 } ]
       result: |
         He crushes your hand in his and laughs. "Good. Bring the loud one, too," he says, nodding at Ulf. "I like a man you can hear in the dark."
 
@@ -103,7 +103,7 @@
         "Think fast," Ubbi says. "Frisia won't wait, and neither will I." He leaves you a ring off his own arm, a thin twisted thing of Danish silver, as a reminder.
     - id: no
       text: Tell him you have a jarl already.
-      effects: [ { set: flag.ubbi_refused }, { add: { honour: 1 } } ]
+      effects: [ { set: flag.ubbi_refused }, { add: { honour: 1 } }, { favour: 1 } ]
       result: |
         He shrugs. "Every man has a jarl until he hasn't," he says, and goes.
 

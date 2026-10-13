@@ -108,6 +108,7 @@ describe('the wives', () => {
     let s = captain();
     for (let i = 0; i < 4; i++) applyEffects(s, content, rng(), [{ deed: { type: 'deed', text: `d${i}`, weight: 6, witnesses: 40 } }]);
     for (const d of s.deeds) d.told = s.day;
+    s.seen.cap_eyvindr = s.day; // the freebooter has had his landfall
     expect(arrive(s, 'kaupang')).toMatch(/g_asta_meet|k_market/);
     if (s.pending?.t === 'scene' && s.pending.id === 'k_market') { s.pending = null; open(s, 'g_asta_meet'); }
     s = settle(choose(s, 'talk'));

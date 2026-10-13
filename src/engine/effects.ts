@@ -1,4 +1,5 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { bestAlly, killCaptain, meet, shiftFavour, shiftRel, swearFelag } from './allies';
 import { addShip, appoint, desert, FLEET_MAX, hiredShip, PRIZE_HULL, shipOf, stow, swornShip } from './fleet';
 import type { ContentBundle, Effect } from '../content/schema';
 import type { GameState } from './state';
@@ -127,6 +128,17 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('master' in e) {
       const ship = hiredShip(state) ?? state.ships[state.ships.length - 1];
       if (ship && state.ships.length > 1) appoint(state, content, ship.id, e.master);
+    } else if ('ally' in e) {
+      const a = e.ally;
+      const id = a.id === 'best' ? bestAlly(state, content) : a.id;
+      if (id) {
+        if (a.meet) meet(state, content, id);
+        if (a.rel) shiftRel(state, content, id, a.rel);
+        if (a.felag) swearFelag(state, content, id);
+        if (a.kill) killCaptain(state, content, id);
+      }
+    } else if ('favour' in e) {
+      shiftFavour(state, e.favour);
     } else if ('lose_cargo' in e) {
       // the heaviest goods go first
       for (let n = e.lose_cargo; n > 0 && state.cargo && Object.keys(state.cargo).length; n--) {

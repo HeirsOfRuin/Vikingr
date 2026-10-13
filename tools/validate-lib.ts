@@ -83,6 +83,10 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.ships[e.prize.type]) errors.push(`${where}: unknown ship type "${e.prize.type}"`);
       } else if ('master' in e) {
         if (e.master !== 'hired' && !content.men[e.master]) errors.push(`${where}: master must be "hired" or a sworn man, not "${e.master}"`);
+      } else if ('ally' in e) {
+        if (e.ally.id !== 'best' && !content.captains[e.ally.id]) errors.push(`${where}: unknown captain "${e.ally.id}"`);
+      } else if ('favour' in e) {
+        /* nothing to check */
       } else if ('desert' in e || 'lose_cargo' in e) {
         /* nothing to check */
       } else if ('give_ship' in e) {
@@ -263,6 +267,10 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     text(`banter line ${i + 1}`, b.text);
   });
   for (const b of Object.values(content.boasts)) if (b.goal && 'when' in b.goal) cond(`boast ${b.id}`, b.goal.when);
+  for (const c of Object.values(content.captains)) {
+    if (!content.places[c.home]) errors.push(`captain ${c.id}: unknown home "${c.home}"`);
+    for (const b of c.bias ?? []) cond(`captain ${c.id} bias`, b.if);
+  }
 
   // rivals
   for (const r of Object.values(content.rivals)) {

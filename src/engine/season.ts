@@ -1,5 +1,6 @@
 // The year at home: spring muster, the autumn share-out and homecoming,
 // the winter hall, and the turn of the year.
+import { endFelag, FAVOUR, favourMuster, jarlCut, partnerCut, shiftFavour } from './allies';
 import { rollTradeNews } from './trade';
 import { addShip, masterShares, MUSTER_PER_SHIP } from './fleet';
 import type { ContentBundle } from '../content/schema';
@@ -123,8 +124,11 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   const lines: string[] = [];
   sellCaptives(state, lines);
   let pot = state.loot;
+  // a félag partner takes his men's part first (docs/FRAME-TRADE-ALLIES.md)
+  const pc = partnerCut(state, content, pot, state.crew.men + aliveMen(state).length);
+  if (pc.cut) { pot -= pc.cut; lines.push(pc.line!); }
   if (state.flags.owes_jarl && pot > 0) {
-    const cut = Math.round(pot * JARL_CUT);
+    const cut = Math.round(pot * jarlCut(state, JARL_CUT));
     pot -= cut;
     lines.push(`The jarl's steward takes his quarter: ${formatSilver(cut)}.`);
   }
@@ -176,7 +180,7 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
 
 // ---- the winter hall ----
 
-export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall';
+export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall' | 'jarl_gift';
 
 export function feastCost(state: GameState): number {
   return mouths(state) + FEAST_GUESTS;
@@ -249,6 +253,13 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       delete state.flags.owes_jarl;
       lines.push(`You pay the jarl ${formatSilver(cost)} for the karvi. She is yours, and so is everything she brings home.`);
       journal(state, 'Bought the karvi from the jarl.');
+      break;
+    }
+    case 'jarl_gift': {
+      state.silver -= FAVOUR.giftCost;
+      shiftFavour(state, FAVOUR.gift);
+      lines.push(`You send the jarl a gift at midwinter: a cloak lined with marten, a silver cup, a good knife. ${formatSilver(FAVOUR.giftCost)}. It comes back with his thanks, and a seat nearer the high seat at the next feast.`);
+      journal(state, 'Sent the jarl a gift.');
       break;
     }
     case 'buy_farm': {
@@ -343,7 +354,10 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   if (state.service) state.crew.men = Math.max(state.crew.men, SERVICE_CREW);
   state.crew.morale = Math.round((state.crew.morale + 6) / 2);
   clampMorale(state);
-  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1);
+  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + favourMuster(state);
+  state.musterPool = Math.max(0, state.musterPool);
+  const felag = endFelag(state, content);
+  if (felag) lines.push(felag);
   // the year's news on the trading beaches
   rollTradeNews(state, content, rng);
   // the farm's winter

@@ -145,17 +145,17 @@
           You tell it the way it happened, not the way it would sound best: the javelin, the banner, the levy breaking, the sea-chest, the men coming up one at a time. You don't make yourself bigger than you were. You don't have to.
 
           When you've finished the jarl is quiet a while. "Nineteen, Ásgeir was, when I gave him a ship," he says at last. "He lost her the first summer. You brought mine home full." He turns to go, and stops. "She's yours to sail next summer. For my quarter. Lose her, and you'll row for me till you've paid for her."
-        effects: [ { set: flag.h_jarl_trust }, { deed: { type: deed, text: "Brought the jarl's ship home from Ireland, and answered for it on the landing", weight: 3, witnesses: 80 } } ]
+        effects: [ { set: flag.h_jarl_trust }, { favour: 2 }, { deed: { type: deed, text: "Brought the jarl's ship home from Ireland, and answered for it on the landing", weight: 3, witnesses: 80 } } ]
       failure:
         text: |
           You tell it, and it comes out wrong: too fast, too much about you, and the bit about the sea-chest sounds, said aloud on a cold landing, like a boy who climbed onto a box.
 
           The jarl hears you out. "You'll sail her next summer," he says, "because the men will row for you and I haven't got anyone better. Don't mistake that for anything else." He takes his quarter of the heap that afternoon, and Ásgeir's, and has it weighed twice.
-        effects: [ { set: flag.h_jarl_doubt }, { add: { honour: -1 } } ]
+        effects: [ { set: flag.h_jarl_doubt }, { favour: -1 }, { add: { honour: -1 } } ]
     - id: sword
       text: Lay Ásgeir's sword at his feet, and say nothing at all.
       visible_if: "fate.asgeir_falls && !flag.bg_covered"
-      effects: [ { set: flag.h_jarl_trust }, { add: { honour: 1 } }, { item: { id: asgeir_sword } } ]
+      effects: [ { set: flag.h_jarl_trust }, { favour: 2 }, { add: { honour: 1 } }, { item: { id: asgeir_sword } } ]
       result: |
         You take it out of the stern, wrapped in Ásgeir's own cloak, and lay it on the shingle at the jarl's feet, and step back.
 
@@ -165,7 +165,7 @@
     - id: men
       text: Let the men who swore to you speak for you.
       requires: [{ any: [man.ketill.sworn, man.ulf.sworn, man.hallvard.sworn] }]
-      effects: [ { set: flag.h_jarl_trust }, { add: { crew.morale: 1 } } ]
+      effects: [ { set: flag.h_jarl_trust }, { favour: 1 }, { add: { crew.morale: 1 } } ]
       result: |
         [if man.ketill.sworn]
         Ketill steps out of the crowd before you can say anything. "I've rowed for you twenty years, Eystein," he says. "I rowed with Ásgeir eleven. I'm telling you this one will do." Then he steps back, because he's said more words together than anyone on the landing has ever heard from him.
@@ -178,7 +178,7 @@
         "Well," says the jarl. "The men have spoken. She's yours to sail next summer, for my quarter." He looks at you a moment longer. "Men who'll speak for you on a cold morning are worth more than the ship. Keep them."
     - id: offer
       text: Offer him Ásgeir's share of the heap for Ásgeir's widow, before he asks.
-      effects: [ { add: { loot: -48, honour: 1 } }, { set: flag.h_jarl_trust }, { set: flag.h_asgeir_widow } ]
+      effects: [ { add: { loot: -48, honour: 1 } }, { set: flag.h_jarl_trust }, { favour: 2 }, { set: flag.h_asgeir_widow } ]
       result: |
         The jarl's eyebrows go up. Two marks, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
 

@@ -7,6 +7,7 @@
 //   [if cond]...[elif cond]...[else]...[/if]   (not nested; cond uses the condition grammar, with && and ||)
 import { reckoning } from './boasts';
 import { hiredShip, swornShip } from './fleet';
+import { bestAlly, partner } from './allies';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { test, validateCond } from './conditions';
@@ -66,6 +67,7 @@ export function renderText(text: string, state: GameState, content: ContentBundl
     .replace(/\{captain\}/g, state.service?.captain ?? 'the captain')
     .replace(/\{ship\}/g, state.ships[0]?.name ?? 'the ship')
     .replace(/\{wife\}/g, state.base.wife ?? 'your wife')
+    .replace(/\{ally\}/g, () => { const id = partner(state, content) ?? bestAlly(state, content); return id ? content.captains[id]!.name : 'a captain you know'; })
     .replace(/\{newship\}/g, state.ships[state.ships.length - 1]?.name ?? 'the new ship')
     .replace(/\{newmaster\}/g, () => { const s = hiredShip(state); return s ? s.master!.split(':')[1]! : 'the steersman'; })
     .replace(/\{mastername\}/g, () => { const s = swornShip(state); return s ? state.men.find((m) => `man:${m.id}` === s.master)!.name : 'your shipmaster'; })
@@ -80,6 +82,6 @@ export function checkText(text: string, content: ContentBundle): string[] {
   for (const m of text.matchAll(IF)) for (const b of branches(m[2]!, m[1]!)) if (b.cond) errs.push(...validateCond(b.cond.trim(), content));
   const stray = text.replace(IF, '').match(/\[(?:if|elif|else|\/if)[^\]]*\]/);
   if (stray) errs.push(`unbalanced ${stray[0]}`);
-  for (const m of text.matchAll(/\{([a-z]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning', 'newship', 'newmaster', 'mastername'].includes(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
+  for (const m of text.matchAll(/\{([a-z]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning', 'newship', 'newmaster', 'mastername', 'ally'].includes(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
   return errs;
 }

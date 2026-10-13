@@ -7,6 +7,7 @@ import { dateOf } from './calendar';
 import { effAttr, age } from './hero';
 import { fameRank, lastingFame, livingFame } from './fame';
 import { standing } from './standing';
+import { captain } from './allies';
 
 export type Value = number | string | boolean;
 
@@ -42,6 +43,9 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   thralls: (s) => s.base.thralls,
   married: (s) => (s.base.wife ? 1 : 0),
   'masters.sworn': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('man:') && s.men.some((m) => m.alive && `man:${m.id}` === x.master)).length,
+  favour: (s) => s.favour ?? 0,
+  allies: (s, c) => Object.keys(c.captains).filter((id) => { const x = captain(s, c, id); return x.met && x.alive && x.rel >= 3; }).length,
+  partner: (s) => (s.partner && s.partner.year === dateOf(s.day).year ? 1 : 0),
   'cargo.lots': (s) => Object.values(s.cargo ?? {}).reduce((n, c) => n + c.lots, 0),
   'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
   'masters.hired': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('hired:')).length,
@@ -74,6 +78,13 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     case 'standing': return standing(state, content, a!);
     case 'item': return state.items.some((x) => x.id === a);
     case 'omen': return state.omens[a!] ?? 0;
+    case 'captain': {
+      const c = captain(state, content, a!);
+      if (b === 'met') return c.met;
+      if (b === 'alive') return c.alive;
+      if (b === 'partner') return state.partner?.id === a && state.partner?.year === dateOf(state.day).year;
+      return c.rel;
+    }
     case 'boast': {
       const bt = state.boasts.find((x) => x.id === a);
       return !bt ? 0 : bt.state === 'open' ? 1 : bt.state === 'kept' ? 2 : 3;
@@ -109,6 +120,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;
     case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;
     case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
+    case 'captain': return content.captains[a!] && ['rel', 'met', 'alive', 'partner'].includes(b!) ? null : `bad captain path "${path}"`;
     case 'boast': return content.boasts[a!] && !b ? null : `unknown boast "${a}" (declare it in content/registry/boasts.yaml)`;
   }
   return `unknown path "${path}"`;

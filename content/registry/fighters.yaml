@@ -107,3 +107,12 @@
   weapon: 1
   habits: { strike: 5, guard: 1 }
   desc: Large, drunk, and certain. He has a gutting-knife he hasn't drawn yet.
+- id: onund
+  name: Önundr Hrappsson
+  attrs: { str: 3, agi: 3, end: 3, wit: 2, pre: 2 }
+  weapons: 4
+  shield: 3
+  armour: 1
+  weapon: 2
+  habits: { strike: 3, guard: 2, feint: 2 }
+  desc: The youngest and the best of Hrapp's sons, with his brothers' grudge and none of their slowness.

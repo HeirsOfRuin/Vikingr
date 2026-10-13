@@ -12,6 +12,7 @@ import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
+import { FAVOUR, favour, favourWord } from './allies';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
@@ -347,6 +348,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       out.push(opt('Hall', { t: 'hall', what: 'train' }, lord ? 'Train with the men' : 'Practise with your bench-mates'));
       out.push(opt('Hall', { t: 'hall', what: 'rest' }, 'Rest and heal'));
       if (state.flags.skald) out.push(opt('Hall', { t: 'hall', what: 'skald' }, 'Have the skald compose'));
+      if (home && !state.service) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift' }, 'Send the jarl a gift', state.silver >= FAVOUR.giftCost, `You need ${formatSilver(FAVOUR.giftCost)}.`, `${formatSilver(FAVOUR.giftCost)}; his favour: ${favourWord(favour(state))}`));
       if (home) out.push(opt('Hall', { t: 'hall', what: 'blot' }, 'Hold a blót', state.silver >= 12, `You need ${formatSilver(12)}.`, formatSilver(12)));
       if (home && lord && !state.building) for (const t of BUILD_TYPES) {
         const st = content.ships[t]!;

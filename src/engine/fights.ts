@@ -1,6 +1,7 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
 import { stow } from './fleet';
+import { partnerInFight } from './allies';
 import type { BattleTerrain, ContentBundle } from '../content/schema';
 import type { BattleState, DuelSide, DuelState, GameState } from './state';
 import type { RngCursor } from './rng';
@@ -123,7 +124,9 @@ export function startBattle(
   const foe = content.foes[opts.foe];
   if (!foe) throw new Error(`unknown foe ${opts.foe}`);
   const named = fitMen(state).map((m) => ({ id: m.id, name: m.name, slot: m.slot, weapons: m.weapons, down: false, hurt: false }));
-  const ours = state.crew.men + named.length;
+  // a félag partner's men, unless he hangs back (docs/FRAME-TRADE-ALLIES.md)
+  const ally = partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
+  const ours = state.crew.men + named.length + ally.men;
   const b: BattleState = {
     foeId: foe.id,
     terrain: opts.terrain,
@@ -132,7 +135,7 @@ export function startBattle(
     them: { name: foe.name, men: opts.men, start: opts.men, quality: foe.quality, morale: 6 + foe.quality - (!state.service && hasFitting(state.ships[0], 'carved_prow') ? FITTING.prowMorale : 0), doctrine: foe.doctrine, last: null },
     position: state.position,
     round: 0,
-    log: [`${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`],
+    log: [...(ally.line ? [ally.line] : []), `${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`],
     heroDown: false,
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),
@@ -146,6 +149,7 @@ export function startBattle(
     win: opts.win,
     lose: opts.lose,
     killed: 0,
+    ...(ally.men ? { allyMen: ally.men } : {}),
     lost: 0,
   };
   state.pending = { t: 'battle', battle: b };
@@ -180,7 +184,9 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
       lines.push(`${m.name} is hurt, and will sit out a fight or two.`);
     }
   }
-  const crewLost = Math.max(0, b.lost - namedLost.length);
+  // a partner's men die in proportion, and they are his to bury
+  const ownShare = b.allyMen ? (b.us.start - b.allyMen) / b.us.start : 1;
+  const crewLost = Math.max(0, Math.round(b.lost * ownShare) - namedLost.length);
   state.crew.men = Math.max(0, state.crew.men - crewLost);
   lines.push(`You lost ${plural(crewLost, 'man', 'men')}${namedLost.length ? ' and ' + plural(namedLost.length, 'sworn man', 'sworn men') : ''}. They lost ${b.killed}.`);
   if (won) state.crew.quality = Math.min(2.5, state.crew.quality + 0.08);

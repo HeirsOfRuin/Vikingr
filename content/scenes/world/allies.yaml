@@ -1,0 +1,299 @@
+# Allies (docs/FRAME-TRADE-ALLIES.md §Step 3): the shipmasters of the north, the félag, and the jarl.
+
+# ---- the captains, met at their own landings ----
+- id: cap_steinarr
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", "!service"]
+  art: muster
+  title: Steinarr
+  text: |
+    Steinarr is on the jarl's landing this spring with a ship of his own: a karvi with a new sail and an old crew, half of them men who rowed the Raven with you.
+    [if flag.bg_challenged]
+    He still carries his left arm a little stiffly, where you opened it on the grass at Bangor. He sees you see it.
+    [/if]
+    He comes over while your men are loading, and stands with his thumbs in his belt looking at your ship, the way he used to look at you on the bench.
+
+    "Well," he says. "Look at us. Two captains." It's hard to tell if he's pleased about it.
+  choices:
+    - id: drink
+      text: Offer him a horn, and drink to Ásgeir.
+      effects: [ { ally: { id: steinarr, meet: true, rel: 2 } } ]
+      result: He hesitates, and then takes it. "To Ásgeir," he says. "Who'd have hated the both of us, captains." He almost laughs. It's the closest you've ever come to liking him.
+    - id: felag
+      text: Ask him to sail with you this summer. Two ships go further than one.
+      requires: ["captain.steinarr.rel >= 3"]
+      effects: [ { ally: { id: steinarr, meet: true, felag: true } } ]
+      result: He looks at you a long while. "Félag," he says. "Equal shares by the men. And when we disagree, we talk, and then I'm right." He holds out his hand. It's a hard grip, and an honest one.
+    - id: cold
+      text: Nod to him, and get on with your loading.
+      effects: [ { ally: { id: steinarr, meet: true, rel: -1 } } ]
+      result: He nods back, and goes back to his own ship, and you both make a point of not looking at each other all morning.
+
+- id: cap_ubbi
+  kind: place
+  trigger: arrive
+  at: [hedeby]
+  once: true
+  requires: ["year >= 833", "!flag.ubbi_broken", "!service"]
+  title: Ubbi's hall
+  text: |
+    Ubbi has a hall now, inside the earth wall, with a carved door and a hearth you could roast an ox in, and he's roasting one. He sees you at the door and roars your name across the whole hall, and makes the man next to him move up the bench.
+    [if flag.ubbi_done]
+    "The ditch-troll!" he tells everyone. "Out of the mud on the Frisians' flank! Sit, sit!"
+    [/if]
+    [break]
+    Later, when the ox is bones, he leans over. "The emperor's sons are at each other again," he says. "The Frisian coast, the Franks' rivers, Dorestad. Every summer there's more lying about and fewer men watching it. Sail with me. Your ship and mine, and the king's peace on us both."
+  choices:
+    - id: felag
+      text: Clasp his hand. A summer with Ubbi.
+      requires: ["captain.ubbi.rel >= 3"]
+      effects: [ { ally: { id: ubbi, meet: true, felag: true } }, { favour: -1 } ]
+      result: |
+        He crushes your hand and roars for more ale. The hall cheers without knowing why. You'll have three ships of Danes at your back this summer, and every one of them louder than Ulf.
+
+        Somebody will tell the jarl. The jarl won't like it.
+    - id: later
+      text: Tell him another year. You have your own road this summer.
+      effects: [ { ally: { id: ubbi, meet: true } } ]
+      result: '"Another year," he agrees, and fills your horn himself. "But don''t leave it too long. There''s only so much lying about."'
+    - id: jarl
+      text: Tell him your jarl doesn't love Danes, and you sail for your jarl.
+      effects: [ { ally: { id: ubbi, meet: true, rel: -1 } }, { favour: 1 } ]
+      result: He shrugs. "Every man has a jarl," he says, "until he hasn't." You've heard that before.
+
+- id: cap_thorstein
+  kind: place
+  trigger: arrive
+  at: [skye]
+  once: true
+  requires: ["year >= 832", "!service"]
+  title: Kolbeinn's son
+  text: |
+    Þorsteinn Kolbeinsson meets you on the beach: a broad, quiet man of thirty with his father's hands and his Pictish mother's black hair, and a ship of his own drawn up beside the steading.
+    [if flag.wife_thorunn]
+    "Brother," he says, which surprises you, until you remember that he is.
+    [/if]
+    His father's war for the three valleys is going badly. The Islesmen from Uist have been raiding the outer glens, and a man with one ship can't be everywhere.
+  choices:
+    - id: help
+      text: Offer him your ship for the summer.
+      requires: ["captain.thorstein.rel >= 3"]
+      effects: [ { ally: { id: thorstein, meet: true, felag: true } } ]
+      result: He considers it the way his father considers everything, slowly, from all sides. Then he nods. "Félag," he says. "We'll clear Uist, and then we'll see what's south."
+    - id: talk
+      text: Talk sheep and ships with him until dark.
+      effects: [ { ally: { id: thorstein, meet: true, rel: 2 } }, { add: { skill.lore: 1 } } ]
+      result: By dark you know every valley on Skye and every rock between here and Uist, and he knows the Irish coast as far as Conaille. It's a fair trade. Better than most.
+    - id: away
+      text: Wish him luck with Uist.
+      effects: [ { ally: { id: thorstein, meet: true } } ]
+      result: He thanks you, politely, and goes back to his ship. He'll remember you didn't offer.
+
+- id: cap_onund
+  kind: place
+  trigger: arrive
+  at: [karmoy]
+  once: true
+  requires: ["year >= 832", "!service"]
+  title: Hrapp's youngest
+  text: |
+    There's a ship in the strait below Avaldsnes with shields on the rail and a man on the stem-post waiting for you, and you know before you're close enough to see his face who he is. He has the Hrappsson jaw.
+
+    Önundr is the youngest of Hrapp's sons, and the only one with a ship.
+    [if flag.hrapp_ended]
+    His brother Grímr is under a mound in Hordaland because of you. He says so, loudly, across the water, so that everybody in the strait can hear.
+    [elif flag.y_holm_won]
+    His brother Thorgils paid you holmlausn on the cloak at Yule, in front of the whole district. Hrapp's sons have not forgotten what that cost.
+    [else]
+    There's bad blood between your family and his that's older than either of you. He seems to want to make it newer.
+    [/if]
+  choices:
+    - id: wergild
+      text: Offer him three marks to settle it, here, in front of witnesses.
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { ally: { id: onund, meet: true, rel: 5 } }, { set: flag.hrapp_paid } ]
+      result: He looks at the silver a long time. Then he takes it, and spits in the sea, and says the words. It's done. He'll never like you. But it's done.
+    - id: holm
+      text: Tell him if he wants it settled, there's a cloak on the shore.
+      danger: true
+      effects: [ { ally: { id: onund, meet: true } }, { fight: { foe: onund, kind: holmgang, lethal: true, win: cap_onund_won } } ]
+    - id: past
+      text: Row past him and say nothing.
+      effects: [ { ally: { id: onund, meet: true, rel: -2 } } ]
+      result: You row past. He watches you all the way through the strait, and then turns his ship and follows you for half a day, just out of bowshot, before he lets you go. Next time he won't.
+
+- id: cap_onund_won
+  kind: spine
+  title: The cloak at Avaldsnes
+  text: |
+    Önundr Hrappsson dies on a cloak on the shingle below the king's seat at Avaldsnes, with half the strait watching from their ships, and his own men standing with their hands well away from their axes.
+
+    That's the last of Hrapp's sons with a ship. Hrapp's line will tell it one way, and yours another, for as long as there are people in Hordaland to tell it.
+  choices:
+    - id: done
+      text: Give his men leave to take him home.
+      effects: [ { ally: { id: onund, kill: true } }, { deed: { type: holmgang_won, text: "Killed Önundr Hrappsson on the cloak at Avaldsnes, ending Hrapp's feud" } }, { set: flag.hrapp_ended } ]
+      result: They carry him down to his ship, and row away north, and nobody says anything at all.
+
+- id: cap_sigtrygg
+  kind: place
+  trigger: arrive
+  at: [birka]
+  cooldown_days: 300
+  requires: ["year >= 832", "!service", "!captain.sigtrygg.met || captain.sigtrygg.rel >= 3"]
+  title: Sigtrygg the Swede
+  text: |
+    Sigtrygg finds you rather than you him: a lean, grey, smiling Swede with two knarrs in the harbour and arm-rings to the elbow, who has heard you're a Norwegian with a ship and wants to know what you'll carry, where, and for how much.
+
+    "I go west for furs and east for silver," he says, "and I need a man who goes the other way. Two ships are harder to rob than one."
+  choices:
+    - id: felag
+      text: Swear félag with him for the summer. Your shields, his knarrs.
+      requires: ["captain.sigtrygg.rel >= 3"]
+      effects: [ { ally: { id: sigtrygg, meet: true, felag: true } } ]
+      result: He smiles wider. "By the men, the shares," he says. "And by my scales, the weights." You'll want to watch his scales.
+    - id: deal
+      text: Trade with him, carefully, and drink with him after.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: You trade, and it's close, and at the end of it he laughs and admits you've beaten him by an ørtug. He respects that more than anything you could have said.
+        effects: [ { ally: { id: sigtrygg, meet: true, rel: 3 } }, { add: { silver: 24 } } ]
+      failure:
+        text: You trade, and he wins, and is gracious about it, and you can't work out until you're out of the harbour exactly how.
+        effects: [ { ally: { id: sigtrygg, meet: true, rel: 1 } }, { add: { silver: -12 } } ]
+    - id: no
+      text: Tell him you don't carry other men's goods.
+      effects: [ { ally: { id: sigtrygg, meet: true } } ]
+      result: '"Everybody does, in the end," he says, still smiling. "Ask me again when you do."'
+
+- id: cap_eyvindr
+  kind: place
+  trigger: arrive
+  at: [kaupang]
+  once: true
+  weight: 2
+  requires: ["year >= 832", "!service"]
+  title: Eyvindr Skreyja
+  text: |
+    You hear Eyvindr Skreyja before you see him: a voice from the far end of the beach telling everyone in Kaupang about the time he took a Frankish count's own horse out from under him on the Seine. Then you see him: a big man in a red cloak with a Frankish sword on each hip, because one, he says, isn't enough for a man of his reputation.
+
+    He's heard of you. He tells you what he's heard, at length, and most of it is wrong in your favour.
+    [break]
+    "Two ships," he says at last. "Mine and yours. The Franks are rich and stupid and fighting each other. What do you say?"
+  choices:
+    - id: felag
+      text: Clasp his hand. A summer with Eyvindr will at least be loud.
+      effects: [ { ally: { id: eyvindr, meet: true, rel: 3 } }, { ally: { id: eyvindr, felag: true } } ]
+      result: He crushes your hand and tells the beach about it. By evening the story is that you begged him on your knees. You let it go.
+    - id: brag
+      text: Out-brag him, in front of the whole beach.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: You tell it bigger, louder and better than he does, and the beach roars, and Eyvindr laughs so hard he has to sit down on a fish crate. He likes you now. Heaven help you.
+        effects: [ { ally: { id: eyvindr, meet: true, rel: 4 } }, { add: { flag.y_hall: 1 } } ]
+      failure:
+        text: You try. He has a better voice and more practice. The beach is his.
+        effects: [ { ally: { id: eyvindr, meet: true, rel: 1 } } ]
+    - id: no
+      text: Tell him you choose your own road.
+      effects: [ { ally: { id: eyvindr, meet: true, rel: -1 } } ]
+      result: He shrugs, hugely. "Then I'll see you on it," he says, "probably going the other way with my ship full."
+
+# ---- the spring félag ----
+- id: g_felag
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 300
+  weight: 2
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", "!service", "!partner", "allies >= 1"]
+  art: muster
+  title: A message up the fjord
+  text: |
+    A boat comes up the fjord with a message from {ally}: he's sailing this summer, with his ships and his men, and he'd sail further with yours beside him. Félag, he says: the men's shares by the men, the losses by the gods, and the glory to whoever's loudest at Yule.
+  choices:
+    - id: yes
+      text: Send back your hand on it.
+      effects: [ { ally: { id: best, felag: true } } ]
+      result: The boat goes back down the fjord with your word. Two fleets this summer, and one heap.
+    - id: no
+      text: Send back your thanks, and sail alone.
+      effects: [ { ally: { id: best, rel: -1 } } ]
+      result: The boat goes back down the fjord. He'll understand. Probably.
+
+# ---- the jarl ----
+- id: g_levy
+  kind: phase
+  trigger: phase_start
+  chance: 0.35
+  cooldown_days: 300
+  weight: 3
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", "!service", "ships >= 1"]
+  art: yule_hall
+  title: The jarl's levy
+  text: |
+    The war-arrow comes round the district in the first week of spring: a split arrow, passed from farm to farm, which means the jarl calls for ships.
+
+    Danish raiders have been on the outer coast since the ice went out: three ships, maybe four, burning farms on the islands and taking cattle and people. The jarl means to catch them before they take anything else, and he wants every ship in the district on his landing in three days.
+    [if favour >= 4]
+    He sends a man to you in particular, which he doesn't do for everyone.
+    [/if]
+  choices:
+    - id: answer
+      text: Answer the arrow. Your ships on his landing in three days.
+      danger: true
+      effects: [ { days: 4 }, { battle: { foe: danish_raiders, men: 34, terrain: beach, win: g_levy_won, lose: g_levy_lost } } ]
+    - id: silver
+      text: Send three marks for the jarl's men, and keep your ships for your own summer.
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } } ]
+      result: The jarl takes the silver. He doesn't send thanks. A man who sends silver to a levy is a man with something better to do, and everybody knows it.
+    - id: refuse
+      text: Let the arrow go past.
+      effects: [ { favour: -3 }, { add: { honour: -1 } } ]
+      result: The arrow goes on to the next farm. The jarl catches the Danes without you, or doesn't. Either way, he notices whose ship wasn't there.
+
+- id: g_levy_won
+  kind: spine
+  art: iona_burning
+  title: The Danes on the strand
+  text: |
+    You catch them on an island beach with their ships drawn up and their cattle half-loaded, and the jarl's ships come round the headland behind them, and there's nowhere for them to go but into your shields.
+
+    It's short. At the end of it the Danes' ships are the jarl's, and their plunder is back where it came from, mostly, and the jarl stands on the strand with a dead man's axe in his hand and looks for you.
+  choices:
+    - id: share
+      text: Take the share he gives you, in front of the levy.
+      effects: [ { favour: 3 }, { add: { loot: 150 } }, { deed: { type: battle_won, text: "Stood with the jarl's levy against the Danish raiders", weight: 3, witnesses: 200 } } ]
+      result: He gives you the best of the Danes' plunder, and his hand, and says your name to the whole levy. That's worth more than the plunder, and you both know it.
+
+- id: g_levy_lost
+  kind: spine
+  title: The Danes get away
+  text: |
+    The Danes are better than anyone thought, and readier. They break your part of the line and get their ships off the beach and away round the point, with most of their plunder and some of yours.
+
+    The jarl doesn't blame you. Not out loud.
+  choices:
+    - id: home
+      text: Row home with the levy.
+      effects: [ { favour: 1 }, { add: { crew.morale: -1 } } ]
+      result: You came when the arrow came. In the end, that's what the jarl remembers.
+
+- id: g_veizla
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["place == home_fjord", "phase == winter", "favour >= 6", "base == father", "!service"]
+  art: yule_hall
+  title: The jarl's gift
+  text: |
+    At the midwinter feast Jarl Eystein calls you up to the high seat, in front of everyone, and puts a turf in your hands: a square of earth, cut from a field, with the grass still on it.
+
+    "The old Hallsteinn farm, at the head of the long valley," he says. "Its man died without sons. It's mine to give, and I give it to you, to hold from me, for as long as you sail when I call."
+  choices:
+    - id: take
+      text: Take the turf, and kneel.
+      effects: [ { base: farm }, { favour: 1 }, { deed: { type: deed, text: "Was given land by Jarl Eystein", weight: 4, witnesses: 100 } } ]
+      result: You kneel, and he puts his hand on your head, the old way. The hall roars. Your father, down the benches, doesn't roar. He's too busy looking at the ceiling, very hard, for some reason.

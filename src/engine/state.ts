@@ -192,6 +192,8 @@ export interface BattleState {
   parted?: string;
   killed: number;
   lost: number;
+  /** A félag partner's men in our line: his losses are his own. */
+  allyMen?: number;
 }
 
 export type Pending =
@@ -249,6 +251,12 @@ export interface GameState {
   cargo?: Record<string, { lots: number; cost: number }>;
   /** The year's trade news: one good dear or cheap everywhere. */
   tradeNews?: { good: string; mult: number; year: number };
+  /** The shipmasters of the north, once anything has passed between them (docs/FRAME-TRADE-ALLIES.md). */
+  captains?: Record<string, { rel: number; met: boolean; alive: boolean }>;
+  /** The summer's félag: a sworn partner, the year, and the heap shared. */
+  partner?: { id: string; year: number; loot: number };
+  /** Jarl Eystein's favour, -10..10. */
+  favour?: number;
   /** This year's trade profit, and whether its deed has been earned. */
   tradeYear?: { year: number; profit: number; deed: boolean };
   hamingja: number;

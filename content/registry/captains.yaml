@@ -1,0 +1,62 @@
+# Shipmasters of the north (docs/FRAME-TRADE-ALLIES.md §Step 3). rel: where he starts with you; bias: what your
+# deeds before you met him have done to that. men and ships: what he brings to a félag.
+- id: steinarr
+  name: Steinarr
+  home: home_fjord
+  people: norse
+  temperament: ambitious
+  ships: 1
+  men: 32
+  rel: 0
+  bias: [ { if: flag.bg_challenged, n: -2 }, { if: flag.bg_steinarr, n: 1 }, { if: flag.h_jarl_trust, n: 1 } ]
+  desc: "Ásgeir's old second. A long, sour man with a broken nose, who has been to Ireland and wants everyone to know it, and who has never forgiven anyone for anything."
+- id: ubbi
+  name: Ubbi
+  home: hedeby
+  people: danish
+  temperament: hot
+  ships: 3
+  men: 100
+  rel: 1
+  bias: [ { if: flag.ubbi_done, n: 4 }, { if: flag.ubbi_sworn, n: 1 }, { if: flag.ubbi_broken, n: -7 }, { if: flag.ubbi_refused, n: -1 } ]
+  desc: "A hersir of King Horik's: red-bearded, loud, generous with silver and with blows, and always going somewhere with more ships than he needs."
+- id: thorstein
+  name: Þorsteinn Kolbeinsson
+  home: skye
+  people: norse
+  temperament: steady
+  ships: 1
+  men: 28
+  rel: 1
+  bias: [ { if: flag.sk_thorunn_friend, n: 1 }, { if: flag.wife_thorunn, n: 3 }, { if: flag.thorunn_refused, n: -2 } ]
+  desc: "Kolbeinn's son on Skye: broad, slow-spoken, half Pict by his mother, who fights for his father's valleys and wants more of them."
+- id: onund
+  name: Önundr Hrappsson
+  home: karmoy
+  people: norse
+  temperament: dour
+  ships: 1
+  men: 30
+  rel: -3
+  bias: [ { if: flag.y_holm_won, n: -2 }, { if: flag.hrapp_ended, n: -3 }, { if: flag.hrapp_paid, n: 3 } ]
+  desc: "The youngest of Hrapp's sons, and the only one with a ship. He remembers everything that was ever done to his family, and he keeps a list."
+- id: sigtrygg
+  name: Sigtrygg the Swede
+  home: birka
+  people: swedish
+  temperament: greedy
+  ships: 2
+  men: 30
+  rel: 0
+  bias: [ { if: flag.birka_east, n: 1 } ]
+  desc: "A Swedish trader with two knarrs and an arm-ring for every summer he has survived. He sails west for furs and east for silver, and fights only when the sums say so."
+- id: eyvindr
+  name: Eyvindr Skreyja
+  home: kaupang
+  people: norse
+  temperament: hot
+  ships: 2
+  men: 60
+  rel: 0
+  bias: [ { if: flag.ubbi_done, n: 1 } ]
+  desc: "Eyvindr the Braggart, half Dane and all trouble: a freebooter out of Kaupang who has raided Franks, Frisians, Irish, English and once, by mistake, his own cousin."

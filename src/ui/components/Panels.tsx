@@ -1,6 +1,7 @@
 import type { ContentBundle } from '../../content/schema';
 import { goalProgress } from '../../engine/boasts';
 import { freeSworn, hold, MASTER_SHARES, masterOf } from '../../engine/fleet';
+import { captain, favour, favourMuster, favourWord, partner, relWord } from '../../engine/allies';
 import { SKILLS, ATTRS } from '../../content/schema';
 import type { GameState, Position } from '../../engine/state';
 import type { Action } from '../../engine/index';
@@ -228,6 +229,18 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
             })}
           </tbody>
         </table>
+      </div>
+      <div class="card">
+        <h3>The jarl and the captains</h3>
+        <p class="small">Jarl Eystein: you are {favourWord(favour(state))}.{state.service ? '' : ` His favour sends ${Math.max(0, favourMuster(state))} more men to your muster.`}</p>
+        {Object.keys(content.captains).filter((id) => captain(state, content, id).met).length ? (
+          <dl class="kv">
+            {Object.values(content.captains).filter((c) => captain(state, content, c.id).met).map((c) => {
+              const cs = captain(state, content, c.id);
+              return [<dt key={`${c.id}t`}>{c.name}</dt>, <dd key={`${c.id}d`}>{cs.alive ? `${relWord(cs.rel)}; ${c.ships === 1 ? 'one ship' : `${c.ships} ships`}, ${c.men} men, at ${content.places[c.home]?.name}${partner(state, content) === c.id ? '. Sworn to you in félag this summer.' : '.'}` : 'dead.'}</dd>];
+            })}
+          </dl>
+        ) : <p class="muted small">You haven't met the other shipmasters of the north yet. They keep to their own landings.</p>}
       </div>
       <div class="card">
         <h3>The greatest living legends</h3>

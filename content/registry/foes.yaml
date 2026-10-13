@@ -39,3 +39,8 @@
   quality: 1
   doctrine: { hold: 3, missiles: 2, push: 1, give: 1 }
   desc: Freemen of the dykes and terps, with a count's mounted household behind them. They know their own mudflats better than you do.
+- id: danish_raiders
+  name: Danish raiders
+  quality: 1
+  doctrine: { push: 2, wedge: 2, hold: 2, missiles: 1 }
+  desc: Hard men off three or four ships, caught on a beach with their plunder half-loaded. They fight like men with nowhere to run.

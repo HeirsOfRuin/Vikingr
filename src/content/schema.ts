@@ -70,6 +70,8 @@ const baseEffect = z.union([
   z.object({ give_ship: id }).strict(),
   z.object({ desert: z.literal(true) }).strict(),
   z.object({ lose_cargo: z.number().int().min(1) }).strict(),
+  z.object({ ally: z.object({ id, meet: z.boolean().optional(), rel: z.number().int().optional(), felag: z.boolean().optional(), kill: z.boolean().optional() }).strict() }).strict(),
+  z.object({ favour: z.number().int() }).strict(),
   z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
@@ -244,6 +246,19 @@ const boastGoal = z.union([
   z.object({ stat: z.enum(BOAST_STATS), n: z.number().int().min(1) }).strict(),
   z.object({ when: condInput }).strict(),
 ]);
+export const captainDef = z.object({
+  id,
+  name: z.string(),
+  home: id,
+  people: z.enum(PEOPLES),
+  temperament: z.enum(TEMPERAMENTS),
+  ships: z.number().int().min(1),
+  men: z.number().int().min(1),
+  rel: z.number().int().min(-10).max(10),
+  bias: z.array(z.object({ if: condInput, n: z.number().int() }).strict()).optional(),
+  desc: z.string(),
+}).strict();
+export type CaptainDef = z.infer<typeof captainDef>;
 export const goodDef = z.object({ id, name: z.string(), lot: z.string(), price: z.number().int().min(1), bulk: z.number().int().min(1) }).strict();
 export type GoodDef = z.infer<typeof goodDef>;
 export const boastDef = z.object({ id, text: z.string(), days: z.number().int().min(1), goal: boastGoal.optional(), repeat: z.boolean().optional() }).strict();
@@ -276,6 +291,7 @@ export interface ContentBundle {
   art: Record<string, ArtEntry>;
   boasts: Record<string, BoastDef>;
   goods: Record<string, GoodDef>;
+  captains: Record<string, CaptainDef>;
   items: Record<string, ItemDef>;
   fates: Record<string, FateDef>;
   banter: BanterLine[];
