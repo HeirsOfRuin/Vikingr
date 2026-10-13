@@ -1,6 +1,7 @@
 // Save format with a version field and a migration chain.
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
+import { kitFromFlags } from './items';
 
 export const SAVE_FORMAT = 'vikingr-save';
 export const SAVE_VERSION = 1;
@@ -44,6 +45,8 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
   }
   state.queue = state.queue.filter((q) => !!content.scenes[q.scene]);
   state.rumoured ??= [];
+  state.crew.gear ??= 0;
+  kitFromFlags(state, content, state.hero.background);
   for (const id of Object.keys(content.places)) {
     const p = content.places[id]!;
     state.places[id] ??= { wealth: p.raid?.wealth ?? 0, defence: 1, raided: 0, lastRaided: null };

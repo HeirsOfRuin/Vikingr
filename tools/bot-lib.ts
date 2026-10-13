@@ -9,6 +9,7 @@ import { routes } from '../src/engine/voyage';
 import { mouths, aliveMen } from '../src/engine/crew';
 import { hpMax } from '../src/engine/hero';
 import { untoldCount } from '../src/engine/fame';
+import { armCost } from '../src/engine/items';
 import { LATE_SEASON_DOY } from '../src/engine/tuning';
 
 export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
@@ -52,6 +53,7 @@ function hops(state: GameState, content: ContentBundle, from: string, to: string
 
 export class Bot {
   visited = new Set<string>(['home_fjord']);
+  shopped = new Set<number>();
   constructor(public policy: Policy, public rng: RngCursor) {}
 
   position(): Position {
@@ -60,7 +62,8 @@ export class Bot {
 
   choose(state: GameState, content: ContentBundle): Action | null {
     const opts = listActions(state, content);
-    const enabled = opts.filter((o) => o.enabled);
+    // shopping and listening are deliberate choices below, never a fallback
+    const enabled = opts.filter((o) => o.enabled && o.action.t !== 'shop' && o.action.t !== 'listen');
     if (!enabled.length) return null;
     if (this.policy === 'random') return enabled[this.rng.int(enabled.length)]!.action;
     const screen = screenOf(state);
@@ -79,8 +82,19 @@ export class Bot {
         if (b && b.position !== this.position() && !b.heroDown && b.round === 0) return { t: 'position', pos: this.position() };
         return pick((a) => a.t === 'battle_auto')!;
       }
+      case 'shop': {
+        // buy what a sensible captain would, keeping a mark in hand
+        const prefer = ['arm', 'helmet', 'mail', 'caulking', 'new_sail', 'shield_rack', 'frankish_sword', 'carved_prow'];
+        for (const want of prefer) {
+          const a = opts.find((o) => o.enabled && ((want === 'arm' && o.action.t === 'arm') || (o.action.t === 'buy' && o.action.item === want)));
+          const cost = !a ? 0 : a.action.t === 'arm' ? armCost(state) ?? 0 : a.action.t === 'buy' ? content.items[a.action.item]?.price ?? 0 : 0;
+          if (a && state.silver - cost > 24) return a.action;
+        }
+        return { t: 'continue' };
+      }
       case 'muster': {
         if (state.service) return pick((a) => a.t === 'set_sail') ?? enabled[0]!.action;
+        if (this.policy !== 'homebody' && state.silver > 120 && !this.shopped.has(state.day)) { this.shopped.add(state.day); const s = pick((a) => a.t === 'shop'); if (s) return s; }
         if (this.policy === 'homebody') return pick((a) => a.t === 'stay_home')!;
         return pick((a) => a.t === 'borrow_ship') ?? pick((a) => a.t === 'recruit') ?? pick((a) => a.t === 'refit') ?? pick((a) => a.t === 'provision') ?? pick((a) => a.t === 'set_sail') ?? enabled[0]!.action;
       }

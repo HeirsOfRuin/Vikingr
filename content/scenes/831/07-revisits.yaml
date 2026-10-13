@@ -31,7 +31,7 @@
     - id: gyda
       text: Tell her the truth. There is a girl at home.
       visible_if: "flag.gyda_courting || flag.gyda_eloped"
-      effects: [ { set: flag.ingibjorg_told }, { add: { honour: 1 } } ]
+      effects: [ { set: flag.ingibjorg_told }, { lose_item: red_thread }, { add: { honour: 1 } } ]
       result: |
         She nods slowly, as if you'd told her the price of something. "Is she pretty?" she says. You tell her. "Is she clever?" You tell her that too.
 

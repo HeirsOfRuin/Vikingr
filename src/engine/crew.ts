@@ -25,7 +25,7 @@ export function capacity(state: GameState, content: ContentBundle): number {
 
 export function fleetSpeed(state: GameState, content: ContentBundle): number {
   if (!state.ships.length) return 0.5;
-  const slowest = Math.min(...state.ships.map((s) => content.ships[s.type]?.speed ?? 1));
+  const slowest = Math.min(...state.ships.map((s) => (content.ships[s.type]?.speed ?? 1) * (s.fittings?.includes('new_sail') ? 1.1 : 1)));
   const oars = state.ships.reduce((s, sh) => s + (content.ships[sh.type]?.oars ?? 0), 0);
   const rowers = state.crew.men + aliveMen(state).length;
   return slowest * (rowers < oars * 0.5 ? 0.8 : 1);
@@ -63,5 +63,6 @@ export function addRecruits(state: GameState, n: number): void {
   const total = state.crew.men + n;
   if (total <= 0) return;
   state.crew.quality = (state.crew.quality * state.crew.men) / total;
+  state.crew.gear = ((state.crew.gear ?? 0) * state.crew.men) / total;
   state.crew.men = total;
 }

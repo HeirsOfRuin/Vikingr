@@ -119,7 +119,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
   let lostMen = 0;
   for (let i = state.ships.length - 1; i >= 0; i--) {
     const ship = state.ships[i]!;
-    ship.hull -= Math.max(2, 6 + rng.int(20) - state.hero.skills.seamanship - Math.min(4, state.hero.skills.craft));
+    ship.hull -= Math.round(Math.max(2, 6 + rng.int(20) - state.hero.skills.seamanship - Math.min(4, state.hero.skills.craft)) * (ship.fittings?.includes('caulking') ? 0.6 : 1));
     const over = rng.int(3);
     lostMen += over;
     if (ship.hull > 0) continue;

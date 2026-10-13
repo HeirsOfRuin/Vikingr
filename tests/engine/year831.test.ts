@@ -4,6 +4,7 @@ import { newGame } from '../../src/engine/index';
 import { applyEffects } from '../../src/engine/effects';
 import { renderText } from '../../src/engine/text';
 import { heroDuelSide } from '../../src/engine/fights';
+import { giveItem } from '../../src/engine/items';
 import { RngCursor, seedRng } from '../../src/engine/rng';
 import { dateOf } from '../../src/engine/calendar';
 import { playLife } from '../../tools/bot-lib';
@@ -41,8 +42,8 @@ describe('the year 831', () => {
   it('a mail shirt and a Frankish sword change the numbers the duel uses', () => {
     const s = start();
     const plain = heroDuelSide(s, content, 'duel');
-    s.flags.mail = 1;
-    s.flags.frankish_sword = 1;
+    giveItem(s, content, 'mail', true);
+    giveItem(s, content, 'frankish_sword', true);
     const kitted = heroDuelSide(s, content, 'duel');
     expect(kitted.armour).toBe(plain.armour + 1);
     expect(kitted.weapon).toBe(plain.weapon + 1);

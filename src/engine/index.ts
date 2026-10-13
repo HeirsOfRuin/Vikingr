@@ -14,6 +14,7 @@ import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, 
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
+import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop } from './items';
 import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
@@ -40,6 +41,10 @@ export type Action =
   | { t: 'hire' }
   | { t: 'land' }
   | { t: 'listen' }
+  | { t: 'shop' }
+  | { t: 'buy'; item: string }
+  | { t: 'arm' }
+  | { t: 'equip'; uid: string }
   | { t: 'expedition'; to: string }
   | { t: 'rest' }
   | { t: 'end_season' }
@@ -73,7 +78,7 @@ export interface ActionOption {
   group: string;
 }
 
-export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
+export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
 
 export interface View {
   screen: Screen;
@@ -118,7 +123,9 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     loot: 0,
     provisions: 0,
     ships: [{ id: bg.service ? 'service' : 'borrowed', type: bg.ship, name: bg.service ? bg.service.ship_name : "The jarl's old karvi", hull: bg.service ? 90 : 80 }],
-    crew: { men: bg.crew, quality: 0.6, morale: 6 },
+    crew: { men: bg.crew, quality: 0.6, morale: 6, gear: 0 },
+    items: [],
+    kit: {},
     men: bg.men.map((id) => ({ ...newMan(content, id), sworn: !bg.service })),
     at: 'home_fjord',
     voyage: null,
@@ -150,6 +157,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     state.fates[f.id] = fateRng.float() < f.chance ? 1 : 0;
     state.omens[f.id] = fateRng.float() < 0.7 ? state.fates[f.id]! : 1 - state.fates[f.id]!;
   }
+  for (const id of bg.kit ?? DEFAULT_KIT) giveItem(state, content, id, true);
   state.hero.hp = hpMax(state, content);
   state.musterPool = 4 + 2 * effAttr(state, content, 'pre');
   // the first season's food comes from the farm and the jarl
@@ -173,8 +181,29 @@ export function screenOf(state: GameState): Screen {
   return 'place';
 }
 
+/** The smith, the market and the shipwright here, if any (FRAME-FOUNDATION §2). */
+export function shopsHere(state: GameState, content: ContentBundle): Shop[] {
+  const at = state.at;
+  if (!at || state.voyage) return [];
+  const p = content.places[at]!;
+  if (p.kind === 'home') return ['smith', 'shipwright'];
+  if (p.market) {
+    const t = tierAt(state, content, at);
+    return t === 'hostile' || t === 'unfriendly' ? [] : ['market', 'shipwright'];
+  }
+  return [];
+}
+
+function shopOption(state: GameState, content: ContentBundle): ActionOption[] {
+  const shops = shopsHere(state, content);
+  if (!shops.length) return [];
+  const label = shops.includes('smith') ? 'Visit the smith and the shipwright' : 'Walk the market booths';
+  const n = forSale(state, content, shops).length + (armCost(state) !== null && !state.service ? 1 : 0);
+  return [opt('Trade', { t: 'shop' }, label, n > 0, 'There is nothing here you need.', `${n} things worth looking at`)];
+}
+
 function homeActions(state: GameState, content: ContentBundle): ActionOption[] {
-  const out: ActionOption[] = [];
+  const out: ActionOption[] = [...shopOption(state, content)];
   const n = recruitable(state, content);
   const room = capacity(state, content) - state.crew.men - aliveMen(state).length;
   out.push(opt('Muster', { t: 'recruit' }, n > 0 ? `Sign on ${plural(n, 'man', 'men')}` : 'Sign on men', n > 0,
@@ -246,6 +275,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const home = state.at === 'home_fjord';
       const fc = feastCost(state);
       const lord = !state.service; // an oarsman eats at his father's table and does not hold feasts
+      if (home) out.push(...shopOption(state, content));
       if (lord) out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
       else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
       for (const m of aliveMen(state)) out.push(opt('Gifts', { t: 'hall', what: 'gift', arg: m.id }, `Give ${m.name} an arm-ring`, state.silver >= ORTUG_PER_MARK, `You need ${formatSilver(ORTUG_PER_MARK)}.`, `Loyalty ${m.loyalty}/10`));
@@ -261,6 +291,14 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         const c = content.ships.karvi!.cost;
         out.push(opt('Ships', { t: 'hall', what: 'buy_ship' }, "Buy the karvi from the jarl", state.silver >= c, `You need ${formatSilver(c)}.`, formatSilver(c)));
       }
+      return out;
+    }
+    case 'shop': {
+      const shops = (p as { shops: Shop[] }).shops;
+      const out = forSale(state, content, shops).map((d) => opt(d.kind === 'fitting' ? 'The shipwright' : shops.includes('smith') ? 'The smith' : 'The booths', { t: 'buy', item: d.id }, `Buy ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}`, state.silver >= d.price!, `You need ${formatSilver(d.price!)}.`, formatSilver(d.price!)));
+      const ac = armCost(state);
+      if (ac !== null && !state.service) out.push(opt('Your men', { t: 'arm' }, `Arm the men: ${gearWord(Math.floor(state.crew.gear) + 1)}`, state.silver >= ac, `You need ${formatSilver(ac)}.`, `${formatSilver(ac)} for ${state.crew.men} men`));
+      out.push(opt('', { t: 'continue' }, 'Done'));
       return out;
     }
     case 'plunder': {
@@ -308,6 +346,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         } else {
           const rc = resupplyCost(state, content, at);
           if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && state.silver + state.loot > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          if (content.places[at]!.market) out.push(...shopOption(state, content));
           const year = dateOf(state.day).year;
           if (GUEST_DAYS[tier] > 0) out.push(opt('Here', { t: 'guest' }, 'Ask for guest-right', state.places[at]?.guested !== year, 'You have had their hospitality this year.', `Food for ${GUEST_DAYS[tier]} days, free, once a year`));
           const hire = hireable(state, content, at);
@@ -352,7 +391,7 @@ function sameAction(a: Action, b: Action): boolean {
 
 export function act(content: ContentBundle, input: GameState, action: Action): GameState {
   const allowed = listActions(input, content).find((o) => sameAction(o.action, action));
-  if (action.t !== 'slot' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
+  if (action.t !== 'slot' && action.t !== 'equip' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
   const state = structuredClone(input);
   const rng = new RngCursor(state.rng);
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
@@ -363,6 +402,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'continue': {
       const next = state.pending?.t === 'report' ? state.pending.next : undefined;
       state.pending = null;
+      delete state.shopNote;
       if (next) open(state, next);
       break;
     }
@@ -426,6 +466,26 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       report('Trading', [`You buy dried fish, meal, cheese and a cask of sour ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`]);
       break;
     }
+    case 'shop':
+      state.pending = { t: 'shop', shops: shopsHere(state, content) };
+      break;
+    case 'buy': {
+      const lines = buy(state, content, action.item);
+      state.pending = { t: 'shop', shops: (state.pending as { shops: Shop[] }).shops };
+      state.shopNote = lines.join(' ');
+      break;
+    }
+    case 'arm': {
+      const cost = armCost(state)!;
+      state.silver -= cost;
+      state.crew.gear = Math.min(GEAR_MAX, Math.floor(state.crew.gear) + 1);
+      journal(state, `Armed the men: ${gearWord(state.crew.gear)}.`);
+      state.shopNote = `You buy ${gearWord(state.crew.gear)} for ${state.crew.men} men. They look like a ship's crew now, and not a farm's.`;
+      break;
+    }
+    case 'equip':
+      equip(state, content, action.uid);
+      break;
     case 'listen': {
       state.silver -= LISTEN_COST;
       state.day += 1;

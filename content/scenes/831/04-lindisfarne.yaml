@@ -88,7 +88,7 @@
         [/if]
     - id: book
       text: Take the whole book. Monks pay to get their books back.
-      effects: [ { set: flag.l_book }, { add: { man.hallvard.loyalty: -1 } }, { plunder: { next: l_after } } ]
+      effects: [ { set: flag.l_book }, { item: { id: lindisfarne_book } }, { add: { man.hallvard.loyalty: -1 } }, { plunder: { next: l_after } } ]
       result: |
         You wrap it in a cloak, cover and all, and put it under your arm. The old monk follows you to the door, and then down the beach, and then into the water up to his waist, saying the same thing over and over in his own language, until Ulf pushes him under, not hard, and he stops.
 

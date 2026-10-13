@@ -122,7 +122,7 @@
         Hallvard spits over the side, three times. But you notice he doesn't stop him.
     - id: bell
       text: Land, and take the bell from the hut. Bronze is bronze.
-      effects: [ { add: { loot: 20, hamingja: -1 } }, { set: flag.sk_bell }, { standing: { place: skye, n: -1 } } ]
+      effects: [ { add: { loot: 20, hamingja: -1 } }, { set: flag.sk_bell }, { item: { id: papar_bell } }, { standing: { place: skye, n: -1 } } ]
       result: |
         It's a little hand-bell, green with age, worth almost nothing. The old man watches you take it without a word.
 

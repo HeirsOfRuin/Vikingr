@@ -12,12 +12,9 @@ import { startPlunder } from './plunder';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { onRaided } from './standing';
+import { creditWeapon, FITTING, GEAR_MAX, GEAR_QUALITY, hasFitting, heroArmour, heroWeapon, shieldBonus } from './items';
 import { DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
-/** Leather and wool; a mail shirt from Kaupang (flag.mail) turns more blows. */
-const heroArmour = (state: GameState): number => (state.flags.mail ? 2 : 1);
-/** A plain spear or axe; his grandfather's sword cuts better (the boyhood scene "father's word"). */
-const heroWeapon = (state: GameState): number => (state.flags.b_sword || state.flags.frankish_sword ? 3 : 2);
 
 export function heroDuelSide(state: GameState, content: ContentBundle, kind: DuelState['kind']): DuelSide {
   const end = effAttr(state, content, 'end');
@@ -32,9 +29,9 @@ export function heroDuelSide(state: GameState, content: ContentBundle, kind: Due
     str: effAttr(state, content, 'str'),
     agi: effAttr(state, content, 'agi'),
     weapons: state.hero.skills.weapons,
-    shield: state.hero.skills.shield,
-    armour: heroArmour(state),
-    weapon: heroWeapon(state),
+    shield: state.hero.skills.shield + shieldBonus(state, content),
+    armour: heroArmour(state, content),
+    weapon: heroWeapon(state, content),
     habits: {},
     bled: false,
     hits: [],
@@ -78,6 +75,8 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
       }
       lines.push(`${foe.name} ${how}.`);
       state.hero.hp = Math.max(1, state.hero.hp);
+      const named = creditWeapon(state, content, rng, champion ? 2 : 1);
+      if (named) lines.push(named);
       next = d.win;
       break;
     }
@@ -127,15 +126,16 @@ export function startBattle(
   const b: BattleState = {
     foeId: foe.id,
     terrain: opts.terrain,
-    us: { name: state.service ? `${state.service.captain}'s men` : 'Your men', men: ours, start: ours, quality: state.crew.quality, morale: state.crew.morale, doctrine: {}, last: null },
-    them: { name: foe.name, men: opts.men, start: opts.men, quality: foe.quality, morale: 6 + foe.quality, doctrine: foe.doctrine, last: null },
+    // his men's arms, and the ship's fittings, count only in a ship he commands (FRAME-FOUNDATION §2)
+    us: { name: state.service ? `${state.service.captain}'s men` : 'Your men', men: ours, start: ours, quality: state.crew.quality + (state.service ? 0 : state.crew.gear * GEAR_QUALITY + (opts.context === 'sea' && hasFitting(state.ships[0], 'shield_rack') ? FITTING.rackQuality : 0)), morale: state.crew.morale, doctrine: {}, last: null },
+    them: { name: foe.name, men: opts.men, start: opts.men, quality: foe.quality, morale: 6 + foe.quality - (!state.service && hasFitting(state.ships[0], 'carved_prow') ? FITTING.prowMorale : 0), doctrine: foe.doctrine, last: null },
     position: state.position,
     round: 0,
     log: [`${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`],
     heroDown: false,
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),
-    heroArmour: heroArmour(state),
+    heroArmour: heroArmour(state, content),
     heroHits: [],
     named,
     deeds: [],
@@ -180,6 +180,12 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   state.crew.men = Math.max(0, state.crew.men - crewLost);
   lines.push(`You lost ${plural(crewLost, 'man', 'men')}${namedLost.length ? ' and ' + plural(namedLost.length, 'sworn man', 'sworn men') : ''}. They lost ${b.killed}.`);
   if (won) state.crew.quality = Math.min(2.5, state.crew.quality + 0.08);
+  // a won field is stripped: helmets and mail off the dead
+  if (won && !state.service) state.crew.gear = Math.min(GEAR_MAX, state.crew.gear + 0.05);
+  if (won && b.position !== 'rear' && !b.heroDown) {
+    const named = creditWeapon(state, content, rng, 1);
+    if (named) lines.push(named);
+  }
   state.crew.morale += won ? 1 : b.over === 'lost' ? -2 : -0.5;
   state.crew.morale -= namedLost.length * 0.5;
   for (const m of aliveMen(state)) addLoyalty(m, won ? 1 : 0);

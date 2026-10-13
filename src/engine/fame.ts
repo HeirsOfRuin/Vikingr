@@ -1,5 +1,6 @@
 // Deeds, telling, fading, verses, and the table of living legends.
 // A deed adds to fame only once it has been told (DESIGN §7).
+import { FIGHT_DEEDS, NAMED_FAME } from './items';
 import type { ContentBundle, Rival } from '../content/schema';
 import type { Deed, GameState } from './state';
 import { dateOf } from './calendar';
@@ -15,7 +16,9 @@ export function addDeed(
 ): Deed {
   const def = content.deeds[d.type];
   if (!def) throw new Error(`unknown deed type ${d.type}`);
-  const weight = Math.round((d.weight ?? def.weight) * (d.mult ?? 1) * 10) / 10;
+  // a fighting deed done with a named weapon in his hand is told with the weapon's name in it (FRAME-FOUNDATION §3)
+  const named = FIGHT_DEEDS.includes(d.type) && !!state.items?.find((x) => x.uid === state.kit?.weapon)?.name;
+  const weight = Math.round((d.weight ?? def.weight) * (d.mult ?? 1) * (named ? NAMED_FAME : 1) * 10) / 10;
   const deed: Deed = {
     n: state.deeds.length + 1,
     type: d.type,

@@ -12,6 +12,34 @@ import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
 import { Bar } from './Actions';
 import { tierAt, TIER_NAMES } from '../../engine/standing';
+import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
+import type { KitSlot } from '../../engine/state';
+
+const SLOT_NAMES: Record<KitSlot, string> = { weapon: 'In his hand', shield: 'On his arm', helmet: 'On his head', armour: 'On his back' };
+
+/** What he carries, what he could carry instead, and what he keeps for what it means (FRAME-FOUNDATION §2–3). */
+function KitCard({ content, state, onAct }: { content: ContentBundle; state: GameState; onAct?: (a: Action) => void }) {
+  const inHand = new Set(Object.values(state.kit));
+  const spare = state.items.filter((x) => !inHand.has(x.uid) && content.items[x.id]?.kind !== 'keepsake');
+  const keepsakes = state.items.filter((x) => content.items[x.id]?.kind === 'keepsake');
+  return (
+    <div class="card">
+      <h3>Kit</h3>
+      <dl class="kv">
+        {(['weapon', 'shield', 'helmet', 'armour'] as KitSlot[]).map((slot) => {
+          const it = equipped(state, slot);
+          return [<dt key={slot}>{SLOT_NAMES[slot]}</dt>, <dd key={slot + 'v'}>{it ? itemName(content, it) : <span class="muted">nothing</span>}{it && slot === 'weapon' ? <span class="muted small"> — {it.deeds} {it.deeds === 1 ? 'deed' : 'deeds'}{it.name ? '' : `; at ${NAME_AT} the men will name it`}</span> : null}</dd>];
+        })}
+      </dl>
+      {spare.length > 0 && (
+        <div class="row sans small" style={{ flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
+          {spare.map((x) => <button key={x.uid} class="choice" style={{ minHeight: 36, padding: '4px 8px' }} onClick={() => onAct?.({ t: 'equip', uid: x.uid })}>Take up {itemName(content, x).replace(/^(A|An|The) /, (m) => m.toLowerCase())}</button>)}
+        </div>
+      )}
+      {keepsakes.length > 0 && <p class="small" style={{ marginTop: 8 }}><span class="muted">Kept for what they mean:</span> {keepsakes.map((x) => itemName(content, x)).join('; ')}.</p>}
+    </div>
+  );
+}
 
 const QUALITY = ['green', 'blooded', 'seasoned', 'veterans'];
 export const qualityWord = (q: number) => QUALITY[Math.max(0, Math.min(3, Math.floor(q)))]!;
@@ -20,13 +48,14 @@ const luckWord = (h: number) => (h >= 3 ? 'The men say your luck is strong. They
 const honourWord = (h: number) => (h >= 5 ? 'a man of his word, known for it' : h >= 2 ? 'well thought of' : h >= -1 ? 'neither praised nor blamed' : h >= -4 ? 'talked about, and not kindly' : 'a name men spit after');
 const loyaltyWord = (l: number) => (l >= 8 ? 'would die for you' : l >= 6 ? 'loyal' : l >= 4 ? 'his oath holds' : l >= 2 ? 'restless' : 'about to leave');
 
-export function HeroPanel({ content, state }: { content: ContentBundle; state: GameState }) {
+export function HeroPanel({ content, state, onAct }: { content: ContentBundle; state: GameState; onAct?: (a: Action) => void }) {
   const h = state.hero;
   const bg = content.backgrounds[h.background];
   return (
     <div>
       <h2>{h.name}{h.nickname ? ` ${h.nickname}` : ''}</h2>
       <p class="muted">{bg?.label}, {age(state)} winters old. {state.service ? `An oarsman in ${state.service.captain}'s ship` : state.ships.length ? "A ship's captain" : 'Without a ship'}. {capitalise(honourWord(state.honour))}.</p>
+      <KitCard content={content} state={state} onAct={onAct} />
       <div class="card">
         <h3>Body</h3>
         Blood {Math.round(h.hp)}/{hpMax(state, content)}
@@ -82,6 +111,10 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
           </div>
         )) : <p class="empty">You have no ship.</p>}
         {state.building && <p class="muted small">Building over the winter: a {content.ships[state.building]?.name.toLowerCase()}.</p>}
+        {!state.service && state.ships[0] && (
+          <p class="small">Fitted with: {state.ships[0].fittings?.length ? state.ships[0].fittings.map((f) => content.items[f]?.name.toLowerCase()).join(', ') : <span class="muted">nothing yet. The shipwright at home, or at a market, can change that.</span>}</p>
+        )}
+        {!state.service && <p class="small">The men carry {gearWord(state.crew.gear)}.</p>}
       </div>
       <div class="card">
         <h3>{state.service ? `${state.service.captain}'s ship` : 'The crew'}</h3>

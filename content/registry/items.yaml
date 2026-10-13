@@ -1,0 +1,28 @@
+# Items (FRAME-FOUNDATION §2). kind: weapon | shield | helmet | armour | keepsake | fitting.
+# value: weapon = how hard it hits (duel and wall); shield = added to his guard; helmet and armour = blows turned;
+# fitting = see src/engine/items.ts. sold: where it can be bought (smith = home; market = market ports; shipwright =
+# home and market ports). deeds: deeds it carries already, from an earlier owner.
+- { id: spear, name: "A spear", kind: weapon, value: 2, price: 12, sold: [smith, market], desc: "Ash shaft, iron head, as long as a man is tall. Every farmer's son has one." }
+- { id: axe, name: "A bearded axe", kind: weapon, value: 2, price: 18, sold: [smith, market], desc: "A wood-axe that has learned another trade. The beard hooks a shield-rim." }
+- { id: ormr_seax, name: "Ormr's seax", kind: weapon, value: 2, desc: "A long, single-edged knife with a bone grip worn to the shape of an old man's hand. He carried it west twice." }
+- { id: grandfather_sword, name: "Your grandfather's sword", kind: weapon, value: 3, desc: "Pattern-welded, plain-hilted, older than your father. It lay in the chest at the foot of his bed until you took it." }
+- { id: frankish_sword, name: "A Frankish sword", kind: weapon, value: 3, price: 72, sold: [market], desc: "A Rhineland blade with the maker's name inlaid in iron wire. It balances like a living thing." }
+- { id: mael_brigte_sword, name: "Máel Brigte's sword", kind: weapon, value: 3, deeds: 3, desc: "An Irish king's sword, gilt at the hilt, with a nick in the edge from his own doorpost. It has killed before." }
+- { id: shield, name: "A round shield", kind: shield, value: 0, price: 9, sold: [smith, market], desc: "Limewood boards, a leather rim, an iron boss. It will last a fight or two." }
+- { id: father_shield, name: "Your father's shield", kind: shield, value: 1, desc: "The paint mostly gone, the rim replaced twice. It has turned more blows than you have struck." }
+- { id: helmet, name: "An iron cap", kind: helmet, value: 1, price: 36, sold: [smith, market], desc: "A plain iron cap with a nose-guard. Ugly, heavy, and the reason a lot of old men are still alive." }
+- { id: leather, name: "A thick leather jerkin", kind: armour, value: 1, desc: "Boiled leather over wool. Better than nothing, which is what most men wear." }
+- { id: mail, name: "A mail shirt", kind: armour, value: 2, price: 96, sold: [market], desc: "Thirty pounds of riveted rings, to the knee. It turns a cut, and most of a thrust." }
+# keepsakes: carried for what they mean; scenes can test item.<id>
+- { id: red_thread, name: "Ingibjörg's red thread", kind: keepsake, desc: "Tied round your wrist on Orkney, to bring you back." }
+- { id: hallvard_hammer, name: "Hallvard's hammer", kind: keepsake, desc: "A little silver Thor's hammer on a cut thong. It stays warm." }
+- { id: ubbi_ring, name: "Ubbi's ring", kind: keepsake, desc: "A thin twisted ring of Danish silver, left as a reminder." }
+- { id: king_horn, name: "The king of Conaille's horn", kind: keepsake, trophy: true, desc: "A drinking-horn rimmed and tipped with silver, out of Máel Brigte's hall." }
+- { id: lindisfarne_book, name: "The Lindisfarne book", kind: keepsake, trophy: true, desc: "Painted pages of birds and beasts biting their own tails, in a jewelled cover. The monks would pay a great deal to have it back." }
+- { id: papar_bell, name: "The papar's bell", kind: keepsake, trophy: true, desc: "A small bronze hand-bell, green with age, from an islet off Skye. Nobody likes it in the ship." }
+- { id: faroes_down, name: "A bale of Faroese eider down", kind: keepsake, trophy: true, desc: "Light as smoke, warm as a fire. Proof you went where the map was blank." }
+# ship fittings: one of each per ship, fitted to his own ship
+- { id: new_sail, name: "A new sail", kind: fitting, price: 96, sold: [shipwright], desc: "Red and white wadmal, greased against the wet. She will run a tenth faster." }
+- { id: caulking, name: "New strakes and caulking", kind: fitting, price: 60, sold: [shipwright], desc: "Rotten planks replaced, every seam tarred and stuffed with wool. Storms do her less harm." }
+- { id: carved_prow, name: "A carved prow", kind: fitting, price: 120, sold: [shipwright], desc: "A dragon's head for her stem, painted, with red eyes. Men who see it coming lose heart before the first blow." }
+- { id: shield_rack, name: "A shield-rack along the rail", kind: fitting, price: 48, sold: [shipwright], desc: "Shields hung ready along both sides. In a fight at sea, she is a wall before the men stand up." }

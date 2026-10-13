@@ -29,7 +29,18 @@ export interface Ship {
   type: string;
   name: string;
   hull: number; // 0..100
+  /** Fittings from the shipwright (FRAME-FOUNDATION §2). */
+  fittings?: string[];
 }
+
+/** One thing he owns. A weapon counts its deeds; at enough of them, the men give it a name. */
+export interface ItemInst {
+  uid: string;
+  id: string;
+  name: string | null;
+  deeds: number;
+}
+export type KitSlot = 'weapon' | 'shield' | 'helmet' | 'armour';
 
 export interface SwornMan {
   id: string;
@@ -182,6 +193,7 @@ export type Pending =
   | { t: 'duel'; duel: DuelState }
   | { t: 'battle'; battle: BattleState }
   | { t: 'plunder'; plunder: PlunderState }
+  | { t: 'shop'; shops: ('smith' | 'market' | 'shipwright')[] }
   | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string };
 
 export interface PlaceState {
@@ -227,7 +239,10 @@ export interface GameState {
   loot: number;
   provisions: number; // man-days
   ships: Ship[];
-  crew: { men: number; quality: number; morale: number };
+  /** gear: the men's arms, 0 spears and shields .. 3 mail for every man (FRAME-FOUNDATION §2). */
+  crew: { men: number; quality: number; morale: number; gear: number };
+  items: ItemInst[];
+  kit: Partial<Record<KitSlot, string>>;
   men: SwornMan[];
   at: string | null; // place, or null at sea
   voyage: Voyage | null;
@@ -238,6 +253,8 @@ export interface GameState {
   known: string[];
   /** Places heard of but not charted: drawn faint, reached only by an expedition. */
   rumoured: string[];
+  /** The last thing bought, shown on the shop screen. */
+  shopNote?: string;
   places: Record<string, PlaceState>;
   pending: Pending | null;
   journal: LogEntry[];

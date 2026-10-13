@@ -16,6 +16,7 @@ import { SceneArt } from '../scene/SceneArt';
 import { getValue } from '../../engine/paths';
 import { renderText } from '../../engine/text';
 import { tierAt, TIER_NAMES, TIER_HINTS } from '../../engine/standing';
+import { gearWord } from '../../engine/items';
 import { PlunderView } from './Fights';
 
 const AFTERLIFE: Record<string, { title: string; text: string }> = {
@@ -104,6 +105,18 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
   }
   if (p?.t === 'duel') return <div class="screen"><DuelView content={content} d={p.duel} options={options} onAct={onAct} /></div>;
   if (p?.t === 'battle') return <div class="screen"><BattleView content={content} b={p.battle} options={options} onAct={onAct} /></div>;
+  if (p?.t === 'shop') {
+    const smith = p.shops.includes('smith');
+    return (
+      <div class="screen">
+        <h2>{smith ? 'The smith and the shipwright' : 'The market'}</h2>
+        <p>{smith ? 'The smith works at the back of his father\'s house, black to the elbows. The shipwright works on the shingle, with an adze and an opinion about everything.' : 'Booths of iron and cloth along the beach, men shouting prices in four languages, and a shipwright\'s yard at the end of it where the tar-pots smoke.'}</p>
+        {state.shopNote && <p class="card small">{state.shopNote}</p>}
+        <p class="muted small sans">Silver: {formatSilver(state.silver)}.{state.service ? '' : ` Your men carry ${gearWord(state.crew.gear)}.`}</p>
+        <Actions options={options} onAct={onAct} />
+      </div>
+    );
+  }
   if (p?.t === 'plunder') {
     const pl = content.places[p.plunder.place];
     const burnt = `${p.plunder.place}_burning`;

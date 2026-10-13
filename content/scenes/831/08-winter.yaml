@@ -22,6 +22,7 @@
       text: Go up to the jarl's hall.
       effects:
         - { if: { all: [flag.j_promised_king, { any: [flag.c_king_kept, flag.c_horn_for_jarl, flag.c_drank, flag.c_king_killed] }] }, then: [ { add: { silver: 48 } }, { set: flag.j_promise_kept }, { deed: { type: ring_giving, text: Given a ring by Jarl Eystein for the king of Conaille, weight: 3 } } ], else: [ { if: flag.j_promised_king, then: [ { add: { honour: -2 } }, { set: flag.j_promise_broken } ] } ] }
+        - { if: flag.c_horn_for_jarl, then: [ { lose_item: king_horn } ] }
         - { if: flag.j_commission_done, then: [ { set: flag.j_trusted } ], else: [ { if: flag.j_commission, then: [ { add: { honour: -1 } }, { set: flag.j_commission_failed } ] } ] }
       result: |
         [if flag.j_promised_king && flag.c_king_kept]

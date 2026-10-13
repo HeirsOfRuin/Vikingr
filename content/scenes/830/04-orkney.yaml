@@ -59,7 +59,7 @@
           You talk till the fire burns down. At the end of it she ties a red thread round your wrist, to bring you back to Orkney, she says, and then goes in before her father sees.
 
           Ulf, who has been watching all night, can't decide whether to be jealous or proud, and manages both.
-        effects: [ { set: flag.o_ingibjorg }, { add: { man.ulf.loyalty: 1 } }, { standing: { place: orkney, n: 1 } } ]
+        effects: [ { set: flag.o_ingibjorg }, { item: { id: red_thread } }, { add: { man.ulf.loyalty: 1 } }, { standing: { place: orkney, n: 1 } } ]
         next: o_council
       failure:
         text: |

@@ -221,7 +221,7 @@
       next: b_fathers_word
     - id: log
       text: Say nothing. Put another log on the fire.
-      effects: [ { set: flag.b_ormr_seax } ]
+      effects: [ { set: flag.b_ormr_seax }, { item: { id: ormr_seax } } ]
       result: |
         You put a log on the fire and sit back down. The bark catches, and the light comes up on the old man's face.
 
@@ -264,7 +264,7 @@
   choices:
     - id: blessing
       text: Ask for your father's blessing, and his old shield.
-      effects: [ { set: flag.b_blessing }, { add: { silver: 24, honour: 1 } } ]
+      effects: [ { set: flag.b_blessing }, { add: { silver: 24, honour: 1 } }, { item: { id: father_shield, equip: true } } ]
       result: |
         Your father takes the shield down from the wall himself. The paint is mostly gone and the rim has been replaced twice. He holds it a moment before he gives it to you.
 
@@ -274,7 +274,7 @@
       next: m_landing
     - id: sword
       text: Take your grandfather's sword from the chest, without asking.
-      effects: [ { set: flag.b_sword }, { add: { honour: -1 } } ]
+      effects: [ { set: flag.b_sword }, { add: { honour: -1 } }, { item: { id: grandfather_sword, equip: true } } ]
       result: |
         Your grandfather's sword has lain in the chest at the foot of your father's bed since before you were born, wrapped in oiled wool. It's a good sword. It's the only good thing in the house, apart from the cows.
 

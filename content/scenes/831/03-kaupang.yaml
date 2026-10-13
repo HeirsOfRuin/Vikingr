@@ -18,9 +18,9 @@
   choices:
     - id: mail
       text: Buy the mail shirt. Four marks.
-      visible_if: "!flag.mail"
+      visible_if: "!item.mail"
       requires: ["silver >= 96"]
-      effects: [ { add: { silver: -96 } }, { set: flag.mail } ]
+      effects: [ { add: { silver: -96 } }, { set: flag.mail }, { item: { id: mail, equip: true } } ]
       result: |
         It is heavier than you thought and lighter than you feared: thirty pounds of riveted rings, to the knee, with a smell of oil and somebody else's sweat. The smith laces it on you and hits you in the chest with a hammer, to show you. It hurts a great deal less than it should.
 
@@ -28,9 +28,9 @@
       next: k_market
     - id: sword
       text: Buy a Frankish sword, with the maker's name in the blade. Three marks.
-      visible_if: "!flag.frankish_sword && !flag.b_sword"
+      visible_if: "!item.frankish_sword && !item.grandfather_sword"
       requires: ["silver >= 72"]
-      effects: [ { add: { silver: -72 } }, { set: flag.frankish_sword } ]
+      effects: [ { add: { silver: -72 } }, { set: flag.frankish_sword }, { item: { id: frankish_sword, equip: true } } ]
       result: |
         The Frank lets you heft three before you choose. The one you choose has a name inlaid in the blade in iron wire, VLFBERHT, and a balance that makes the others feel like oars.
 
@@ -98,7 +98,7 @@
         Ketill says nothing until Ubbi is gone. Then he says, "The jarl won't like it," and goes to sleep.
     - id: maybe
       text: Tell him you'll think on it.
-      effects: [ { set: flag.ubbi_offer } ]
+      effects: [ { set: flag.ubbi_offer }, { item: { id: ubbi_ring } } ]
       result: |
         "Think fast," Ubbi says. "Frisia won't wait, and neither will I." He leaves you a ring off his own arm, a thin twisted thing of Danish silver, as a reminder.
     - id: no

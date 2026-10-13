@@ -59,7 +59,7 @@
         effects: [ { add: { provisions: 40 } } ]
       failure:
         text: |
-          You fish all day, and catch one small, furious fish that bites Ulf, and that is all.
+          You fish all day, and catch one small, furious fish that bites Ulf, and nothing else.
         effects: [ { add: { provisions: 4 } } ]
     - id: push
       text: Row harder. The sooner you're there, the sooner you eat.

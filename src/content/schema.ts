@@ -60,6 +60,8 @@ const baseEffect = z.union([
   z.object({ sell_captives: z.number().int().min(1) }).strict(),
   z.object({ recruit: z.number().int().min(1) }).strict(),
   z.object({ progress: z.number() }).strict(),
+  z.object({ item: z.object({ id, equip: z.boolean().optional() }).strict() }).strict(),
+  z.object({ lose_item: id }).strict(),
   z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
@@ -204,10 +206,27 @@ export const background = z.object({
   start_scene: id,
   /** Starts at another man's oar: the ship and crew are his, and the hero's men are bench-mates, not sworn. */
   service: z.object({ captain: z.string(), ship_name: z.string() }).strict().optional(),
+  /** What he carries on the first day (item ids, equipped). Default: a spear, a shield, a leather jerkin. */
+  kit: z.array(id).optional(),
 }).strict();
 export type Background = z.infer<typeof background>;
 
 export const flagDef = z.object({ description: z.string() }).strict();
+
+export const ITEM_KINDS = ['weapon', 'shield', 'helmet', 'armour', 'keepsake', 'fitting'] as const;
+export type ItemKind = (typeof ITEM_KINDS)[number];
+export const itemDef = z.object({
+  id,
+  name: z.string(),
+  kind: z.enum(ITEM_KINDS),
+  value: z.number().int().optional(),
+  price: z.number().int().optional(),
+  sold: z.array(z.enum(['smith', 'market', 'shipwright'])).optional(),
+  deeds: z.number().int().optional(),
+  trophy: z.boolean().optional(),
+  desc: z.string(),
+}).strict();
+export type ItemDef = z.infer<typeof itemDef>;
 
 export const boastDef = z.object({ id, text: z.string(), days: z.number().int().min(1) }).strict();
 export type BoastDef = z.infer<typeof boastDef>;
@@ -238,6 +257,7 @@ export interface ContentBundle {
   names: string[];
   art: Record<string, ArtEntry>;
   boasts: Record<string, BoastDef>;
+  items: Record<string, ItemDef>;
   fates: Record<string, FateDef>;
   banter: BanterLine[];
 }

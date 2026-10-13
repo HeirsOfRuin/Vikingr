@@ -56,7 +56,7 @@
   choices:
     - id: hammer
       text: Wear his hammer.
-      effects: [ { add: { hamingja: 1 } }, { set: flag.hallvard_hammer } ]
+      effects: [ { add: { hamingja: 1 } }, { set: flag.hallvard_hammer }, { item: { id: hallvard_hammer } } ]
       result: You tie the hammer round your own neck. It is warm from the sun. It stays warm, somehow, all that summer.
     - id: grave
       text: Bury it with him.

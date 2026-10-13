@@ -10,6 +10,7 @@ import { startVoyage } from './voyage';
 import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
+import { giveItem, loseItem } from './items';
 import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
 
 function addTo(state: GameState, path: string, n: number): void {
@@ -112,6 +113,11 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const n = Math.min(room, e.recruit);
         if (n > 0) { addRecruits(state, n); journal(state, `${n} men signed on.`); }
       }
+    } else if ('item' in e) {
+      giveItem(state, content, e.item.id, !!e.item.equip);
+      journal(state, `You have ${content.items[e.item.id]!.name.charAt(0).toLowerCase()}${content.items[e.item.id]!.name.slice(1)}.`);
+    } else if ('lose_item' in e) {
+      loseItem(state, e.lose_item);
     } else if ('progress' in e) {
       // fair-wind days gained (or lost) on the voyage under way
       if (state.voyage) state.voyage.progress = Math.max(0, state.voyage.progress + e.progress);
