@@ -90,6 +90,8 @@ export interface Voyage {
   progress: number;
   daysAtSea: number;
   wind: Wind;
+  /** Uncharted water (FRAME-FOUNDATION §1). */
+  expedition?: boolean;
   /** Scenes that have broken into this leg (at most SEA_EVENTS_PER_LEG). */
   events?: number;
 }
@@ -193,6 +195,10 @@ export interface PlaceState {
   hired?: number;
   /** The year he last asked for guest-right here. */
   guested?: number;
+  /** He has made landfall here (its people have told him of their neighbours). */
+  visited?: boolean;
+  /** The year he last listened to the old sailors here. */
+  listened?: number;
 }
 
 export interface LogEntry {
@@ -230,6 +236,8 @@ export interface GameState {
   seen: Record<string, number>;
   queue: { scene: string; day: number }[];
   known: string[];
+  /** Places heard of but not charted: drawn faint, reached only by an expedition. */
+  rumoured: string[];
   places: Record<string, PlaceState>;
   pending: Pending | null;
   journal: LogEntry[];

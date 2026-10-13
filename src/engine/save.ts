@@ -43,6 +43,7 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
     state.pending = null;
   }
   state.queue = state.queue.filter((q) => !!content.scenes[q.scene]);
+  state.rumoured ??= [];
   for (const id of Object.keys(content.places)) {
     const p = content.places[id]!;
     state.places[id] ??= { wealth: p.raid?.wealth ?? 0, defence: 1, raided: 0, lastRaided: null };

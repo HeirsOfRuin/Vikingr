@@ -112,6 +112,9 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const n = Math.min(room, e.recruit);
         if (n > 0) { addRecruits(state, n); journal(state, `${n} men signed on.`); }
       }
+    } else if ('progress' in e) {
+      // fair-wind days gained (or lost) on the voyage under way
+      if (state.voyage) state.voyage.progress = Math.max(0, state.voyage.progress + e.progress);
     } else if ('spread' in e) {
       spread(state, content, e.spread.from, e.spread.n, !!e.spread.church);
     } else if ('raided' in e) {

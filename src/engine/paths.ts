@@ -35,6 +35,7 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   captives: (s) => s.captives,
   nickname: (s) => !!s.hero.nickname,
   shares: (s) => s.service?.shares ?? 0,
+  expedition: (s) => (s.voyage?.expedition ? 1 : 0),
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */
   winter: (s) => s.flags._winter ?? 0,
 };

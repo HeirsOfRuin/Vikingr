@@ -59,6 +59,7 @@ const baseEffect = z.union([
   z.object({ captain: z.string() }).strict(),
   z.object({ sell_captives: z.number().int().min(1) }).strict(),
   z.object({ recruit: z.number().int().min(1) }).strict(),
+  z.object({ progress: z.number() }).strict(),
   z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
@@ -136,6 +137,12 @@ export const place = z.object({
   people: z.enum(PEOPLES),
   /** Where his standing starts, if not the people's usual (-10 hostile .. 10 allied). */
   standing: z.number().int().min(-10).max(10).optional(),
+  /** Places its people tell of on his first landfall: their sea roads become known (FRAME-FOUNDATION §1). */
+  tells: z.array(id).optional(),
+  /** Far places its old sailors can tell of, as rumours. */
+  rumours: z.array(id).optional(),
+  /** What the old sailors say of this place, when it is the rumour. */
+  rumour: z.string().optional(),
   region: z.string(),
   desc: z.string(),
   known: z.boolean().optional(),
@@ -146,7 +153,8 @@ export const place = z.object({
 }).strict();
 export type Place = z.infer<typeof place>;
 
-export const leg = z.object({ a: id, b: id, days: z.number().min(0.5), kind: z.enum(['coastal', 'open', 'river']) }).strict();
+/** expedition: uncharted water; sailed only as an expedition until the far end is charted. */
+export const leg = z.object({ a: id, b: id, days: z.number().min(0.5), kind: z.enum(['coastal', 'open', 'river']), expedition: z.boolean().optional() }).strict();
 export type Leg = z.infer<typeof leg>;
 
 export const shipType = z.object({ id, name: z.string(), oars: z.number().int(), crew: z.number().int(), cargo: z.number().int(), speed: z.number(), cost: z.number().int(), desc: z.string() }).strict();

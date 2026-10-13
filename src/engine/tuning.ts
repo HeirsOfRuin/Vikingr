@@ -36,6 +36,8 @@ export const PROVISION_ORTUG_PER = 20; // man-days of food per ørtug
 export const HUNGER_MORALE_PER_DAY = 0.5;
 /** Sea scenes that can break into one leg of a voyage: enough for colour, not so many that a crossing drags. */
 export const SEA_EVENTS_PER_LEG = 1;
+/** Expeditions over uncharted water (FRAME-FOUNDATION §1): what he needs to set out, and what it costs. */
+export const EXPEDITION = { foodDays: 40, minHull: 70, minMen: 6, stormMult: 1.5, events: 2 } as const;
 
 // ---- crew ----
 export const SIGN_ON_GIFT = 3; // ørtugar per recruit

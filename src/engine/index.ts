@@ -14,7 +14,8 @@ import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, 
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
-import { routes, runVoyage, startVoyage } from './voyage';
+import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
+import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
   borrowShip, BUILD_TYPES, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
   type HallWhat, type ShareHow,
@@ -38,6 +39,8 @@ export type Action =
   | { t: 'guest' }
   | { t: 'hire' }
   | { t: 'land' }
+  | { t: 'listen' }
+  | { t: 'expedition'; to: string }
   | { t: 'rest' }
   | { t: 'end_season' }
   | { t: 'winter_here' }
@@ -124,6 +127,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     seen: {},
     queue: [],
     known: Object.values(content.places).filter((p) => p.known && p.active).map((p) => p.id),
+    rumoured: [],
     places: Object.fromEntries(Object.values(content.places).map((p) => [p.id, { wealth: p.raid?.wealth ?? 0, defence: 1, raided: 0, lastRaided: null }])),
     pending: null,
     journal: [],
@@ -312,6 +316,12 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         }
       }
       if (tier !== 'hostile') out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
+      // rumours of far places, and expeditions to them (FRAME-FOUNDATION §1)
+      if (tier !== 'hostile' && listenable(state, content, at)) out.push(opt('Here', { t: 'listen' }, 'Stand the old sailors a round, and listen', state.silver >= LISTEN_COST, `You need ${formatSilver(LISTEN_COST)} for the ale.`, `${formatSilver(LISTEN_COST)}; a day; rumours of far places`));
+      if (state.ships.length) for (const r of expeditionRoads(state, content, at)) {
+        const why = expeditionBlock(state, content);
+        out.push(opt('Sail', { t: 'expedition', to: r.to }, `Mount an expedition to ${content.places[r.to]!.name}`, !why, why ?? undefined, `Uncharted water: about ${r.days} days, maybe more`));
+      }
       if (at === 'home_fjord') {
         out.push(...homeActions(state, content));
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
@@ -414,6 +424,19 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       // a paying customer is remembered kindly, up to a point
       if (standing(state, content, state.at!) < baseStanding(content, state.at!) + 3) shiftStanding(state, content, state.at!, 1);
       report('Trading', [`You buy dried fish, meal, cheese and a cask of sour ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`]);
+      break;
+    }
+    case 'listen': {
+      state.silver -= LISTEN_COST;
+      state.day += 1;
+      report('Old sailors', listen(state, content, rng, state.at!));
+      break;
+    }
+    case 'expedition': {
+      startVoyage(state, content, action.to, false, true);
+      journal(state, `Set out on an expedition to ${content.places[action.to]!.name}.`);
+      const r = runVoyage(state, content, rng);
+      report('Uncharted water', ['The last land you know goes down behind you. After that there is only the sea, and what the old men said.', ...r.lines], undefined, { key: 'open_sea' });
       break;
     }
     case 'guest': {

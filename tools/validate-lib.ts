@@ -76,6 +76,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         for (const p of e.route) if (!content.places[p]?.active) errors.push(`${where}: route place "${p}" is not an active place`);
       } else if ('plunder' in e) {
         sceneRef(where, e.plunder.next);
+      } else if ('progress' in e) {
+        /* nothing to check */
       } else if ('spread' in e) {
         if (!content.places[e.spread.from]) errors.push(`${where}: unknown place "${e.spread.from}"`);
       } else if ('raided' in e) {
@@ -132,6 +134,13 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     if (s.choices.every((c) => c.requires !== undefined || c.visible_if !== undefined)) warnings.push(`scene ${s.id}: every choice has a requirement or a visibility condition; it can dead-end`);
   }
   if (placeholders) info.push(`${placeholders} placeholder scenes (Phase 2 replaces them)`);
+
+  // discovery: what each port tells of, and the rumours its old sailors carry (FRAME-FOUNDATION §1)
+  for (const p of Object.values(content.places)) {
+    for (const id of [...(p.tells ?? []), ...(p.rumours ?? [])]) if (!content.places[id]) errors.push(`place ${p.id}: tells or rumours of unknown place "${id}"`);
+    for (const id of p.rumours ?? []) if (!content.places[id]!.rumour) warnings.push(`place ${id}: rumoured at ${p.id} but has no rumour text`);
+  }
+  for (const l of content.legs) if (l.expedition && content.places[l.a]?.known && content.places[l.b]?.known) warnings.push(`leg ${l.a}-${l.b}: an expedition between two places known from the start`);
 
   // reachability of linked scenes from starts and triggers
   const reached = new Set<string>();

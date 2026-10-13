@@ -4,7 +4,8 @@ import type { ContentBundle, Leg } from '../content/schema';
 import type { GameState, Wind } from './state';
 import type { RngCursor } from './rng';
 import { dateOf } from './calendar';
-import { STORM_BY_MONTH, STORM_LEG_MULT, WIND, HUNGER_MORALE_PER_DAY, SEA_EVENTS_PER_LEG } from './tuning';
+import { STORM_BY_MONTH, STORM_LEG_MULT, WIND, HUNGER_MORALE_PER_DAY, SEA_EVENTS_PER_LEG, EXPEDITION } from './tuning';
+import { tierAt } from './standing';
 import { fleetSpeed, mouths, aliveMen, clampMorale } from './crew';
 import { effAttr, heal, kill, learn } from './hero';
 import { addDeed } from './fame';
@@ -26,22 +27,46 @@ export function routes(state: GameState, content: ContentBundle, from: string, a
   return content.legs
     .filter((l) => l.a === from || l.b === from)
     .map((leg) => ({ leg, to: leg.a === from ? leg.b : leg.a }))
-    .filter((r) => content.places[r.to]?.active && (any || state.known.includes(r.to)))
+    // uncharted water is sailed only as an expedition, until the far end is charted
+    .filter((r) => content.places[r.to]?.active && (r.leg.expedition ? state.known.includes(r.to) && state.known.includes(from) : any || state.known.includes(r.to)))
     .map((r) => ({ ...r, days: Math.round((r.leg.days / (speed * AVG_PROGRESS)) * 10) / 10 }));
 }
 
-/** Places next to this one become known: you learn the way onward from the people there. */
-export function learnNeighbours(state: GameState, content: ContentBundle, at: string): void {
-  for (const l of content.legs) {
-    const other = l.a === at ? l.b : l.b === at ? l.a : null;
-    if (other && content.places[other]?.active && !state.known.includes(other)) state.known.push(other);
+/** On his first landfall at a port, its people tell him of their neighbours (the place's `tells`), as many as
+ *  they are willing to: all of them if friendly, one if wary or worse, none if hostile. Returns what he learned. */
+export function hearOfNeighbours(state: GameState, content: ContentBundle, at: string): string[] {
+  const ps = state.places[at];
+  const p = content.places[at];
+  if (!ps || !p || ps.visited) return [];
+  ps.visited = true;
+  const tier = tierAt(state, content, at);
+  const willing = tier === 'friendly' || tier === 'allied' || p.kind === 'home' ? 99 : tier === 'hostile' ? 0 : 1;
+  const learned: string[] = [];
+  for (const id of p.tells ?? []) {
+    if (learned.length >= willing) break;
+    if (!content.places[id]?.active || state.known.includes(id)) continue;
+    state.known.push(id);
+    state.rumoured = state.rumoured.filter((r) => r !== id);
+    learned.push(id);
   }
+  if (learned.length) journal(state, `At ${p.name} they told you of ${learned.map((id) => content.places[id]!.name).join(' and ')}.`);
+  return learned;
+}
+
+/** Expedition roads out of a place: uncharted water to somewhere he has only heard of. */
+export function expeditionRoads(state: GameState, content: ContentBundle, from: string): Route[] {
+  const speed = fleetSpeed(state, content);
+  return content.legs
+    .filter((l) => l.expedition && (l.a === from || l.b === from))
+    .map((leg) => ({ leg, to: leg.a === from ? leg.b : leg.a }))
+    .filter((r) => content.places[r.to]?.active && state.rumoured.includes(r.to) && !state.known.includes(r.to))
+    .map((r) => ({ ...r, days: Math.round((r.leg.days / (speed * AVG_PROGRESS)) * 10) / 10 }));
 }
 
 export function stormChance(state: GameState, kind: Leg['kind'], wind: Wind): number {
   const m = dateOf(state.day).month;
   const skill = 1 - 0.04 * state.hero.skills.seamanship - 0.02 * state.hamingja;
-  return STORM_BY_MONTH[m]! * STORM_LEG_MULT[kind] * (wind === 'gale' ? WIND.galeStormMult : 1) * Math.max(0.3, skill);
+  return STORM_BY_MONTH[m]! * STORM_LEG_MULT[kind] * (wind === 'gale' ? WIND.galeStormMult : 1) * Math.max(0.3, skill) * (state.voyage?.expedition ? EXPEDITION.stormMult : 1);
 }
 
 /** The next place on the shortest sea road from one place to another (by legs, any place on the map). */
@@ -54,7 +79,7 @@ export function nextHop(content: ContentBundle, from: string, to: string): strin
     const cur = q.shift()!;
     for (const l of content.legs) {
       const nb = l.a === cur ? l.b : l.b === cur ? l.a : null;
-      if (!nb || seen.has(nb) || !content.places[nb]?.active) continue;
+      if (!nb || l.expedition || seen.has(nb) || !content.places[nb]?.active) continue;
       seen.add(nb);
       prev[nb] = cur;
       q.push(nb);
@@ -68,16 +93,16 @@ export function nextHop(content: ContentBundle, from: string, to: string): strin
 
 /** Sets out for `to`. With any, the way need not be known to the hero (another man is steering), and a far
  *  destination is reached hop by hop: this leg goes to the next place on the road. */
-export function startVoyage(state: GameState, content: ContentBundle, to: string, any = false): void {
+export function startVoyage(state: GameState, content: ContentBundle, to: string, any = false, expedition = false): void {
   const from = state.at!;
   if (any) {
     const hop = nextHop(content, from, to);
     if (!hop) throw new Error(`no sea road from ${from} to ${to}`);
     to = hop;
   }
-  const r = routes(state, content, from, any).find((x) => x.to === to);
+  const r = (expedition ? expeditionRoads(state, content, from) : routes(state, content, from, any)).find((x) => x.to === to);
   if (!r) throw new Error(`no route from ${from} to ${to}`);
-  state.voyage = { from, to, kind: r.leg.kind, total: r.leg.days, progress: 0, daysAtSea: 0, wind: 'fair' };
+  state.voyage = { from, to, kind: r.leg.kind, total: r.leg.days, progress: 0, daysAtSea: 0, wind: 'fair', ...(expedition ? { expedition: true } : {}) };
   state.at = null;
 }
 
@@ -171,7 +196,7 @@ export function runVoyage(state: GameState, content: ContentBundle, rng: RngCurs
       arrive(state, content, rng, lines);
       return { lines, arrived: true };
     }
-    if ((v.events ?? 0) < SEA_EVENTS_PER_LEG && trigger(state, content, rng, 'sea')) {
+    if ((v.events ?? 0) < (v.expedition ? EXPEDITION.events : SEA_EVENTS_PER_LEG) && trigger(state, content, rng, 'sea')) {
       v.events = (v.events ?? 0) + 1;
       break;
     }
@@ -184,7 +209,15 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   state.at = v.to;
   state.voyage = null;
   state.stats.legs += 1;
-  learnNeighbours(state, content, v.to);
+  if (v.expedition) {
+    // the far end is charted now, for good
+    if (!state.known.includes(v.to)) state.known.push(v.to);
+    state.rumoured = state.rumoured.filter((r) => r !== v.to);
+    addDeed(state, content, { type: 'first_voyage', text: `Sailed uncharted water to ${content.places[v.to]!.name}`, witnesses: state.crew.men });
+    lines.push(`You have found it: ${content.places[v.to]!.name}, where your map was blank. The way is yours now, and anyone you tell.`);
+  }
+  const heard = hearOfNeighbours(state, content, v.to);
+  if (heard.length) lines.push(`They tell you of ${heard.map((id) => content.places[id]!.name).join(' and ')}.`);
   const place = content.places[v.to]!;
   if (state.service && state.service.route[0] === v.to) state.service.route.shift();
   if (!state.known.includes(v.to)) state.known.push(v.to);

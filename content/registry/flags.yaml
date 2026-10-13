@@ -193,3 +193,8 @@ hrapp_outlawed: { description: "Grímr Hrappsson outlawed for the burning" }
 hrapp_unpunished: { description: "The Thing let the Hrappssons go" }
 hrapp_paid: { description: "Paid the Hrappssons to end it" }
 sp832_done: { description: "Spring 832: the written saga pauses" }
+# ---- the world: discovery and expeditions (content/scenes/world) ----
+ex_double_share: { description: "Promised a double share to keep an expedition going" }
+f_traded: { description: "Traded with Grímr on the Faroes" }
+f_land_claimed: { description: "Set up stones on land in the Faroes" }
+f_heard_snaeland: { description: "Heard of Snæland, beyond the Faroes" }

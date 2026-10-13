@@ -11,6 +11,8 @@ places:
     standing: 10
     art: home_fjord
     region: West Norway
+    tells: [karmoy, shetland, kaupang]
+    rumours: [faroes, hedeby]
     desc: The home fjord. Steep sides, thin fields, good timber, and too many sons for the land.
     known: true
     active: true
@@ -22,6 +24,8 @@ places:
     people: norse
     standing: 2
     region: West Norway
+    tells: [kaupang]
+    rumours: [hedeby, ribe]
     desc: A king's seat on Karmøy, above the strait every ship going north has to pass.
     known: true
     active: true
@@ -34,6 +38,8 @@ places:
     people: norse
     standing: 3
     region: The Northern Isles
+    tells: [orkney]
+    rumours: [faroes]
     desc: Shetland. Wind, peat, sheep, and Norse farms on the old Pictish ones. Two days west with a fair wind.
     known: true
     active: true
@@ -46,6 +52,8 @@ places:
     standing: 3
     art: birsay
     region: The Northern Isles
+    tells: [skye, lindisfarne]
+    rumours: [faroes, man, dublin]
     desc: Orkney. Green islands, a chieftain's hall, and men who know the way south to the monasteries.
     known: true
     active: true
@@ -58,8 +66,9 @@ places:
     standing: -2
     art: iona_dawn
     region: The Hebrides
+    tells: [skye]
     desc: Colum Cille's island. Raided before your father's time and again since, and still the monks come back.
-    known: false
+    known: true
     active: true
     raid: { wealth: 720, defenders: 14, foe: monks_tenants, terrain: beach }
   - id: bangor
@@ -71,8 +80,9 @@ places:
     standing: -3
     art: bangor_field
     region: Ulster
+    tells: [conaille]
     desc: A great house of the Irish monks on Belfast Lough, with a king's levy close enough to come.
-    known: false
+    known: true
     active: true
     raid: { wealth: 1500, defenders: 28, foe: ulster_levy, terrain: field }
   # ---- opened in 831 (docs/FRAME-831.md) ----
@@ -84,6 +94,8 @@ places:
     people: norse
     standing: 2
     region: Vík
+    tells: [karmoy]
+    rumours: [hedeby, birka, dorestad, aldeigjuborg]
     desc: "The market at Skíringssalr: a beach of booths and smoke under the king's hall, where Danes, Frisians and Swedes sell everything, and buy everything, including people."
     known: false
     active: true
@@ -96,6 +108,7 @@ places:
     people: english
     standing: -2
     region: Northumbria
+    rumours: [york]
     desc: "The holy island where it began, forty years ago. Twice a day the sea covers the sands between it and the mainland, and twice a day it lets you walk across."
     known: false
     active: true
@@ -108,6 +121,8 @@ places:
     people: norse
     standing: 2
     region: The Hebrides
+    tells: [iona, orkney]
+    rumours: [faroes, man]
     desc: "Skye. Black mountains, sea lochs, and here and there a Norse steading built on top of a Pictish one, where the settlers have stopped going home."
     known: false
     active: true
@@ -119,28 +134,30 @@ places:
     people: gael
     standing: -4
     region: Ireland
+    tells: [bangor]
+    rumours: [armagh, dublin, clonmacnoise]
     desc: "Conaille Muirthemne, on Dundalk Bay: a small Irish kingdom with a king in a ringfort, cattle on the plain, and no Norse ship yet seen in its bay."
     known: false
     active: true
     raid: { wealth: 1300, defenders: 26, foe: conaille_men, terrain: field }
   # ---- later phases ----
   - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, people: norse, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
-  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland." }
-  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland." }
-  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren." }
+  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes." }
+  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland.", rumour: "A Danish market on the west side of Jutland, older than Hedeby, where the Frisian ships come in with wine and cloth." }
+  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read." }
   - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings." }
   - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea." }
   - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast." }
-  - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east." }
-  - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea." }
-  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain." }
-  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey." }
-  - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, people: gael, kind: monastery, region: Ireland, desc: "The chief church of the Irish." }
-  - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, people: gael, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon." }
-  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, people: english, kind: town, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse." }
+  - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves." }
+  - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky." }
+  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain." }
+  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey.", rumour: "The black pool on the Liffey, where the Irish have a fort and a ford. A good harbour, he says, for a man who meant to stay the winter in Ireland. Nobody has, yet." }
+  - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, people: gael, kind: monastery, region: Ireland, desc: "The chief church of the Irish.", rumour: "The chief church of all the Irish, inland from the bay at Conaille. Saint Patrick's own house. The richest church in Ireland, and it knows it." }
+  - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, people: gael, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon.", rumour: "A great monastery on the Shannon in the middle of Ireland, so far from the sea that the monks think they're safe. A ship that could get up the Shannon would find out if they're right." }
+  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, people: english, kind: town, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse.", rumour: "The Northumbrian king's city on the Ouse, with a minster and a market and walls the Romans built. Too big for one ship. Not too big for a fleet." }
   - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, people: english, kind: island, region: Kent, desc: "An island in the mouth of the Thames." }
   - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, people: english, kind: market, region: Mercia, desc: "The market on the Thames." }
-  - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, people: frisian, kind: market, region: Frisia, desc: "The richest market of the Frankish north." }
+  - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, people: frisian, kind: market, region: Frisia, desc: "The richest market of the Frankish north.", rumour: "The richest market of the Franks, on the Rhine, so rich they say the streets are paved with broken pots. The emperor's sons are fighting each other, and nobody is guarding it." }
   - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth." }
   - { id: noirmoutier, name: "Noirmoutier", lon: -2.25, lat: 47.0, people: frankish, kind: monastery, region: Frankia, desc: "A monastery island off the Loire." }
   - { id: nantes, name: "Nantes", lon: -1.55, lat: 47.22, people: frankish, kind: town, region: Frankia, desc: "A city on the Loire." }
@@ -163,3 +180,7 @@ legs:
   - { a: orkney, b: skye, days: 3, kind: coastal }
   - { a: skye, b: iona, days: 1.5, kind: coastal }
   - { a: bangor, b: conaille, days: 1, kind: coastal }
+  # uncharted water: sailed as an expedition until the far end is charted (FRAME-FOUNDATION §1)
+  - { a: shetland, b: faroes, days: 3, kind: open, expedition: true }
+  - { a: orkney, b: faroes, days: 4, kind: open, expedition: true }
+  - { a: home_fjord, b: faroes, days: 5, kind: open, expedition: true }

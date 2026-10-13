@@ -60,7 +60,8 @@ export function MapView({ content, map, state, mini }: Props) {
   const label = 11 / scale; // canvas pixels, so labels stay ~11px on screen
 
   const known = new Set(state.known);
-  const places = Object.values(content.places).filter((p) => known.has(p.id));
+  const rumoured = new Set(state.rumoured);
+  const places = Object.values(content.places).filter((p) => known.has(p.id) || rumoured.has(p.id));
   const legs = content.legs.filter((l) => known.has(l.a) && known.has(l.b));
   const fleet = fleetAt(state, content);
   const reachable = state.at ? routes(state, content, state.at).map((r) => r.to) : [];
@@ -101,6 +102,16 @@ export function MapView({ content, map, state, mini }: Props) {
               const here = state.at === p.id;
               const r = (here ? 5 : 3.5) / scale;
               const fill = p.kind === 'monastery' ? '#b3352a' : p.kind === 'home' ? '#8a9860' : '#e6ddc8';
+              if (rumoured.has(p.id) && !known.has(p.id)) {
+                // heard of, not charted: a faint dashed ring, and the name in italics
+                return (
+                  <g key={p.id} onClick={() => !drag.current?.moved && setPicked(p.id)} style={{ cursor: 'pointer' }} opacity={0.75}>
+                    <circle cx={x * PX} cy={y * PX} r={r * 2.5} fill="transparent" />
+                    <circle cx={x * PX} cy={y * PX} r={r} fill="none" stroke="#e6ddc8" stroke-width={1 / scale} stroke-dasharray={`${2 / scale} ${2 / scale}`} />
+                    <text x={x * PX + r * 1.6} y={y * PX + label * 0.35} font-size={label} font-style="italic" fill="#b9b2a2" stroke="#111213" stroke-width={label * 0.25} paint-order="stroke" font-family="Georgia, serif">{p.name}?</text>
+                  </g>
+                );
+              }
               return (
                 <g key={p.id} onClick={() => !drag.current?.moved && setPicked(p.id)} style={{ cursor: 'pointer' }}>
                   <circle cx={x * PX} cy={y * PX} r={r * 2.5} fill="transparent" />
@@ -124,14 +135,22 @@ export function MapView({ content, map, state, mini }: Props) {
           {pickedPlace ? (
             <>
               <h2>{pickedPlace.name}</h2>
+              {state.rumoured.includes(pickedPlace.id) && !state.known.includes(pickedPlace.id) ? (
+                <>
+                  <p class="muted small sans">{pickedPlace.region} · rumoured</p>
+                  <p>{pickedPlace.rumour ?? pickedPlace.desc}</p>
+                  <p class="muted small sans">{pickedPlace.active ? 'You have heard of it, but nobody has shown you the way. An expedition across uncharted water might find it.' : 'You have heard of it. It is beyond any sea road you could sail yet.'}</p>
+                </>
+              ) : (<>
               <p class="muted small sans">{pickedPlace.region}{pickedPlace.raid ? ' · a place to raid' : ''}{pickedPlace.market ? ' · a market' : ''}</p>
               <p>{pickedPlace.desc}</p>
               {pickedPlace.active && pickedPlace.kind !== 'home' && <p class="small sans"><span class={`pill standing-${tierAt(state, content, pickedPlace.id)}`}>{TIER_NAMES[tierAt(state, content, pickedPlace.id)]}</span> {TIER_HINTS[tierAt(state, content, pickedPlace.id)]}</p>}
               {!pickedPlace.active && <p class="muted small sans">Beyond your reach for now. (Later phases.)</p>}
               {visits(pickedPlace.id).length > 0 && <p class="muted small sans">You were here: {visits(pickedPlace.id).join(', ')}</p>}
+              </>)}
             </>
           ) : (
-            <p class="muted small sans">Tap a place for its story. Drag to move, + and − to zoom. Places you have not heard of are not on your map.</p>
+            <p class="muted small sans">Tap a place for its story. Drag to move, + and − to zoom. Places you have not heard of are not on your map; places you have only heard rumours of are drawn faint.</p>
           )}
         </div>
       )}

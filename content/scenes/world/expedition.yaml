@@ -1,0 +1,163 @@
+# Expedition events (FRAME-FOUNDATION §1): uncharted water. They break into an expedition voyage only.
+- id: ex_last_land
+  kind: pool
+  trigger: sea
+  chance: 0.35
+  cooldown_days: 60
+  requires: [expedition]
+  art: open_sea
+  title: The last land
+  text: |
+    On the second morning the last skerry you know goes down behind the stern, and there is nothing in any direction but grey water and grey sky, and the long swell coming in from somewhere nobody has a name for.
+
+    The men row quietly. Every so often one of them looks back, as if the land might have followed.
+  choices:
+    - id: story
+      text: Tell them the story the old man told you, all of it.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          You tell it well: the sheep islands, the cliffs black with birds, the hermits who went there to be closer to their god and found it was further than they thought. By the end the men are arguing about how many birds, which is better than not talking.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: |
+          You tell it badly, and somebody at the bow asks how the old man knew all that if he'd never been, and you don't have an answer.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: offer
+      text: Pour ale over the side for Njörðr, where they can all see.
+      effects: [ { add: { hamingja: 1, provisions: -10 } } ]
+      result: |
+        You pour a whole skin over the side, slowly, and say the words loud enough to carry. The sea takes it without comment.
+
+        Hallvard nods, as if a debt had been paid. The men breathe out.
+    - id: row
+      text: Say nothing. Set the stroke, and row.
+      result: You set the stroke yourself and hold it until noon. Nobody looks back after that. There's no time.
+
+- id: ex_hunger
+  kind: pool
+  trigger: sea
+  chance: 0.3
+  cooldown_days: 60
+  requires: [expedition]
+  art: open_sea
+  title: Short rations
+  text: |
+    The wind has been foul for three days, and the voyage that was meant to take three is going to take six, or ten, or nobody knows. Bersi has counted the casks, and then counted them again, and come to you with a face like a funeral.
+  choices:
+    - id: halve
+      text: Halve the rations. Everyone, you first.
+      effects: [ { add: { provisions: 30, crew.morale: -1, honour: 1 } } ]
+      result: |
+        You take half a strip of dried fish at noon, in front of everyone, and eat it slowly, and say it's the best you've had. Nobody believes you. Nobody complains, either.
+    - id: fish
+      text: Put lines over the side.
+      check: { skill: seamanship, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          The cod come up as if they had been waiting for you: big, stupid, grey-green fish, one after another. By dusk the bilge is slippery with them.
+        effects: [ { add: { provisions: 40 } } ]
+      failure:
+        text: |
+          You fish all day, and catch one small, furious fish that bites Ulf, and that is all.
+        effects: [ { add: { provisions: 4 } } ]
+    - id: push
+      text: Row harder. The sooner you're there, the sooner you eat.
+      effects: [ { progress: 1 }, { add: { crew.morale: -1 } } ]
+      result: You double the stroke and hold it. The men curse you all afternoon, and the ship flies.
+
+- id: ex_turn_back
+  kind: pool
+  trigger: sea
+  chance: 0.25
+  cooldown_days: 60
+  requires: [expedition]
+  art: open_sea
+  title: Turn back
+  text: |
+    It's Thorvald at the bow who says it, but he says it for half the ship. "There's nothing out here. The old man was drunk. Turn back while there's food to get home on."
+
+    The oars have stopped. Everyone is looking at the stern, at you.
+  choices:
+    - id: hold
+      text: Tell them you'll turn back when you've seen it, and not before.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You don't shout. You say it once, plainly, and then you look at Thorvald until he picks up his oar. One by one, so do the others.
+
+          It is the first time you have felt what it is to be a captain, rather than to be called one.
+        effects: [ { add: { skill.command: 1, crew.morale: 1 } } ]
+      failure:
+        text: |
+          You say it. Thorvald says something back. In the end they row, but they row like men going to their own burial, and it costs you a day.
+        effects: [ { add: { crew.morale: -2 } }, { days: 1 } ]
+    - id: promise
+      text: Promise every man a double share of whatever you find.
+      effects: [ { add: { crew.morale: 2 } }, { set: flag.ex_double_share } ]
+      result: That does it. It is amazing what men will do for a share of nothing. The oars go in again, and Thorvald is singing by noon.
+    - id: ketill
+      text: Look to Ketill.
+      requires: [man.ketill.sworn]
+      effects: [ { add: { crew.morale: 1, man.ketill.loyalty: 1 } } ]
+      result: |
+        Ketill gets up off his bench and walks down the ship to the bow, and stands beside Thorvald, and says something into his ear. Thorvald goes white, and then red, and picks up his oar.
+
+        You never find out what it was.
+
+- id: ex_signs
+  kind: pool
+  trigger: sea
+  chance: 0.3
+  cooldown_days: 60
+  requires: [expedition]
+  art: open_sea
+  title: Signs
+  text: |
+    Toward evening there are birds: puffins, a lot of them, low over the water and all flying the same way with their beaks full of fish. A raft of weed goes past, and a log, white with salt.
+
+    Somewhere in that direction, something has land on it.
+  choices:
+    - id: follow
+      text: Follow the birds.
+      check: { skill: lore, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          You follow them all night, steering by the noise of them in the dark, and in the morning there is a smudge on the horizon that doesn't move when the clouds do.
+        effects: [ { progress: 2 }, { add: { crew.morale: 1 } } ]
+      failure:
+        text: |
+          You follow them for half a night and lose them in the dark, and in the morning there's nothing in any direction. You go back to your course.
+        effects: [ { days: 1 } ]
+    - id: course
+      text: Hold your course. Birds go everywhere.
+      result: You hold your course. The birds go one way and you go another, and you hope you are right.
+
+- id: ex_whales
+  kind: pool
+  trigger: sea
+  chance: 0.2
+  cooldown_days: 60
+  requires: [expedition]
+  art: open_sea
+  title: The grind
+  text: |
+    A school of pilot whales comes up all round the ship at dawn: hundreds of them, black and blunt-headed, blowing, rolling, so close you could touch them with an oar.
+
+    The men who've been to the islands before, the ones with Hebridean mothers, have gone very quiet and very eager. "If we could drive them," one says, "into a bay..."
+  choices:
+    - id: drive
+      text: There's no bay. Spear what you can from the side.
+      check: { skill: weapons, attr: str, difficulty: 4 }
+      success:
+        text: |
+          It is bloody, and it is fast, and the sea goes red for a long way. You get three aboard before the school dives, and there is more meat in the ship than the ship can hold.
+        effects: [ { add: { provisions: 60, crew.morale: 1 } } ]
+      failure:
+        text: |
+          You get spears into two, and both of them go down with the spears still in them. The school is gone in a breath. The men look at the empty sea, and then at you.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: leave
+      text: Let them pass. You have water to cross.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: They pass under and around the ship for an hour, blowing and rolling, and then go away north. Hallvard watches them all the way. "A good sign," he says. He doesn't say of what.

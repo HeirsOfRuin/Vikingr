@@ -1,0 +1,45 @@
+# The Faroes (FRAME-FOUNDATION §1): the first expedition's landfall.
+- id: f_landfall
+  kind: place
+  trigger: arrive
+  at: [faroes]
+  once: true
+  title: The sheep islands
+  text: |
+    They come up out of the sea like the backs of drowned giants: steep and green and black, with the cloud lying on their tops and the cliffs white with birds, millions of them, so many that the noise reaches you a mile out like surf.
+
+    There are sheep on the slopes. Somebody brought them.
+    [break]
+    In a bay on the biggest island there are three beehive huts of stone, very old, and a little garden gone to weed, and a cross. Nobody is in the huts. Nobody has been for years.
+
+    And on the far side of the bay there is a turf house with smoke coming out of it, and a boat drawn up, and a man standing in front of it with a spear, watching you come in.
+
+    His name, it turns out, is Grímr. He came from Agder ten years ago with his wife and his brothers and forty sheep, and he has not seen a ship since. He looks at you the way a man looks at weather he doesn't trust.
+  choices:
+    - id: trade
+      text: Trade with him. Wool and down and dried birds for iron and news.
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          He hasn't seen iron in two years, or news in ten, and he pays for both in the island's own coin: bales of the coarse brown wool, sacks of eider down light as smoke, dried puffins strung by the hundred. In Kaupang the down alone would buy you a sword.
+        effects: [ { add: { loot: 220 } }, { standing: { place: faroes, n: 2 } }, { set: flag.f_traded } ]
+      failure:
+        text: |
+          He drives a harder bargain than you expected from a man who hasn't seen a stranger in ten years. You come away with some wool, some down, and the feeling of having been robbed by a shepherd.
+        effects: [ { add: { loot: 80 } }, { standing: { place: faroes, n: 1 } }, { set: flag.f_traded } ]
+    - id: claim
+      text: Walk the empty valley over the ridge, and set up stones. Land for later.
+      effects: [ { set: flag.f_land_claimed }, { standing: { place: faroes, n: -1 } } ]
+      result: |
+        It's a good valley: a stream, a beach for a boat, grass to the knees. You set up four stones at the corners and say the words over them, and Grímr watches from the ridge, and doesn't say anything.
+
+        It's yours, by the old law, if you come back and use it. Whether Grímr's brothers agree is a question for another year.
+    - id: stay
+      text: Stay three nights with Grímr, and ask what lies further on.
+      effects: [ { standing: { place: faroes, n: 2 } }, { set: flag.f_heard_snaeland }, { add: { skill.lore: 1, provisions: 40 } } ]
+      result: |
+        He feeds you puffin and mutton and sour milk, and on the third night, when the ale has done its work, he tells you about the land beyond.
+
+        Further north-west, he says, much further, there is a country of snow and fire, empty, with mountains that smoke. A Swede was blown there once and came home and called it Snæland, and nobody believed him. Grímr believes him. "Somebody has to go," he says, looking into the fire. "Not me. I've gone far enough."
+
+        You think about it all the way home.
