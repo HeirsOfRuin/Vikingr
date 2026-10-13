@@ -194,6 +194,8 @@ export interface BattleState {
   lost: number;
   /** A félag partner's men in our line: his losses are his own. */
   allyMen?: number;
+  /** A host: the other wings of the line (docs/FRAME-HOSTS-FRISIA.md). */
+  host?: import('./host').HostState;
 }
 
 export type Pending =

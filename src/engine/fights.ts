@@ -1,7 +1,8 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
 import { stow } from './fleet';
-import { partnerInFight } from './allies';
+import { partner, partnerInFight } from './allies';
+import { HOST, startHost } from './host';
 import type { BattleTerrain, ContentBundle } from '../content/schema';
 import type { BattleState, DuelSide, DuelState, GameState } from './state';
 import type { RngCursor } from './rng';
@@ -119,13 +120,13 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
 export function startBattle(
   state: GameState,
   content: ContentBundle,
-  opts: { foe: string; men: number; terrain: BattleTerrain; context: BattleState['context']; place: string | null; win?: string; lose?: string },
+  opts: { foe: string; men: number; terrain: BattleTerrain; context: BattleState['context']; place: string | null; win?: string; lose?: string; noAlly?: boolean },
 ): void {
   const foe = content.foes[opts.foe];
   if (!foe) throw new Error(`unknown foe ${opts.foe}`);
   const named = fitMen(state).map((m) => ({ id: m.id, name: m.name, slot: m.slot, weapons: m.weapons, down: false, hurt: false }));
   // a félag partner's men, unless he hangs back (docs/FRAME-TRADE-ALLIES.md)
-  const ally = partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
+  const ally = opts.noAlly ? { men: 0, line: null } : partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
   const ours = state.crew.men + named.length + ally.men;
   const b: BattleState = {
     foeId: foe.id,
@@ -296,7 +297,14 @@ export function startRaid(state: GameState, content: ContentBundle, rng: RngCurs
   const men = Math.max(3, Math.round(p.raid.defenders * ps.defence * (surprise ? 0.45 : 1) * (0.85 + 0.3 * rng.float())));
   learn(state, 'cunning', 2);
   state.seasonRaids.push(placeId);
-  startBattle(state, content, { foe: p.raid.foe, men, terrain: p.raid.terrain, context: 'raid', place: placeId });
+  // a big place, and a partner beside him: the raid is fought as a host, his men in the centre, the partner's on the flank
+  const pid = partner(state, content);
+  if (pid && men >= HOST.raidAt && !state.service) {
+    const pf = partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
+    const flankMen = Math.round(men * 0.4);
+    startHost(state, content, { title: `The assault on ${p.name}`, foe: p.raid.foe, terrain: p.raid.terrain, context: 'raid', place: placeId, foeMen: men - flankMen, wings: [{ name: `${content.captains[pid]!.name}'s men`, men: pf.men, foe_men: flankMen }] });
+    if (pf.line && state.pending?.t === 'battle') state.pending.battle.log.push(pf.line);
+  } else startBattle(state, content, { foe: p.raid.foe, men, terrain: p.raid.terrain, context: 'raid', place: placeId });
   if (state.pending?.t === 'battle') state.pending.battle.log.unshift(surprise ? 'You come in with the dawn and most of them are still asleep.' : 'They saw your sails. They are waiting.');
 }
 

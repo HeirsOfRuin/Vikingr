@@ -1,5 +1,6 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
-import { bestAlly, killCaptain, meet, shiftFavour, shiftRel, swearFelag } from './allies';
+import { bestAlly, killCaptain, meet, partner, partnerInFight, shiftFavour, shiftRel, swearFelag } from './allies';
+import { startHost } from './host';
 import { addShip, appoint, desert, FLEET_MAX, hiredShip, PRIZE_HULL, shipOf, stow, swornShip } from './fleet';
 import type { ContentBundle, Effect } from '../content/schema';
 import type { GameState } from './state';
@@ -137,6 +138,16 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         if (a.felag) swearFelag(state, content, id);
         if (a.kill) killCaptain(state, content, id);
       }
+    } else if ('host' in e) {
+      const h = e.host;
+      // a wing marked ally is the summer's félag partner, if he comes (he may hang back, or there may be none)
+      const wings = h.wings.map((w) => {
+        if (!w.ally) return { name: w.name, men: w.men ?? 0, quality: w.quality, foe_men: w.foe_men };
+        const pid = partner(state, content);
+        const pf = partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
+        return { name: pid ? `${content.captains[pid]!.name}'s men` : w.name, men: pf.men, quality: 1, foe_men: w.foe_men };
+      });
+      startHost(state, content, { title: h.title, foe: h.foe, terrain: h.terrain, context: h.raid ? 'raid' : 'scene', place: h.raid ? state.at : null, foeMen: h.men, wings, role: h.role, reserve: h.reserve, win: h.win, lose: h.lose });
     } else if ('favour' in e) {
       shiftFavour(state, e.favour);
     } else if ('lose_cargo' in e) {

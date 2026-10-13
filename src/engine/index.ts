@@ -13,6 +13,7 @@ import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
+import { commitReserve, fightOutHost, hostRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
@@ -78,6 +79,8 @@ export type Action =
   | { t: 'buy_hull'; type: string }
   | { t: 'trade' }
   | { t: 'divide'; how: ShareHow }
+  | { t: 'reserve' }
+  | { t: 'signal'; order: 'push' | 'hold' }
   | { t: 'sell_item'; uid: string }
   | { t: 'give_item'; uid: string; man: string }
   | { t: 'trade_buy'; good: string }
@@ -311,6 +314,12 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const ok = availableOrders(b, 'us');
       const out = ok.map((o) => opt(state.service ? 'Your shout' : 'Orders', { t: 'order', order: o }, ORDER_NAMES[o]));
       for (const pos of ['front', 'wall', 'rear'] as Position[]) if (pos !== b.position && !b.heroDown) out.push(opt('Your place', { t: 'position', pos }, `Move to: ${POSITION_NAMES[pos]}`));
+      // the host's leader: the reserve, and a signal to the other wings (docs/FRAME-HOSTS-FRISIA.md)
+      if (b.host?.role === 'host' && !b.over) {
+        if (b.host.reserve.us > 0) out.push(opt('The host', { t: 'reserve' }, 'Throw in the reserve', !b.host.reserve.usIn, 'The reserve is already in.', `${b.host.reserve.us} men, to whichever wing is closest to breaking`));
+        out.push(opt('The host', { t: 'signal', order: 'push' }, 'Signal the wings: push', true, undefined, 'The whole line goes forward next round'));
+        out.push(opt('The host', { t: 'signal', order: 'hold' }, 'Signal the wings: hold', true, undefined, 'The flanks lock shields and wait'));
+      }
       out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
       return out;
     }
@@ -761,9 +770,17 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
         b.position = action.pos;
         state.position = action.pos;
         b.log.push(`You take your place: ${POSITION_NAMES[action.pos].toLowerCase()}.`);
-      } else if (action.t === 'battle_auto') fightOutBattle(b, battleAuto, rng);
+      } else if (action.t === 'battle_auto') { if (b.host) fightOutHost(b, battleAuto, rng); else fightOutBattle(b, battleAuto, rng); }
+      else if (b.host) hostRound(b, action.order, rng);
       else resolveRound(b, action.order, doctrinePolicy(b, 'them', rng), rng);
       if (b.over) finishBattle(state, content, rng, b);
+      break;
+    }
+    case 'reserve':
+    case 'signal': {
+      const b = (state.pending as { t: 'battle'; battle: import('./state').BattleState }).battle;
+      if (action.t === 'reserve') commitReserve(b);
+      else { b.host!.signal = action.order; b.log.push(`You signal the wings: ${action.order === 'push' ? 'push' : 'hold'}. The horns take it down the line.`); }
       break;
     }
     case 'slot': {

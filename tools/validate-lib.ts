@@ -85,6 +85,10 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (e.master !== 'hired' && !content.men[e.master]) errors.push(`${where}: master must be "hired" or a sworn man, not "${e.master}"`);
       } else if ('ally' in e) {
         if (e.ally.id !== 'best' && !content.captains[e.ally.id]) errors.push(`${where}: unknown captain "${e.ally.id}"`);
+      } else if ('host' in e) {
+        lethal = true;
+        if (!content.foes[e.host.foe]) errors.push(`${where}: unknown foe "${e.host.foe}"`);
+        for (const id of [e.host.win, e.host.lose]) if (id && !content.scenes[id]) errors.push(`${where}: no scene "${id}"`);
       } else if ('favour' in e) {
         /* nothing to check */
       } else if ('desert' in e || 'lose_cargo' in e) {
@@ -180,6 +184,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if ('plunder' in e && e.plunder.next) queue.push(e.plunder.next);
         if ('fight' in e) queue.push(...[e.fight.win, e.fight.lose].filter((x): x is string => !!x));
         if ('battle' in e) queue.push(...[e.battle.win, e.battle.lose, e.battle.parted].filter((x): x is string => !!x));
+        if ('host' in e) queue.push(...[e.host.win, e.host.lose].filter((x): x is string => !!x));
         if ('queue' in e) queue.push(e.queue.scene);
       }
     }

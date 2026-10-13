@@ -72,6 +72,12 @@ const baseEffect = z.union([
   z.object({ lose_cargo: z.number().int().min(1) }).strict(),
   z.object({ ally: z.object({ id, meet: z.boolean().optional(), rel: z.number().int().optional(), felag: z.boolean().optional(), kill: z.boolean().optional() }).strict() }).strict(),
   z.object({ favour: z.number().int() }).strict(),
+  z.object({ host: z.object({
+    title: z.string(), foe: id, terrain: z.enum(TERRAINS), men: z.number().int().min(1),
+    wings: z.array(z.object({ name: z.string(), men: z.number().int().min(0).optional(), ally: z.boolean().optional(), foe_men: z.number().int().min(1), quality: z.number().optional() }).strict()).min(1).max(2),
+    role: z.enum(['man', 'wing', 'host']).optional(), reserve: z.object({ us: z.number().int().min(0), them: z.number().int().min(0) }).strict().optional(),
+    raid: z.boolean().optional(), win: id.optional(), lose: id.optional(),
+  }).strict() }).strict(),
   z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
