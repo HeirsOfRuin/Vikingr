@@ -69,6 +69,7 @@ const baseEffect = z.union([
   z.object({ master: z.string() }).strict(),
   z.object({ give_ship: id }).strict(),
   z.object({ desert: z.literal(true) }).strict(),
+  z.object({ lose_cargo: z.number().int().min(1) }).strict(),
   z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
@@ -157,6 +158,8 @@ export const place = z.object({
   known: z.boolean().optional(),
   active: z.boolean().optional(),
   market: z.boolean().optional(),
+  /** What its market makes cheaply and wants dearly (docs/FRAME-TRADE-ALLIES.md). */
+  trade: z.object({ cheap: z.array(id), dear: z.array(id) }).strict().optional(),
   art: id.optional(),
   raid: z.object({ wealth: z.number().int(), defenders: z.number().int(), foe: id, terrain: z.enum(TERRAINS) }).strict().optional(),
 }).strict();
@@ -241,6 +244,8 @@ const boastGoal = z.union([
   z.object({ stat: z.enum(BOAST_STATS), n: z.number().int().min(1) }).strict(),
   z.object({ when: condInput }).strict(),
 ]);
+export const goodDef = z.object({ id, name: z.string(), lot: z.string(), price: z.number().int().min(1), bulk: z.number().int().min(1) }).strict();
+export type GoodDef = z.infer<typeof goodDef>;
 export const boastDef = z.object({ id, text: z.string(), days: z.number().int().min(1), goal: boastGoal.optional(), repeat: z.boolean().optional() }).strict();
 export type BoastDef = z.infer<typeof boastDef>;
 export const fateDef = z.object({ id, chance: z.number().min(0).max(1), desc: z.string() }).strict();
@@ -270,6 +275,7 @@ export interface ContentBundle {
   names: string[];
   art: Record<string, ArtEntry>;
   boasts: Record<string, BoastDef>;
+  goods: Record<string, GoodDef>;
   items: Record<string, ItemDef>;
   fates: Record<string, FateDef>;
   banter: BanterLine[];

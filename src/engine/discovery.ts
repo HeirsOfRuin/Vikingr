@@ -1,4 +1,5 @@
 // Discovery (FRAME-FOUNDATION §1): rumours of far places from the old sailors, and what an expedition needs.
+import { tradeNewsLine } from './trade';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
@@ -22,7 +23,7 @@ export function listenable(state: GameState, content: ContentBundle, at: string)
   const p = content.places[at];
   if (!p || !['hall', 'market', 'town', 'home', 'island'].includes(p.kind)) return false;
   if (state.places[at]?.listened === dateOf(state.day).year) return false;
-  return untold(state, content, at).length > 0;
+  return untold(state, content, at).length > 0 || (!!p.trade && tradeNewsLine(state, content) !== null);
 }
 
 /** The old men talk. Lore and wits decide whether anything true comes out of it. */
@@ -31,7 +32,9 @@ export function listen(state: GameState, content: ContentBundle, rng: RngCursor,
   ps.listened = dateOf(state.day).year;
   const left = untold(state, content, at);
   const chance = Math.min(0.9, 0.45 + 0.07 * (state.hero.skills.lore + effAttr(state, content, 'wit')));
+  const news = tradeNewsLine(state, content);
   if (!left.length || rng.float() >= chance) {
+    if (news) return [`You stand the old men a round. Most of what they say is about sea-serpents and a woman in Dublin. But one of them has been trading all summer. ${news} The ale was ${formatSilver(LISTEN_COST)}.`];
     return [`You stand the old men a round, and then another, and they tell you about sea-serpents, and a woman in Dublin, and the time they nearly drowned. None of it is any use. The ale was ${formatSilver(LISTEN_COST)}.`];
   }
   const id = left[0]!;
@@ -46,6 +49,7 @@ export function listen(state: GameState, content: ContentBundle, rng: RngCursor,
     : from
       ? `He tells you the way, too: from ${from}, ${road!.days} days, ${road!.kind === 'open' ? 'over open sea' : road!.kind === 'river' ? 'up the river and over the portage' : 'along the coast'}. It is on your map now.`
       : 'Nobody you know has the way there; it would take an expedition to find it. It is on your map now, faint, where he said it would be.');
+  if (news) out.push(news);
   return out;
 }
 

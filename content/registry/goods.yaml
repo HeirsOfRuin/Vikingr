@@ -1,0 +1,13 @@
+# Trade goods (docs/FRAME-TRADE-ALLIES.md). price: ørtugar a lot at base; bulk: ørtugar of hold space a lot takes.
+- { id: furs, name: Furs, lot: "a bale of marten and fox", price: 30, bulk: 20 }
+- { id: ivory, name: Walrus ivory, lot: "a bundle of tusks", price: 40, bulk: 10 }
+- { id: amber, name: Amber, lot: "a sack of amber", price: 30, bulk: 8 }
+- { id: down, name: Eider down, lot: "a bale of down", price: 26, bulk: 10 }
+- { id: soapstone, name: Soapstone, lot: "a stack of soapstone pots", price: 10, bulk: 40 }
+- { id: whetstones, name: Whetstones, lot: "a crate of whetstones", price: 12, bulk: 30 }
+- { id: wool, name: Wool, lot: "a bale of wool", price: 12, bulk: 30 }
+- { id: stockfish, name: Stockfish, lot: "a bundle of dried cod", price: 8, bulk: 30 }
+- { id: salt, name: Salt, lot: "a sack of salt", price: 10, bulk: 40 }
+- { id: wine, name: Frankish wine, lot: "a cask of wine", price: 24, bulk: 40 }
+- { id: glass, name: Rhenish glass, lot: "a crate of glass", price: 24, bulk: 12 }
+- { id: grain, name: Grain, lot: "a sack of grain", price: 8, bulk: 50 }

@@ -157,6 +157,8 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
     }
   }
   state.crew.men = Math.max(0, state.crew.men - lostMen);
+  // no hull left, no cargo
+  if (!state.ships.length) delete state.cargo;
   state.crew.morale -= 1;
   clampMorale(state);
   if (lostMen) lines.push(`${plural(lostMen, 'man', 'men')} lost to the sea.`);

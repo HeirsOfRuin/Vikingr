@@ -83,7 +83,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.ships[e.prize.type]) errors.push(`${where}: unknown ship type "${e.prize.type}"`);
       } else if ('master' in e) {
         if (e.master !== 'hired' && !content.men[e.master]) errors.push(`${where}: master must be "hired" or a sworn man, not "${e.master}"`);
-      } else if ('desert' in e) {
+      } else if ('desert' in e || 'lose_cargo' in e) {
         /* nothing to check */
       } else if ('give_ship' in e) {
         if (e.give_ship !== 'master' && !content.men[e.give_ship]) errors.push(`${where}: unknown sworn man "${e.give_ship}"`);
@@ -240,6 +240,13 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     if (s.calibration && s.trigger) errors.push(`scene ${s.id}: calibration scenes are opened from the title screen, not triggers`);
   }
   for (const p of Object.values(content.places)) artRef(`place ${p.id}`, p.art);
+  // trade: every good a market names must exist, and nothing is both cheap and dear
+  for (const p of Object.values(content.places)) {
+    if (!p.trade) continue;
+    for (const g of [...p.trade.cheap, ...p.trade.dear]) if (!content.goods[g]) errors.push(`place ${p.id}: unknown good "${g}" in trade`);
+    for (const g of p.trade.cheap) if (p.trade.dear.includes(g)) errors.push(`place ${p.id}: "${g}" is both cheap and dear`);
+  }
+  for (const g of Object.keys(content.goods)) if (!Object.values(content.places).some((p) => p.trade?.cheap.includes(g))) warnings.push(`good ${g}: no market sells it`);
   for (const a of Object.values(content.art)) {
     if (artFiles && !artFiles.includes(a.id)) errors.push(`art ${a.id}: no picture src/art/${a.id}.png (run tools/art.ts)`);
     for (const f of a.fx ?? []) {

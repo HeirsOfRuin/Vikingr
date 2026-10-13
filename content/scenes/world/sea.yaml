@@ -256,3 +256,36 @@
       failure:
         text: You whistle. Somebody laughs. You stop. The calm lasts two more days, and they're all your fault.
         effects: [ { days: 2 }, { add: { crew.morale: -1 } } ]
+
+# A ship low in the water with goods draws the wrong kind of attention (docs/FRAME-TRADE-ALLIES.md).
+- id: g_sea_pirates
+  kind: pool
+  trigger: sea
+  chance: 0.1
+  cooldown_days: 120
+  requires: ["year >= 832", "cargo.lots >= 4", "!service"]
+  art: open_sea
+  title: Low in the water
+  text: |
+    Two small ships come out from behind a skerry as you pass, fast and low, rowing hard, with no shields on the rail and no sail up, the way men row who don't want to be seen until they're close.
+
+    They've seen how low you're riding. Everyone on this coast knows what a ship that low is carrying.
+  choices:
+    - id: fight
+      text: Shields up. Let them come.
+      danger: true
+      effects: [ { battle: { foe: rival_crew, men: 18, terrain: ship } } ]
+    - id: run
+      text: Throw the heaviest goods over the side and run.
+      effects: [ { add: { crew.morale: -1 } }, { lose_cargo: 3 } ]
+      result: Three lots of good cargo go over the side, one after the other, while the men curse and row. You pull away by dusk. Somewhere behind you, they'll be fishing your goods out of the sea.
+    - id: pay
+      text: Hail them, and offer them something to go away.
+      danger: true
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: They take a lot of your goods and a little silver, and go away, and you're left with most of what you had and a story to tell. Their skipper even thanks you.
+        effects: [ { lose_cargo: 1 } ]
+      failure:
+        text: They take the offer as a sign of weakness, which it was. They come on anyway.
+        effects: [ { battle: { foe: rival_crew, men: 18, terrain: ship } } ]

@@ -11,6 +11,7 @@ places:
     standing: 10
     art: home_fjord
     region: West Norway
+    trade: { cheap: [soapstone, whetstones, furs, ivory, stockfish], dear: [wine, salt, glass, grain] }
     tells: [karmoy, shetland, kaupang]
     rumours: [faroes, hedeby]
     desc: The home fjord. Steep sides, thin fields, good timber, and too many sons for the land.
@@ -24,6 +25,7 @@ places:
     people: norse
     standing: 2
     region: West Norway
+    trade: { cheap: [stockfish, furs, soapstone], dear: [wine, glass, grain] }
     tells: [kaupang]
     rumours: [hedeby, ribe]
     desc: A king's seat on Karmøy, above the strait every ship going north has to pass.
@@ -38,6 +40,7 @@ places:
     people: norse
     standing: 3
     region: The Northern Isles
+    trade: { cheap: [wool, stockfish], dear: [grain, salt, soapstone] }
     tells: [orkney]
     rumours: [faroes]
     desc: Shetland. Wind, peat, sheep, and Norse farms on the old Pictish ones. Two days west with a fair wind.
@@ -52,6 +55,7 @@ places:
     standing: 3
     art: birsay
     region: The Northern Isles
+    trade: { cheap: [wool, stockfish, grain], dear: [wine, soapstone, whetstones, glass] }
     tells: [skye, lindisfarne]
     rumours: [faroes, man, dublin]
     desc: Orkney. Green islands, a chieftain's hall, and men who know the way south to the monasteries.
@@ -94,6 +98,7 @@ places:
     people: norse
     standing: 2
     region: Vík
+    trade: { cheap: [whetstones, soapstone, furs], dear: [glass, wine, salt, amber] }
     tells: [karmoy, hedeby]
     rumours: [hedeby, birka, dorestad, aldeigjuborg]
     desc: "The market at Skíringssalr: a beach of booths and smoke under the king's hall, where Danes, Frisians and Swedes sell everything, and buy everything, including people."
@@ -121,6 +126,7 @@ places:
     people: norse
     standing: 2
     region: The Hebrides
+    trade: { cheap: [wool], dear: [salt, wine, soapstone] }
     tells: [iona, orkney]
     rumours: [faroes, man]
     desc: "Skye. Black mountains, sea lochs, and here and there a Norse steading built on top of a Pictish one, where the settlers have stopped going home."
@@ -142,14 +148,14 @@ places:
     raid: { wealth: 1300, defenders: 26, foe: conaille_men, terrain: field }
   # ---- later phases ----
   - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, people: norse, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
-  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes.", standing: 0, active: true, market: true, tells: [ribe], rumours: [birka, dorestad, truso] }
-  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland.", rumour: "A Danish market on the west side of Jutland, older than Hedeby, where the Frisian ships come in with wine and cloth.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [dorestad, walcheren] }
-  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [gotland, aldeigjuborg, uppsala] }
+  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes.", standing: 0, active: true, market: true, tells: [ribe], rumours: [birka, dorestad, truso], trade: { cheap: [glass, wine, salt], dear: [furs, ivory, soapstone, down] } }
+  - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland.", rumour: "A Danish market on the west side of Jutland, older than Hedeby, where the Frisian ships come in with wine and cloth.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [dorestad, walcheren], trade: { cheap: [wine, glass, grain], dear: [furs, soapstone, whetstones, wool, amber] } }
+  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [gotland, aldeigjuborg, uppsala], trade: { cheap: [furs, amber], dear: [glass, wine, salt, stockfish] } }
   - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings.", rumour: "The Swedes' great temple, he says, a day inland from Birka: a hall roofed with gold, and three great mounds of the old kings, and a grove where they hang the sacrifices every ninth year, men and horses and dogs together." }
   - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea.", rumour: "A rich island in the middle of the eastern sea, he says, where every farmer buries his silver in the floor and the traders come from every shore of the Baltic." }
   - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast.", rumour: "An amber market at the mouth of a river on the far side of the eastern sea, he says, among people who speak no tongue anyone in Hedeby knows, and sell amber by the sack." }
   - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves." }
-  - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky." }
+  - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky.", trade: { cheap: [wool, down], dear: [grain, salt, whetstones] } }
   - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain." }
   - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey.", rumour: "The black pool on the Liffey, where the Irish have a fort and a ford. A good harbour, he says, for a man who meant to stay the winter in Ireland. Nobody has, yet." }
   - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, people: gael, kind: monastery, region: Ireland, desc: "The chief church of the Irish.", rumour: "The chief church of all the Irish, inland from the bay at Conaille. Saint Patrick's own house. The richest church in Ireland, and it knows it." }

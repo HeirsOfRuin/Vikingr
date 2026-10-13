@@ -67,7 +67,12 @@ export function hold(state: GameState, content: ContentBundle): number {
 }
 
 export function holdRoom(state: GameState, content: ContentBundle): number {
-  return Math.max(0, hold(state, content) - state.loot);
+  return Math.max(0, hold(state, content) - state.loot - goodsBulk(state, content));
+}
+
+/** Hold space the trade goods take (docs/FRAME-TRADE-ALLIES.md). Kept here to spare a cycle with trade.ts. */
+function goodsBulk(state: GameState, content: ContentBundle): number {
+  return Object.entries(state.cargo ?? {}).reduce((n, [g, c]) => n + c.lots * (content.goods[g]?.bulk ?? 0), 0);
 }
 
 /** Plunder into the holds, up to what they carry. Returns what was left behind. */

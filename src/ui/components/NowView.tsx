@@ -1,3 +1,4 @@
+import { goodsRoom } from '../../engine/trade';
 import { useEffect, useState } from 'preact/hooks';
 import type { ContentBundle, Scene } from '../../content/schema';
 import type { GameState } from '../../engine/state';
@@ -105,6 +106,19 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
   }
   if (p?.t === 'duel') return <div class="screen"><DuelView content={content} d={p.duel} options={options} onAct={onAct} /></div>;
   if (p?.t === 'battle') return <div class="screen"><BattleView content={content} b={p.battle} options={options} onAct={onAct} /></div>;
+  if (p?.t === 'trade') {
+    const place = content.places[state.at!]!;
+    const wants = place.trade!.dear.map((g) => content.goods[g]!.name.toLowerCase());
+    return (
+      <div class="screen">
+        <h2>The trading beach</h2>
+        <p>Goods laid out on cloths and hides along the strand, and men who have done this all their lives watching you work out what things are worth.{wants.length ? ` Here they pay well for ${wants.join(', ')}.` : ''}</p>
+        {state.shopNote && <p class="card small">{state.shopNote}</p>}
+        <p class="muted small sans">Silver: {formatSilver(state.silver)}. Room for goods: {formatSilver(goodsRoom(state, content))} of hold space.{state.tradeYear?.year === dateOf(state.day).year ? ` Profit this year: ${formatSilver(Math.round(state.tradeYear.profit))}.` : ''}</p>
+        <Actions options={options} onAct={onAct} />
+      </div>
+    );
+  }
   if (p?.t === 'shop') {
     const smith = p.shops.includes('smith');
     return (

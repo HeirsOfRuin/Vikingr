@@ -12,6 +12,7 @@ import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
+import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
@@ -74,6 +75,9 @@ export type Action =
   | { t: 'battle_auto' }
   | { t: 'slot'; man: string; slot: Position }
   | { t: 'buy_hull'; type: string }
+  | { t: 'trade' }
+  | { t: 'trade_buy'; good: string }
+  | { t: 'trade_sell'; good: string }
   | { t: 'appoint'; ship: string; man: string }
   | { t: 'follow' }
   | { t: 'take_share' }
@@ -88,7 +92,7 @@ export interface ActionOption {
   group: string;
 }
 
-export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
+export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
 
 export interface View {
   screen: Screen;
@@ -222,6 +226,14 @@ function shopOption(state: GameState, content: ContentBundle): ActionOption[] {
   return [opt('Trade', { t: 'shop' }, label, n > 0, 'There is nothing here you need.', `${n} things worth looking at`)];
 }
 
+/** The trading beach, where the port has a market for goods (docs/FRAME-TRADE-ALLIES.md). */
+function tradeOption(state: GameState, content: ContentBundle): ActionOption[] {
+  if (!tradesHere(state, content)) return [];
+  const p = content.places[state.at!]!;
+  const makes = p.trade!.cheap.map((g) => content.goods[g]!.name.toLowerCase());
+  return [opt('Trade', { t: 'trade' }, 'Trade goods on the beach', true, undefined, makes.length ? `They sell ${makes.join(', ')} cheap` : undefined)];
+}
+
 /** At home: the hoard, the wall (FRAME-FOUNDATION §4). Instant; shown on the Home tab and the home screens. */
 export function baseActions(state: GameState, content: ContentBundle): ActionOption[] {
   if (state.at !== 'home_fjord' || state.voyage) return [];
@@ -243,7 +255,7 @@ export function baseActions(state: GameState, content: ContentBundle): ActionOpt
 }
 
 function homeActions(state: GameState, content: ContentBundle): ActionOption[] {
-  const out: ActionOption[] = [...shopOption(state, content), ...baseActions(state, content)];
+  const out: ActionOption[] = [...shopOption(state, content), ...tradeOption(state, content), ...baseActions(state, content)];
   const n = recruitable(state, content);
   const room = capacity(state, content) - state.crew.men - aliveMen(state).length;
   out.push(opt('Muster', { t: 'recruit' }, n > 0 ? `Sign on ${plural(n, 'man', 'men')}` : 'Sign on men', n > 0,
@@ -359,6 +371,24 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       out.push(opt('', { t: 'continue' }, 'Done'));
       return out;
     }
+    case 'trade': {
+      const at = state.at!;
+      const t = content.places[at]!.trade!;
+      const out: ActionOption[] = [];
+      for (const [g, c] of Object.entries(state.cargo ?? {})) {
+        const sp = sellPrice(state, content, at, g);
+        const basis = Math.round(c.cost / Math.max(1, c.lots));
+        out.push(opt('Sell', { t: 'trade_sell', good: g }, `Sell ${content.goods[g]!.lot}`, true, undefined, `${formatSilver(sp)} here; you paid ${formatSilver(basis)} (${c.lots} aboard)`));
+      }
+      const news = state.tradeNews?.year === dateOf(state.day).year ? state.tradeNews.good : null;
+      const buyable = [...new Set([...t.cheap, ...(news && state.tradeNews!.mult < 1 ? [news] : [])])];
+      for (const g of buyable) {
+        const why = canBuy(state, content, at, g);
+        out.push(opt('Buy', { t: 'trade_buy', good: g }, `Buy ${content.goods[g]!.lot}`, !why, why ?? undefined, `${formatSilver(buyPrice(state, content, at, g))}; ${content.goods[g]!.bulk} of hold space`));
+      }
+      out.push(opt('', { t: 'continue' }, 'Done'));
+      return out;
+    }
     case 'plunder': {
       const pl = (p as { plunder: import('./state').PlunderState }).plunder;
       const left = ALARM_MAX - pl.alarm;
@@ -405,6 +435,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const rc = resupplyCost(state, content, at);
           if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
           if (content.places[at]!.market) out.push(...shopOption(state, content));
+          out.push(...tradeOption(state, content));
           const year = dateOf(state.day).year;
           if (GUEST_DAYS[tier] > 0) out.push(opt('Here', { t: 'guest' }, 'Ask for guest-right', state.places[at]?.guested !== year, 'You have had their hospitality this year.', `Food for ${GUEST_DAYS[tier]} days, free, once a year`));
           const hire = hireable(state, content, at);
@@ -524,6 +555,18 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     }
     case 'shop':
       state.pending = { t: 'shop', shops: shopsHere(state, content) };
+      break;
+    case 'trade':
+      state.pending = { t: 'trade' };
+      break;
+    case 'trade_buy':
+      state.shopNote = buyLot(state, content, state.at!, action.good);
+      state.pending = { t: 'trade' };
+      break;
+    case 'trade_sell':
+      state.shopNote = sellLot(state, content, state.at!, action.good);
+      learn(state, 'trade', 1);
+      state.pending = { t: 'trade' };
       break;
     case 'buy_hull': {
       const name = SHIP_NAMES[(state.ships.length * 3 + state.day) % SHIP_NAMES.length]!;

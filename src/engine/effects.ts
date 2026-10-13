@@ -127,6 +127,15 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('master' in e) {
       const ship = hiredShip(state) ?? state.ships[state.ships.length - 1];
       if (ship && state.ships.length > 1) appoint(state, content, ship.id, e.master);
+    } else if ('lose_cargo' in e) {
+      // the heaviest goods go first
+      for (let n = e.lose_cargo; n > 0 && state.cargo && Object.keys(state.cargo).length; n--) {
+        const g = Object.keys(state.cargo).sort((a, b) => (content.goods[b]?.bulk ?? 0) - (content.goods[a]?.bulk ?? 0))[0]!;
+        const c = state.cargo[g]!;
+        c.cost -= c.cost / c.lots;
+        c.lots -= 1;
+        if (c.lots <= 0) delete state.cargo[g];
+      }
     } else if ('desert' in e) {
       desert(state, content);
     } else if ('give_ship' in e) {

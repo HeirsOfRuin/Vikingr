@@ -42,6 +42,7 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   thralls: (s) => s.base.thralls,
   married: (s) => (s.base.wife ? 1 : 0),
   'masters.sworn': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('man:') && s.men.some((m) => m.alive && `man:${m.id}` === x.master)).length,
+  'cargo.lots': (s) => Object.values(s.cargo ?? {}).reduce((n, c) => n + c.lots, 0),
   'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
   'masters.hired': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('hired:')).length,
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */

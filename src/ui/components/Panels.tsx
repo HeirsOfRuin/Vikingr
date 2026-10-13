@@ -128,7 +128,8 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
             </div>
           );
         }) : <p class="empty">You have no ship.</p>}
-        {!state.service && state.ships.length > 0 && <p class="small">The holds carry {formatSilver(hold(state, content))} of plunder; {formatSilver(state.loot)} aboard.</p>}
+        {!state.service && state.ships.length > 0 && <p class="small">The holds carry {formatSilver(hold(state, content))} of plunder and goods; {formatSilver(state.loot)} of plunder aboard.</p>}
+        {Object.keys(state.cargo ?? {}).length > 0 && <p class="small">Goods aboard: {Object.entries(state.cargo!).map(([g, c]) => `${c.lots} × ${content.goods[g]?.name.toLowerCase()} (paid ${formatSilver(Math.round(c.cost / c.lots))} a lot)`).join(', ')}.</p>}
         {state.building && <p class="muted small">Building over the winter: a {content.ships[state.building]?.name.toLowerCase()}.</p>}
         {!state.service && state.ships[0] && (
           <p class="small">Fitted with: {state.ships[0].fittings?.length ? state.ships[0].fittings.map((f) => content.items[f]?.name.toLowerCase()).join(', ') : <span class="muted">nothing yet. The shipwright at home, or at a market, can change that.</span>}</p>

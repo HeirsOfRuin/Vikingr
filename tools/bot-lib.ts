@@ -2,6 +2,7 @@
 // so two runs are comparable (game-building skill, Part 2 #5).
 import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
 import { hold, SECONDHAND } from '../src/engine/fleet';
+import { buyPrice, sellPrice } from '../src/engine/trade';
 import type { ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
 import { act, listActions, newGame, screenOf, type Action, type ActionOption } from '../src/engine/index';
@@ -56,6 +57,8 @@ function hops(state: GameState, content: ContentBundle, from: string, to: string
 export class Bot {
   visited = new Set<string>(['home_fjord']);
   shopped = new Set<number>();
+  traded = new Set<string>();
+  bought = new Map<number, number>();
   constructor(public policy: Policy, public rng: RngCursor) {}
 
   position(): Position {
@@ -65,7 +68,7 @@ export class Bot {
   choose(state: GameState, content: ContentBundle): Action | null {
     const opts = listActions(state, content);
     // shopping and listening are deliberate choices below, never a fallback
-    const enabled = opts.filter((o) => o.enabled && o.action.t !== 'shop' && o.action.t !== 'listen');
+    const enabled = opts.filter((o) => o.enabled && o.action.t !== 'shop' && o.action.t !== 'listen' && o.action.t !== 'trade');
     if (!enabled.length) return null;
     if (this.policy === 'random') return enabled[this.rng.int(enabled.length)]!.action;
     const screen = screenOf(state);
@@ -83,6 +86,24 @@ export class Bot {
         const b = state.pending!.t === 'battle' ? state.pending!.battle : null;
         if (b && b.position !== this.position() && !b.heroDown && b.round === 0) return { t: 'position', pos: this.position() };
         return pick((a) => a.t === 'battle_auto')!;
+      }
+      case 'trade': {
+        // sell what pays; buy what this beach makes cheap and some other market wants, with silver to spare
+        const at = state.at!;
+        for (const [g, c] of Object.entries(state.cargo ?? {})) {
+          if (sellPrice(state, content, at, g) >= (c.cost / c.lots) * 1.05) return { t: 'trade_sell', good: g };
+        }
+        if ((this.bought.get(state.day) ?? 0) < 12) {
+          for (const g of content.places[at]!.trade?.cheap ?? []) {
+            const wanted = Object.values(content.places).some((p) => p.id !== at && p.trade?.dear.includes(g) && state.known.includes(p.id));
+            const a = opts.find((o) => o.enabled && o.action.t === 'trade_buy' && o.action.good === g);
+            if (wanted && a && state.silver - buyPrice(state, content, at, g) > 150) {
+              this.bought.set(state.day, (this.bought.get(state.day) ?? 0) + 1);
+              return a.action;
+            }
+          }
+        }
+        return { t: 'continue' };
       }
       case 'shop': {
         // a second hull when rich: a knarr if the holds are the trouble, else a karvi (docs/FRAME-FLEET.md)
@@ -152,6 +173,12 @@ export class Bot {
     const raid = pick((a) => a.t === 'raid');
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
+    // the trading beach, once a landfall, when there is something to sell or silver to spend
+    const tk = `${state.day}:${at}`;
+    if (!this.traded.has(tk) && (Object.keys(state.cargo ?? {}).length || state.silver > 200)) {
+      const t = pick((a) => a.t === 'trade');
+      if (t) { this.traded.add(tk); return t; }
+    }
     const hungry = state.provisions < mouths(state) * 6;
     // top up wherever they'll sell, before it is urgent
     if (at !== 'home_fjord' && state.provisions < mouths(state) * 15) { const buy = pick((a) => a.t === 'resupply') ?? pick((a) => a.t === 'guest'); if (buy) return buy; }

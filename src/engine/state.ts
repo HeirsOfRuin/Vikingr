@@ -200,6 +200,7 @@ export type Pending =
   | { t: 'battle'; battle: BattleState }
   | { t: 'plunder'; plunder: PlunderState }
   | { t: 'shop'; shops: ('smith' | 'market' | 'shipwright')[] }
+  | { t: 'trade' }
   | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string };
 
 export interface PlaceState {
@@ -217,6 +218,8 @@ export interface PlaceState {
   visited?: boolean;
   /** The year he last listened to the old sailors here. */
   listened?: number;
+  /** His own buying and selling here, pushing prices: lots (+ bought, - sold) as of a day (docs/FRAME-TRADE-ALLIES.md). */
+  supply?: Record<string, { n: number; day: number }>;
 }
 
 export interface LogEntry {
@@ -242,6 +245,12 @@ export interface GameState {
   honour: number;
   /** A fallen sworn man's id → the oarsman who took his bench (scenes written before the death name him instead). */
   standIns?: Record<string, string>;
+  /** Goods aboard: lots, and what they cost him (docs/FRAME-TRADE-ALLIES.md). */
+  cargo?: Record<string, { lots: number; cost: number }>;
+  /** The year's trade news: one good dear or cheap everywhere. */
+  tradeNews?: { good: string; mult: number; year: number };
+  /** This year's trade profit, and whether its deed has been earned. */
+  tradeYear?: { year: number; profit: number; deed: boolean };
   hamingja: number;
   silver: number;
   loot: number;

@@ -1,5 +1,6 @@
 // The year at home: spring muster, the autumn share-out and homecoming,
 // the winter hall, and the turn of the year.
+import { rollTradeNews } from './trade';
 import { addShip, masterShares, MUSTER_PER_SHIP } from './fleet';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
@@ -343,6 +344,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   state.crew.morale = Math.round((state.crew.morale + 6) / 2);
   clampMorale(state);
   state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1);
+  // the year's news on the trading beaches
+  rollTradeNews(state, content, rng);
   // the farm's winter
   const y = takeWinterYield(state);
   if (y) lines.push(y);
