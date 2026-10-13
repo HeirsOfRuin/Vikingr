@@ -37,7 +37,7 @@ Each step follows the usual process: a short frame doc for approval, then the bu
 
 ---
 
-## Step 1: The fleet (a second ship and its shipmaster)
+## Step 1: The fleet (a second ship and its shipmaster) — built 2026-10-13 (`docs/FRAME-FLEET.md`)
 **Problem.** A second ship today only adds benches. A real second ship needs a man at its steering-oar. It changes the share-out and what you can attack. It can also be lost, or stolen by its own master.
 
 **Build:**
