@@ -11,13 +11,13 @@ import { livingFame, untoldCount } from '../engine/fame';
 import { saveGame, loadGame, clearSave } from './storage';
 import { NowView } from './components/NowView';
 import { MapView } from './components/MapView';
-import { HeroPanel, CrewPanel, SagaPanel } from './components/Panels';
+import { HeroPanel, CrewPanel, SagaPanel, HomePanel } from './components/Panels';
 import { Knot, PixelIcon } from './components/Ornament';
 import { SceneArt } from './scene/SceneArt';
 
-type Tab = 'now' | 'map' | 'hero' | 'crew' | 'saga';
+type Tab = 'now' | 'map' | 'hero' | 'crew' | 'home' | 'saga';
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'now', label: 'Now' }, { id: 'map', label: 'Map' }, { id: 'hero', label: 'Hero' }, { id: 'crew', label: 'Crew' }, { id: 'saga', label: 'Saga' },
+  { id: 'now', label: 'Now' }, { id: 'map', label: 'Map' }, { id: 'hero', label: 'Hero' }, { id: 'crew', label: 'Crew' }, { id: 'home', label: 'Home' }, { id: 'saga', label: 'Saga' },
 ];
 const NAMES = ['Hrafn', 'Asbjorn', 'Ketil', 'Orm', 'Thorir', 'Ulfar', 'Eyvind', 'Halldor', 'Arni', 'Bjorn'];
 
@@ -210,6 +210,7 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
             {tab === 'map' && <div class="screen"><h2>The known world</h2><MapView content={content} map={map} state={state} /></div>}
             {tab === 'hero' && <div class="screen"><HeroPanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'crew' && <div class="screen"><CrewPanel content={content} state={state} onAct={onAct} /></div>}
+            {tab === 'home' && <div class="screen"><HomePanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'saga' && <div class="screen"><SagaPanel content={content} state={state} /></div>}
           </>
         )}

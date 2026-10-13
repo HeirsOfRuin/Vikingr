@@ -242,6 +242,7 @@ export interface GameState {
   /** gear: the men's arms, 0 spears and shields .. 3 mail for every man (FRAME-FOUNDATION §2). */
   crew: { men: number; quality: number; morale: number; gear: number };
   items: ItemInst[];
+  base: import('./base').BaseState;
   kit: Partial<Record<KitSlot, string>>;
   men: SwornMan[];
   at: string | null; // place, or null at sea

@@ -133,7 +133,7 @@
         effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_high } ]
     - id: away
       text: Ask her to come away with you now, and let Bárð keep his scales.
-      effects: [ { set: flag.gyda_eloped }, { add: { honour: -1 } } ]
+      effects: [ { set: flag.gyda_eloped }, { add: { honour: -1 } }, { wife: Gyða } ]
       result: |
         She looks at you for a long moment, and you can't tell what she is thinking, and then you can.
 

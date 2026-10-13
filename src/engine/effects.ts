@@ -11,6 +11,7 @@ import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
 import { giveItem, loseItem } from './items';
+import { BASE_LEVELS, keepCaptives } from './base';
 import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
 
 function addTo(state: GameState, path: string, n: number): void {
@@ -116,6 +117,12 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('item' in e) {
       giveItem(state, content, e.item.id, !!e.item.equip);
       journal(state, `You have ${content.items[e.item.id]!.name.charAt(0).toLowerCase()}${content.items[e.item.id]!.name.slice(1)}.`);
+    } else if ('wife' in e) {
+      state.base.wife = e.wife;
+    } else if ('base' in e) {
+      if (BASE_LEVELS.indexOf(e.base) > BASE_LEVELS.indexOf(state.base.level)) state.base.level = e.base;
+    } else if ('keep_captives' in e) {
+      keepCaptives(state);
     } else if ('lose_item' in e) {
       loseItem(state, e.lose_item);
     } else if ('progress' in e) {

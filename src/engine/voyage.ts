@@ -11,7 +11,7 @@ import { effAttr, heal, kill, learn } from './hero';
 import { addDeed } from './fame';
 import { trigger } from './director';
 import { journal } from './journal';
-import { plural } from './format';
+import { formatSilver, plural } from './format';
 
 export interface Route {
   to: string;
@@ -145,6 +145,10 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
         return;
       }
       lines.push('You come up, and find a spar, and hold on.');
+      if (state.silver > 0) {
+        lines.push(`Your sea-chest went down with her, and half the silver you carried with it. ${formatSilver(Math.floor(state.silver / 2))}. The hoard at home is safe.`);
+        state.silver -= Math.floor(state.silver / 2);
+      }
     }
   }
   state.crew.men = Math.max(0, state.crew.men - lostMen);

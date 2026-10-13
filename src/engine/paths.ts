@@ -36,6 +36,9 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   nickname: (s) => !!s.hero.nickname,
   shares: (s) => s.service?.shares ?? 0,
   expedition: (s) => (s.voyage?.expedition ? 1 : 0),
+  base: (s) => s.base.level,
+  thralls: (s) => s.base.thralls,
+  married: (s) => (s.base.wife ? 1 : 0),
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */
   winter: (s) => s.flags._winter ?? 0,
 };
@@ -46,6 +49,7 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'place') return ['sea', ...Object.keys(content.places)];
   if (path === 'at.kind') return ['sea', 'none', ...PLACE_KINDS];
   if (path === 'background') return Object.keys(content.backgrounds);
+  if (path === 'base') return ['father', 'farm', 'hall'];
   return undefined;
 }
 

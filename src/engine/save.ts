@@ -2,6 +2,7 @@
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { kitFromFlags } from './items';
+import { newBase } from './base';
 
 export const SAVE_FORMAT = 'vikingr-save';
 export const SAVE_VERSION = 1;
@@ -46,6 +47,7 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
   state.queue = state.queue.filter((q) => !!content.scenes[q.scene]);
   state.rumoured ??= [];
   state.crew.gear ??= 0;
+  state.base ??= newBase();
   kitFromFlags(state, content, state.hero.background);
   for (const id of Object.keys(content.places)) {
     const p = content.places[id]!;

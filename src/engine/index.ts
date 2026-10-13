@@ -14,6 +14,7 @@ import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, 
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
+import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, HALL_PRICE, keepCaptives, newBase, thrallRoom } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop } from './items';
 import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
@@ -41,6 +42,10 @@ export type Action =
   | { t: 'hire' }
   | { t: 'land' }
   | { t: 'listen' }
+  | { t: 'hoard_in' }
+  | { t: 'hoard_out' }
+  | { t: 'hang'; item: string }
+  | { t: 'keep_thralls' }
   | { t: 'shop' }
   | { t: 'buy'; item: string }
   | { t: 'arm' }
@@ -126,6 +131,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     crew: { men: bg.crew, quality: 0.6, morale: 6, gear: 0 },
     items: [],
     kit: {},
+    base: newBase(),
     men: bg.men.map((id) => ({ ...newMan(content, id), sworn: !bg.service })),
     at: 'home_fjord',
     voyage: null,
@@ -202,8 +208,19 @@ function shopOption(state: GameState, content: ContentBundle): ActionOption[] {
   return [opt('Trade', { t: 'shop' }, label, n > 0, 'There is nothing here you need.', `${n} things worth looking at`)];
 }
 
+/** At home: the hoard, the wall (FRAME-FOUNDATION §4). Instant; shown on the Home tab and the home screens. */
+export function baseActions(state: GameState, content: ContentBundle): ActionOption[] {
+  if (state.at !== 'home_fjord' || state.voyage) return [];
+  const out: ActionOption[] = [];
+  const keep = Math.max(0, state.silver - 24);
+  out.push(opt('Your base', { t: 'hoard_in' }, 'Bury silver in your hoard', keep > 0, 'You have nothing to spare.', keep > 0 ? `${formatSilver(keep)}, keeping a mark in hand` : undefined));
+  out.push(opt('Your base', { t: 'hoard_out' }, 'Dig up your hoard', state.base.hoard > 0, 'The hoard is empty.', state.base.hoard > 0 ? formatSilver(state.base.hoard) : undefined));
+  for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall`));
+  return out;
+}
+
 function homeActions(state: GameState, content: ContentBundle): ActionOption[] {
-  const out: ActionOption[] = [...shopOption(state, content)];
+  const out: ActionOption[] = [...shopOption(state, content), ...baseActions(state, content)];
   const n = recruitable(state, content);
   const room = capacity(state, content) - state.crew.men - aliveMen(state).length;
   out.push(opt('Muster', { t: 'recruit' }, n > 0 ? `Sign on ${plural(n, 'man', 'men')}` : 'Sign on men', n > 0,
@@ -216,6 +233,16 @@ function homeActions(state: GameState, content: ContentBundle): ActionOption[] {
   if (state.ships.length) out.push(opt('Muster', { t: 'refit' }, 'Refit the ships', rc > 0 && state.silver >= rc, rc <= 0 ? 'The ships are sound.' : `You need ${formatSilver(rc)}.`, rc > 0 ? formatSilver(rc) : undefined));
   if (!state.ships.length) out.push(opt('Muster', { t: 'borrow_ship' }, "Borrow a ship from the jarl", true, undefined, 'For a quarter of the plunder'));
   return out;
+}
+
+/** The captain's share-out choices. */
+function listActionsReturn(state: GameState): ActionOption[] {
+  const pot = state.loot;
+  return [
+    opt('Share-out', { t: 'share', how: 'generous' }, 'Share with an open hand', true, undefined, `Keep 15% of ${formatSilver(pot)}`),
+    opt('Share-out', { t: 'share', how: 'fair' }, 'Share as custom has it', true, undefined, 'Keep 30%'),
+    opt('Share-out', { t: 'share', how: 'mean' }, 'Keep the lord\'s share and more', true, undefined, 'Keep 50%'),
+  ];
 }
 
 export function listActions(state: GameState, content: ContentBundle): ActionOption[] {
@@ -262,21 +289,24 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       return out;
     }
     case 'return': {
+      const room = thrallRoom(state);
+      const thralls = state.captives > 0 && room > 0 && !state.service ? [opt('Captives', { t: 'keep_thralls' }, `Keep ${plural(Math.min(room, state.captives), 'captive')} as thralls at ${BASE[state.base.level].name.toLowerCase()}`, true, undefined, 'They work the land each winter; the rest go to the trader')] : [];
       if (state.service) return [opt('Share-out', { t: 'take_share' }, `Take your share from ${state.service.captain}`)];
-      const pot = state.loot;
-      return [
-        opt('Share-out', { t: 'share', how: 'generous' }, 'Share with an open hand', true, undefined, `Keep 15% of ${formatSilver(pot)}`),
-        opt('Share-out', { t: 'share', how: 'fair' }, 'Share as custom has it', true, undefined, 'Keep 30%'),
-        opt('Share-out', { t: 'share', how: 'mean' }, 'Keep the lord\'s share and more', true, undefined, 'Keep 50%'),
-      ];
+      if (thralls.length) return [...thralls, ...listActionsReturn(state)];
+      return listActionsReturn(state);
     }
     case 'hall': {
       const out: ActionOption[] = [];
       const home = state.at === 'home_fjord';
       const fc = feastCost(state);
       const lord = !state.service; // an oarsman eats at his father's table and does not hold feasts
-      if (home) out.push(...shopOption(state, content));
-      if (lord) out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
+      if (home) out.push(...shopOption(state, content), ...baseActions(state, content));
+      if (home && state.base.level === 'father') out.push(opt('Your base', { t: 'hall', what: 'buy_farm' }, 'Buy a farm of your own', state.silver >= FARM_PRICE, `You need ${formatSilver(FARM_PRICE)}.`, formatSilver(FARM_PRICE)));
+      if (home && state.base.level === 'farm') {
+        const why = canBuildHall(state);
+        out.push(opt('Your base', { t: 'hall', what: 'build_hall' }, 'Build a hall', !why, why ?? undefined, formatSilver(HALL_PRICE)));
+      }
+      if (lord || state.base.level !== 'father') out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
       else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
       for (const m of aliveMen(state)) out.push(opt('Gifts', { t: 'hall', what: 'gift', arg: m.id }, `Give ${m.name} an arm-ring`, state.silver >= ORTUG_PER_MARK, `You need ${formatSilver(ORTUG_PER_MARK)}.`, `Loyalty ${m.loyalty}/10`));
       out.push(opt('Hall', { t: 'hall', what: 'train' }, lord ? 'Train with the men' : 'Practise with your bench-mates'));
@@ -486,6 +516,26 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'equip':
       equip(state, content, action.uid);
       break;
+    case 'hoard_in': {
+      const n = Math.max(0, state.silver - 24);
+      state.silver -= n;
+      state.base.hoard += n;
+      journal(state, `Buried ${formatSilver(n)} in the hoard.`);
+      break;
+    }
+    case 'hoard_out':
+      state.silver += state.base.hoard;
+      journal(state, `Dug up ${formatSilver(state.base.hoard)} from the hoard.`);
+      state.base.hoard = 0;
+      break;
+    case 'hang':
+      hangTrophy(state, content, action.item);
+      break;
+    case 'keep_thralls': {
+      const n = keepCaptives(state);
+      report('Thralls', [`${plural(n, 'captive')} ${n === 1 ? 'goes' : 'go'} up the hill to ${BASE[state.base.level].name.toLowerCase()}, to cut turf and carry water and muck out the byre. ${state.base.wife ? `${state.base.wife} looks them over the way she looks at a new cow.` : 'Your mother looks at them a long time, and does not say what she thinks.'}`]);
+      break;
+    }
     case 'listen': {
       state.silver -= LISTEN_COST;
       state.day += 1;

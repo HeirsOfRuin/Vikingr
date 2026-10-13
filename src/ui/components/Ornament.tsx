@@ -50,6 +50,7 @@ const ICONS: Record<string, string[]> = {
   map: ['.....b......', '.....bb.....', '.....bbb....', '.....bbbb...', '.....b......', '.r...b...r..', '.rrrrrrrrr..', '..rrrrrrr...', '...rrrrr....', '.sssssssss..', 's.s.s.s.s.s.', '............'],
   hero: ['............', '....iiii....', '...iiiiii...', '..iiiiiiii..', '..iiiiiiii..', '..iiikkiii..', '..iik..kii..', '..ii.kk.ii..', '..i..ii..i..', '.....ii.....', '............', '............'],
   crew: ['............', '............', '.rr..bb..rr.', 'rrrrbbbbrrrr', 'rrirbbibrrir', 'rrrrbbbbrrrr', '.rr..bb..rr.', '............', '.k..k..k..k.', '.k..k..k..k.', '............', '............'],
+  home: ['.......b....', '......b.....', '.......b....', '....oooooo..', '...oooooooo.', '..oooooooooo', '.kkkkkkkkkk.', '.kbbkkkkbbk.', '.kkkkrrkkkk.', '.kkkkrrkkkk.', 'ssssssssssss', '............'],
   saga: ['....bbbb....', '...bbbbbb...', '..bbrbbbbb..', '..bbbrrbbb..', '..bbbbbrbb..', '..bbrrbbbb..', '..bbbbrbbb..', '..bbbrbbbb..', '..bbbbbbbb..', '..bbbbbbbb..', '.kkkkkkkkkk.', '............'],
 };
 const TOKENS: Record<string, string> = { r: '--rune-red', o: '--ochre', b: '--bone', k: '--granite-500', i: '--iron', s: '--sea' };

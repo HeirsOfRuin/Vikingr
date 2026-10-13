@@ -79,6 +79,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
       } else if ('item' in e || 'lose_item' in e) {
         const iid = 'item' in e ? e.item.id : e.lose_item;
         if (!content.items[iid]) errors.push(`${where}: unknown item "${iid}"`);
+      } else if ('wife' in e || 'base' in e || 'keep_captives' in e) {
+        /* nothing to check */
       } else if ('progress' in e) {
         /* nothing to check */
       } else if ('spread' in e) {

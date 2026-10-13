@@ -204,6 +204,7 @@
       text: Keep them as thralls on your father's farm.
       effects:
         - { set: flag.h_thralls }
+        - { keep_captives: true }
         - { captives: -99 }
         - { if: service, then: [ { add: { man.bersi.loyalty: -1 } } ] }
         - { if: "flag.i_colman_taken && !flag.bg_colman_freed", then: [ { set: flag.colman_kept } ] }

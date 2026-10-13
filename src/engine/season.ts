@@ -10,6 +10,7 @@ import { effAttr, heal, learn, strawDeathCheck, kill, age } from './hero';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { trigger } from './director';
+import { BASE, FARM_PRICE, feastMult, hallActionsFor, HALL_PRICE, takeWinterYield } from './base';
 import { driftStanding } from './standing';
 import {
   HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
@@ -109,7 +110,7 @@ export function serviceShare(state: GameState, content: ContentBundle): string[]
   journal(state, `Your share of the summer: ${formatSilver(mine)}.`);
   const { told, gained } = tellDeeds(state);
   if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
-  startWinter(state, HALL_ACTIONS);
+  startWinter(state, hallActionsFor(state, HALL_ACTIONS));
   void content;
   return lines;
 }
@@ -159,13 +160,13 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   // the homecoming feast tells the summer's deeds
   const { told, gained } = tellDeeds(state);
   if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
-  startWinter(state, HALL_ACTIONS);
+  startWinter(state, hallActionsFor(state, HALL_ACTIONS));
   return lines;
 }
 
 // ---- the winter hall ----
 
-export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work';
+export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall';
 
 export function feastCost(state: GameState): number {
   return mouths(state) + FEAST_GUESTS;
@@ -179,7 +180,13 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
     case 'feast': {
       const cost = feastCost(state);
       state.silver -= cost;
-      const { told, gained } = tellDeeds(state);
+      const told0 = tellDeeds(state);
+      // in his own hall, with trophies on the walls, the deeds are told better (FRAME-FOUNDATION §4)
+      const fm = feastMult(state);
+      if (fm > 1) for (const d of told0.told) d.weight = Math.round(d.weight * fm * 10) / 10;
+      const told = told0.told;
+      const gained = fm > 1 ? Math.round(told0.gained * fm * 10) / 10 : told0.gained;
+      if (fm > 1) lines.push(state.base.trophies.length ? `In your own hall, under ${plural(state.base.trophies.length, 'trophy', 'trophies')} on the wall, the telling goes better.` : 'In your own hall, the telling goes better.');
       state.crew.morale += 1;
       for (const m of aliveMen(state)) addLoyalty(m, 1);
       learn(state, 'speech', 2);
@@ -232,6 +239,21 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       delete state.flags.owes_jarl;
       lines.push(`You pay the jarl ${formatSilver(cost)} for the karvi. She is yours, and so is everything she brings home.`);
       journal(state, 'Bought the karvi from the jarl.');
+      break;
+    }
+    case 'buy_farm': {
+      state.silver -= FARM_PRICE;
+      state.base.level = 'farm';
+      journal(state, 'Bought a farm of his own.');
+      lines.push(`You buy the old Ketilsstead at the head of the fjord from a widow going to live with her daughter: a longhouse with a bad roof, a byre, a field, a strip of shore. ${formatSilver(FARM_PRICE)}.`, state.base.wife ? `${state.base.wife} walks round it twice, and says it will do, and starts on the roof.` : 'It is cold, and it is empty, and it is yours.');
+      break;
+    }
+    case 'build_hall': {
+      state.silver -= HALL_PRICE;
+      state.base.level = 'hall';
+      addDeed(state, content, { type: 'deed', text: 'Built a hall of his own', weight: 5, witnesses: state.crew.men + 30 });
+      journal(state, 'Built a hall.');
+      lines.push(`All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They say your name at the door. That is what a hall is for.');
       break;
     }
     case 'work': {
@@ -309,7 +331,10 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   }
   state.crew.morale = Math.round((state.crew.morale + 6) / 2);
   clampMorale(state);
-  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre');
+  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster;
+  // the farm's winter
+  const y = takeWinterYield(state);
+  if (y) lines.push(y);
   state.seasonRaids = [];
   state.phase = state.at === 'home_fjord' ? 'muster' : 'sailing';
   lines.push(...chapterCard(state, content, year));

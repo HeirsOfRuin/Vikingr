@@ -123,7 +123,7 @@
   choices:
     - id: here
       text: Here we are.
-      effects: [ { deed: { type: deed, text: Married Gyða Bárðardóttir at the winter nights, weight: 2 } }, { add: { hamingja: 1 } } ]
+      effects: [ { deed: { type: deed, text: Married Gyða Bárðardóttir at the winter nights, weight: 2 } }, { add: { hamingja: 1 } }, { wife: Gyða } ]
       result: She leans her head on your shoulder, and for the first time since you were sixteen you aren't thinking about the sea at all.
 
 - id: w1_eloped
@@ -147,7 +147,7 @@
     - id: house
       text: Build her a house of your own, on the far side of the fjord.
       requires: ["silver >= 60"]
-      effects: [ { add: { silver: -60 } }, { set: flag.own_house } ]
+      effects: [ { add: { silver: -60 } }, { set: flag.own_house }, { base: farm } ]
       result: |
         You build it with your own hands and Ketill's and anyone else you can bribe with ale: turf walls, a timber roof, a hearth. It is small and smoky and the door sticks. Gyða walks round it twice, and says, "It will do," which from her is a great deal.
     - id: cows

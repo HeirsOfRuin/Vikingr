@@ -12,6 +12,9 @@ import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
 import { Bar } from './Actions';
 import { tierAt, TIER_NAMES } from '../../engine/standing';
+import { BASE, FARM_PRICE, HALL_FAME, HALL_PRICE, winterYield } from '../../engine/base';
+import { baseActions } from '../../engine/index';
+import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
 import type { KitSlot } from '../../engine/state';
 
@@ -158,6 +161,34 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
           </div>
         );
       }) : <p class="empty">No one has sworn to you.</p>}
+    </div>
+  );
+}
+
+/** The base (FRAME-FOUNDATION §4): what he has, who keeps it, and what is on its walls. */
+export function HomePanel({ content, state, onAct }: { content: ContentBundle; state: GameState; onAct: (a: Action) => void }) {
+  const b = state.base;
+  const def = BASE[b.level];
+  const acts = baseActions(state, content);
+  const next = b.level === 'father' ? `A farm of your own costs ${formatSilver(FARM_PRICE)}: buy one at home, in the winter.` : b.level === 'farm' ? `A hall costs ${formatSilver(HALL_PRICE)}, and a name men know (fame ${HALL_FAME}). Build it at home, in the winter.` : 'You have a hall. Men say your name at its door.';
+  return (
+    <div>
+      <h2>{def.name}</h2>
+      <p class="muted">{def.desc}</p>
+      <div class="card">
+        <dl class="kv">
+          <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : 'No wife yet.'}</dd>
+          <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> — captives you keep instead of selling</span>}</dd>
+          <dt>Each winter</dt><dd>{formatSilver(winterYield(state)) || 'nothing'}{b.wife ? <span class="muted"> (a quarter more, for her running of it)</span> : null}</dd>
+          <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small"> — safe from the sea</span></dd>
+        </dl>
+        <p class="muted small">{next}</p>
+      </div>
+      <div class="card">
+        <h3>On the wall</h3>
+        {b.trophies.length ? <p>{b.trophies.map((id) => content.items[id]?.name).join('; ')}.</p> : <p class="empty">Nothing yet. Keepsakes worth showing can be hung here, and feasts in your own hall go better under them.</p>}
+      </div>
+      {acts.length > 0 ? <Actions options={acts} onAct={onAct} /> : <p class="muted small sans">You are away from home. The hoard and the wall wait for you.</p>}
     </div>
   );
 }

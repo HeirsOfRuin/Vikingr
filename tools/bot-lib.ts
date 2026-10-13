@@ -1,5 +1,6 @@
 // Reference players. They do not need to play well; they need to play consistently,
 // so two runs are comparable (game-building skill, Part 2 #5).
+import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
 import type { ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
 import { act, listActions, newGame, screenOf, type Action, type ActionOption } from '../src/engine/index';
@@ -100,6 +101,8 @@ export class Bot {
       }
       case 'return': {
         if (state.service) return pick((a) => a.t === 'take_share')!;
+        // a farm of his own wants hands; at his father's they are worth more sold
+        if (state.base.level !== 'father') { const k = pick((a) => a.t === 'keep_thralls'); if (k) return k; }
         const how = state.loot > 600 ? 'generous' : this.policy === 'coward' ? 'mean' : 'fair';
         return pick((a) => a.t === 'share' && a.how === how)!;
       }
@@ -125,6 +128,9 @@ export class Bot {
     if (sulky && sulky.loyalty <= 4 && state.silver > 60) { const g = h('gift', sulky.id); if (g) return g; }
     const sk = h('skald'); if (sk && state.deeds.some((d) => d.told !== null && !d.verse)) return sk;
     if (state.flags.owes_jarl && state.silver > 260) { const b = h('buy_ship'); if (b) return b; }
+    const hang = pick((a) => a.t === 'hang'); if (hang) return hang;
+    if (state.silver > FARM_PRICE + 150) { const b = h('buy_farm'); if (b) return b; }
+    if (state.silver > HALL_PRICE + 150) { const b = h('build_hall'); if (b) return b; }
     if (state.silver > 700 && state.ships.length < 3) { const b = h('build', 'snekkja'); if (b) return b; }
     if (state.silver > 120 && state.hamingja < 2) { const b = h('blot'); if (b) return b; }
     return h('train')!;
