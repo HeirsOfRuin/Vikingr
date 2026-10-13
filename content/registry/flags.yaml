@@ -256,3 +256,8 @@ fr_road_east: { description: "Looks east after 835" }
 fr_road_home: { description: "Looks to his own land and hall after 835" }
 rg_saw_turgeis: { description: "Saw Turgeis's fleet go north" }
 rg_met_turgeis: { description: "Spoke with Turgeis at sea" }
+# ---- hardship (docs/FRAME-HARDSHIP.md) ----
+ha_jarl_refused: { description: "Refused the jarl a ship when he was suspicious" }
+ha_ketill_stayed: { description: "Asked old Ketill for one more summer" }
+ha_ketill_steward: { description: "Made Ketill steward of the farm" }
+ha_sold_dear: { description: "Sold grain dear in a famine" }

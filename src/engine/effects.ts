@@ -1,4 +1,6 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
+import { dateOf } from './calendar';
 import { bestAlly, killCaptain, meet, partner, partnerInFight, shiftFavour, shiftRel, swearFelag } from './allies';
 import { startHost } from './host';
 import { addShip, appoint, desert, FLEET_MAX, hiredShip, PRIZE_HULL, shipOf, stow, swornShip } from './fleet';
@@ -27,6 +29,8 @@ function addTo(state: GameState, content: ContentBundle, path: string, n: number
     case 'provisions': state.provisions = Math.max(0, state.provisions + n); return;
     case 'crew.men': state.crew.men = Math.max(0, state.crew.men + n); return;
     case 'crew.morale': state.crew.morale += n; clampMorale(state); return;
+    case 'muster': state.musterPool = Math.max(0, state.musterPool + n); return;
+    case 'hoard': state.base.hoard = Math.max(0, state.base.hoard + n); return;
     case 'thralls': state.base.thralls = Math.max(0, Math.min(BASE[state.base.level].thralls, state.base.thralls + n)); return;
   }
   const [ns, a, b] = path.split('.');
@@ -98,7 +102,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       if (state.at && state.at !== e.voyage) startVoyage(state, content, e.voyage, true);
     } else if ('captives' in e) state.captives = Math.max(0, state.captives + e.captives);
     else if ('shares' in e) { if (state.service) state.service.shares = e.shares; }
-    else if ('plunder' in e) { if (state.at) startPlunder(state, state.at, [], e.plunder.next); }
+    else if ('plunder' in e) { if (state.at) startPlunder(state, state.at, [], e.plunder.next, content); }
     else if ('position' in e) state.position = e.position;
     else if ('sell_captives' in e) {
       // a market price, straight into the heap
@@ -192,6 +196,16 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       if (e.standing.place) shiftStanding(state, content, e.standing.place, e.standing.n);
       if (e.standing.people) shiftPeople(state, content, e.standing.people, e.standing.n, e.standing.place);
     } else if ('captain' in e) { if (state.service) state.service.captain = e.captain; }
+    else if ('envy' in e) shiftEnvy(state, e.envy);
+    else if ('give' in e) give(state, e.give);
+    else if ('lose_hoard' in e) robHoard(state, e.lose_hoard);
+    else if ('recover_hoard' in e) recoverHoard(state, e.recover_hoard);
+    else if ('fire' in e) burn(state, content, e.fire);
+    else if ('lose_ship' in e) loseShip(state, content, e.lose_ship);
+    else if ('jarl_men' in e) {
+      // the jarl mans his benches, for a quarter of the summer's heap
+      state.flags.jarl_men = dateOf(state.day).year;
+    }
     else if ('ship' in e) {
       // a ship of his own, in place of the bench in another man's: the old crew stays with the old ship
       state.ships = [{ id: `ship${state.day}`, type: e.ship.type, name: e.ship.name, hull: 80 }];

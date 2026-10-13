@@ -8,3 +8,8 @@
 - { id: bad_knee, name: "A ruined knee", desc: "It will tell you about the weather for the rest of your life.", attrs: { agi: -1 }, deed: true }
 - { id: face_scar, name: "A scar across the face", desc: "From brow to jaw. Women look twice; so do men deciding whether to fight you.", attrs: { pre: 1 }, deed: true }
 - { id: lost_fingers, name: "Lost fingers", desc: "Two fingers of the shield hand, left on someone's beach.", attrs: { str: -1 }, deed: true }
+# Old wounds (docs/FRAME-HARDSHIP.md): what a bad wound leaves, sometimes, when it has closed.
+- { id: old_shoulder, name: "An old shoulder", desc: "It closed, but it never came back all the way. It aches in the cold, and the cold is most of the year.", attrs: { str: -1 } }
+- { id: old_ribs, name: "Old ribs", desc: "They knitted crooked. You get short of breath at the oar now, which you never used to.", attrs: { end: -1 } }
+- { id: old_leg, name: "A leg that never healed right", desc: "A hitch in the stride that the men copy behind your back.", attrs: { agi: -1 } }
+- { id: winter_cough, name: "A winter cough", desc: "The sickness let you live. It didn't let you go.", days: 70, attrs: { end: -1 } }

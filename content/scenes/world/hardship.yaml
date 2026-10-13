@@ -1,0 +1,425 @@
+# Hardship (docs/FRAME-HARDSHIP.md): the world taking back what it gave. Famine, fire, sickness and the sea;
+# and the men who grudge a man his luck: the challenger, the lawsuit, the raid on the farm, the jarl, the district.
+
+# ---- disasters ----
+
+- id: ha_harvest
+  kind: queued
+  requires: ["place == home_fjord", "!service"]
+  art: home_fjord
+  title: The bad year
+  text: |
+    It rained from midsummer to the winter nights. The barley lay down in the fields and rotted where it lay, and the hay went into the barns wet and came out black. Half the district will kill its cattle before Yule, because there's nothing to feed them on, and the other half will wish they had by spring.
+    [if base == father]
+    Your father walks the rotten field with you, turning over the black ears with his foot. "Your grandfather lived through two like this," he says. "He used to say the second was easier, because by then you'd eaten everybody who was any trouble."
+    [elif married]
+    {wife} has already counted what's in the storehouse, twice, and doesn't like either answer.
+    [else]
+    The storehouse at the end of your longhouse is half empty, and the half that's full is the wrong half.
+    [/if]
+    [break]
+    In the second week of winter the people of the district start coming to your door. Not begging. Northmen don't beg. They come to talk about the weather, and stay to look at your storehouse, and go home with their children's faces in front of you.
+  choices:
+    - id: open
+      text: Open the storehouse to the district.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { give: stores }, { favour: 1 }, { deed: { type: open_handed, text: "Fed the district in the bad year", weight: 3, witnesses: 120 } } ]
+      result: |
+        You open the doors and stand by them while the grain goes out a sack at a time, and you make a point of knowing every name. It costs you two marks of silver to fill the storehouse up again, at the price grain is this winter, which is a robber's price.
+
+        At the spring thing, men you barely know come up to grip your hand. Nobody says why. Everybody knows why.
+    - id: sell
+      text: Sell your grain to them. At this winter's price.
+      visible_if: ["base != father"]
+      effects: [ { add: { silver: 40 } }, { envy: 2 }, { add: { honour: -1 } }, { set: flag.ha_sold_dear } ]
+      result: |
+        They pay. They have to. A man who sells barley in a famine at three times its price is within the law, and everyone who pays him remembers it for the rest of their lives, and teaches it to their children.
+
+        You earn more in a month than a summer on Skye. Your neighbours stop coming to your door at all, which is quieter.
+    - id: keep
+      text: Keep what you have for your own household.
+      effects: [ { envy: 0.5 } ]
+      result: |
+        You keep your doors shut and your people fed. Nobody can say you did wrong; it's your grain. People say it anyway, at other men's fires, in the long nights, and they say it with the kind of care that means they're going to remember it.
+
+- id: ha_fire
+  kind: queued
+  requires: ["place == home_fjord", "base != father"]
+  art: iona_burning
+  title: Fire
+  text: |
+    You wake in the dark with your eyes streaming and the roof roaring over your head like surf.
+
+    [if base == hall]
+    The hall is burning. Fire runs along the roof-tree from the gable end, eating the old dry thatch under the turf, and the carved posts of the high seat are already alight, the beasts on them writhing in the smoke as if they were alive.
+    [else]
+    The longhouse is burning. The turf roof has caught along its whole length, and the byre end is full of screaming cattle and smoke.
+    [/if]
+    [if envy >= 5]
+    In the yard, as you come out of the door with your shirt on fire, there are footprints in the frost that aren't yours, going away at a run toward the ridge.
+    [/if]
+    [break]
+    [if married]
+    {wife} is already outside, with her hair singed off one side of her head, dragging a thrall-woman out by the arm. She looks at you. There's time to go back in once, and only once, and you both know it.
+    [else]
+    There's time to go back in once, and only once.
+    [/if]
+  choices:
+    - id: hoard
+      text: The hoard, under the floor by the hearth.
+      effects: [ { fire: hoard }, { envy: -1 } ]
+      result: |
+        You go in on your belly under the smoke and dig with your hands in the hot earth by the hearth until you find the chest, and drag it out by one handle with the roof coming down behind you. Your hands blister up like bread.
+
+        Everything else burns: the trophies on the walls, the hangings, the high seat, the people who didn't wake. In the morning you sift the ashes for nails.
+    - id: trophies
+      text: The trophies on the walls. They are your name.
+      visible_if: ["trophies >= 1"]
+      effects: [ { fire: trophies }, { envy: -1 } ]
+      result: |
+        You go in and tear them off the walls with your sleeves over your hands: the things men came to your hall to see, the things that told your story without your having to. You come out with your arms full and your eyebrows gone.
+
+        Under the floor the hoard melts in the heat, and runs, and in the morning you dig it out of the ashes in lumps, fused together with the nails. Half of it is still silver. The rest is a lesson.
+    - id: people
+      text: The people in the back room.
+      effects: [ { fire: people }, { add: { honour: 1 } }, { envy: -1.5 } ]
+      result: |
+        The thralls sleep in the back by the byre, where the smoke is worst. You go in for them, because somebody has to, and drag out an old woman and two boys and a man with a broken leg, one after another, until you can't see and can't breathe and somebody drags you out instead.
+
+        Half the hoard melts. Half the trophies burn. Nobody dies. In the morning the old woman comes and sits by you in the ashes and says nothing at all until the sun is up, and then she goes and starts making porridge on the coals of your house, as if it was any morning.
+
+# ---- envy: the men who grudge him ----
+
+- id: ha_challenger
+  kind: phase
+  trigger: hall
+  chance: 0.35
+  cooldown_days: 700
+  requires: ["place == home_fjord", "phase == winter", "!service", "envy >= 3", "fame.living >= 40"]
+  art: yule_hall
+  title: The challenger
+  text: |
+    At the Yule feast a young man stands up on the bench at the far end of the hall, where the young men sit, and waits for the noise to die. He's nineteen, maybe; tall, quick, with a new cloak and a borrowed sword and nothing else in the world.
+
+    "Hrói Bjarnarson," he says, "from over the ridge. My father's farm borders your father's. I've heard the stories about {name}, the same as everyone. I don't believe half of them." He lets the hall laugh. "So I'll find out. A holmgang, on the ice, when the feast is over. Three shields each. If I win, I'll tell the stories from now on."
+    [break]
+    The hall goes quiet. Every man in it is looking at you. Some of them are hoping.
+  choices:
+    - id: fight
+      text: Accept. On the ice, when the feast is over.
+      danger: true
+      effects: [ { envy: -1 }, { fight: { foe: young_wolf, kind: holmgang, lethal: false, win: ha_challenger_won, lose: ha_challenger_lost } } ]
+    - id: oars
+      text: Tell him a man that eager should be at your oars, not on the ice.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          "Come and row for me," you say, "and in two summers you'll have stories of your own, and you won't need mine." The hall roars. Hrói goes red, and then he laughs too, because he's not a fool, and comes up the hall to grip your hand.
+        effects: [ { envy: -1.5 }, { add: { crew.men: 1 } } ]
+      failure:
+        text: |
+          "I didn't come for a bench," he says. "I came for you." The hall hears it. He walks out into the snow without waiting for an answer, and by the end of the winter the story in the district is that you were offered the holmgang and talked your way out of it.
+        effects: [ { add: { honour: -1 } } ]
+    - id: laugh
+      text: Laugh, and tell him to come back when he has a beard.
+      effects: [ { add: { honour: -1 } }, { envy: 0.5 } ]
+      result: |
+        The hall laughs with you. Hrói doesn't. He gets down off the bench and walks out, and the young men at the end of the hall watch him go, and then watch you, and you can see them deciding something.
+
+- id: ha_challenger_won
+  kind: spine
+  art: holmgang
+  title: On the ice
+  text: |
+    He's quick, and he's brave, and he's nineteen. Your third blow splits his last shield down the middle and the fourth takes him across the thigh, and he goes down on the ice in a spray of red and doesn't get up.
+
+    He tries to. You'll give him that. He tries three times before his friends come and carry him off the cloak.
+  choices:
+    - id: done
+      text: Walk off the ice.
+      effects: [ { envy: -1 }, { deed: { type: deed, text: "Beat young Hrói Bjarnarson on the ice at Yule", weight: 3, witnesses: 80 } } ]
+      result: |
+        His father comes to you the next day with the holmlausn in a bag, and his face like a closed door. "He'll walk again," he says. "He'll limp." Neither of you says anything about whose fault it is. The young men at the end of the hall have stopped looking at you like that. For now.
+
+- id: ha_challenger_lost
+  kind: spine
+  art: holmgang
+  title: On the ice
+  text: |
+    He's quick, and you're not nineteen any more. He breaks your second shield and your third, and when you go down on one knee on the ice with blood in your eyes, he steps back and lets you get up. That's crueller than anything he could have done with the sword.
+
+    The hall has seen it. The district will have heard it by morning.
+  choices:
+    - id: done
+      text: Get up, and give him his due.
+      effects: [ { add: { honour: -1 } }, { envy: -2 } ]
+      result: |
+        You pay him the holmlausn in front of everyone and grip his hand, which is the only thing left to do with any dignity. "You're better than the stories," he says, quietly, so only you can hear. "But you're not better than me." He's right, today. You'll have to see about tomorrow.
+
+- id: ha_lawsuit
+  kind: phase
+  trigger: phase_start
+  chance: 0.4
+  cooldown_days: 700
+  requires: ["year >= 832", "place == home_fjord", "phase == muster", "!service", "envy >= 4"]
+  art: muster
+  title: The suit at the thing
+  text: |
+    At the spring thing, when the law-speaker has finished reciting the third part of the law and men are starting to drift toward the ale, a farmer called Þorbjörn Hallsson stands up on the mound and names you.
+
+    He names a killing: a man called Grímr, his wife's brother, who rowed with you [if year >= 834]four summers back[else]two summers back[/if] and died in a brawl on a strand in the west. Þorbjörn says you struck the blow. Six men stand up behind him and say they'll swear to it.
+    [break]
+    You don't remember Grímr. That's not a defence. The men behind Þorbjörn are the men whose sons sail with you, and don't sail with them. Nobody at the thing thinks this is about Grímr.
+  choices:
+    - id: pay
+      text: Pay the wergild, in front of the thing, and be done with it.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { envy: -1.5 } ]
+      result: |
+        You count four marks onto the cloak in front of the mound, slowly, so everyone can see the scales are honest. Þorbjörn takes it with his jaw working. He wanted the fight, and you've given him silver instead, which is harder to tell stories about.
+    - id: oath
+      text: Call your own oath-helpers. Make them prove it.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          You bring up twelve men who were on that strand, and each of them swears on the ring at the hof that he saw who struck the blow, and it wasn't you. By the eighth, Þorbjörn's six have gone very quiet. By the twelfth, the law-speaker is looking at Þorbjörn the way a man looks at a dog that's been at the sheep.
+        effects: [ { envy: -2 }, { deed: { type: deed, text: "Beat a false suit at the spring thing", weight: 2, witnesses: 200 } } ]
+      failure:
+        text: |
+          Your oath-helpers stumble. One of them can't remember which strand it was. One was drunk. The law-speaker finds for Þorbjörn, and doubles the wergild for the trouble, and you pay it in front of the whole district.
+        effects: [ { add: { silver: -144 } }, { envy: -1 }, { add: { honour: -1 } } ]
+    - id: refuse
+      text: Tell Þorbjörn that if he wants payment, he can come and take it.
+      effects: [ { favour: -3 }, { add: { muster: -8 } }, { envy: -1 } ]
+      result: |
+        The thing goes very quiet. A man who refuses the law refuses the jarl who keeps it, and every farmer on the mound knows it, and so does the jarl, who is sitting on his chair at the top of the mound and looking at you with no expression at all.
+
+        Nobody comes to take the payment. A good many young men who would have rowed for you this spring decide to row for someone else.
+
+- id: ha_farm_raid
+  kind: phase
+  trigger: phase_start
+  chance: 0.5
+  cooldown_days: 700
+  requires: ["place == home_fjord", "phase == return", "!service", "base != father", "envy >= 5", "hoard >= 24 || thralls >= 2"]
+  art: home_fjord
+  title: While you were away
+  text: |
+    You see the smoke-black on the byre gable from the fjord, before you're near enough to see anything else.
+
+    They came in the hay month, at night, a ship's crew from somewhere, men with their faces blacked. They burned the byre and drove off the cattle, and they knew exactly where to dig.
+    [if married]
+    {wife} held the house door with a spear for most of the night, she says, with the thrall-women behind her, and they didn't come at the door, because there was nothing in the house worth dying for and they knew where the silver was. She tells it all flat and plain, standing in the yard, and doesn't sit down until she's finished.
+    [else]
+    The thralls who are left tell it in pieces, the way frightened people do.
+    [/if]
+    [break]
+    The hoard is half gone. So are some of the thralls. The tracks go over the ridge toward Hrafnsfjord, where the Bjarnarsons have a ship drawn up, and a new cloak or two this summer.
+  choices:
+    - id: hunt
+      text: Take your men over the ridge. Tonight.
+      danger: true
+      effects: [ { lose_hoard: 0.5 }, { add: { thralls: -2 } }, { envy: -2 }, { battle: { foe: rival_crew, men: 18, terrain: field, win: ha_farm_raid_won, lose: ha_farm_raid_lost } } ]
+    - id: law
+      text: Take it to the thing, with witnesses.
+      check: { skill: speech, attr: wit, difficulty: 6 }
+      success:
+        text: |
+          You bring the tracks, and the dug floor, and a farmhand from Hrafnsfjord who saw a ship come in that night with a load that clinked. The thing finds for you. The Bjarnarsons pay back what they took, sullenly, a little short, in front of everyone.
+        effects: [ { lose_hoard: 0.5 }, { add: { thralls: -2 } }, { envy: -2 }, { recover_hoard: 0.8 } ]
+      failure:
+        text: |
+          Tracks in the frost aren't evidence. The Bjarnarsons have six men who'll swear they were all at home that night. The thing shrugs. Your silver is in somebody else's floor now.
+        effects: [ { lose_hoard: 0.5 }, { add: { thralls: -2 } }, { envy: -2 } ]
+    - id: let
+      text: Let it go. Rebuild the byre.
+      effects: [ { lose_hoard: 0.5 }, { add: { thralls: -2 } }, { envy: -1 }, { add: { honour: -1 } } ]
+      result: |
+        You rebuild the byre and dig a new hiding place, somewhere else, and tell nobody where. The district notices that you let it go. Some of them think it's wisdom. The ones over the ridge don't.
+
+- id: ha_farm_raid_won
+  kind: spine
+  art: iona_burning
+  title: Over the ridge
+  text: |
+    You come down on Hrafnsfjord in the grey before dawn, the way you'd come down on an Irish church, and the Bjarnarsons come out of their houses half-dressed with whatever they could grab.
+
+    It doesn't last long. It isn't meant to.
+  choices:
+    - id: take
+      text: Take back what's yours, and a little more.
+      effects: [ { recover_hoard: 1 }, { add: { silver: 24 } }, { deed: { type: deed, text: "Took back what the Bjarnarsons stole, over the ridge", weight: 3, witnesses: 60 } } ]
+      result: |
+        You dig it out of their floor yourself, with their women watching from the door. Some of it is still in your own bags. Old Bjarni sits in the yard with a broken arm and watches you load it, and says nothing, and you say nothing back. There'll be a reckoning at the thing for this, one way or another. But nobody will dig in your floor again for a while.
+
+- id: ha_farm_raid_lost
+  kind: spine
+  title: Over the ridge
+  text: |
+    They were waiting. Somebody in the district told them you'd come, and they had their shields up and their ship in the water behind them, and they broke your rush in the dark and sent you back over the ridge with your dead.
+  choices:
+    - id: home
+      text: Carry the dead home.
+      effects: [ { add: { honour: -1 } } ]
+      result: |
+        The Bjarnarsons sail before the spring thing, for the west, with your silver and your thralls and the story of how they beat {name} on his own side of the ridge. You'll hear that story again. You'll be sure of it.
+
+- id: ha_jarl
+  kind: phase
+  trigger: phase_start
+  chance: 0.5
+  cooldown_days: 700
+  requires: ["year >= 832", "place == home_fjord", "phase == muster", "!service", "envy >= 6", "ships >= 3"]
+  art: yule_hall
+  title: The jarl's question
+  text: |
+    [if flag.fr_jarl_hakon]Jarl Hákon[elif flag.fr_jarl_eirik]Jarl Eiríkr[else]Jarl Eystein[/if] sends for you in the first week of spring, and receives you alone, without his hirð, which is never good.
+
+    "[if ships >= 4]Four ships[else]Three ships[/if]," he says. "And the men in them. And silver enough to buy more, they tell me, and a name that young men come from three fjords away to hear." He pours you ale himself. "My grandfather had a man like you in this district once. He had five ships. Then one spring he had none, and a new grave."
+    [break]
+    He waits. He wants something from you, and he wants you to work out what it is without his having to say it, so that it'll be your idea.
+  choices:
+    - id: ship
+      text: Offer him your best ship, as a gift. Crew and all.
+      effects: [ { lose_ship: give }, { favour: 2 }, { envy: -3 } ]
+      result: |
+        He takes it the way a jarl takes a gift: graciously, and as if it was his already. Your ship goes into his boat-house with his men at her oars. At the spring thing he calls you his friend, in front of everyone, and the men who were starting to whisper about you go back to whispering about each other.
+    - id: silver
+      text: Offer him ten marks, for his hall.
+      requires: ["silver >= 240"]
+      effects: [ { add: { silver: -240 } }, { favour: 1 }, { envy: -2 } ]
+      result: |
+        He weighs it on his own scales, an insult, and then smiles at the result, a bigger one. "A generous man," he says. It's what he wanted to hear himself say. It'll do, for now.
+    - id: refuse
+      text: Tell him your ships are your own, and so is your silver.
+      effects: [ { favour: -3 }, { envy: -1 }, { set: flag.ha_jarl_refused } ]
+      result: |
+        He nods, slowly, as if you'd told him the price of wool. "Of course they are," he says. You walk out of his hall with your ships and your silver, and you can feel his eyes between your shoulder blades all the way to the door.
+
+- id: ha_district
+  kind: phase
+  trigger: phase_start
+  chance: 0.5
+  cooldown_days: 700
+  requires: ["year >= 832", "place == home_fjord", "phase == muster", "!service", "envy >= 7"]
+  art: muster
+  title: The district
+  text: |
+    The muster this spring is thin. The young men who used to come down to your landing with their sea-chests on their shoulders come down in ones and twos, and some of them don't come at all, and their fathers find work for them on the farms.
+
+    At the smithy, the smith charges you double for a set of rivets and looks you in the eye while he does it. At the hof, the godi forgets your name in the blessing. Nobody says anything. Nobody has to.
+    [break]
+    [if married]
+    "They think you've grown too big," {wife} says, that night. "They think you've forgotten whose fjord this is." She doesn't say whether she thinks so too.
+    [else]
+    Your father says it for them, at the fire. "You've got too big for the district," he says. "Either feed it, or leave it."
+    [/if]
+  choices:
+    - id: feast
+      text: Feast the whole district. Three nights. Every farm.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { give: feast }, { envy: -3 }, { add: { muster: 4 } }, { deed: { type: open_handed, text: "Feasted the whole district for three nights", weight: 2, witnesses: 200 } } ]
+      result: |
+        Three nights, every farm, every bench full, the ale running till the barrels were dry and then some. On the third night the smith makes a speech about you that's mostly about himself, and the young men come down to your landing the next morning with their sea-chests on their shoulders, looking sheepish.
+    - id: ignore
+      text: Let them talk. Find your men elsewhere.
+      effects: [ { add: { muster: -8 } } ]
+      result: |
+        You sail short this spring, with what you can get. The district watches you go. Some of them would be glad if you didn't come back, and they don't hide it as well as they think.
+
+# ---- the floor: a ruined man can climb back ----
+
+- id: ha_lean
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 700
+  requires: ["year >= 832", "place == home_fjord", "phase == muster", "!service", "ships >= 1", "crew.men < 10", "silver < 24"]
+  art: muster
+  title: The lean spring
+  text: |
+    Your ship lies on the landing with her strakes greying, and your sea-chest has nothing in it but a spare shirt and a whetstone, and the men who used to row for you are rowing for other men this spring, or farming, or dead.
+    [if fame.living >= 40]
+    They still know your name in the district. They just don't think it pays any more.
+    [/if]
+
+    Then, in the second week of the muster, the jarl's steward comes down to the landing and walks round your ship, slowly, kicking the strakes.
+    [break]
+    "The jarl's got young men eating his bread who've never seen a strand," he says. "You've got a ship and nobody in her. He'll fill your benches for the summer, for a quarter of what comes home." He spits. "Or don't, and sit here, and watch her rot."
+  choices:
+    - id: take
+      text: Take the jarl's men, and his quarter.
+      effects: [ { jarl_men: true }, { recruit: 18 }, { favour: 1 } ]
+      result: |
+        They come down the next day: eighteen of them, the jarl's younger sons and his hirðmen's nephews and two brothers from the islands who don't speak, with new shields and no scars. They row like farmers. They'll learn, or they'll drown.
+
+        It's a crew. It's a summer. It's a start.
+    - id: alone
+      text: Sail with what you have.
+      effects: [ { add: { honour: 1 } } ]
+      result: |
+        "Suit yourself," says the steward, and walks off. You'll go with what you've got, and come back with what you get. That's how it was the first time, too.
+
+# ---- age: the sworn men grow old ----
+
+- id: ha_ketill_old
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["year >= 838", "place == home_fjord", "phase == winter", "man.ketill.alive", "man.ketill.present"]
+  art: hearth_ormr
+  title: Ketill
+  text: |
+    Ketill comes to you at the fire when the hall has gone to bed, and sits down slowly, the way he does now, one hand on the bench and one on his knee.
+
+    "I rowed with your father," he says. "I've rowed with you every summer since you were sixteen. My hands won't close round an oar in the mornings any more until I've held them in hot water. Last summer, at the wall, I was a step slow, and a boy from the bench nearly died for it." He holds out his hands to the fire and looks at them. "I'd like to go home, while I still can. I've a sister in Sogn with a farm and no sons. She'll have me."
+    [break]
+    He doesn't ask. He's told you. He's waiting to see what you'll do with it.
+  choices:
+    - id: go
+      text: Give him an arm-ring, and your blessing, and a ship to Sogn.
+      effects: [ { add: { silver: -24 } }, { give: ring }, { man: { id: ketill, leave: true } }, { deed: { type: ring_giving, text: "Sent old Ketill home to Sogn with an arm-ring", weight: 2, witnesses: 60 } } ]
+      result: |
+        In the spring you walk him down to the landing yourself. He grips your arm at the boat, wrist to wrist, the way he did the first morning you ever rowed out of the fjord, at sixteen. "You'll do," he says. It's the most he's ever said about you. Then he gets in the boat and doesn't look back, because he never did.
+    - id: steward
+      text: Ask him to stay, and keep your farm for you while you're away.
+      visible_if: ["base != father"]
+      effects: [ { man: { id: ketill, leave: true } }, { set: flag.ha_ketill_steward }, { add: { thralls: 1 } } ]
+      result: |
+        He thinks about it until the fire has burned down to coals. "Your farm," he says. "Not your ship." Then he nods. He'll be there when you come home, every autumn, at the landing with his bad hands, to count you back in. Somebody ought to.
+    - id: stay
+      text: Ask him for one more summer. Just one.
+      effects: [ { man: { id: ketill, loyalty: -2 } }, { set: flag.ha_ketill_stayed } ]
+      result: |
+        He looks at you a long time. Then he says, "One," and gets up and goes to bed. He doesn't say anything else about it, all winter. He doesn't have to.
+
+# ---- the sea: storms at anchor ----
+
+- id: g_anchor_storm
+  kind: pool
+  trigger: arrive
+  chance: 0.06
+  cooldown_days: 400
+  requires: ["ships >= 3", "place != home_fjord", "phase == sailing", "!service"]
+  art: storm
+  title: Storm at anchor
+  text: |
+    It comes in the night, out of a sky that was clear at sunset: a gale straight onto the beach where the ships lie at anchor in a long row, too close together, because there wasn't room to spread them out.
+
+    By the second hour the anchor-stones are dragging. By the third the ships are grinding against each other in the dark, and men are in the surf to their chests trying to fend them off with oars, and you can hear timber going somewhere down the line.
+  choices:
+    - id: ride
+      text: Ride it out. Every man to the ships.
+      effects: [ { lose_ship: wreck }, { add: { crew.morale: -1 } } ]
+      result: |
+        In the morning the beach is covered with oars and sea-chests and broken strakes, and one of your ships is on the rocks at the end of the bay with her back broken, rolling in the surf like a dead whale. You count the men who came ashore. You count again. The numbers don't change.
+    - id: sea
+      text: Cut the cables. Get the ships off the beach and out to sea.
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: |
+          It's madness, and it works. You get every ship off the beach and out past the point into open water, where a gale is only a gale, and you spend the rest of the night bailing and cursing and alive. In the morning you come back in under oars, every ship, every man. The men who were on that beach will tell this one for the rest of their lives.
+        effects: [ { deed: { type: deed, text: "Got the whole fleet off a lee shore in a gale", weight: 3 } }, { add: { crew.morale: 1 } } ]
+      failure:
+        text: |
+          The first two ships get off. The third goes broadside to the waves at the mouth of the bay and rolls over. You see her keel come up white in the dark, and then nothing.
+        effects: [ { lose_ship: wreck }, { add: { crew.morale: -2 } } ]

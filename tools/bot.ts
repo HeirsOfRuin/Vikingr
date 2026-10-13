@@ -6,8 +6,11 @@ import { playLife, POLICIES, type Policy, type RunResult } from './bot-lib';
 import { livingFame, lastingFame, fameRank } from '../src/engine/fame';
 import { ageOn } from '../src/engine/calendar';
 import { formatSilver } from '../src/engine/format';
+import { ABLATE } from '../src/engine/hardship';
 
 const args = process.argv.slice(2);
+// --off coast,upkeep,...: switch hardship brakes off, to compare (docs/FRAME-HARDSHIP.md)
+if (args.includes('--off')) for (const k of args[args.indexOf('--off') + 1]!.split(',')) ABLATE[k] = true;
 const arg = (k: string, d: string) => {
   const i = args.indexOf(`--${k}`);
   return i >= 0 ? args[i + 1]! : d;

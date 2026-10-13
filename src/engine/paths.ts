@@ -52,6 +52,12 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   'cargo.lots': (s) => Object.values(s.cargo ?? {}).reduce((n, c) => n + c.lots, 0),
   'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
   'masters.hired': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('hired:')).length,
+  /** Hardship (docs/FRAME-HARDSHIP.md): how far men grudge him, his buried silver, a bad harvest this winter. */
+  envy: (s) => s.hard?.envy ?? 0,
+  hoard: (s) => s.base.hoard,
+  trophies: (s) => s.base.trophies.length,
+  dearth: (s) => (s.hard?.dearth !== undefined && s.hard.dearth === (s.flags._winter ?? -1) ? 1 : 0),
+  muster: (s) => s.musterPool,
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */
   winter: (s) => s.flags._winter ?? 0,
 };
@@ -135,7 +141,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
 
 /** Paths an { add } effect may change. */
 export function checkAddPath(content: ContentBundle, path: string): string | null {
-  if (['silver', 'loot', 'honour', 'hamingja', 'provisions', 'crew.men', 'crew.morale', 'thralls'].includes(path)) return null;
+  if (['silver', 'loot', 'honour', 'hamingja', 'provisions', 'crew.men', 'crew.morale', 'thralls', 'muster', 'hoard'].includes(path)) return null;
   const [ns, a, b] = path.split('.');
   if (ns === 'flag') return content.flags[a!] ? null : `undeclared flag "${a}"`;
   if (ns === 'skill' || ns === 'attr') return checkPath(content, path);

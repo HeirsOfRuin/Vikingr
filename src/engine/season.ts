@@ -2,6 +2,7 @@
 // the winter hall, and the turn of the year.
 import { endFelag, FAVOUR, favourMuster, jarlCut, partnerCut, shiftFavour } from './allies';
 import { rollTradeNews } from './trade';
+import { ABLATE, earn, EXPECT_PER_FAME, give, payUpkeep, promiseMen, rollFire, rollHarvest, turnOfYear, dearthOf } from './hardship';
 import { addShip, masterShares, MUSTER_PER_SHIP } from './fleet';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
@@ -13,7 +14,7 @@ import { effAttr, heal, learn, strawDeathCheck, kill, age } from './hero';
 import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { trigger } from './director';
-import { BASE, FARM_PRICE, feastMult, hallActionsFor, HALL_PRICE, takeWinterYield } from './base';
+import { BASE, FARM_PRICE, feastMult, hallActionsFor, HALL_PRICE, hallPrice, takeWinterYield } from './base';
 import { driftStanding } from './standing';
 import {
   HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
@@ -24,28 +25,51 @@ export const PROVISION_DAYS = 40;
 export const FEAST_GUESTS = 10;
 /** The benches a captain fills each spring when the hero rows for him. */
 export const SERVICE_CREW = 26;
+/** Man-days of food each man who signs on for a promise brings with him. */
+export const PROMISE_FOOD = 20;
 
 // ---- muster ----
 
+function recruitSplit(state: GameState, content: ContentBundle): { paid: number; promised: number } {
+  const room = Math.max(0, Math.min(state.musterPool, capacity(state, content) - state.crew.men - aliveMen(state).length));
+  const paid = Math.min(room, Math.floor(purse(state) / SIGN_ON_GIFT));
+  // the floor under a ruined man: some will row for the promise of a share (docs/FRAME-HARDSHIP.md)
+  const promised = Math.min(room - paid, promiseMen(state));
+  return { paid, promised };
+}
+
 export function recruitable(state: GameState, content: ContentBundle): number {
-  return Math.max(0, Math.min(state.musterPool, capacity(state, content) - state.crew.men - aliveMen(state).length, Math.floor(purse(state) / SIGN_ON_GIFT)));
+  const r = recruitSplit(state, content);
+  return r.paid + r.promised;
 }
 
 export function recruit(state: GameState, content: ContentBundle): string[] {
-  const n = recruitable(state, content);
+  const { paid, promised } = recruitSplit(state, content);
+  const n = paid + promised;
   if (n <= 0) return ['No one else will sign on.'];
-  payShip(state, n * SIGN_ON_GIFT);
+  payShip(state, paid * SIGN_ON_GIFT);
   state.musterPool -= n;
   addRecruits(state, n);
   state.day += 5;
   learn(state, 'speech', 2);
   journal(state, `${plural(n, 'man', 'men')} signed on.`);
-  return [`${plural(n, 'man', 'men')} take your sign-on gift and put their sea-chests aboard. ${formatSilver(n * SIGN_ON_GIFT)}.`];
+  const lines = paid ? [`${plural(paid, 'man', 'men')} take your sign-on gift and put their sea-chests aboard. ${formatSilver(paid * SIGN_ON_GIFT)}.`] : [];
+  if (promised) {
+    state.flags.promised = dateOf(state.day).year;
+    // they bring their own sea-chests and a sack of meal each, as men answering a levy do
+    state.provisions += promised * PROMISE_FOOD;
+    state.crew.morale -= 1;
+    clampMorale(state);
+    lines.push(`${plural(promised, 'man', 'men')} sign on with nothing in hand but your word that the summer will pay. They're the ones nobody else would take, and they know it, and so do you.`);
+  }
+  return lines;
 }
 
 export function provisionCost(state: GameState): { need: number; cost: number } {
   const need = Math.max(0, mouths(state) * PROVISION_DAYS - state.provisions);
-  return { need, cost: Math.ceil(need / PROVISION_ORTUG_PER) };
+  // after a bad harvest, food is dear all spring
+  const dear = dearthOf(state, dateOf(state.day).year - 1) ? 2 : 1;
+  return { need, cost: Math.ceil((need * dear) / PROVISION_ORTUG_PER) };
 }
 
 export function provision(state: GameState): string[] {
@@ -99,7 +123,7 @@ function sellCaptives(state: GameState, lines: string[]): void {
 }
 
 /** At another man's oar: the captain divides, and you take your shares. */
-export function serviceShare(state: GameState, content: ContentBundle): string[] {
+export function serviceShare(state: GameState, content: ContentBundle, rng?: RngCursor): string[] {
   const lines: string[] = [];
   sellCaptives(state, lines);
   const svc = state.service!;
@@ -108,6 +132,7 @@ export function serviceShare(state: GameState, content: ContentBundle): string[]
   const each = pot > 0 ? (pot * SERVICE_OARS_SHARE) / heads : 0; // a quarter to the ship and her captain, the rest to the oars
   const mine = Math.round(each * svc.shares);
   state.silver += mine;
+  earn(state, mine);
   state.loot = 0;
   lines.push(pot > 0
     ? `${svc.captain} divides it on the strand in front of everyone: a quarter to the ship, the rest to the oars. Your ${svc.shares > 1 ? `${svc.shares} shares come` : 'share comes'} to ${formatSilver(mine)}.`
@@ -115,14 +140,15 @@ export function serviceShare(state: GameState, content: ContentBundle): string[]
   journal(state, `Your share of the summer: ${formatSilver(mine)}.`);
   const { told, gained } = tellDeeds(state);
   if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
-  startWinter(state, hallActionsFor(state, HALL_ACTIONS));
-  void content;
+  startWinter(state, hallActionsFor(state, HALL_ACTIONS), content, rng);
   return lines;
 }
 
-export function shareOut(state: GameState, content: ContentBundle, how: ShareHow): string[] {
+export function shareOut(state: GameState, content: ContentBundle, how: ShareHow, rng?: RngCursor): string[] {
   const lines: string[] = [];
   sellCaptives(state, lines);
+  // the winter's keep comes off the top of the heap (docs/FRAME-HARDSHIP.md)
+  lines.push(...payUpkeep(state, content));
   divideHeap(state, content, how, lines);
   // the unhappy go home for good
   if (state.crew.morale < 4) {
@@ -142,7 +168,7 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   // the homecoming feast tells the summer's deeds
   const { told, gained } = tellDeeds(state);
   if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
-  startWinter(state, hallActionsFor(state, HALL_ACTIONS));
+  startWinter(state, hallActionsFor(state, HALL_ACTIONS), content, rng);
   return lines;
 }
 
@@ -160,7 +186,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
   // a félag partner takes his men's part first (docs/FRAME-TRADE-ALLIES.md)
   const pc = partnerCut(state, content, pot, state.crew.men + aliveMen(state).length);
   if (pc.cut) { pot -= pc.cut; lines.push(pc.line!); }
-  if (state.flags.owes_jarl && pot > 0) {
+  if ((state.flags.owes_jarl || state.flags.jarl_men === dateOf(state.day).year) && pot > 0) {
     const cut = Math.round(pot * jarlCut(state, JARL_CUT));
     pot -= cut;
     lines.push(`The jarl's steward takes his quarter: ${formatSilver(cut)}.`);
@@ -175,13 +201,16 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
     for (const id of ms.sworn) { const m = state.men.find((x) => x.id === id); if (m) addLoyalty(m, 1); }
   }
   state.silver += keep;
+  earn(state, keep);
   state.loot = 0;
-  const ratio = each / SHARE_EXPECTED;
+  // a great captain's men expect a great captain's shares (docs/FRAME-HARDSHIP.md)
+  const ratio = each / (SHARE_EXPECTED * (1 + (ABLATE.expect ? 0 : livingFame(state) * EXPECT_PER_FAME)));
   // a share in hand mid-summer only cheers them; the reckoning of the whole summer comes in autumn
   const mood = Math.max(-3, Math.min(3, (ratio - 1) * 3)) + (how === 'generous' ? 1 : how === 'mean' ? -1 : 0);
   state.crew.morale += partial ? Math.max(0, mood) : mood;
   for (const m of aliveMen(state)) addLoyalty(m, how === 'generous' ? 1 : how === 'mean' ? -1 : 0);
   if (how === 'generous' && pot > 0) {
+    give(state, 'generous');
     state.honour = Math.min(10, state.honour + 1);
     addDeed(state, content, { type: 'open_handed', text: 'Shared the plunder with an open hand', witnesses: heads });
   }
@@ -212,12 +241,15 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       const told0 = tellDeeds(state);
       // in his own hall, with trophies on the walls, the deeds are told better (FRAME-FOUNDATION §4)
       const fm = feastMult(state);
-      if (fm > 1) for (const d of told0.told) d.weight = Math.round(d.weight * fm * 10) / 10;
+      // the hall tells a new deed better; an old one is an old one in any hall
+      let extra = 0;
+      if (fm > 1) for (const d of told0.fresh) { const w = Math.round(d.weight * fm * 10) / 10; extra += w - d.weight; d.weight = w; }
       const told = told0.told;
-      const gained = fm > 1 ? Math.round(told0.gained * fm * 10) / 10 : told0.gained;
+      const gained = Math.round((told0.gained + extra) * 10) / 10;
       if (fm > 1) lines.push(state.base.trophies.length ? `In your own hall, under ${plural(state.base.trophies.length, 'trophy', 'trophies')} on the wall, the telling goes better.` : 'In your own hall, the telling goes better.');
       state.crew.morale += 1;
       for (const m of aliveMen(state)) addLoyalty(m, 1);
+      give(state, 'feast');
       learn(state, 'speech', 2);
       lines.push(`You feast ${plural(mouths(state) + FEAST_GUESTS - 1, 'guest')} for three nights. ${formatSilver(cost)}.`);
       lines.push(told.length ? `Your deeds are told at the benches: ${plural(told.length, 'deed')}, ${gained} fame.` : 'There is nothing new to tell, so they tell the old ones again.');
@@ -229,6 +261,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       if (!m) throw new Error(`no sworn man ${arg}`);
       state.silver -= ORTUG_PER_MARK;
       addLoyalty(m, 3);
+      give(state, 'ring');
       addDeed(state, content, { type: 'ring_giving', text: `Gave an arm-ring to ${m.name}`, witnesses: state.crew.men });
       lines.push(`You take an arm-ring from your own arm and put it on ${m.name}'s, in front of the hall.`);
       break;
@@ -273,6 +306,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
     case 'jarl_gift': {
       state.silver -= FAVOUR.giftCost;
       shiftFavour(state, FAVOUR.gift);
+      give(state, 'jarl');
       lines.push(`You send the jarl a gift at midwinter: a cloak lined with marten, a silver cup, a good knife. ${formatSilver(FAVOUR.giftCost)}. It comes back with his thanks, and a seat nearer the high seat at the next feast.`);
       journal(state, 'Sent the jarl a gift.');
       break;
@@ -285,11 +319,14 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       break;
     }
     case 'build_hall': {
-      state.silver -= HALL_PRICE;
+      const rebuilt = !!state.flags.hall_burned;
+      state.silver -= hallPrice(state);
+      delete state.flags.hall_burned;
       state.base.level = 'hall';
-      addDeed(state, content, { type: 'deed', text: 'Built a hall of his own', weight: 5, witnesses: state.crew.men + 30 });
-      journal(state, 'Built a hall.');
-      lines.push(`All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They say your name at the door. That is what a hall is for.');
+      if (!rebuilt) addDeed(state, content, { type: 'deed', text: 'Built a hall of his own', weight: 5, witnesses: state.crew.men + 30 });
+      journal(state, rebuilt ? 'Rebuilt the hall.' : 'Built a hall.');
+      if (rebuilt) lines.push(`All winter the carpenters work on the burned posts, and raise the hall again on the old stones, carving the beasts back where they were. ${formatSilver(Math.round(HALL_PRICE / 2))}.`, 'It smells of new oak and old smoke. At the first feast in it, the hall is as full as it ever was.');
+      else lines.push(`All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They say your name at the door. That is what a hall is for.');
       break;
     }
     case 'work': {
@@ -321,18 +358,23 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
 }
 
 /** Wintering abroad: fewer choices, no feast at home. */
-export function winterHere(state: GameState): string[] {
-  startWinter(state, 2);
+export function winterHere(state: GameState, content?: ContentBundle, rng?: RngCursor): string[] {
+  startWinter(state, 2, content, rng);
   return ['You haul the ships up and find a hall that will take you in for the winter, for a price in silver and good behaviour.'];
 }
 
 /** Winter begins. It belongs to the year whose autumn it follows; spring comes on 1 March after it. */
-export function startWinter(state: GameState, actions: number): void {
+export function startWinter(state: GameState, actions: number, content?: ContentBundle, rng?: RngCursor): void {
   const d = dateOf(state.day);
   state.flags._winter = d.doy >= 182 ? d.year : d.year - 1;
   state.phase = 'winter';
   state.hallLeft = actions;
   if (d.doy >= 182) state.day = Math.max(state.day, nextDoy(state.day, WINTER_DOY));
+  // the harvest is in, or isn't; and a long dark winter of fires in a wooden house (docs/FRAME-HARDSHIP.md)
+  if (content && rng && !state.service) {
+    rollHarvest(state, content, rng, state.flags._winter);
+    if (state.at === 'home_fjord') rollFire(state, content, rng);
+  }
 }
 
 // ---- the turn of the year ----
@@ -347,6 +389,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
     kill(state, 'straw', `${state.hero.name} died in his bed in the winter of ${year - 1}, at ${age(state)}, of a fever that would not break.`);
     return lines;
   }
+  // the winter's sickness and the winter's bills, and what the district thinks of him (docs/FRAME-HARDSHIP.md)
+  const hardLines = turnOfYear(state, content, rng, year, state.at !== 'home_fjord');
   for (const m of aliveMen(state)) addLoyalty(m, m.loyalty > 6 ? -1 : m.loyalty < 4 ? 1 : 0);
   for (const [id, ps] of Object.entries(state.places)) {
     const base = content.places[id]?.raid?.wealth ?? 0;
@@ -378,6 +422,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // the farm's winter
   const y = takeWinterYield(state);
   if (y) lines.push(y);
+  lines.push(...hardLines);
   state.seasonRaids = [];
   state.phase = state.at === 'home_fjord' ? 'muster' : 'sailing';
   lines.push(...chapterCard(state, content, year));

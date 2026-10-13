@@ -82,6 +82,14 @@ const baseEffect = z.union([
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
   z.object({ standing: z.object({ place: id.optional(), people: z.enum(PEOPLES).optional(), n: z.number().int() }).strict() }).strict(),
   z.object({ ship: z.object({ type: id, name: z.string(), crew: z.number().int().min(0) }).strict() }).strict(),
+  // hardship (docs/FRAME-HARDSHIP.md)
+  z.object({ envy: z.number() }).strict(),
+  z.object({ give: z.enum(['generous', 'feast', 'jarl', 'ring', 'stores']) }).strict(),
+  z.object({ lose_hoard: z.number().min(0).max(1) }).strict(),
+  z.object({ recover_hoard: z.number().min(0).max(1) }).strict(),
+  z.object({ fire: z.enum(['hoard', 'trophies', 'people']) }).strict(),
+  z.object({ lose_ship: z.enum(['wreck', 'give']) }).strict(),
+  z.object({ jarl_men: z.literal(true) }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */
 export const effect: z.ZodType<Effect> = z.lazy(() => z.union([baseEffect, z.object({ if: condInput, then: z.array(effect), else: z.array(effect).optional() }).strict()]));

@@ -9,13 +9,16 @@ import { journal } from './journal';
 import { formatSilver, plural } from './format';
 import { POSITION_FAME } from './tuning';
 import { onRaided } from './standing';
+import { coastPlunderStart } from './hardship';
 
 export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'leave';
 export const ALARM_MAX = 10;
 
-export function startPlunder(state: GameState, place: string, lines: string[], next?: string): void {
+export function startPlunder(state: GameState, place: string, lines: string[], next?: string, content?: ContentBundle): void {
   if (!state.seasonRaids.includes(place)) state.seasonRaids.push(place);
-  state.pending = { t: 'plunder', plunder: { place, round: 0, alarm: 2, taken: 0, captives: 0, burned: false, log: lines, next } };
+  // a region that has learned comes to the alarm faster (docs/FRAME-HARDSHIP.md)
+  const alarm = 2 + (content ? coastPlunderStart(state, content, place) : 0);
+  state.pending = { t: 'plunder', plunder: { place, round: 0, alarm, taken: 0, captives: 0, burned: false, log: lines, next } };
 }
 
 export function plunderAction(state: GameState, content: ContentBundle, rng: RngCursor, what: PlunderWhat): void {

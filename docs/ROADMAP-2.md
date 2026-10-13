@@ -1,6 +1,6 @@
 # Roadmap 2: the next five steps (836–840)
 
-**Status:** planned 2026-10-13, at the author's request. Roadmap 1 (`docs/ROADMAP.md`) is built.
+**Status:** planned 2026-10-13, at the author's request; the author approved the defaults below the same day. Roadmap 1 (`docs/ROADMAP.md`) is built. **Step 1 is built** (`docs/FRAME-HARDSHIP.md`).
 
 **The author asked for:**
 - large fleets, and more than one raiding group at a time;
@@ -20,7 +20,11 @@ Every step keeps the usual process: a frame doc, the build, then measurement (bo
 
 ---
 
-## Step 1: Hardship (the counterweight)
+## Step 1: Hardship (the counterweight) — built
+
+See `docs/FRAME-HARDSHIP.md` for what was built and measured. Two things differ from the plan below:
+- the measure found the median life already falls into a poverty trap, so the step also built a floor (men on promise, the lean spring);
+- fame now fades with retelling, because it never faded before.
 
 **The problem, measured.** Ten-year lives today only climb:
 - silver, ships, fame and men all rise;

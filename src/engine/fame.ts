@@ -1,10 +1,14 @@
 // Deeds, telling, fading, verses, and the table of living legends.
 // A deed adds to fame only once it has been told (DESIGN §7).
+import { ABLATE } from './hardship';
 import { FIGHT_DEEDS, NAMED_FAME } from './items';
 import type { ContentBundle, Rival } from '../content/schema';
 import type { Deed, GameState } from './state';
 import { dateOf } from './calendar';
 import { FAME_FADE_DAYS, FAME_FADE_PER_YEAR, VERSE_LASTING_MULT } from './tuning';
+
+/** What an old deed still carries each time it is told again. */
+export const RETELL = 0.8;
 
 /** Deeds this heavy tell themselves: men talk of them without a feast. */
 export const SELF_TELLING = 8;
@@ -52,17 +56,21 @@ export function lastingFame(state: GameState): number {
 }
 
 /** Tells every deed not told within the fade window. Returns the deeds told and the fame they added. */
-export function tellDeeds(state: GameState): { told: Deed[]; gained: number } {
+export function tellDeeds(state: GameState): { told: Deed[]; fresh: Deed[]; gained: number } {
   const before = livingFame(state);
   const told: Deed[] = [];
+  const fresh: Deed[] = [];
   for (const d of state.deeds) {
     if (d.verse) continue;
     if (d.told === null || state.day - d.told > FAME_FADE_DAYS / 2) {
+      // the same story for the fifth winter running: each retelling carries less (docs/FRAME-HARDSHIP.md)
+      if (d.told !== null && !ABLATE.fame) d.weight = Math.round(d.weight * RETELL * 10) / 10;
+      else fresh.push(d);
       d.told = state.day;
       told.push(d);
     }
   }
-  return { told, gained: Math.round((livingFame(state) - before) * 10) / 10 };
+  return { told, fresh, gained: Math.round((livingFame(state) - before) * 10) / 10 };
 }
 
 /** The skald makes a verse of the heaviest told deed that has none. */

@@ -40,7 +40,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
       if (y >= 833) yearsSeen.add(y);
       const id = s.pending?.t === 'scene' ? s.pending.id : null;
       if (id && id !== lastScene) {
-        if (id.startsWith('g_')) fired[id] = (fired[id] ?? 0) + 1;
+        if (id.startsWith('g_') || id.startsWith('ha_')) fired[id] = (fired[id] ?? 0) + 1;
         if (y >= 833) (perYear[y] ??= { scenes: 0, lives: 0 }).scenes++;
       }
       lastScene = id;
@@ -84,7 +84,7 @@ for (const policy of ['raider', 'coward', 'reckless'] as Policy[]) {
   console.log('  the Frisian Road: ' + Object.entries(story).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', '));
   console.log('  land: ' + Object.entries(base).map(([k, v]) => `${k} ${pct(v, lives832)}`).join(', '));
   console.log(`  Yule boasts on the books at the end: ${sworn} (kept ${kept}, broken ${broken}); by boast, kept/broken: ` + Object.entries(byBoast).map(([k, [a, b]]) => `${k.slice(5)} ${a}/${b}`).join(', '));
-  const never = Object.keys(content.scenes).filter((id) => id.startsWith('g_') && !fired[id]);
+  const never = Object.keys(content.scenes).filter((id) => (id.startsWith('g_') || id.startsWith('ha_')) && !fired[id]);
   console.log('  repeatable events: ' + Object.entries(fired).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(', '));
   if (never.length) console.log('  never fired: ' + never.join(', '));
 }

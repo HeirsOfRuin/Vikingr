@@ -172,6 +172,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     ...Object.keys(content.scenes).filter((id) => id.startsWith('mourn_')),
     // queued by the engine itself: a ship joining the fleet (src/engine/fleet.ts addShip)
     'fl_master',
+    // queued by the hardship rolls (src/engine/hardship.ts)
+    'ha_harvest', 'ha_fire',
   ];
   while (queue.length) {
     const id = queue.pop()!;

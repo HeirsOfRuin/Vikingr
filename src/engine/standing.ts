@@ -1,5 +1,6 @@
 // Standing in the ports (DESIGN §11.6): what each place thinks of him. Everything a port will or won't do for
 // him is derived from one number: whether he may dock, buy food, hire men or winter there, or is fought on landing.
+import { alarmRegion } from './hardship';
 import type { ContentBundle, People } from '../content/schema';
 import type { GameState } from './state';
 import { journal } from './journal';
@@ -121,6 +122,8 @@ export function onRaided(state: GameState, content: ContentBundle, id: string, h
   if (!p) return;
   const hit = how.failed ? RAID_HIT.failed : RAID_HIT.place + (how.burned ? RAID_HIT.burned : 0) + (how.captives ? RAID_HIT.captives : 0);
   shiftStanding(state, content, id, hit);
+  // the whole region remembers, and arms (docs/FRAME-HARDSHIP.md)
+  if (!how.failed) alarmRegion(state, content, id, !!how.burned);
   spread(state, content, id, RAID_HIT.kin + (how.burned ? -1 : 0), p.kind === 'monastery');
 }
 

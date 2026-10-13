@@ -259,6 +259,8 @@ export interface GameState {
   partner?: { id: string; year: number; loot: number };
   /** Jarl Eystein's favour, -10..10. */
   favour?: number;
+  /** Hardship: envy, the year's ledger, the coasts' memory, disasters (docs/FRAME-HARDSHIP.md). */
+  hard?: import('./hardship').HardState;
   /** This year's trade profit, and whether its deed has been earned. */
   tradeYear?: { year: number; profit: number; deed: boolean };
   hamingja: number;

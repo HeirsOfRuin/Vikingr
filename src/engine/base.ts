@@ -5,6 +5,7 @@ import type { GameState } from './state';
 import { journal } from './journal';
 import { formatSilver, plural } from './format';
 import { livingFame } from './fame';
+import { earn, yieldAfterHarvest } from './hardship';
 
 export type BaseLevel = 'father' | 'farm' | 'hall';
 export const BASE_LEVELS: BaseLevel[] = ['father', 'farm', 'hall'];
@@ -59,9 +60,12 @@ export function winterYield(state: GameState): number {
 }
 
 export function takeWinterYield(state: GameState): string | null {
-  const n = winterYield(state);
+  const full = winterYield(state);
+  const n = yieldAfterHarvest(state, full);
+  if (full && !n) return 'The harvest failed. The place has fed its own people through the winter, just, and brought in nothing.';
   if (!n) return null;
   state.silver += n;
+  earn(state, n);
   journal(state, `${BASE[state.base.level].name} brought in ${formatSilver(n)} over the winter.`);
   const who = state.base.wife ? `${state.base.wife} has kept the place` : 'The place has kept itself';
   return `${who} through the winter${state.base.thralls ? `, with ${plural(state.base.thralls, 'thrall')} at the work` : ''}: ${formatSilver(n)} in wool, butter and hides.`;
@@ -77,10 +81,15 @@ export function hallActionsFor(state: GameState, base: number): number {
   return base + (state.base.level === 'hall' && state.at === 'home_fjord' ? 1 : 0);
 }
 
+/** A hall that burned is raised again on its old stones, at half the price (docs/FRAME-HARDSHIP.md). */
+export function hallPrice(state: GameState): number {
+  return state.flags.hall_burned ? Math.round(HALL_PRICE / 2) : HALL_PRICE;
+}
+
 export function canBuildHall(state: GameState): string | null {
   if (state.base.level !== 'farm') return state.base.level === 'hall' ? 'You have a hall.' : 'You need a farm of your own to build it on.';
   if (livingFame(state) < HALL_FAME) return 'Nobody would come to the hall of a man without a name. Not yet.';
-  if (state.silver < HALL_PRICE) return `You need ${formatSilver(HALL_PRICE)}.`;
+  if (state.silver < hallPrice(state)) return `You need ${formatSilver(hallPrice(state))}.`;
   return null;
 }
 

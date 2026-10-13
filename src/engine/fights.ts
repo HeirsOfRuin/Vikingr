@@ -1,6 +1,7 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
 import { stow } from './fleet';
+import { coastMult } from './hardship';
 import { partner, partnerInFight } from './allies';
 import { HOST, startHost } from './host';
 import type { BattleTerrain, ContentBundle } from '../content/schema';
@@ -60,7 +61,7 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
   state.stats.duels += 1;
   state.hero.hp = Math.max(0, d.hero.hp);
   // a fight to first blood leaves scars, not cripples
-  for (const h of d.hero.hits) if (h >= 5) addWound(state, content, woundFor(rng, d.lethal && h >= 7), `the fight with ${foe.name}`);
+  for (const h of d.hero.hits) if (h >= 5) addWound(state, content, woundFor(rng, d.lethal && h >= 7), `the fight with ${foe.name}`, rng);
   const lw = learn(state, 'weapons', 4);
   const ls = learn(state, 'shield', 3);
   let next: string | undefined;
@@ -98,7 +99,7 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
         return;
       }
       state.hero.hp = 1;
-      addWound(state, content, woundFor(rng, d.lethal), `the fight with ${foe.name}`);
+      addWound(state, content, woundFor(rng, d.lethal), `the fight with ${foe.name}`, rng);
       state.honour = Math.max(-10, state.honour - 1);
       lines.push(`${foe.name} beat you. You live, which is more than he meant.`);
       next = d.lose;
@@ -203,14 +204,14 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
 
   // the hero
   state.hero.hp = Math.max(0, b.heroHp);
-  for (const h of b.heroHits) if (h >= 5) addWound(state, content, woundFor(rng, h >= 7), b.place ? `the fight at ${content.places[b.place]?.name ?? b.place}` : 'a fight at sea');
+  for (const h of b.heroHits) if (h >= 5) addWound(state, content, woundFor(rng, h >= 7), b.place ? `the fight at ${content.places[b.place]?.name ?? b.place}` : 'a fight at sea', rng);
   if (b.heroDown) {
     if (rng.float() < 0.4) {
       kill(state, 'battle', `${state.hero.name} fell${b.place ? ' at ' + (content.places[b.place]?.name ?? b.place) : ' in a fight at sea'}, in the ${b.position === 'front' ? 'front rank' : 'shield-wall'}.`);
       return;
     }
     state.hero.hp = 1;
-    addWound(state, content, woundFor(rng, true), 'being carried out of the wall');
+    addWound(state, content, woundFor(rng, true), 'being carried out of the wall', rng);
     lines.push('You were carried out of the wall. You will live.');
   }
   const lc = learn(state, 'command', 3);
@@ -247,7 +248,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     const pl = content.places[b.place]!;
     lines.unshift(`${pl.name} is yours for the afternoon.`);
     clampMorale(state);
-    startPlunder(state, b.place, lines, b.win);
+    startPlunder(state, b.place, lines, b.win, content);
     return;
   }
   if (b.context === 'raid' && b.place) {
@@ -294,7 +295,7 @@ export function startRaid(state: GameState, content: ContentBundle, rng: RngCurs
   const ps = state.places[placeId];
   if (!p?.raid || !ps) throw new Error(`${placeId} cannot be raided`);
   const surprise = rng.float() < 0.3 + 0.05 * state.hero.skills.cunning + 0.03 * effAttr(state, content, 'wit');
-  const men = Math.max(3, Math.round(p.raid.defenders * ps.defence * (surprise ? 0.45 : 1) * (0.85 + 0.3 * rng.float())));
+  const men = Math.max(3, Math.round(p.raid.defenders * ps.defence * coastMult(state, content, placeId) * (surprise ? 0.45 : 1) * (0.85 + 0.3 * rng.float())));
   learn(state, 'cunning', 2);
   state.seasonRaids.push(placeId);
   // a big place, and a partner beside him: the raid is fought as a host, his men in the centre, the partner's on the flank

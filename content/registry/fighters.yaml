@@ -116,3 +116,12 @@
   weapon: 2
   habits: { strike: 3, guard: 2, feint: 2 }
   desc: The youngest and the best of Hrapp's sons, with his brothers' grudge and none of their slowness.
+- id: young_wolf
+  name: Hrói Bjarnarson
+  attrs: { str: 3, agi: 4, end: 3, wit: 2, pre: 2 }
+  weapons: 3
+  shield: 2
+  armour: 1
+  weapon: 2
+  habits: { strike: 4, guard: 1, feint: 2 }
+  desc: Nineteen winters old, quick, and hungry for a name. He means to take yours.

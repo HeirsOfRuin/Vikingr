@@ -111,7 +111,11 @@ describe('allies', () => {
     s.loot = 1000;
     s.phase = 'return';
     const lines = shareOut(s, content, 'fair');
-    expect(lines[0]).toMatch(/Steinarr takes his men's part/);
+    // the winter's keep comes off the top first (docs/FRAME-HARDSHIP.md); then the partner, then the jarl
+    const partnerAt = lines.findIndex((l) => /Steinarr takes his men's part/.test(l));
+    expect(partnerAt).toBeGreaterThanOrEqual(0);
+    const jarlAt = lines.findIndex((l) => /steward takes/.test(l));
+    if (jarlAt >= 0) expect(partnerAt).toBeLessThan(jarlAt);
   });
 
   it('meeting scenes meet; a holmgang can end a feud for good', () => {

@@ -1,6 +1,7 @@
 // Trade (docs/FRAME-TRADE-ALLIES.md §Step 2): goods bought where they are made and sold where they are wanted.
 // Prices move with what he buys and sells, and recover; one good a year is in the news. His own venture:
 // his silver in, his silver out.
+import { earn } from './hardship';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
@@ -123,6 +124,7 @@ export function sellLot(state: GameState, content: ContentBundle, at: string, go
   const year = dateOf(state.day).year;
   if (state.tradeYear?.year !== year) state.tradeYear = { year, profit: 0, deed: false };
   state.tradeYear.profit += price - basis;
+  earn(state, price - basis);
   const lines = [`You sell ${content.goods[good]!.lot} for ${formatSilver(price)}${price > basis ? `, ${formatSilver(price - basis)} more than it cost you` : price < basis ? `, ${formatSilver(basis - price)} less than it cost you` : ''}.`];
   if (!state.tradeYear.deed && state.tradeYear.profit >= TRADE.deedProfit) {
     state.tradeYear.deed = true;

@@ -15,7 +15,8 @@ import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
 import { Bar } from './Actions';
 import { tierAt, TIER_NAMES } from '../../engine/standing';
-import { BASE, FARM_PRICE, HALL_FAME, HALL_PRICE, winterYield } from '../../engine/base';
+import { BASE, FARM_PRICE, HALL_FAME, HALL_PRICE, hallPrice, winterYield } from '../../engine/base';
+import { envyWords, SETBACK, upkeepBill } from '../../engine/hardship';
 import { baseActions } from '../../engine/index';
 import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
@@ -200,7 +201,9 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
   const b = state.base;
   const def = BASE[b.level];
   const acts = baseActions(state, content);
-  const next = b.level === 'father' ? `A farm of your own costs ${formatSilver(FARM_PRICE)}: buy one at home, in the winter.` : b.level === 'farm' ? `A hall costs ${formatSilver(HALL_PRICE)}, and a name men know (fame ${HALL_FAME}). Build it at home, in the winter.` : 'You have a hall. Men say your name at its door.';
+  const next = b.level === 'father' ? `A farm of your own costs ${formatSilver(FARM_PRICE)}: buy one at home, in the winter.` : b.level === 'farm' ? (state.flags.hall_burned ? `Your hall burned. Raising it again on the old stones costs ${formatSilver(hallPrice(state))}.` : `A hall costs ${formatSilver(HALL_PRICE)}, and a name men know (fame ${HALL_FAME}). Build it at home, in the winter.`) : 'You have a hall. Men say your name at its door.';
+  const bill = upkeepBill(state, content);
+  const envy = state.hard?.envy ?? 0;
   return (
     <div>
       <h2>{def.name}</h2>
@@ -210,7 +213,9 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
           <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : state.flags.betrothed ? 'Betrothed; the wedding is at the winter nights.' : 'No wife yet.'}{state.flags.child_son ? ` A son${state.flags.child_daughter ? ' and a daughter' : ''}.` : ''}</dd>
           <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> — captives you keep instead of selling</span>}</dd>
           <dt>Each winter</dt><dd>{formatSilver(winterYield(state)) || 'nothing'}{b.wife ? <span class="muted"> (a quarter more, for her running of it)</span> : null}</dd>
-          <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small"> — safe from the sea</span></dd>
+          <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small"> — safe from the sea, not from men who know where to dig</span></dd>
+          {bill.total > 0 && <><dt>Winter's keep</dt><dd>{formatSilver(bill.total)}<span class="muted small"> — the men's meat and Yule gifts {formatSilver(bill.men + bill.sworn)}, the ships' tar and rope {formatSilver(bill.ships)}; it comes off the heap at the autumn share-out</span></dd></>}
+          <dt>The district</dt><dd>{envyWords(envy)}</dd>
         </dl>
         <p class="muted small">{next}</p>
       </div>
@@ -283,7 +288,7 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
       <div class="card">
         <h3>Journal</h3>
         <div class="log" style={{ maxHeight: 360 }}>
-          {[...state.journal].reverse().slice(0, 80).map((j, i) => <p key={i}><span class="muted">{formatDate(j.day)}:</span> {j.text}</p>)}
+          {[...state.journal].reverse().slice(0, 80).map((j, i) => <p key={i}><span class="muted">{formatDate(j.day)}:</span> {j.text.replace(SETBACK, "").trimStart()}</p>)}
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_N
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
-import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, HALL_PRICE, keepCaptives, newBase, thrallRoom } from './base';
+import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
 import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
@@ -352,7 +352,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (home && state.base.level === 'father') out.push(opt('Your base', { t: 'hall', what: 'buy_farm' }, 'Buy a farm of your own', state.silver >= FARM_PRICE, `You need ${formatSilver(FARM_PRICE)}.`, formatSilver(FARM_PRICE)));
       if (home && state.base.level === 'farm') {
         const why = canBuildHall(state);
-        out.push(opt('Your base', { t: 'hall', what: 'build_hall' }, 'Build a hall', !why, why ?? undefined, formatSilver(HALL_PRICE)));
+        out.push(opt('Your base', { t: 'hall', what: 'build_hall' }, state.flags.hall_burned ? 'Rebuild the hall' : 'Build a hall', !why, why ?? undefined, formatSilver(hallPrice(state))));
       }
       if (lord || state.base.level !== 'father') out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
       else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
@@ -557,7 +557,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       report('At sea', r.lines, undefined, { key: 'open_sea' });
       break;
     }
-    case 'take_share': report('The share-out', serviceShare(state, content)); break;
+    case 'take_share': report('The share-out', serviceShare(state, content, rng)); break;
     case 'plunder':
       plunderAction(state, content, rng, action.what);
       break;
@@ -721,7 +721,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       state.phase = 'return';
       break;
     case 'winter_here':
-      report('Winter abroad', winterHere(state));
+      report('Winter abroad', winterHere(state, content, rng));
       break;
     case 'passage_home': {
       const paid = state.silver >= 12;
@@ -750,7 +750,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       heal(state, content, 120, 1);
       state.phase = 'return';
       break;
-    case 'share': report('The share-out', shareOut(state, content, action.how)); break;
+    case 'share': report('The share-out', shareOut(state, content, action.how, rng)); break;
     case 'hall': report('The hall', hallAction(state, content, rng, action.what, action.arg)); break;
     case 'duel_move':
     case 'duel_auto':

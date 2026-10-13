@@ -11,10 +11,19 @@ import { journal } from './journal';
 export function effAttr(state: GameState, content: ContentBundle, a: Attr): number {
   let v = state.hero.attrs[a];
   for (const w of state.hero.wounds) v += content.injuries[w.id]?.attrs?.[a] ?? 0;
-  const age = ageOn(state.day, state.hero.born);
-  if (age >= 45 && (a === 'str' || a === 'agi' || a === 'end')) v -= Math.floor((age - 40) / 8);
+  if (a === 'str' || a === 'agi' || a === 'end') v -= ageing(ageOn(state.day, state.hero.born));
   return Math.max(1, v);
 }
+
+/** The body's decline (docs/FRAME-HARDSHIP.md): slow from 32, faster from 44. */
+export const AGEING = { from: 32, step: 8, fasterFrom: 44, fasterStep: 8 } as const;
+export function ageing(age: number): number {
+  return Math.floor(Math.max(0, age - AGEING.from) / AGEING.step) + Math.floor(Math.max(0, age - AGEING.fasterFrom) / AGEING.fasterStep);
+}
+
+/** A bad wound can leave something that never quite heals. */
+export const OLD_WOUND = { chance: 0.12, minDays: 40 } as const;
+const OLD_WOUNDS: Record<string, string> = { gashed_arm: 'old_shoulder', broken_hand: 'old_shoulder', cracked_ribs: 'old_ribs', gashed_leg: 'old_leg' };
 
 export function hpMax(state: GameState, content: ContentBundle): number {
   return HP_BASE + HP_PER_END * effAttr(state, content, 'end');
@@ -38,7 +47,7 @@ export function learn(state: GameState, skill: Skill, xp: number, ceiling = 10):
   return null;
 }
 
-export function addWound(state: GameState, content: ContentBundle, injury: string, from: string): void {
+export function addWound(state: GameState, content: ContentBundle, injury: string, from: string, rng?: RngCursor): void {
   const def = content.injuries[injury];
   if (!def) throw new Error(`unknown injury ${injury}`);
   const existing = state.hero.wounds.find((w) => w.id === injury);
@@ -47,6 +56,8 @@ export function addWound(state: GameState, content: ContentBundle, injury: strin
   if (existing) existing.until = Math.max(existing.until, until);
   else state.hero.wounds.push({ id: injury, until, from });
   journal(state, `${def.name}: ${from}.`);
+  const old = OLD_WOUNDS[injury];
+  if (rng && old && content.injuries[old] && (def.days ?? 0) >= OLD_WOUND.minDays && rng.float() < OLD_WOUND.chance) addWound(state, content, old, from);
   if (def.deed) addDeed(state, content, { type: 'scar', text: `${def.name}, from ${from}`, witnesses: 10 });
 }
 
