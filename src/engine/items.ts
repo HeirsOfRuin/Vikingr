@@ -3,6 +3,7 @@ import type { ContentBundle, ItemDef } from '../content/schema';
 import type { GameState, ItemInst, KitSlot, Ship } from './state';
 import type { RngCursor } from './rng';
 import { journal } from './journal';
+import { formatSilver } from './format';
 import { addDeed } from './fame';
 
 export const DEFAULT_KIT = ['spear', 'shield', 'leather'];
@@ -177,4 +178,51 @@ export function kitFromFlags(state: GameState, content: ContentBundle, backgroun
   if (state.flags.b_sword) giveItem(state, content, 'grandfather_sword', true);
   if (state.flags.frankish_sword) giveItem(state, content, 'frankish_sword', true);
   if (state.flags.mail) giveItem(state, content, 'mail', true);
+}
+
+// ---- selling and giving away what he no longer carries (playtest 4) ----
+
+/** Kit he owns and isn't using: weapons, shields, helmets, armour. */
+export function spareKit(state: GameState, content: ContentBundle): ItemInst[] {
+  const inHand = new Set(Object.values(state.kit));
+  return state.items.filter((x) => !inHand.has(x.uid) && slotOf(content.items[x.id]!) !== null);
+}
+
+/** What a trader will give for it: half its price, more for a blade with a name and a history. */
+export function sellValue(content: ContentBundle, inst: ItemInst): number {
+  const def = content.items[inst.id]!;
+  const base = def.price ?? (def.value ?? 1) * 24;
+  return Math.round(base * 0.5 * (inst.name ? 1.5 : 1) + inst.deeds * 2);
+}
+
+export function sellItem(state: GameState, content: ContentBundle, uid: string): string {
+  const i = state.items.findIndex((x) => x.uid === uid);
+  if (i < 0) return '';
+  const inst = state.items[i]!;
+  const def = content.items[inst.id]!;
+  const price = sellValue(content, inst);
+  state.items.splice(i, 1);
+  state.silver += price;
+  const name = itemName(content, inst);
+  journal(state, `Sold ${name.charAt(0).toLowerCase()}${name.slice(1)} for ${formatSilver(price)}.`);
+  if (def.heirloom) {
+    state.honour = Math.max(-10, state.honour - 1);
+    return `You sell ${name.charAt(0).toLowerCase()}${name.slice(1)} for ${formatSilver(price)}. The trader can't believe his luck. Neither, when they hear of it at home, can anyone else.`;
+  }
+  return `You sell ${name.charAt(0).toLowerCase()}${name.slice(1)} for ${formatSilver(price)}.`;
+}
+
+/** A blade or a mail-shirt given to a sworn man, in front of the others: it binds him closer, and he fights better for it. */
+export function giveKitTo(state: GameState, content: ContentBundle, uid: string, manId: string): string {
+  const i = state.items.findIndex((x) => x.uid === uid);
+  const m = state.men.find((x) => x.id === manId && x.alive && x.sworn);
+  if (i < 0 || !m || Object.values(state.kit).includes(uid)) return '';
+  const inst = state.items[i]!;
+  const def = content.items[inst.id]!;
+  state.items.splice(i, 1);
+  m.loyalty = Math.min(10, m.loyalty + (def.heirloom || inst.name ? 3 : 2));
+  if (def.kind === 'weapon') m.weapons = Math.min(6, m.weapons + 1);
+  const name = itemName(content, inst);
+  journal(state, `Gave ${name.charAt(0).toLowerCase()}${name.slice(1)} to ${m.name}.`);
+  return `You give ${name.charAt(0).toLowerCase()}${name.slice(1)} to ${m.name}, in front of the others.`;
 }

@@ -123,6 +123,39 @@ export function serviceShare(state: GameState, content: ContentBundle): string[]
 export function shareOut(state: GameState, content: ContentBundle, how: ShareHow): string[] {
   const lines: string[] = [];
   sellCaptives(state, lines);
+  divideHeap(state, content, how, lines);
+  // the unhappy go home for good
+  if (state.crew.morale < 4) {
+    const leave = Math.round(state.crew.men * (4 - state.crew.morale) * 0.1);
+    if (leave) {
+      state.crew.men -= leave;
+      lines.push(`${plural(leave, 'man', 'men')} will not sail with you again.`);
+    }
+  }
+  for (const m of aliveMen(state)) {
+    if (m.loyalty <= 1) {
+      state.men = state.men.filter((x) => x !== m);
+      lines.push(`${m.name} takes back his oath and goes to find another lord.`);
+      journal(state, `${m.name} left your service.`);
+    }
+  }
+  // the homecoming feast tells the summer's deeds
+  const { told, gained } = tellDeeds(state);
+  if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
+  startWinter(state, hallActionsFor(state, HALL_ACTIONS));
+  return lines;
+}
+
+/** A share-out on a foreign strand, mid-summer, when the holds are full (playtest 4): the men carry their
+ *  shares from here, and the summer goes on. */
+export function divideAbroad(state: GameState, content: ContentBundle, how: ShareHow): string[] {
+  const lines: string[] = [state.at === 'home_fjord' ? 'You divide the heap on the jarl\'s landing, in front of everyone, the way it\'s done.' : 'You divide the heap on the strand, in front of everyone, the way it\'s done.'];
+  divideHeap(state, content, how, lines, true);
+  return lines;
+}
+
+/** The dividing itself: a félag partner's part, the jarl's cut, his own share, the shipmasters', the men's. */
+function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lines: string[], partial = false): void {
   let pot = state.loot;
   // a félag partner takes his men's part first (docs/FRAME-TRADE-ALLIES.md)
   const pc = partnerCut(state, content, pot, state.crew.men + aliveMen(state).length);
@@ -144,7 +177,9 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   state.silver += keep;
   state.loot = 0;
   const ratio = each / SHARE_EXPECTED;
-  state.crew.morale += Math.max(-3, Math.min(3, (ratio - 1) * 3)) + (how === 'generous' ? 1 : how === 'mean' ? -1 : 0);
+  // a share in hand mid-summer only cheers them; the reckoning of the whole summer comes in autumn
+  const mood = Math.max(-3, Math.min(3, (ratio - 1) * 3)) + (how === 'generous' ? 1 : how === 'mean' ? -1 : 0);
+  state.crew.morale += partial ? Math.max(0, mood) : mood;
   for (const m of aliveMen(state)) addLoyalty(m, how === 'generous' ? 1 : how === 'mean' ? -1 : 0);
   if (how === 'generous' && pot > 0) {
     state.honour = Math.min(10, state.honour + 1);
@@ -155,27 +190,7 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
     ? `You keep ${formatSilver(keep)}. Each man takes about ${formatSilver(each)}.`
     : 'There is nothing to share. The men go home with what they left with.');
   clampMorale(state);
-  // the unhappy go home for good
-  if (state.crew.morale < 4) {
-    const leave = Math.round(state.crew.men * (4 - state.crew.morale) * 0.1);
-    if (leave) {
-      state.crew.men -= leave;
-      lines.push(`${plural(leave, 'man', 'men')} will not sail with you again.`);
-    }
-  }
-  for (const m of aliveMen(state)) {
-    if (m.loyalty <= 1) {
-      state.men = state.men.filter((x) => x !== m);
-      lines.push(`${m.name} takes back his oath and goes to find another lord.`);
-      journal(state, `${m.name} left your service.`);
-    }
-  }
   journal(state, `The share-out: you kept ${formatSilver(keep)}.`);
-  // the homecoming feast tells the summer's deeds
-  const { told, gained } = tellDeeds(state);
-  if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
-  startWinter(state, hallActionsFor(state, HALL_ACTIONS));
-  return lines;
 }
 
 // ---- the winter hall ----

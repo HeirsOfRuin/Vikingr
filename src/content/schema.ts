@@ -236,6 +236,8 @@ export const itemDef = z.object({
   sold: z.array(z.enum(['smith', 'market', 'shipwright'])).optional(),
   deeds: z.number().int().optional(),
   trophy: z.boolean().optional(),
+  /** Family or a dead man's gift: selling it costs honour; giving it binds a man closer. */
+  heirloom: z.boolean().optional(),
   desc: z.string(),
 }).strict();
 export type ItemDef = z.infer<typeof itemDef>;

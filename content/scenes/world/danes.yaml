@@ -42,7 +42,7 @@
   at: [hedeby]
   cooldown_days: 200
   weight: 10
-  requires: [flag.ubbi_sworn, "!flag.ubbi_done", "!flag.ubbi_broken", "!service", "month >= 4", "month <= 8"]
+  requires: [flag.ubbi_sworn, "!flag.ubbi_done", "!flag.ubbi_broken", "!service", "month >= 4", "month <= 8", "yearsince.k_ubbi >= 1"]
   title: Ubbi's fleet
   text: |
     There are twelve longships drawn up on the beach below the wall, with men swarming over them like flies over a carcass, and a red-bearded man standing on the stem-post of the biggest, roaring at all of them.
@@ -77,6 +77,23 @@
         Ubbi doesn't shout. That's the worst of it. He looks at you, and then at your ship, and then turns his back and wades back to his own, and the men on the beach watch you all the way out of the harbour.
 
         Every Dane in Hedeby will know by nightfall. Every Dane in Denmark, by Yule.
+
+- id: hd_ubbi_early
+  kind: place
+  trigger: arrive
+  at: [hedeby]
+  once: true
+  weight: 10
+  requires: [flag.ubbi_sworn, "!flag.ubbi_done", "!flag.ubbi_broken", "yearsince.k_ubbi == 0"]
+  title: Ubbi's steward
+  text: |
+    Ubbi isn't in Hedeby. His steward, a grey Dane with ink on his fingers and no sense of humour, tells you so on the beach before you've finished asking.
+
+    "Gone to the king at Jelling," he says, "and then round the islands for ships. He said spring. He meant spring." He looks at your ship. "You're early. He'll like that. Come back when the ice is out."
+  choices:
+    - id: ok
+      text: Tell him you'll be back in the spring.
+      result: He writes something on a wax tablet, which you suspect is your name, and the word "early", and goes back to his counting.
 
 - id: hd_frisia
   kind: queued

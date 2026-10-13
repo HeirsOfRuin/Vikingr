@@ -1,7 +1,7 @@
 // Reference players. They do not need to play well; they need to play consistently,
 // so two runs are comparable (game-building skill, Part 2 #5).
 import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
-import { hold, SECONDHAND } from '../src/engine/fleet';
+import { hold, holdRoom, SECONDHAND } from '../src/engine/fleet';
 import { buyPrice, sellPrice } from '../src/engine/trade';
 import type { ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
@@ -18,6 +18,9 @@ import { LATE_SEASON_DOY } from '../src/engine/tuning';
 export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
 
+// instant actions (the hoard, the wall, shops) are deliberate choices, never a fallback: they don't move time
+const INSTANT = ['shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint'];
+const fallback = (opts: ActionOption[]) => (opts.find((o) => o.enabled && !INSTANT.includes(o.action.t)) ?? opts.find((o) => o.enabled)!).action;
 const find = (opts: ActionOption[], pred: (a: Action) => boolean) => opts.find((o) => o.enabled && pred(o.action));
 
 /** Next hop on the shortest known route from `from` to `to`. */
@@ -68,7 +71,7 @@ export class Bot {
   choose(state: GameState, content: ContentBundle): Action | null {
     const opts = listActions(state, content);
     // shopping and listening are deliberate choices below, never a fallback
-    const enabled = opts.filter((o) => o.enabled && o.action.t !== 'shop' && o.action.t !== 'listen' && o.action.t !== 'trade');
+    const enabled = opts.filter((o) => o.enabled && !INSTANT.includes(o.action.t));
     if (!enabled.length) return null;
     if (this.policy === 'random') return enabled[this.rng.int(enabled.length)]!.action;
     const screen = screenOf(state);
@@ -169,10 +172,12 @@ export class Bot {
     const at = state.at!;
     const doy = dateOf(state.day).doy;
     // at another man's oar the captain decides: follow him, and haul up when he does
-    if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? opts.find((o) => o.enabled)!.action;
+    if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? fallback(opts);
     const raid = pick((a) => a.t === 'raid');
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
+    // holds nearly full in mid-summer: share out on the strand and go on (playtest 4)
+    if (state.loot > 0 && holdRoom(state, content) < 200) { const d = pick((a) => a.t === 'divide' && a.how === 'fair'); if (d) return d; }
     // the trading beach, once a landfall, when there is something to sell or silver to spend
     const tk = `${state.day}:${at}`;
     if (!this.traded.has(tk) && (Object.keys(state.cargo ?? {}).length || state.silver > 200)) {
@@ -202,11 +207,11 @@ export class Bot {
       target = targets[0] ?? state.known.find((id) => !this.visited.has(id) && content.places[id]?.active) ?? null;
     }
     if (!target) target = 'home_fjord';
-    if (target === at) return pick((a) => a.t === 'rest') ?? opts.find((o) => o.enabled)!.action;
+    if (target === at) return pick((a) => a.t === 'rest') ?? fallback(opts);
     const hop = nextHop(state, content, at, target);
     const sail = hop ? pick((a) => a.t === 'sail' && a.to === hop) : undefined;
     if (sail) return sail;
-    return pick((a) => a.t === 'passage_home') ?? pick((a) => a.t === 'winter_here') ?? pick((a) => a.t === 'rest') ?? opts.find((o) => o.enabled)!.action;
+    return pick((a) => a.t === 'passage_home') ?? pick((a) => a.t === 'winter_here') ?? pick((a) => a.t === 'rest') ?? fallback(opts);
   }
 }
 

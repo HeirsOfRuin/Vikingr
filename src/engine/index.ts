@@ -20,11 +20,11 @@ import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOut
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, HALL_PRICE, keepCaptives, newBase, thrallRoom } from './base';
-import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop } from './items';
+import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
 import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
-  borrowShip, BUILD_TYPES, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
+  borrowShip, BUILD_TYPES, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
   type HallWhat, type ShareHow,
 } from './season';
 import { formatSilver, plural } from './format';
@@ -77,6 +77,9 @@ export type Action =
   | { t: 'slot'; man: string; slot: Position }
   | { t: 'buy_hull'; type: string }
   | { t: 'trade' }
+  | { t: 'divide'; how: ShareHow }
+  | { t: 'sell_item'; uid: string }
+  | { t: 'give_item'; uid: string; man: string }
   | { t: 'trade_buy'; good: string }
   | { t: 'trade_sell'; good: string }
   | { t: 'appoint'; ship: string; man: string }
@@ -223,7 +226,7 @@ function shopOption(state: GameState, content: ContentBundle): ActionOption[] {
   const shops = shopsHere(state, content);
   if (!shops.length) return [];
   const label = shops.includes('smith') ? 'Visit the smith and the shipwright' : 'Walk the market booths';
-  const n = forSale(state, content, shops).length + (armCost(state) !== null && !state.service ? 1 : 0) + (shops.includes('shipwright') ? hullsForSale(state, content).length : 0);
+  const n = forSale(state, content, shops).length + (armCost(state) !== null && !state.service ? 1 : 0) + (shops.includes('shipwright') ? hullsForSale(state, content).length : 0) + spareKit(state, content).length;
   return [opt('Trade', { t: 'shop' }, label, n > 0, 'There is nothing here you need.', `${n} things worth looking at`)];
 }
 
@@ -365,6 +368,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const out = forSale(state, content, shops).map((d) => opt(d.kind === 'fitting' ? 'The shipwright' : shops.includes('smith') ? 'The smith' : 'The booths', { t: 'buy', item: d.id }, `Buy ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}`, state.silver >= d.price!, `You need ${formatSilver(d.price!)}.`, formatSilver(d.price!)));
       const ac = armCost(state);
       if (ac !== null && !state.service) out.push(opt('Your men', { t: 'arm' }, `Arm the men: ${gearWord(Math.floor(state.crew.gear) + 1)}`, state.silver >= ac, `You need ${formatSilver(ac)}.`, `${formatSilver(ac)} for ${state.crew.men} men`));
+      // kit he no longer carries, to the smith or the booths (playtest 4)
+      for (const x of spareKit(state, content)) {
+        const n = itemName(content, x);
+        out.push(opt('Sell', { t: 'sell_item', uid: x.uid }, `Sell ${n.charAt(0).toLowerCase()}${n.slice(1)}`, true, undefined, `${formatSilver(sellValue(content, x))}${content.items[x.id]?.heirloom ? '; it was never yours to sell, men will say' : ''}`));
+      }
       // secondhand hulls on a market beach (docs/FRAME-FLEET.md)
       if (shops.includes('shipwright')) for (const h of hullsForSale(state, content)) {
         const st = content.ships[h.type]!;
@@ -445,6 +453,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them; and they will remember' : 'Food for the crew; the locals will remember'));
         }
       }
+      // share out on the strand, when the holds are full and the summer isn't (playtest 4)
+      if (!state.service && state.loot > 0) {
+        out.push(opt('Plunder', { t: 'divide', how: 'fair' }, 'Share out the plunder here', true, undefined, `${formatSilver(state.loot)} in the heap; fair shares, and room in the holds again`));
+        out.push(opt('Plunder', { t: 'divide', how: 'generous' }, 'Share it out with an open hand', true, undefined, 'Less for you; the men remember'));
+      }
       if (tier !== 'hostile') out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
       // rumours of far places, and expeditions to them (FRAME-FOUNDATION §1)
       if (tier !== 'hostile' && listenable(state, content, at)) out.push(opt('Here', { t: 'listen' }, 'Stand the old sailors a round, and listen', state.silver >= LISTEN_COST, `You need ${formatSilver(LISTEN_COST)} for the ale.`, `${formatSilver(LISTEN_COST)}; a day; rumours of far places`));
@@ -482,7 +495,7 @@ function sameAction(a: Action, b: Action): boolean {
 
 export function act(content: ContentBundle, input: GameState, action: Action): GameState {
   const allowed = listActions(input, content).find((o) => sameAction(o.action, action));
-  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
+  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && action.t !== 'give_item' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
   const state = structuredClone(input);
   const rng = new RngCursor(state.rng);
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
@@ -560,6 +573,18 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       break;
     case 'trade':
       state.pending = { t: 'trade' };
+      break;
+    case 'sell_item':
+      state.shopNote = sellItem(state, content, action.uid);
+      state.pending = { t: 'shop', shops: (state.pending as { shops: Shop[] }).shops };
+      break;
+    case 'give_item': {
+      const line = giveKitTo(state, content, action.uid, action.man);
+      if (line) journal(state, line);
+      break;
+    }
+    case 'divide':
+      report('The share-out', divideAbroad(state, content, action.how));
       break;
     case 'trade_buy':
       state.shopNote = buyLot(state, content, state.at!, action.good);

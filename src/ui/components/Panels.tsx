@@ -42,6 +42,18 @@ function KitCard({ content, state, onAct }: { content: ContentBundle; state: Gam
           {spare.map((x) => <button key={x.uid} class="choice" style={{ minHeight: 36, padding: '4px 8px' }} onClick={() => onAct?.({ t: 'equip', uid: x.uid })}>Take up {itemName(content, x).replace(/^(A|An|The) /, (m) => m.toLowerCase())}</button>)}
         </div>
       )}
+      {spare.length > 0 && !state.voyage && state.men.some((m) => m.alive && m.sworn) && (
+        <div class="small" style={{ marginTop: 8 }}>
+          <span class="muted">Give what you don't carry to a man sworn to you (it binds him closer; a blade makes him better with it). Or sell it at the smith or the market.</span>
+          {spare.map((x) => (
+            <div key={`g${x.uid}`} class="row sans small" style={{ flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+              {state.men.filter((m) => m.alive && m.sworn).map((m) => (
+                <button key={m.id} class="choice" style={{ minHeight: 32, padding: '4px 8px' }} onClick={() => onAct?.({ t: 'give_item', uid: x.uid, man: m.id })}>{itemName(content, x).replace(/^(A|An|The) /, (w) => w.toLowerCase())} to {m.name}</button>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
       {keepsakes.length > 0 && <p class="small" style={{ marginTop: 8 }}><span class="muted">Kept for what they mean:</span> {keepsakes.map((x) => itemName(content, x)).join('; ')}.</p>}
     </div>
   );
