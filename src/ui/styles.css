@@ -42,7 +42,7 @@ p { margin: 0 0 0.85em; }
 .app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; max-width: 720px; margin: 0 auto; }
 .topbar {
   position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px;
-  background: color-mix(in srgb, var(--granite-900) 94%, transparent); border-bottom: 1px solid var(--granite-700);
+  background: var(--granite-900); border-bottom: 1px solid var(--granite-700);
   padding: calc(env(safe-area-inset-top) + 10px) var(--gutter) 10px; font-family: var(--f-ui); font-size: 0.8rem; color: var(--iron);
   white-space: nowrap; overflow: hidden;
 }

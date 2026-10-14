@@ -24,7 +24,7 @@
       result: |
         It is heavier than you thought and lighter than you feared: thirty pounds of riveted rings, to the knee, with a smell of oil and somebody else's sweat. The smith laces it on you and hits you in the chest with a hammer, to show you. It hurts a great deal less than it should.
 
-        Ulf wants to try it on. You let him, later. He doesn't give it back for an hour.
+        Ulf wants to try it on. You let him, later. He doesn't give it back until dark.
       next: k_market
     - id: sword
       text: Buy a Frankish sword, with the maker's name in the blade. A pound and a half.

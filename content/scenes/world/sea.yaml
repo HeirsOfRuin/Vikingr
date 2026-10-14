@@ -42,7 +42,7 @@
   text: |
     It is short and ugly. The traders fight for their cargo for exactly as long as they think they might keep it, and then they throw down their axes and sit on the deck with their hands on their heads.
 
-    The cargo is wine, cloth, glass, and a locked chest that takes half an hour and an axe to open.
+    The cargo is wine, cloth, glass, and a locked chest that takes a long while and an axe to open.
   choices:
     - id: prize
       text: Keep the knarr, put a prize crew aboard, and sell her crew.
@@ -50,9 +50,9 @@
       effects: [ { add: { loot: 120 } }, { captives: 4 }, { add: { honour: -1 } }, { prize: { type: knarr, name: The Frisian } } ]
       result: You put twelve men aboard her under a hired steersman, with the traders tied in her hold, and she wallows along in your wake for the rest of the voyage. She's slow, and ugly, and her hold would swallow a church.
     - id: strip
-      text: Take everything, and the ship as well, and sell the crew.
+      text: Take the cargo and her crew, and sell the ship herself at the next market.
       effects: [ { add: { loot: 180 } }, { captives: 4 }, { add: { honour: -1 } } ]
-      result: You put a prize crew aboard the knarr and sail her to the next market, with the traders tied in her hold. They don't weep. They're traders; they know the price of things, themselves included.
+      result: You sail her to the next market with a handful of men at her oars and the traders tied in her hold, and sell the ship and the men separately, to different buyers. The man who buys the knarr asks no questions about the stains on her deck. The traders don't weep. They're traders; they know the price of things, themselves included.
     - id: cargo
       text: Take the cargo and let them sail home empty.
       effects: [ { add: { loot: 130 } } ]
@@ -137,7 +137,7 @@
       text: Pull them out.
       effects: [ { days: 1 }, { if: "!service", then: [ { add: { crew.men: 2 } } ] }, { add: { hamingja: 1 } } ]
       result: |
-        The waving one lives, and one of the others, after you've thumped the water out of him. They're Hebrideans, off a trader that turned over in the night. The third has been dead for hours.
+        The waving one lives, and one of the others, after you've thumped the water out of him. They're Hebrideans, off a trader that turned over in the night. The third has been dead since before the dawn.
         [if service]
         They sign on with {captain} for the voyage home.
         [else]
@@ -183,7 +183,7 @@
       visible_if: "!service"
       check: { skill: command, attr: wit, difficulty: 4 }
       success:
-        text: You bring her round in a sea that wants to roll her over, and the third line they throw lands across his arms. He comes aboard like a landed cod, and lies there swearing at Rán for an hour.
+        text: You bring her round in a sea that wants to roll her over, and the third line they throw lands across his arms. He comes aboard like a landed cod, and lies there swearing at Rán until his breath runs out.
         effects: [ { add: { crew.morale: 1 } } ]
       failure:
         text: You bring her round too slowly. By the time she answers, there's nothing to throw a line to.
@@ -251,7 +251,7 @@
       text: Whistle for the wind, like your grandfather did.
       check: { skill: lore, attr: pre, difficulty: 5 }
       success:
-        text: You whistle, low and tuneless, the way the old men do. Nobody laughs. Within the hour there's a cat's-paw on the water to the west, and then a wind. The older men look at you differently after that.
+        text: You whistle, low and tuneless, the way the old men do. Nobody laughs. Before the men have finished muttering there's a cat's-paw on the water to the west, and then a wind. The older men look at you differently after that.
         effects: [ { progress: 1 }, { add: { hamingja: 1 } } ]
       failure:
         text: You whistle. Somebody laughs. You stop. The calm lasts two more days, and they're all your fault.

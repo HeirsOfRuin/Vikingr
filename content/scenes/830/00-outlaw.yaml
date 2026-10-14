@@ -179,7 +179,7 @@
         effects: [ { set: flag.o_kolgrimr_cowed }, { add: { skill.cunning: 1 } }, *west ]
       failure:
         text: |
-          You watch him for nine days and sleep on the tenth, for an hour, off the Orkney skerries, and when you wake your sea-chest is open and your mother's lock of hair is in the sea and Kolgrímr is at the bow, singing.
+          You watch him for nine days and sleep on the tenth, for a moment, off the Orkney skerries, and when you wake your sea-chest is open and your mother's lock of hair is in the sea and Kolgrímr is at the bow, singing.
 
           At Birsay he's off the ship before it grounds, and by night every man in Harek's hall knows there's a Hordaland outlaw on the beach, with a Hrappsson's blood on his father's axe.
         effects: [ { set: flag.o_kolgrimr_told }, *west ]

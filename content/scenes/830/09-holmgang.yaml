@@ -26,7 +26,7 @@
       requires: ["man.ketill.alive", "man.ketill.loyalty >= 5"]
       effects: [ { set: flag.y_ketill_peace }, { add: { man.ketill.loyalty: -1 } } ]
       result: |
-        Ketill is gone an hour. When he comes back his knuckles are skinned, and he won't say why.
+        Ketill is gone a long while. When he comes back his knuckles are skinned, and he won't say why.
 
         In the morning Thorgils stands up in the jarl's hall, white in the face, and says in front of everyone that he spoke in drink and spoke wrongly of an honest woman. Then he sits down and doesn't speak again.
 

@@ -138,7 +138,7 @@ export const FIGHT_DEEDS = ['duel_won', 'killed_champion', 'holmgang_won', 'fron
 
 const WEAPON_NAMES: Record<string, [string, string][]> = {
   sword: [['Leggbítr', 'Leg-biter'], ['Hvítingr', 'the White One'], ['Gramr', 'Wrath'], ['Naðr', 'the Adder'], ['Fótbítr', 'Foot-biter'], ['Hneitir', 'the Wounder'], ['Brynjubítr', 'Mail-biter']],
-  axe: [['Rimmugýgr', 'Battle-hag'], ['Skeggöx', 'Old Beard'], ['Hel', 'Hel'], ['Járnglumra', 'Iron-clatter']],
+  axe: [['Rimmugýgr', 'Battle-hag'], ['Skeggöx', 'Old Beard'], ['Hel', 'after the goddess of the dead'], ['Járnglumra', 'Iron-clatter']],
   spear: [['Grásíða', 'Grey-flank'], ['Hrafnsfæða', 'Raven-feeder'], ['Ulfr', 'the Wolf']],
   seax: [['Tanni', 'the Tooth'], ['Ormstunga', 'Snake-tongue']],
 };
@@ -159,8 +159,8 @@ export function creditWeapon(state: GameState, content: ContentBundle, rng: RngC
   w.name = nm;
   const base = content.items[w.id]!.name.toLowerCase().replace(/^an? /, 'the ');
   addDeed(state, content, { type: 'weapon_named', text: `His weapon was given a name: ${nm}, ${gloss}`, witnesses: state.crew.men });
-  journal(state, `The men call ${base} ${nm} now: ${gloss}.`);
-  return `Somewhere between the fight and the fire, the men start calling ${base} by a name: ${nm}. ${gloss}. You didn't choose it. Nobody ever does.`;
+  journal(state, `The men call ${base} ${nm} now, ${gloss}.`);
+  return `Somewhere between the fight and the fire, the men start calling ${base} by a name: ${nm}, ${gloss}. You didn't choose it. Nobody ever does.`;
 }
 
 export function namedWeaponInHand(state: GameState): boolean {

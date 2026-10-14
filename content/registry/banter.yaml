@@ -3,7 +3,7 @@
 # Lines heard this year are skipped while fresh ones remain.
 
 # ---- at sea ----
-- { who: ulf, when: sea, text: "Ulf asks Hallvard what the gulls are saying. Hallvard tells him. Ulf rows in silence for an hour." }
+- { who: ulf, when: sea, text: "Ulf asks Hallvard what the gulls are saying. Hallvard tells him. Ulf rows in silence until the next change of oars." }
 - { who: ulf, when: sea, requires: [nickname], text: "Ulf has been practising your name all morning, in different voices. The one he likes best is the one the jarl would use." }
 - { who: ulf, when: sea, requires: ["!nickname"], text: "\"When I get my name,\" says Ulf, \"it'll be something with blood in it.\" Bersi suggests Ulf Nosebleed. It takes Ketill to separate them." }
 - { who: ketill, when: sea, text: "Ketill rows the way other men breathe. When you look back at him he nods at your oar: lower, longer. He is right. He is always right about oars." }

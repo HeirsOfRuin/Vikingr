@@ -160,4 +160,4 @@
     - id: leave
       text: Let them pass. You have water to cross.
       effects: [ { add: { hamingja: 1 } } ]
-      result: They pass under and around the ship for an hour, blowing and rolling, and then go away north. Hallvard watches them all the way. "A good sign," he says. He doesn't say of what.
+      result: They pass under and around the ship for half the morning, blowing and rolling, and then go away north. Hallvard watches them all the way. "A good sign," he says. He doesn't say of what.

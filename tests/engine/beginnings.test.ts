@@ -6,6 +6,7 @@ import { open } from '../../src/engine/director';
 import { dayOf } from '../../src/engine/calendar';
 import { legendTable } from '../../src/engine/fame';
 import { routes } from '../../src/engine/voyage';
+import { winterWork } from '../../src/engine/season';
 
 // docs/FRAME-BEGINNINGS.md: two summers at another man's oar before a ship of his own.
 const oarsman = (): GameState => {
@@ -83,6 +84,17 @@ describe("the freedman's son", () => {
   it('his homecoming is his own; the younger son\'s brother is not in it', () => {
     expect(content.scenes.h_return!.requires).toContain('background == younger_son');
     expect(content.scenes.f_return!.requires).toContain('background == freedman');
+  });
+
+  it("winters in his father's boatyard, not on a brother's farm", () => {
+    const s = oarsman();
+    s.hero.background = 'freedman';
+    s.at = 'home_fjord';
+    expect(winterWork(s)!.label).toBe("Work in your father's boatyard");
+    s.hero.background = 'outlaw';
+    s.at = 'orkney';
+    s.flags.outlawed = 1;
+    expect(winterWork(s)!.label).toBe("Work for Harek's steward");
   });
 
   it('spring 832: he launches the ship he built with his father', () => {

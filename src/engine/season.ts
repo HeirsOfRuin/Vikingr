@@ -235,6 +235,18 @@ export function feastCost(state: GameState): number {
 
 export const BUILD_TYPES = ['karvi', 'snekkja', 'skeid', 'knarr'] as const;
 
+/** What a man with no hall of his own does with a winter: his own family's work, by background. */
+export function winterWork(state: GameState): { label: string; text: (pay: string) => string } | null {
+  if (state.base.level !== 'father') return null;
+  if (state.at === 'home_fjord') {
+    if (state.hero.background === 'freedman') return { label: "Work in your father's boatyard", text: (pay) => `You work the winter in the boatyard with Leysingr: splitting oak along the grain, shaping strakes, clenching rivets, caulking the seams with tarred wool. A farmer from up the valley pays for a new færing, and your father counts you out ${pay} of it without a word, which from him is praise.` };
+    if (state.hero.background === 'outlaw') return { label: "Work your father's farm", text: (pay) => `You work the winter on Grímr's farm: hauling, mending, mucking out. The neighbours nod to you at the hof and say what they think of you once your back is turned. Your father pays you ${pay} and says nothing about any of it.` };
+    return { label: "Work your brother's farm", text: (pay) => `You work the winter on your brother's farm: mending, hauling, sharpening, mucking out. He pays you ${pay} and you both pretend it is a gift.` };
+  }
+  if (state.at === 'orkney' && state.flags.outlawed && !state.flags.outlaw_ended) return { label: "Work for Harek's steward", text: (pay) => `You work the winter for Harek's steward at Birsay: cutting peat, mending nets, standing to the thighs in the surf to drag the boats up the noust. He pays you ${pay}, an exile's wage, and makes sure you know it.` };
+  return null;
+}
+
 export function hallAction(state: GameState, content: ContentBundle, rng: RngCursor, what: HallWhat, arg?: string): string[] {
   const lines: string[] = [];
   switch (what) {
@@ -343,7 +355,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       const pay = 5 + rng.int(4);
       state.silver += pay;
       learn(state, 'craft', 3);
-      lines.push(`You work the winter on your brother's farm: mending, hauling, sharpening, mucking out. He pays you ${formatSilver(pay)} and you both pretend it is a gift.`);
+      lines.push(winterWork(state)?.text(formatSilver(pay)) ?? `You work the winter for whoever will feed you, and are paid ${formatSilver(pay)}.`);
       break;
     }
     case 'blot': {

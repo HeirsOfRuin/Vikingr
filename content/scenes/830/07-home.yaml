@@ -251,7 +251,7 @@
         - { set: flag.h_brother_feud }
         - { if: "captives >= 1", then: [ { queue: { scene: h_captives, days: 0 } } ] }
       result: |
-        You say nothing. You drink, and keep drinking, and in the small hours you say something to Hallbjörn across the fire that you can't take back.
+        You say nothing. You drink, and keep drinking, and in the dead of the night you say something to Hallbjörn across the fire that you can't take back.
 
         He gets up and goes out. In the morning neither of you mentions it. Neither of you forgets it, either.
 

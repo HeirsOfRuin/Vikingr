@@ -68,7 +68,7 @@
         text: |
           The king's steward comes down to the beach, and looks at the wine, and looks at your hands, and looks at the gate where the three Norsemen are hanging. Then he walks back up the hill without a word, and the gate shuts behind him.
 
-          They come out to meet you an hour later, all of them.
+          They come out to meet you before the shadows have moved, all of them.
         effects:
           - { battle: { foe: conaille_men, men: 26, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
     - id: straight

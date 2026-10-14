@@ -37,7 +37,7 @@
 
           There is a hall in the next valley with fires in front of it and forty spears stacked against the wall. The men around the fires are drinking, and two of them are fighting, and nobody is watching the road.
 
-          You come back down to the ship an hour before dawn. Ásgeir listens and grins in the dark. "Then we go now," he says, "while they sleep it off."
+          You come back down to the ship in the grey before dawn. Ásgeir listens and grins in the dark. "Then we go now," he says, "while they sleep it off."
         effects: [ { set: flag.bg_scouted }, { add: { man.ketill.loyalty: 1 } } ]
       failure:
         text: |

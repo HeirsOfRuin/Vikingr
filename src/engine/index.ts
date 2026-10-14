@@ -26,7 +26,7 @@ import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem
 import { expeditionRoads, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
-  borrowShip, BUILD_TYPES, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
+  borrowShip, BUILD_TYPES, winterWork, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
   type HallWhat, type ShareHow,
 } from './season';
 import { formatSilver, plural } from './format';
@@ -361,7 +361,10 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         out.push(opt('Your base', { t: 'hall', what: 'build_hall' }, state.flags.hall_burned ? 'Rebuild the hall' : 'Build a hall', !why, why ?? undefined, formatSilver(hallPrice(state))));
       }
       if (lord || state.base.level !== 'father') out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
-      else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
+      else {
+        const w = winterWork(state);
+        if (w) out.push(opt('Hall', { t: 'hall', what: 'work' }, w.label, true, undefined, 'A little silver; the winter passes'));
+      }
       // only the rings he holds: made by the smith, given him, or taken (the author, 2026-10-14)
       const r = ringsOf(state);
       for (const m of aliveMen(state)) {

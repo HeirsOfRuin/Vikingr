@@ -81,7 +81,10 @@ awesome
 guys
 teenager
 weekend
-/\b\d+ (minutes?|hours?|o'clock)\b/
+# no clock time: they told time by light, tide, meals and watches
+/\bhours?\b/
+/\b(a|half a|\d+) minutes?\b/
+/\bo'clock\b/
 # the shows, not the history
 horned helmet
 /\bthe vikings\b/

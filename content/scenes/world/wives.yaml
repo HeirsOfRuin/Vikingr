@@ -188,7 +188,7 @@
       check: { skill: trade, attr: wit, difficulty: 5 }
       success:
         text: |
-          She argues for most of an hour, and enjoys it, and in the end gives you half the wool money and calls you a thief. Kolbeinn, listening from the doorway, says it's the best bargain anyone's ever got out of her.
+          She argues until the fire wants feeding, and enjoys it, and in the end gives you half the wool money and calls you a thief. Kolbeinn, listening from the doorway, says it's the best bargain anyone's ever got out of her.
         effects: [ { set: flag.betrothed }, { set: flag.thorunn_betrothed }, { set: flag.thorunn_wool } ]
       failure:
         text: |

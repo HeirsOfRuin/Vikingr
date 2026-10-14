@@ -158,7 +158,7 @@
   text: |
     Your father waits until the end of the winter to say it, which is how you know he has been thinking about it all winter.
 
-    "Ásgeir Kolsson is taking the Raven west in the spring, for the jarl. Forty oars." He doesn't look at you. He looks at the adze in his hands, which he has been sharpening for an hour. "I've done her strakes this winter, half of them. He wants a man aboard who knows them. A bailer. A mender." He tests the edge with his thumb. "Half a share. He says he'll put you at an oar when you've shown him you can pull one."
+    "Ásgeir Kolsson is taking the Raven west in the spring, for the jarl. Forty oars." He doesn't look at you. He looks at the adze in his hands, which he has been sharpening since the meal. "I've done her strakes this winter, half of them. He wants a man aboard who knows them. A bailer. A mender." He tests the edge with his thumb. "Half a share. He says he'll put you at an oar when you've shown him you can pull one."
     [if flag.f_asgeir]
     "He remembered you," your father adds. "The boy with the supper. I don't know what you said to him."
     [/if]
@@ -194,7 +194,7 @@
       text: Let your father ask for you. He's owed.
       effects: [ { set: flag.f_father_spoke }, { add: { honour: -1 } } ]
       result: |
-        He goes up to Ásgeir's hall in his good shirt, the one from the freedom-ale, and comes back an hour later and says, "An oar. A full share," and goes back to his sharpening.
+        He goes up to Ásgeir's hall in his good shirt, the one from the freedom-ale, and comes back before the fire has burned down and says, "An oar. A full share," and goes back to his sharpening.
 
         You find out on the landing in the spring what it cost him: Ásgeir's men call you the boatwright's boy, all that summer, and it isn't meant kindly, and you understand that your father knew they would.
       next: m_landing

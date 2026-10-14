@@ -117,7 +117,7 @@
       danger: true
       check: { skill: cunning, attr: end, difficulty: 5 }
       success:
-        text: An hour in mud to the waist, with the tide coming. You come up out of a ditch onto their flank as Ubbi's line hits their front, and they break all at once.
+        text: A long wade in mud to the waist, with the tide coming. You come up out of a ditch onto their flank as Ubbi's line hits their front, and they break all at once.
         next: hd_frisia_won
         effects: [ { set: flag.hd_flanked } ]
       failure:
