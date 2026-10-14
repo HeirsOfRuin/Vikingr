@@ -5,6 +5,7 @@ import type { GameState } from '../../src/engine/state';
 import { open } from '../../src/engine/director';
 import { dayOf } from '../../src/engine/calendar';
 import { legendTable } from '../../src/engine/fame';
+import { routes } from '../../src/engine/voyage';
 
 // docs/FRAME-BEGINNINGS.md: two summers at another man's oar before a ship of his own.
 const oarsman = (): GameState => {
@@ -97,5 +98,51 @@ describe("the freedman's son", () => {
     s = act(content, s, { t: 'choose', id: 'launch' });
     expect(s.service).toBeNull();
     expect(s.ships[0]!.name).toBe('Órlaith');
+  });
+});
+
+describe('the outlaw', () => {
+  it('starts at the horse-fight, outlawed, working his passage west on a trader', () => {
+    const s = newGame(content, { background: 'outlaw', seed: 3, name: 'Ari' });
+    expect(s.pending).toEqual({ t: 'scene', id: 'o_horses' });
+    expect(s.flags.outlawed).toBe(1);
+    expect(s.men.length).toBe(0);
+  });
+
+  it('cannot sail home while his time is not served', () => {
+    const s = newGame(content, { background: 'outlaw', seed: 3, name: 'Ari' });
+    s.pending = null;
+    s.at = 'karmoy';
+    expect(routes(s, content, 'karmoy').some((r) => r.to === 'home_fjord')).toBe(false);
+    s.flags.outlaw_ended = 1;
+    expect(routes(s, content, 'karmoy').some((r) => r.to === 'home_fjord')).toBe(true);
+  });
+
+  it('joins the Raven at Birsay, with the four bench-mates; her season ends at Orkney for him', () => {
+    let s = newGame(content, { background: 'outlaw', seed: 3, name: 'Ari' });
+    s.pending = null;
+    s.at = 'orkney';
+    s.phase = 'sailing';
+    s.day = dayOf(830, 130);
+    open(s, 'o_birsay');
+    s = act(content, s, { t: 'choose', id: 'oar' });
+    expect(s.service).toMatchObject({ captain: 'Ásgeir', home: 'orkney' });
+    expect(s.men.map((m) => m.id).sort()).toEqual(['bersi', 'hallvard', 'ketill', 'ulf']);
+    expect(s.men.every((m) => !m.sworn)).toBe(true);
+  });
+
+  it('three winters served: he comes home at the muster, and the 833 council can take him', () => {
+    let s = newGame(content, { background: 'outlaw', seed: 3, name: 'Ari' });
+    s.pending = null;
+    s.at = 'orkney';
+    s.phase = 'sailing';
+    s.day = dayOf(833, 60);
+    s.silver = 300;
+    open(s, 'o_return');
+    s = act(content, s, { t: 'choose', id: 'pay' });
+    expect(s.at).toBe('home_fjord');
+    expect(s.phase).toBe('muster');
+    expect(s.flags.o_peace).toBe(1);
+    expect(s.flags.outlaw_ended).toBe(1);
   });
 });

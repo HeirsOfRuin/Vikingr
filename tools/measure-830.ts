@@ -20,7 +20,7 @@ for (const policy of POLICIES.filter((p) => p !== 'homebody') as Policy[]) {
   const rank: number[] = [];
   for (let i = 0; i < runs; i++) {
     // through spring 831: the year's choices are made once the spring scene has been answered
-    const r = playLife(content, policy, 5000 + i, 2, bg, (s) => s.seen.sp_831 !== undefined && !s.pending);
+    const r = playLife(content, policy, 5000 + i, 2, bg, (s) => (bg === 'outlaw' ? s.seen.o_spring_831 !== undefined : s.seen.sp_831 !== undefined) && !s.pending);
     const s = r.state;
     if (r.error) { console.log(`  ERROR ${policy} ${5000 + i}: ${r.error}`); continue; }
     if (s.death) { deaths[s.death.cause] = (deaths[s.death.cause] ?? 0) + 1; continue; }

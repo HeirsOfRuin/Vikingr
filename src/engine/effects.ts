@@ -208,6 +208,24 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       addRings(state, e.ring.metal, n);
       journal(state, n > 0 ? `You have ${n === 1 ? `a ${e.ring.metal} arm-ring` : `${n} ${e.ring.metal} arm-rings`} more.` : `Gave away ${-n === 1 ? `a ${e.ring.metal} arm-ring` : `${-n} ${e.ring.metal} arm-rings`}.`);
     }
+    else if ('join_ship' in e) {
+      const j = e.join_ship;
+      state.service = { captain: j.captain, route: [...(j.route ?? [])], shares: state.service?.shares ?? 1, ...(j.home ? { home: j.home } : {}) };
+      state.ships = [{ id: 'service', type: j.type, name: j.ship_name, hull: 90 }];
+      state.crew.men = j.crew;
+      // his bench-mates in her, who have not sworn to him
+      for (const id of j.men ?? []) if (!state.men.some((m) => m.id === id)) state.men.push({ ...newMan(content, id), sworn: false });
+      journal(state, `Took a bench in ${j.ship_name}, under ${j.captain}.`);
+    }
+    else if ('exile_end' in e) {
+      // the three winters served: he comes home over the last of the winter, in time for the muster
+      state.flags.outlaw_ended = 1;
+      state.at = 'home_fjord';
+      state.voyage = null;
+      state.phase = 'muster';
+      if (state.service) state.service.home = 'home_fjord';
+      journal(state, 'Came home to Hordaland, his three winters served.');
+    }
     else if ('jarl_men' in e) {
       // the jarl mans his benches, for a quarter of the summer's heap
       state.flags.jarl_men = dateOf(state.day).year;

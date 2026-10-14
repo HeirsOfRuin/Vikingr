@@ -1,6 +1,6 @@
 # Frame: the two other beginnings, and a slower rise
 
-**Status:** frame for the author's approval, 2026-10-14. Nothing here is built yet.
+**Status:** built 2026-10-14, with the recommended answers to the decisions below. The author repeated the request after the frame, which was taken as the go-ahead. Measured results are at the end.
 
 **The author asked for two things:**
 - the freedman's son and the outlaw written properly. Today both start from a Phase 1 placeholder: a borrowed karvi and four men who "did not ask";
@@ -207,3 +207,43 @@ A harbour. He can't go home: the jarl's men will take him, and the Hrappssons wi
 3. **The outlaw's way home:** [three winters by the law, with or without the wergild.] Paying the wergild buys peace with the Hrappssons; not paying brings him home hunted.
 4. **The freedman's grandmother taken at Rechru in 795,** the first recorded raid on Ireland: [yes.] It puts his family's story at the very beginning of the age.
 5. **Ásgeir's fall at Bangor:** [it stays about as common as now (four lives in ten), but it no longer gives the hero the ship.]
+
+---
+
+## Built and measured (2026-10-14)
+
+**About 15,000 new words** across these files:
+- `content/scenes/830/00-freedman.yaml`;
+- `content/scenes/830/00-outlaw.yaml`;
+- rewrites of Bangor, the jarl's notice, and springs 831 and 832;
+- background lines in the shared 830 and 831 scenes.
+
+**The engine:**
+- **Text:** a `{father}` token.
+- **Service:**
+  - a captain's own home port (`service.home`), so the outlaw's season ends at Orkney;
+  - `join_ship`, for the outlaw's passage west, the Raven at Birsay, and Harek's oar;
+  - service shares reset each autumn, and the prow-man keeps a share and a half.
+- **Exile:**
+  - `exiled()`: no sea road home while outlawed, and captains route round Hordaland, by Karmøy;
+  - `exile_end`, for the homecoming at the muster;
+  - an outlaw castaway works his passage to Orkney, not home, and can ask Harek for a bench.
+- **Fame:** a crew's victories count half for an oarsman.
+- **Measures:** `measure:830` and `measure:831` take `--bg` and report fame and legend rank.
+
+**Measured** (bot lives, scene choices random):
+
+| | Younger son | Freedman's son | Outlaw |
+|---|---|---|---|
+| Alive at spring 831 | 92–95% | 94% | 96% |
+| A ship before 832 | 0% | 0% | 0% |
+| Fame at spring 831, median (90th) | 6–10 (14–17) | 7 (14) | 10 (18) |
+| Rank among the legends at spring 831 | 7th | 7th | 7th |
+| A captain at spring 832 | 33–38% | 28–33% | 50–57% |
+| Duel deaths by spring 832 | 10–15% | 13–20% | 14–17% |
+| Reach the 833 council (of those alive) | 91–100% | as the younger son | 18 of 25 (the rest chose another summer abroad) |
+
+**Notes:**
+- **The first ships are below the 40–60% target** for the younger son and the freedman's son. The bot picks scene choices at random, including "take your oar again"; a player going to the jarl, or laying the keel, gets the ship.
+- **The outlaw's Önundr fight was first written to the death,** and killed a third of outlaw lives by 832. The text has Önundr spare a beaten man, so the fight is now to first blood, as written.
+- **Not yet written:** the outlaw's winters of 831 and 832 abroad have no Yule of their own. Harek's Yule 830 is the one written.

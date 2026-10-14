@@ -19,7 +19,7 @@ for (const policy of POLICIES.filter((p) => p !== 'homebody') as Policy[]) {
   const tiers: Record<string, Record<Tier, number>> = {};
   let alive = 0;
   for (let i = 0; i < runs; i++) {
-    const r = playLife(content, policy, 7000 + i, 3, bg, (s) => s.seen.sp_832 !== undefined && !s.pending);
+    const r = playLife(content, policy, 7000 + i, 3, bg, (s) => (bg === 'outlaw' ? s.seen.o_spring_832 !== undefined : s.seen.sp_832 !== undefined) && !s.pending);
     const s = r.state;
     if (r.error) { console.log(`  ERROR ${policy} ${7000 + i}: ${r.error}`); failed = true; continue; }
     if (s.death) { deaths[s.death.cause] = (deaths[s.death.cause] ?? 0) + 1; continue; }

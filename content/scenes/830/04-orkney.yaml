@@ -4,7 +4,7 @@
   trigger: arrive
   at: [orkney]
   once: true
-  requires: [service]
+  requires: [service, { any: ["background != outlaw", flag.o_joined] }]
   art: birsay
   title: The hall at Birsay
   text: |

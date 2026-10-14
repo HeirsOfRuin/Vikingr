@@ -192,7 +192,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
   if ((state.flags.owes_jarl || state.flags.jarl_men === dateOf(state.day).year) && pot > 0) {
     const cut = Math.round(pot * jarlCut(state, JARL_CUT));
     pot -= cut;
-    lines.push(`The jarl's steward takes his quarter: ${formatSilver(cut)}.`);
+    lines.push(`${state.flags.o_harek_ship ? "Harek's steward" : "The jarl's steward"} takes his quarter: ${formatSilver(cut)}.`);
   }
   const keep = Math.round(pot * LEADER_SHARE[how]);
   const heads = state.crew.men + aliveMen(state).length;

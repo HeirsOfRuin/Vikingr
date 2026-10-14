@@ -16,7 +16,7 @@
   service: { captain: Ásgeir, ship_name: the Raven }
 - id: outlaw
   label: The outlaw
-  desc: You killed a man at sixteen and the district declared you outlaw. You have a deed already, a blood feud, and no harbour to call home.
+  desc: You killed a man at the spring horse-fight, at sixteen, and the Thing put you out of Hordaland for three winters. You have a deed already, a blood feud, and no harbour to call home.
   patronymic: Grímsson
   father: Grímr
   attrs: { str: 3, agi: 3, end: 2, wit: 2, pre: 1 }
@@ -24,13 +24,14 @@
   honour: -2
   silver: 12
   flags: [outlawed]
-  men: [ketill, ulf, hallvard, bersi]
-  crew: 18
-  ship: karvi
-  start_scene: p1_start_outlaw
+  men: []
+  crew: 8
+  ship: knarr
+  start_scene: o_horses
+  service: { captain: Þórir, ship_name: "Þórir's knarr" }
 - id: freedman
   label: The freedman's son
-  desc: Your father was a thrall until his master freed him. You know boats and tools, and men remember where your family came from.
+  desc: Your father was born a thrall on Hrapp's farm, and your grandmother was taken from Ireland in the first year of the ships. You know boats, a little Irish, and men remember where your family came from.
   patronymic: Leysingsson
   father: Leysingr
   attrs: { str: 2, agi: 2, end: 3, wit: 3, pre: 1 }

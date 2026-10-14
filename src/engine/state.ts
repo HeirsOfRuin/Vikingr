@@ -74,6 +74,8 @@ export interface Service {
   captain: string;
   route: string[]; // where the captain means to go next, in order
   shares: number; // shares of the plunder the hero has earned (1 an oarsman; 2 for a deed)
+  /** Where this captain's season ends and he winters, if not the home fjord (the outlaw's captains: docs/FRAME-BEGINNINGS.md). */
+  home?: string;
 }
 
 export interface PlunderState {

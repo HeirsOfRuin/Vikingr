@@ -285,3 +285,26 @@ f_due_refused: { description: "Refused Hrapp's due on the new ship at the Thing"
 f_due_thorgils: { description: "Gave Thorgils the new ship's first share" }
 i_colman_irish: { description: "Spoke to Colmán in Irish at Iona" }
 c_interpreter: { description: "Spoke for the ship at Conaille's gate, in Irish" }
+# ---- the outlaw (content/scenes/830/00-outlaw.yaml) ----
+o_hot: { description: "Killed Ozurr in hot blood" }
+o_defence: { description: "Killed Ozurr after he drew on an unarmed man" }
+o_meant: { description: "Killed Ozurr and meant it" }
+o_two_winters: { description: "The jarl gave two winters, not three" }
+o_cursed: { description: "Cursed Hrapp across the mound" }
+o_ketill_asked: { description: "Asked Ketill why he helped" }
+o_faced_kolgrimr: { description: "Called Kolgrímr out at Hjaltland" }
+o_kolgrimr_bought: { description: "Bought Kolgrímr's silence" }
+o_kolgrimr_cowed: { description: "Watched Kolgrímr all the way to Orkney" }
+o_kolgrimr_told: { description: "Kolgrímr told Orkney what he is" }
+o_kolgrimr_left: { description: "Left Kolgrímr on Hjaltland" }
+o_joined: { description: "Joined the Raven at Birsay" }
+o_steinarr_cold: { description: "Steinarr didn't like the outlaw's tongue" }
+o_sworn_wergild: { description: "Swore at Yule to come home with the wergild" }
+o_onund_done: { description: "Önundr has found him" }
+o_onund_dead: { description: "Killed Önundr Hrappsson on the sand" }
+o_onund_waits: { description: "Önundr will be on the landing when he comes home" }
+o_wergild_paid: { description: "Paid Önundr the wergild for Ozurr" }
+o_harek_ship: { description: "Sails Harek's karvi for a quarter" }
+o_peace: { description: "Paid the wergild and the jarl's price: peace with Hrapp's house" }
+o_hunted: { description: "Came home without paying: Hrapp's house hunts him" }
+outlaw_ended: { description: "The outlaw's time is served: he may sail home" }

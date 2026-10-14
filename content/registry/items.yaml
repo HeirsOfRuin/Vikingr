@@ -6,6 +6,7 @@
 - { id: axe, name: "A bearded axe", kind: weapon, value: 2, price: 18, sold: [smith, market], desc: "A wood-axe that has learned another trade. The beard hooks a shield-rim." }
 - { id: ormr_seax, name: "Ormr's seax", kind: weapon, value: 2, heirloom: true, desc: "A long, single-edged knife with a bone grip worn to the shape of an old man's hand. He carried it west twice." }
 - { id: grandfather_sword, name: "Your grandfather's sword", kind: weapon, value: 3, heirloom: true, desc: "Pattern-welded, plain-hilted, older than your father. It lay in the chest at the foot of his bed until you took it." }
+- { id: grimr_axe, name: "Your father's axe", kind: weapon, value: 2, heirloom: true, desc: "A bearded axe with a haft your father replaced twice. It killed Ozurr Hrappsson in the horse-ring. It knows the way." }
 - { id: asgeir_sword, name: "Ásgeir's sword", kind: weapon, value: 3, deeds: 2, heirloom: true, desc: "A plain, heavy, pattern-welded blade with a horn grip, eleven summers in the Raven's stern. The jarl gave it back to you on the landing." }
 - { id: frankish_sword, name: "A Frankish sword", kind: weapon, value: 3, price: 72, sold: [market], desc: "A Rhineland blade with the maker's name inlaid in iron wire. It balances like a living thing." }
 - { id: mael_brigte_sword, name: "Máel Brigte's sword", kind: weapon, value: 3, deeds: 3, desc: "An Irish king's sword, gilt at the hilt, with a nick in the edge from his own doorpost. It has killed before." }

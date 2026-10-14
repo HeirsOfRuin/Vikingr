@@ -1,0 +1,603 @@
+# The outlaw (docs/FRAME-BEGINNINGS.md, part 3): "Three Winters". At the spring horse-fight he killed Ozurr
+# Hrappsson, and the Thing put him out of Hordaland for three winters. He works his way west, joins the Raven at
+# Birsay, winters in Harek's hall, rows for Harek, is hunted by Önundr, and comes home in the spring of 833.
+
+- id: o_horses
+  kind: spine
+  art: muster
+  when: Spring, 830
+  title: The horse-fight
+  text: |
+    The spring Thing is the best week of the year, and the horse-fight is the best day of it.
+
+    You are sixteen. The whole district is on the slope above the ring: the farmers with their wives, the jarl on his chair with his household round him, the boys up the trees. Two stallions in the ring at a time, and a mare tied at the edge where they can smell her, and the owners in the ring behind their horses with goads, to drive them on. The stallions scream and rear and go for each other's necks and bellies with their teeth, and the slope roars, and money changes hands.
+
+    Your father's stallion is called Fölski. He is old and grey and has never lost.
+    [break]
+    Hrapp's stallion is young and black and bought from the Danes, and Ozurr Hrappsson is behind him with the goad. Ozurr is Hrapp's eldest: big, slow, careful with money, not careful with anything else.
+
+    The fight goes badly for the black. Fölski has him by the crest and won't let go. And Ozurr, who can see his silver going, reverses his goad and drives the iron point of it into Fölski's flank, below the ribs, where the slope can't see. Your father sees. Your father hits Ozurr across the face with his open hand, in front of the whole Thing.
+
+    Ozurr drops the goad and draws his sword.
+    [break]
+    Your father hasn't got a sword. He has a goad, and he is fifty-one, and Ozurr is twenty-five.
+
+    You have your father's axe. You've been carrying it for him all morning, because he likes to have it near him at the horse-fight, in case.
+  choices:
+    - id: hot
+      text: Go into the ring. Don't think. There isn't time.
+      effects: [ { set: flag.o_hot }, { add: { skill.weapons: 1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson in the horse-ring at the spring Thing, in his father's defence", weight: 2, witnesses: 400 } } ]
+      result: |
+        You don't remember going over the rail. You remember Ozurr's face turning, surprised, and the axe going in above his ear with a sound like a man splitting a log, and the slope going silent all at once, four hundred people silent, and the horses still screaming.
+
+        Ozurr sits down in the trampled mud with his sword still in his hand, as if he'd decided to rest. Then he falls over.
+      next: o_thing
+    - id: wait
+      text: Wait until his sword is up. Let the whole Thing see it.
+      check: { skill: weapons, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You go over the rail and stand in front of your father with the axe up, and wait, while Ozurr looks at you and at the four hundred people on the slope and decides. He decides wrong. His sword comes up, and the whole Thing sees it come up, and then you kill him.
+
+          It's very quick. Afterwards, everybody agrees on that, and on the sword. It's the only thing anybody agrees on.
+        effects: [ { set: flag.o_defence }, { add: { honour: 1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson in the horse-ring, after he drew on an unarmed man", weight: 2, witnesses: 400 } } ]
+        next: o_thing
+      failure:
+        text: |
+          You wait. You wait a heartbeat too long, and Ozurr's sword opens your father's forearm to the bone before you get there, and then you kill him, and it is messy, and long, and nobody on the slope will ever agree about who struck first.
+        effects: [ { set: flag.o_hot }, { add: { honour: -1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson in the horse-ring at the spring Thing", weight: 2, witnesses: 400 } } ]
+        next: o_thing
+    - id: meant
+      text: You've hated Ozurr Hrappsson since you were ten. Now you have a reason.
+      effects: [ { set: flag.o_meant }, { add: { honour: -1, skill.weapons: 1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson at the spring Thing, and meant it", weight: 3, witnesses: 400 } } ]
+      result: |
+        He's slow. He was always slow, from the time he used to catch you on the shore path and twist your arm until you said what he wanted. You go over the rail with the axe already swinging, and he's still turning, and that's all.
+
+        You look up at the slope afterwards with his blood on your shoes, and you see Hrapp, old Hrapp, standing up at the rail, and you see him see your face, and understand that you meant it.
+      next: o_thing
+
+- id: o_thing
+  kind: spine
+  art: yule_hall
+  when: Spring, 830
+  title: The law
+  text: |
+    The law-speaker takes two days over it. He recites the killing-law from the mound, all of it, in his flat sing-song, while the district stands below and the Hrappssons stand at the front in black, and your father stands with his arm bound up, and you stand where they put you, between two of the jarl's men.
+
+    Hrapp wants you outlawed outright: a wolf's head, outside the law for good, so any man may kill you anywhere and owe nothing for it. He says it standing at the foot of the mound with his hands shaking. Your father offers silver for Ozurr: three pounds, every coin he has and some he doesn't.
+    [break]
+    Jarl Eystein listens to all of it from his chair. Then he gives his judgment, and the law-speaker says it after him, so it's law.
+
+    "Out of Hordaland three winters. After the third, he may come home, and the law will have nothing more to say to him. Before it, any man who finds him in this district may kill him. If the wergild is paid, three pounds for Ozurr, and a pound and a half to me for his peace, he may come home sooner, and Hrapp's house must take it." The jarl looks at Hrapp. "You'll take it, Hrapp. Or you'll answer to me."
+
+    Hrapp looks at you. He doesn't say anything. He doesn't have to.
+  choices:
+    - id: accept
+      text: Bow your head to the law.
+      effects: [ { add: { honour: 1 } }, { favour: 1 } ]
+      result: |
+        You bow your head. The jarl nods, very slightly. The law has been done properly, and you have let it be done properly, and he will remember that, three winters from now, when you come back.
+      next: o_night
+    - id: plead
+      text: Speak to the Thing. Tell them about the goad.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          You tell them about the goad: the iron point, below the ribs, where the slope couldn't see. You ask for the horse to be brought. They bring Fölski, limping, with the wound in his flank still open, and four hundred people look at it, and look at the Hrappssons.
+
+          The jarl looks too. "Two winters," he says. "Not three." Hrapp makes a sound like a man being strangled, and the Thing hears it.
+        effects: [ { set: flag.o_two_winters }, { add: { honour: 1 } } ]
+        next: o_night
+      failure:
+        text: |
+          You tell them about the goad. Nobody saw it but your father, and your father is your father. The law-speaker hears you out and then says, mildly, that a goad is a goad, and a killing is a killing, and the jarl has spoken.
+
+          It sounds, said aloud on the mound, like a boy making excuses. You can see the Thing hearing it that way.
+        effects: [ { add: { honour: -1 } } ]
+        next: o_night
+    - id: curse
+      text: Tell Hrapp, across the mound, that his son died slow, and squealing.
+      effects: [ { set: flag.o_cursed }, { add: { honour: 1 } }, { favour: -2 } ]
+      result: |
+        It isn't true. He died quick. But you say it, loud, so the whole slope hears it, and Hrapp hears it, and his other sons hear it.
+
+        The jarl closes his eyes. The young men at the back of the Thing whoop, and some of them will remember you for it for the rest of their lives, and so will every one of Hrapp's sons.
+      next: o_night
+
+- id: o_night
+  kind: spine
+  art: hearth_ormr
+  when: Spring, 830
+  title: The last night
+  text: |
+    You have until the next full moon to be out of Hordaland. Your mother takes it as an order and packs your sea-chest the same night, twice: once with everything you'll need, and once again, after she's unpacked it and wept, with everything you'll need and more.
+
+    Your father sits by the fire with his arm in its sling and doesn't say anything until the fire has burned down by half. Then he gets up, and takes his axe down from the wall, the one you killed Ozurr with, cleaned now, and puts it in your hands.
+
+    "It knows the way," he says. And then, after a while: "So do I. I'd have done the same." That's all. He sits back down.
+    [break]
+    After dark there is a knock at the door. It's Ketill, who rowed with your father when they were both young, grey all through now, with forearms like ship's knees. He doesn't come in.
+
+    "Ásgeir is taking the Raven west at the end of the month," he says. "Forty oars. He's short. He doesn't need to know what I tell him." He looks at you. "There's a trader called Þórir going to Orkney on the next tide. He'll take you for your back at his oars. Be at Birsay when the Raven comes in."
+
+    Then he's gone.
+  choices:
+    - id: father
+      text: Sit with your father until the fire goes out.
+      effects: [ { item: { id: grimr_axe, equip: true } }, { add: { honour: 1 } } ]
+      result: You sit with him until the fire is coals and then ash, and neither of you says anything, and it's the longest you have ever talked.
+      next: o_passage
+    - id: mother
+      text: Let your mother finish the sea-chest. Then let her hold you.
+      effects: [ { item: { id: grimr_axe, equip: true } }, { add: { provisions: 60, hamingja: 1 } } ]
+      result: |
+        She finishes it a third time. There is dried fish in it, and a new shirt, and a whetstone, and a little bag of salt, and a lock of her hair tied with red wool, which you don't find until Orkney. She holds you at the door until your shoulder is wet, and then pushes you away, hard, and shuts it.
+      next: o_passage
+    - id: ketill
+      text: Go after Ketill, and ask him why.
+      effects: [ { item: { id: grimr_axe, equip: true } }, { set: flag.o_ketill_asked }, { add: { man.ketill.loyalty: 2 } } ]
+      result: |
+        You catch him at the end of the shore path. He stops, and thinks about it, which he does about everything.
+
+        "Your father pulled me out of the sea off Kintyre," he says, "the year we went west and came back with nothing but his broken nose. I've owed him since. Now I owe you." He walks on. "Don't make it expensive."
+      next: o_passage
+
+- id: o_passage
+  kind: spine
+  art: open_sea
+  when: Spring, 830
+  title: Passage west
+  text: |
+    Þórir the Hjaltlander's knarr is broad and slow and stinks of wool and stockfish, and he takes you on for your back at his oars and doesn't ask why a boy from a good farm is leaving Hordaland in the night with an axe and a full sea-chest. Traders don't ask. It's why they live to be old.
+
+    There are eight of you at the oars. One of them is a lean young man with Hrapp's long jaw, who looks at you the first morning out and then doesn't look at you again. That's harder to sleep beside.
+    [break]
+    His name is Kolgrímr. He's Hrapp's sister's son. He has an uncle in Orkney, he tells the man next to him, loudly, where you can hear, and he's going to tell his uncle all the news from Hordaland. All of it.
+
+    It is six days to Hjaltland, and four more to Orkney, and you have to sleep sometime.
+  choices:
+    - id: face
+      text: Call him out on the beach at Hjaltland. End it there.
+      danger: true
+      effects: [ { set: flag.o_faced_kolgrimr }, { fight: { foe: beach_brawler, kind: duel, lethal: false, win: o_passage_won, lose: o_passage_lost } } ]
+    - id: buy
+      text: Buy his silence. Twelve coins and a promise.
+      requires: ["silver >= 12"]
+      effects: [ { add: { silver: -12 } }, { set: flag.o_kolgrimr_bought }, &west { join_ship: { captain: Þórir, ship_name: "Þórir's knarr", type: knarr, crew: 8, home: orkney, route: [orkney] } } ]
+      result: |
+        He takes it. He weighs it, and bites one of the coins, and puts it away, and grins at you with Hrapp's long jaw. "Silent as the grave," he says. "Ozurr's, say."
+
+        You don't believe him. But he takes it, and that's something, and you sleep with your back to the strakes and the axe under your hand, all the way to Orkney.
+    - id: watch
+      text: Say nothing. Watch him, all the way. Never sleep where he can reach you.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          You watch him. On the eighth night, off the Orkney skerries, he comes down the ship toward you in the dark with something in his hand, and you're not asleep, and he sees you're not, and goes back.
+
+          At Birsay he goes ashore with the others and walks off up the beach without telling anybody anything, because you are standing at the top of the beach, watching him, and he understands that you'll keep watching.
+        effects: [ { set: flag.o_kolgrimr_cowed }, { add: { skill.cunning: 1 } }, *west ]
+      failure:
+        text: |
+          You watch him for nine days and sleep on the tenth, for an hour, off the Orkney skerries, and when you wake your sea-chest is open and your mother's lock of hair is in the sea and Kolgrímr is at the bow, singing.
+
+          At Birsay he's off the ship before it grounds, and by night every man in Harek's hall knows there's a Hordaland outlaw on the beach, with a Hrappsson's blood on his father's axe.
+        effects: [ { set: flag.o_kolgrimr_told }, *west ]
+
+- id: o_passage_won
+  kind: spine
+  art: open_sea
+  title: Hjaltland
+  text: |
+    It's quick. Kolgrímr fights like a man who has watched fights, and you fight like a man who has killed one, and on the shingle at Hjaltland, with Þórir's crew standing round eating their dinner, you knock him down three times, and the third time he stays down.
+
+    Þórir walks over and looks at him, and then at you. "He'll stay here," he says. "There's a farm up the dale that wants hands. He'll be happy." Kolgrímr doesn't look happy. But he stays.
+  choices:
+    - id: on
+      text: Get back in the ship.
+      effects: [ { set: flag.o_kolgrimr_left }, *west ]
+      result: You row the last four days to Orkney with a bench to yourself and your back to nobody.
+
+- id: o_passage_lost
+  kind: spine
+  art: open_sea
+  title: Hjaltland
+  text: |
+    He's better than you thought. On the shingle at Hjaltland, with Þórir's crew standing round eating their dinner, he puts you down twice and then stands over you, and doesn't finish it, because Þórir is watching, and Þórir has made it clear he wants his oarsmen alive.
+
+    "Next time," Kolgrímr says, and spits, and gets back in the ship.
+  choices:
+    - id: on
+      text: Get back in the ship.
+      effects: [ { set: flag.o_kolgrimr_told }, *west ]
+      result: At Birsay he's off the ship before it grounds, and by night every man in Harek's hall knows there's a Hordaland outlaw on the beach.
+
+# Birsay: he has been working Harek's boats three weeks when the Raven comes in.
+- id: o_birsay
+  kind: place
+  trigger: arrive
+  at: [orkney]
+  once: true
+  weight: 20
+  requires: ["background == outlaw", "!flag.o_joined"]
+  art: birsay
+  title: The Raven comes in
+  text: |
+    You're three weeks at Birsay, mending Harek's nets and gutting his fish for your keep and sleeping in his boat-shed, when the Raven comes round the headland: forty oars, a mast like a young pine, and a carved head on her stem that somebody has painted black and given red eyes.
+
+    You're on the beach before she grounds. So, it seems, is everybody.
+    [if flag.o_kolgrimr_told]
+    Harek's men stand a little apart from you. They know what you are; Kolgrímr made sure of it. Nobody has tried anything. Harek doesn't want trouble in his hall with the Raven coming. But they watch.
+    [/if]
+    [break]
+    Ásgeir Kolsson jumps down into the shallows, older than the man you remember, thicker in the neck, with grey in his beard, and Ketill comes down after him and walks straight up the beach to you and stands there.
+
+    Ásgeir looks at you, and at Ketill, and at the axe in your belt. "Grímr's boy," he says. "I heard. The whole of Hordaland heard." He chews it over. "I'm short. Ketill says you can pull an oar and that I don't need to know anything else." He looks at Steinarr, behind him, who is shaking his head. "An outlaw aboard is bad luck, Steinarr says. And worse with the jarl."
+  choices:
+    - id: oar
+      text: Tell him you can pull an oar.
+      effects:
+        - &raven { join_ship: { captain: Ásgeir, ship_name: the Raven, type: snekkja, crew: 34, home: orkney, men: [ketill, ulf, hallvard, bersi] } }
+        - { set: flag.o_joined }
+        - { queue: { scene: o_hall, days: 0 } }
+      result: |
+        "Can you," says Ásgeir. It isn't a question. He jerks his head at the ship. "Find a bench. Find out who you're rowing next to." He walks off up the beach to Harek's hall without another word, and Steinarr looks at you for a long moment and follows him.
+
+        The man on the bench across from yours is your own age, near enough, with a grin like a split melon. "An outlaw," he says, delighted. "A real one. I'm Ulf. What did you do?"
+    - id: luck
+      text: Tell Steinarr that bad luck is a man who doesn't take the oars he's offered.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          Steinarr looks at you, and at the men round him, who are laughing, and then he laughs too, despite himself. "All right," he says. "But if we sink, I'm throwing you over first."
+        effects: [ *raven, { set: flag.o_joined }, { add: { man.ulf.loyalty: 1 } }, { queue: { scene: o_hall, days: 0 } } ]
+      failure:
+        text: |
+          Steinarr doesn't laugh. "He talks well for a wolf's head," he says to Ásgeir, and Ásgeir takes you anyway, because he's short, and because Ketill is standing there. But Steinarr will remember it.
+        effects: [ *raven, { set: flag.o_joined }, { set: flag.o_steinarr_cold }, { queue: { scene: o_hall, days: 0 } } ]
+
+# The autumn: the Raven goes home, and he can't. The ones who swore stay; Harek takes him in.
+- id: o_parting
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["background == outlaw", "phase == winter", "place == orkney", "winter == 830"]
+  art: birsay
+  title: The Raven goes home
+  text: |
+    The Raven goes home to Hordaland without you on a cold bright morning at the end of the summer, low in the water, with your share of the summer in your sea-chest on the beach and the gulls following her out past the headland.
+
+    You stand on the beach and watch her go. It's the first time since spring you've stood still long enough to feel it.
+    [break]
+    Not everybody went. Ketill is sitting on his sea-chest beside yours, with his arms folded, looking at the sea.
+    [if man.ulf.loyalty >= 5]
+    Ulf is with him, grinning. "Somebody's got to keep you alive," he says. "Ketill's too old."
+    [/if]
+    [if man.hallvard.loyalty >= 6]
+    Hallvard is there too. He says the ravens went north this morning, not east. He doesn't say what that means. He doesn't have to.
+    [/if]
+    [if man.bersi.loyalty >= 6]
+    Bersi has stayed. He says Harek pays better than the jarl, which isn't true, and everybody knows it isn't, and nobody says so.
+    [/if]
+
+    Harek of Birsay comes down to the beach with his cloak pulled round him and looks at the lot of you. "Wolf's heads eat," he says. "So do the men who follow them. You'll winter in my hall, and row for me in the spring, and we'll see."
+  choices:
+    - id: hall
+      text: Go up to Harek's hall.
+      effects:
+        - { if: "man.ketill.loyalty >= 3", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
+        - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
+        - { if: "man.hallvard.loyalty >= 6", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
+        - { if: "man.bersi.loyalty >= 6", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
+        - { join_ship: { captain: Harek, ship_name: "Harek's Sea-Stallion", type: snekkja, crew: 30, home: orkney } }
+      result: |
+        It's a good hall, as halls go, warm and loud and smelling of peat and wet dog. It isn't yours, and it isn't your father's, and every man in it knows why you're in it and not in your own. You find you can live with that. You find you have to.
+
+- id: o_yule
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["background == outlaw", "place == orkney", "winter == 830", { any: ["month == 12", "month <= 2"] }]
+  art: yule_hall
+  when: Yule, 830
+  title: Yule at Birsay
+  text: |
+    Yule at Birsay is like Yule anywhere: the boar, the smoke, the dogs, the noise. Only the faces are wrong.
+
+    Harek sits in his high seat with his red beard combed out for the feast, and his daughter Ingibjörg goes down the benches with the ale. When she gets to you she stops, and pours, and doesn't move on.
+
+    "They say you killed a man at a horse-fight," she says. Not quietly. The bench goes quiet round you. "Was it worth it?"
+    [break]
+    Harek's men have a name for you already, though they don't say it to your face yet. They call you Vargr: the wolf, the outlaw, the man any man may kill.
+
+    The bragarfull comes round later, the great horn rimmed with silver, and each man who takes it stands on his bench and swears what he will do in the year to come. Harek's men watch you take it. Some of them are hoping you'll make a fool of yourself. Some of them are just curious what a wolf's head swears to.
+  choices:
+    - id: home
+      text: Swear you'll go home in three winters with the wergild in your hand.
+      effects: [ { set: flag.o_sworn_wergild }, { add: { honour: 1 } }, &oname { if: "!nickname", then: [ { if: flag.i_first, then: [ { nickname: Gate-Breaker } ], else: [ { if: flag.bg_acclaimed, then: [ { nickname: Raven } ], else: [ { nickname: Vargr } ] } ] } ] } ]
+      result: |
+        "In three winters," you say, "I'll walk into Hrapp's hall and put three pounds of silver on his board, and he'll take it, because the jarl will make him." Then you drink.
+
+        Ingibjörg is watching from the end of the hall. It's not a boast that makes the hall roar. It's the kind that makes the old men nod. Harek nods.
+    - id: ship
+      text: Swear you will stand at your own steering-oar within two winters.
+      effects: [ { boast: own_ship }, { add: { flag.y_hall: 1 } }, *oname ]
+      result: |
+        "Within two winters," you say, "I'll stand at my own steering-oar." Harek laughs out loud. "In whose ship?" he says. "Mine?" The hall laughs with him. Ingibjörg doesn't.
+    - id: cup
+      text: Swear you will drink from an Irish king's own cup.
+      effects: [ { boast: irish_cup }, { add: { flag.y_hall: 2 } }, *oname ]
+      result: |
+        "I've seen their abbeys," you say. "Next I'll see their kings. And I'll drink from one of their cups, the one he keeps for himself, before I'm done." That gets a roar. Harek raises his own cup to you. It is not clear whether he is mocking you.
+    - id: worth
+      text: Answer Ingibjörg instead. Tell her the truth.
+      effects: [ { set: flag.o_ingibjorg }, { add: { man.ketill.loyalty: 1 } }, *oname ]
+      result: |
+        "My father's horse is alive," you tell her. "Ozurr isn't. I'm in your father's hall instead of mine. Ask me in three winters."
+
+        She looks at you a long time. Then she goes on down the bench with the ale. But later, when the hall is asleep, there's a red thread tied round your wrist that wasn't there before.
+
+- id: o_kolgrimr
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["background == outlaw", "place == orkney", "winter == 830", flag.o_kolgrimr_told, seen.o_yule]
+  art: yule_hall
+  title: Hrapp's kin
+  text: |
+    Kolgrímr's uncle in Orkney turns out to be a farmer called Svein with a farm across the bay from Birsay, three grown sons, and a long memory. They come to Harek's hall on the last night of Yule, the four of them, with Kolgrímr behind them, and stand in the door, and the hall goes quiet.
+
+    "Ozurr Hrappsson was my sister's son's cousin," says Svein, which is how they count it in Orkney. "We've no quarrel with Harek. Our quarrel's with the wolf's head."
+
+    Harek looks at you from his high seat. He won't stop it. It isn't his feud. But it's his hall, and he wants to see what you do.
+  choices:
+    - id: fight
+      text: Tell Kolgrímr to come out on the beach, alone, if he's a man.
+      danger: true
+      effects: [ { fight: { foe: beach_brawler, kind: duel, lethal: false, win: o_kolgrimr_won, lose: o_kolgrimr_lost } } ]
+    - id: harek
+      text: Remind Harek, loud, that a man who eats in his hall is under his peace.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          Harek stands up. "He's right," he says. "He's eaten my meat all winter. Any man who draws in my hall draws on me." Svein looks at Harek's men, and counts them, and takes his sons home. Kolgrímr goes last, looking back.
+        effects: [ { add: { honour: 1 } }, { standing: { place: orkney, n: 1 } } ]
+      failure:
+        text: |
+          Harek shrugs. "He's eaten my meat," he says. "He hasn't eaten my oath." Then he sits back to watch, and in the end it's Ketill who stands up and stands beside you, and then Ulf, and Svein counts again, and decides another night.
+        effects: [ { add: { honour: -1, man.ketill.loyalty: 1 } } ]
+
+- id: o_kolgrimr_won
+  kind: spine
+  art: yule_hall
+  title: The beach at Birsay
+  text: |
+    On the frozen beach under the hall, in the light of the torches Harek's men carry down, you beat Kolgrímr until he can't stand, and then you let him crawl back to his uncle.
+
+    Nobody from Svein's farm comes to Harek's hall again that winter.
+  choices:
+    - id: on
+      text: Go back up to the fire.
+      effects: [ { deed: { type: duel_won, text: "Beat Hrapp's kinsman on the beach at Birsay at Yule", witnesses: 60 } } ]
+      result: Ingibjörg is at the door when you come up, with her arms folded. She doesn't say anything. She stands aside to let you in.
+
+- id: o_kolgrimr_lost
+  kind: spine
+  art: yule_hall
+  title: The beach at Birsay
+  text: |
+    On the frozen beach under the hall, in the light of the torches, Kolgrímr beats you. He's better rested, and you've been at the ale, and that's how it goes. He stands over you with the torchlight on his long Hrapp jaw.
+
+    "That's for Ozurr," he says. "The rest is my uncle's." He goes. The rest doesn't come, that winter. But it will.
+  choices:
+    - id: on
+      text: Get up.
+      effects: [ { add: { honour: -1 } } ]
+      result: Ketill helps you up the beach. He doesn't say anything. That's worse than anything he could say.
+
+# Spring 831, abroad: Harek's summer.
+- id: o_spring_831
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["background == outlaw", "year == 831", "place == orkney", service]
+  art: birsay
+  when: Spring, 831
+  title: Harek's summer
+  text: |
+    The ice doesn't go out of Orkney's harbours the way it goes out of a fjord, all at once with a noise like thunder. Here the spring comes in on the wind, a little at a time, until one morning Harek stands on his beach and sniffs, and says, "Now."
+
+    You are seventeen. One winter gone, of three.
+    [break]
+    Harek has a plan for the summer, and he tells it in his hall with his feet on the board. "Skye first: there's a settler there called Kolbeinn paying silver for men to hold a valley. Then south to Ireland, to a little kingdom called Conaille, whose king has been hanging Norsemen from his gate. Then home by Kaupang, to sell what we take." He looks down the hall at you. "Kaupang's in the Vestfold king's country. Your jarl's law doesn't reach there. Even a wolf's head can buy a mail shirt in Kaupang."
+  choices:
+    - id: prow
+      text: Ask Harek for the prow. First ashore, a share and a half.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          Harek looks at you over his cup for a long while. "The prow's where I put men I don't mind losing," he says. "Take it." His men laugh. You take it anyway.
+        effects: [ { shares: 1.5 }, { set: flag.prow_man }, { route: [skye, conaille, kaupang] }, { know: skye }, { know: conaille }, { know: kaupang }, { know: lindisfarne } ]
+      failure:
+        text: |
+          "The prow?" says Harek. "You can have the prow when you've been to Ireland under my steering-oar and come back. Find a bench."
+        effects: [ { route: [skye, conaille, kaupang] }, { know: skye }, { know: conaille }, { know: kaupang }, { know: lindisfarne } ]
+    - id: bench
+      text: Take a bench, and say nothing. It's his ship.
+      effects: [ { route: [skye, conaille, kaupang] }, { know: skye }, { know: conaille }, { know: kaupang }, { know: lindisfarne }, { add: { man.ketill.loyalty: 1 } } ]
+      result: |
+        You find a bench and put your chest under it. Ketill takes the bench behind you, as he always does, as if he'd been born there.
+
+        "Two more winters," he says. "Count them in summers. It goes quicker."
+
+# The hunter: Önundr, the youngest and best of Hrapp's sons, comes west to find him.
+- id: o_onund
+  kind: place
+  trigger: arrive
+  chance: 0.35
+  cooldown_days: 200
+  weight: 10
+  requires: ["background == outlaw", "year >= 831", "!flag.o_onund_done", "!flag.o_peace", "place != home_fjord", "place != orkney"]
+  art: open_sea
+  title: Hrapp's youngest
+  text: |
+    There's a ship on the beach when you come in: one ship, thirty oars, with a carved prow you know from the jarl's landing at home. Önundr Hrappsson's.
+
+    He's sitting on a rock above the tideline, alone, with his sword across his knees, waiting. He's the youngest of Hrapp's sons and the best of them, everybody always said: quick where Ozurr was slow, quiet where Thorgils was loud. He has come a long way to sit on this rock.
+
+    "I've been to Orkney," he says, when you come up the beach. "And Skye. And here. I was going to Ireland next." He stands up. "My father's old. He wanted it done before he dies."
+  choices:
+    - id: fight
+      text: Fight him. Here, now, on the sand.
+      danger: true
+      effects: [ { set: flag.o_onund_done }, { fight: { foe: onund, kind: duel, lethal: false, win: o_onund_won, lose: o_onund_lost } } ]
+    - id: pay
+      text: Offer him the wergild for his brother, here, three pounds, to take home to his father.
+      requires: ["silver >= 144"]
+      effects: [ { add: { silver: -144 } }, { set: flag.o_onund_done }, { set: flag.o_wergild_paid }, { add: { honour: 1 } } ]
+      result: |
+        He looks at the silver on the rock between you while the tide comes in a hand's breadth. Then he says, "My father won't take it." And then: "I will." He picks it up, every coin, and weighs it in his hand.
+
+        "It's not peace," he says. "It's a pound and a half short of peace. That's the jarl's part. But it's what I came for, near enough." He goes back to his ship. Behind him, his men look at each other, and at you, and follow.
+    - id: talk
+      text: Tell him to wait for the Thing. You'll come home, and face it there.
+      danger: true
+      check: { skill: speech, attr: wit, difficulty: 6 }
+      success:
+        text: |
+          "In front of the jarl," you say. "In front of the district. Not on a beach in Ireland where nobody will see either of us die." He thinks about that. He's the clever one.
+
+          "In front of the district," he agrees, finally. "When you come home, I'll be on the landing." He goes. You find, afterwards, that your hands are shaking.
+        effects: [ { set: flag.o_onund_done }, { set: flag.o_onund_waits } ]
+      failure:
+        text: |
+          "Wait?" he says. "My father's waited a year." He draws. There's no talking after that.
+        effects: [ { set: flag.o_onund_done }, { fight: { foe: onund, kind: duel, lethal: false, win: o_onund_won, lose: o_onund_lost } } ]
+
+- id: o_onund_won
+  kind: spine
+  art: holmgang
+  title: The sand
+  text: |
+    He's good. He's better than you, maybe, on another day. But he's come a long way to sit on that rock, and he's tired in a way he doesn't know he's tired, and you aren't.
+
+    He goes down on the wet sand with the tide coming in round him, and looks up at you, and says, "Tell my father it was quick," and it is.
+  choices:
+    - id: on
+      text: Tell his men to take him home.
+      effects: [ { ally: { id: onund, kill: true } }, { set: flag.o_onund_dead }, { deed: { type: holmgang_won, text: "Killed Önundr Hrappsson on the sand, when he came to avenge his brother" } } ]
+      result: |
+        His men take him home. They don't look at you. Hrapp has buried two sons now because of a horse-fight, and has one left with a ship, and none who'll come looking. The feud isn't over. Feuds aren't. But it's tired.
+
+- id: o_onund_lost
+  kind: spine
+  art: holmgang
+  title: The sand
+  text: |
+    He's better than you. It's as simple as that, and it takes about as long. You're on your back on the wet sand with the tide coming in round you and his sword at your throat, and he looks down at you for a long moment, and doesn't push.
+
+    "Not here," he says. "Not on a beach nobody will remember. When you come home." He goes back to his ship.
+  choices:
+    - id: on
+      text: Get up, when you can.
+      effects: [ { set: flag.o_onund_waits }, { add: { honour: -1 } } ]
+      result: Ketill binds you up. He doesn't say anything. But you see him, later, watching Önundr's sail go out of sight, and his face is not a face you've seen on him before.
+
+# Spring 832, abroad: a ship of his own, by the outlaw's road.
+- id: o_spring_832
+  kind: phase
+  trigger: phase_start
+  once: true
+  requires: ["background == outlaw", "year == 832", "place == orkney", service]
+  art: birsay
+  when: Spring, 832
+  title: Harek's karvi
+  text: |
+    You are eighteen. Two winters gone. [if flag.o_two_winters]The jarl gave you two; the time is served.[else]One to go.[/if]
+
+    Harek finds you on the beach, looking at an old karvi drawn up under the boat-shed: twenty-eight oars, a patched sail, the strakes grey with two winters' neglect.
+    [break]
+    "She was my brother's," he says. "He drowned off Fair Isle in her. Nobody's wanted her since. Sailors are like that." He looks at you sideways. "You aren't. A quarter of what she brings home, to me. And you sail where I can find you."
+    [if flag.o_ingibjorg]
+    Behind him, at the top of the beach, Ingibjörg is watching, with her arms folded.
+    [/if]
+  choices:
+    - id: take
+      text: Take her. A quarter to Harek.
+      effects:
+        - { ship: { type: karvi, name: "The Fair Isle", crew: 10 } }
+        - { set: flag.owes_jarl }
+        - { set: flag.o_harek_ship }
+        - { keep_boast: own_ship }
+      result: |
+        You call her the Fair Isle, which makes Harek laugh, and then not laugh. You spend a week on her strakes before you trust her. Then you take her out past the headland with Ketill at the bow and the wind in your teeth, and the whole of Birsay comes down to watch.
+
+        You can't go home. But you can go anywhere else.
+    - id: buy
+      text: Pay Harek four pounds for her outright, and owe nobody.
+      requires: ["silver >= 192"]
+      effects:
+        - { add: { silver: -192 } }
+        - { ship: { type: karvi, name: "The Fair Isle", crew: 10 } }
+        - { keep_boast: own_ship }
+      result: |
+        Harek weighs it twice and grins. "A wolf's head with four pounds," he says. "Ireland's been good to you." She's yours. You can't go home. But you can go anywhere else.
+    - id: bench
+      text: Another summer at Harek's oar. Go home with something worth bringing.
+      effects: [ { route: [skye, iona, conaille, kaupang] } ]
+      result: Harek shrugs. "She'll keep," he says. "Nobody else wants her." You go back to your bench.
+
+# Spring 833 (or 832, if the jarl gave him two winters): the time is served.
+- id: o_return
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 300
+  requires: ["background == outlaw", flag.outlawed, "!flag.outlaw_ended", "place != home_fjord", { any: ["year >= 833", "year >= 832 && flag.o_two_winters"] }]
+  art: open_sea
+  title: Three winters
+  text: |
+    [if flag.o_two_winters]
+    Two winters. That's what the jarl said at the Thing, with Fölski limping in front of the mound, and that's what it's been.
+    [else]
+    Three winters. That's what the jarl said at the Thing, and that's what it's been.
+    [/if]
+    You were sixteen when you went over the rail with your father's axe. You're older now, by more than the winters.
+
+    The law has nothing more to say to you. Hrapp's house may have.
+    [if flag.o_onund_dead]
+    Hrapp has buried two sons. He has one left, Thorgils, and Thorgils has never been the kind to go looking.
+    [elif flag.o_onund_waits]
+    Önundr Hrappsson said he'd be on the landing. Önundr Hrappsson is the kind of man who is where he said he'd be.
+    [elif flag.o_wergild_paid]
+    Önundr took the wergild home to his father. Hrapp, they say, threw it in the fjord. Then he sent his thralls in after it.
+    [/if]
+  choices:
+    - id: pay
+      text: Sail home with the wergild and the jarl's price in your sea-chest, and pay it on the landing.
+      requires: [{ any: ["silver >= 216", "flag.o_wergild_paid && silver >= 72"] }]
+      effects:
+        - { if: flag.o_wergild_paid, then: [ { add: { silver: -72 } } ], else: [ { add: { silver: -216 } } ] }
+        - { set: flag.o_peace }
+        - { favour: 2 }
+        - { exile_end: true }
+        - { deed: { type: deed, text: "Came home from outlawry and paid the wergild for Ozurr Hrappsson on the jarl's landing", weight: 3, witnesses: 200 } }
+      result: |
+        You come up the fjord in the last week of the winter, with the ice just out and the water black, and walk up the jarl's landing with your sea-chest on your shoulder and put it down in front of the jarl's steward, and open it, and count it out.
+
+        Hrapp is there. He's very old now. He watches every coin go onto the scales, and when it's done, he nods, once, and turns and walks up the hill without a word. That's peace, in Hordaland. It's what peace looks like.
+
+        Your mother is at the back of the crowd. Your father isn't; he died the second winter, Ketill tells you, quietly, on the landing, and you understand why nobody wrote. [if flag.o_ketill_asked]"He knew where you were," Ketill says. "I made sure."[/if]
+    - id: home
+      text: Sail home. The law's done with you. Hrapp's house can do what it likes.
+      effects: [ { set: flag.o_hunted }, { exile_end: true }, { add: { honour: 1 } } ]
+      result: |
+        You come up the fjord in the last week of the winter with your axe in your belt and your sea-chest full of silver you haven't spent on Hrapp, and walk up the jarl's landing as if you owned it.
+
+        Nobody stops you. The law is done with you. Hrapp's sons watch you from the top of the landing, and don't come down, and you know they're counting the days the same way you counted them.
+
+        Your mother is at the back of the crowd. Your father isn't; he died the second winter, Ketill tells you, and you understand why nobody wrote.
+    - id: stay
+      text: Not yet. One more summer abroad.
+      effects: [ { add: { man.ketill.loyalty: -1 } } ]
+      result: |
+        Ketill looks at you until you look away. Then he goes and sits in the bow, by himself, and looks east, toward Hordaland, which you can't see from here and he can.

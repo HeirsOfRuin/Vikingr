@@ -32,7 +32,19 @@ export function routes(state: GameState, content: ContentBundle, from: string, a
     // uncharted water is sailed only as an expedition, until the far end is charted; a rumour of a place on a
     // known sea road is enough to find it
     .filter((r) => content.places[r.to]?.active && (r.leg.expedition ? state.known.includes(r.to) && state.known.includes(from) : any || state.known.includes(r.to) || state.rumoured.includes(r.to)))
+    // an outlaw can't sail home until his time is served (docs/FRAME-BEGINNINGS.md)
+    .filter((r) => !(r.to === 'home_fjord' && exiled(state)))
     .map((r) => ({ ...r, days: Math.round((r.leg.days / (speed * AVG_PROGRESS)) * 10) / 10 }));
+}
+
+/** Outlawed from Hordaland, and the three winters not yet served. */
+export function exiled(state: GameState): boolean {
+  return !!state.flags.outlawed && !state.flags.outlaw_ended;
+}
+
+/** Where the captain he rows for ends his season. */
+export function serviceHome(state: GameState): string {
+  return state.service?.home ?? 'home_fjord';
 }
 
 /** On his first landfall at a port, its people tell him of their neighbours (the place's `tells`), as many as
@@ -73,7 +85,7 @@ export function stormChance(state: GameState, kind: Leg['kind'], wind: Wind): nu
 }
 
 /** The next place on the shortest sea road from one place to another (by legs, any place on the map). */
-export function nextHop(content: ContentBundle, from: string, to: string): string | null {
+export function nextHop(content: ContentBundle, from: string, to: string, avoid?: string): string | null {
   if (from === to) return null;
   const prev: Record<string, string> = {};
   const seen = new Set([from]);
@@ -82,7 +94,7 @@ export function nextHop(content: ContentBundle, from: string, to: string): strin
     const cur = q.shift()!;
     for (const l of content.legs) {
       const nb = l.a === cur ? l.b : l.b === cur ? l.a : null;
-      if (!nb || l.expedition || seen.has(nb) || !content.places[nb]?.active) continue;
+      if (!nb || l.expedition || seen.has(nb) || !content.places[nb]?.active || nb === avoid) continue;
       seen.add(nb);
       prev[nb] = cur;
       q.push(nb);
@@ -99,7 +111,8 @@ export function nextHop(content: ContentBundle, from: string, to: string): strin
 export function startVoyage(state: GameState, content: ContentBundle, to: string, any = false, expedition = false): void {
   const from = state.at!;
   if (any) {
-    const hop = nextHop(content, from, to);
+    // an outlaw's captain goes round Hordaland, not through it
+    const hop = nextHop(content, from, to, exiled(state) ? 'home_fjord' : undefined);
     if (!hop) throw new Error(`no sea road from ${from} to ${to}`);
     to = hop;
   }

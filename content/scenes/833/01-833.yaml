@@ -5,7 +5,7 @@
   trigger: phase_start
   once: true
   weight: 10
-  requires: ["year >= 833", "place == home_fjord", "phase == muster", seen.sp_832]
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", { any: [seen.sp_832, flag.outlaw_ended] }]
   art: yule_hall
   when: Spring, 833
   title: The emperor's sons

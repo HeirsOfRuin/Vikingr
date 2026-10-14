@@ -90,6 +90,10 @@ const baseEffect = z.union([
   z.object({ fire: z.enum(['hoard', 'trophies', 'people']) }).strict(),
   z.object({ lose_ship: z.enum(['wreck', 'give']) }).strict(),
   z.object({ jarl_men: z.literal(true) }).strict(),
+  // another man's ship (docs/FRAME-BEGINNINGS.md): the outlaw's passage west, the Raven at Birsay, Harek's oar
+  z.object({ join_ship: z.object({ captain: z.string(), ship_name: z.string(), type: id, crew: z.number().int().min(0), home: id.optional(), route: z.array(id).optional(), men: z.array(id).optional() }).strict() }).strict(),
+  // the outlaw's three winters served: home, at the muster
+  z.object({ exile_end: z.literal(true) }).strict(),
   // arm-rings (src/engine/rings.ts): given to him (n > 0) or given away (n < 0)
   z.object({ ring: z.object({ metal: z.enum(['silver', 'gold']), n: z.number().int().optional() }).strict() }).strict(),
 ]);

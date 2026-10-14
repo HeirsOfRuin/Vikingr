@@ -4,7 +4,7 @@
   trigger: sea
   chance: 0.3
   once: true
-  requires: [service]
+  requires: [service, { any: ["background != outlaw", flag.o_joined] }]
   art: open_sea
   title: The open sea
   text: |
@@ -51,7 +51,7 @@
   trigger: sea
   chance: 0.04
   once: true
-  requires: [service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
+  requires: [service, "!flag.bg_left", { any: ["background != outlaw", flag.o_joined] }]  # Ásgeir is at the steering-oar
   art: open_sea
   title: The whale
   text: |
@@ -101,6 +101,7 @@
   chance: 0.035
   once: true
   art: open_sea
+  requires: [{ any: ["background != outlaw", flag.o_joined] }]
   title: Wreckage
   text: |
     Planks on the water. A spar. A sea-chest, riding low. And, tangled in a line from the spar, a drowned man, face down, his hair spread out round his head like weed.
@@ -132,7 +133,7 @@
   trigger: sea
   chance: 0.02
   once: true
-  requires: ["month <= 8", service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
+  requires: ["month <= 8", service, "!flag.bg_left", { any: ["background != outlaw", flag.o_joined] }]  # Ásgeir is at the steering-oar
   art: open_sea
   title: Sails astern
   text: |
@@ -167,7 +168,7 @@
   trigger: sea
   chance: 0.04
   once: true
-  requires: [service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
+  requires: [service, "!flag.bg_left", { any: ["background != outlaw", flag.o_joined] }]  # Ásgeir is at the steering-oar
   art: open_sea
   title: The calm
   text: |
@@ -209,7 +210,7 @@
   trigger: sea
   chance: 0.04
   once: true
-  requires: [service, "!flag.bg_left"]  # Ásgeir is at the steering-oar
+  requires: [service, "!flag.bg_left", { any: ["background != outlaw", flag.o_joined] }]  # Ásgeir is at the steering-oar
   art: open_sea
   title: Ravens
   text: |
@@ -253,6 +254,7 @@
   chance: 0.04
   once: true
   art: open_sea
+  requires: [{ any: ["background != outlaw", flag.o_joined] }]
   title: Bersi's dice
   text: |
     At anchor in a bay with no name, Bersi brings out the dice. Bone dice, yellow with handling, that he says belonged to his grandfather, who won a farm with them.
@@ -297,7 +299,7 @@
   trigger: arrive
   at: [shetland]
   once: true
-  requires: [service]
+  requires: [service, { any: ["background != outlaw", flag.o_joined] }]
   art: open_sea
   title: Hjaltland
   text: |

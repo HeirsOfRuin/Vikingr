@@ -23,7 +23,7 @@ import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
-import { expeditionRoads, routes, runVoyage, startVoyage } from './voyage';
+import { expeditionRoads, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
   borrowShip, BUILD_TYPES, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
@@ -64,6 +64,7 @@ export type Action =
   | { t: 'end_season' }
   | { t: 'winter_here' }
   | { t: 'passage_home' }
+  | { t: 'harek' }
   | { t: 'recruit' }
   | { t: 'provision' }
   | { t: 'refit' }
@@ -441,8 +442,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (state.service) {
         const svc = state.service;
         const dest = svc.route[0];
+        const shome = serviceHome(state);
         if (dest && dest !== at) out.push(opt('Sail', { t: 'follow' }, `Row on with ${svc.captain}`, true, undefined, `Bound for ${content.places[dest]?.name ?? dest}`));
-        else if (at !== 'home_fjord') out.push(opt('Sail', { t: 'follow' }, `Row home with ${svc.captain}`, true, undefined, `Bound for ${content.places.home_fjord!.name}`));
+        else if (at !== shome) out.push(opt('Sail', { t: 'follow' }, shome === 'home_fjord' ? `Row home with ${svc.captain}` : `Row to ${content.places[shome]!.name} with ${svc.captain}`, true, undefined, `Bound for ${content.places[shome]!.name}`));
         else out.push(opt('Season', { t: 'end_season' }, 'Haul up the ship for the winter'));
         return out;
       }
@@ -451,7 +453,10 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const short = state.provisions < mouths(state) * r.days;
           out.push(opt('Sail', { t: 'sail', to: r.to }, `Sail to ${content.places[r.to]!.name}`, true, undefined, `About ${r.days} days, ${r.leg.kind === 'open' ? 'open sea' : r.leg.kind}${short ? '. Not enough food' : ''}`));
         }
-      } else if (at !== 'home_fjord') out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage home on a trader' : 'Work your passage home on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
+      } else if (at !== 'home_fjord' && !exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage home on a trader' : 'Work your passage home on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
+      // an outlaw castaway can't go home: a trader takes him west, to the one hall that will have him
+      else if (at !== 'orkney' && exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage to Orkney on a trader' : 'Work your passage to Orkney on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
+      else if (at === 'orkney' && exiled(state) && !state.service) out.push(opt('Sail', { t: 'harek' }, "Go to Harek's hall, and ask for a bench", true, undefined, 'Another summer at his oar'));
       if (place.raid) {
         const done = state.seasonRaids.includes(at);
         out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.'));
@@ -562,7 +567,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'follow':
     case 'voyage_on': {
       if (action.t === 'sail') startVoyage(state, content, action.to);
-      if (action.t === 'follow') startVoyage(state, content, state.service?.route[0] ?? 'home_fjord', true);
+      if (action.t === 'follow') startVoyage(state, content, state.service?.route[0] ?? serviceHome(state), true);
       const r = runVoyage(state, content, rng);
       const talk = banter(state, content, rng, 'sea', 0.6);
       if (talk) r.lines.push(talk);
@@ -746,8 +751,21 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       const paid = state.silver >= 12;
       if (paid) state.silver -= 12;
       state.day += paid ? 12 : 30;
+      if (exiled(state)) {
+        state.at = 'orkney';
+        report('Orkney', [paid ? 'A trader takes you west to Orkney for silver and a hand at the oars. It isn\'t home. It\'s the nearest thing you have.' : 'A trader takes you west to Orkney for nothing but your back at his oars. It isn\'t home. It\'s the nearest thing you have.']);
+        break;
+      }
       state.at = 'home_fjord';
       report('Home', [paid ? 'A trader takes you home for silver and a hand at the oars.' : 'A trader takes you home for nothing but your back at his oars, by the longest way round, with a stop at every market between.']);
+      break;
+    }
+    case 'harek': {
+      // an outlaw without a ship goes back to the bench that fed him
+      state.service = { captain: 'Harek', route: [], shares: 1, home: 'orkney' };
+      state.ships = [{ id: 'service', type: 'snekkja', name: "Harek's Sea-Stallion", hull: 90 }];
+      state.crew.men = Math.max(state.crew.men, 26);
+      report('Birsay', ['Harek looks at you a long while, and at what\'s left of your men. "Wolf\'s heads eat," he says. "Find a bench."']);
       break;
     }
     case 'recruit': report('Muster', recruit(state, content)); break;
@@ -830,6 +848,6 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
     return;
   }
   const doy = dateOf(state.day).doy;
-  if (state.phase === 'sailing' && state.at === 'home_fjord' && !state.voyage && doy >= FORCE_RETURN_DOY) state.phase = 'return';
+  if (state.phase === 'sailing' && state.at === (state.service ? serviceHome(state) : 'home_fjord') && !state.voyage && doy >= FORCE_RETURN_DOY) state.phase = 'return';
   trigger(state, content, rng, 'phase_start');
 }

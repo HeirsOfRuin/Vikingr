@@ -1,13 +1,2 @@
-# PLACEHOLDER scenes for the Phase 1 engine build. Phase 2 replaces them with the real prologue.
-- id: p1_start_outlaw
-  kind: spine
-  placeholder: true
-  title: Spring, 830
-  text: |
-    [Placeholder prologue: the outlaw. Phase 2 writes the killing and the Thing that outlawed you.]
-
-    The district has said its piece. A jarl who needs men more than he needs the law has lent you a karvi, and four men who did not ask what you did.
-  choices:
-    - id: go
-      text: Begin.
-      effects: [ { set: flag.placeholder_start }, { set: flag.owes_jarl } ]
+# Phase 1 placeholder starts: none left; every beginning is written (docs/FRAME-BEGINNINGS.md).
+[]
