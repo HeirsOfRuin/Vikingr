@@ -232,9 +232,12 @@
       result: |
         He takes hold of your wrist with his good hand, hard.
 
-        "I can't steer with one hand and one leg," he says. "Steinarr will want her. Steinarr would lose her by the second summer." He breathes through his teeth for a while. "You stood with me. Nobody told you to. Take her home. She's the jarl's ship, and the jarl will want his quarter, and I'll want mine, and you'll have the rest."
+        "I can't steer with one hand and one leg," he says. "Steinarr will want her. Steinarr would lose her by the second summer." He breathes through his teeth for a while. "You stood with me. Nobody told you to."
 
-        He says it loud enough for the men to hear. Then he lies back and shuts his eyes, and Steinarr walks away down to the water and stands there a long time with his back to everybody.
+        He stops, and breathes, and looks at you properly. "No. You're sixteen. They'd row you into the first rock off Kintyre, and they'd be right to." He says the next part loud enough for the men to hear. "Steinarr steers her home. This one has the prow. And next spring, it's this one I'll name to the jarl."
+
+        Steinarr walks away down to the water and stands there a long time with his back to everybody.
+      effects: [ { set: flag.asgeir_patron } ]
       next: b_oaths
     - id: decline
       text: Tell Ásgeir Steinarr should have her. You are sixteen.
@@ -278,35 +281,41 @@
 - id: b_oaths
   kind: spine
   art: bangor_field
-  title: The steering-oar
+  title: The prow
   text: |
     [if flag.bg_challenged]
-    Steinarr sits on the grass holding his arm together, with blood coming out between his fingers. "First blood," he says, as if it tasted bad. "She's yours. Lose her and I'll be there."
+    Steinarr sits on the grass holding his arm together, with blood coming out between his fingers. "First blood," he says, as if it tasted bad. Then he gets up, and picks up Ásgeir's sword with his good hand, and nobody stops him. "You can have the prow," he says. "The stern stays mine till the jarl says different."
+    [elif fate.asgeir_falls && flag.bg_covered]
+    Steinarr takes the steering-oar. Ásgeir can't hold it, and you are sixteen, and every man on the field knows both things. But Ásgeir said your name out loud, lying in the grass, and every man on the field heard that too.
+    [else]
+    It doesn't happen the way it happens in the stories. The men shout your name, and bang their shields, and then they stand round in the trampled grass and look at each other, and somebody asks who is going to take her home across the open sea, and nobody looks at you.
+
+    Steinarr takes the steering-oar. He doesn't make a speech about it. "They'd follow you up that hill," he says to you, quietly, so only you can hear. "They won't follow you across the sea. Nobody follows a boy across the sea. Take the prow."
     [/if]
-    It doesn't happen the way it happens in the stories. Nobody lifts you on a shield. Ásgeir's sea-chest is carried up to you, and you sit on it, and men come up one at a time and say things.
-
-    Ketill comes first. He puts his hands between yours, the old way, and says the words your father must have said to somebody once.
     [break]
-    The others come after. Not all of them. Some of the Raven's men only nod, and go up the hill to the abbey: they'll row for you, because they want to get home, and that's all.
+    Ásgeir's sea-chest stays in the stern. But the men come up to you one at a time, there on the field, and say things.
 
-    But the ones who sat on your bench all summer come up. Or most of them.
+    Ketill comes first. He puts his hands between yours, the old way, and says the words your father must have said to somebody once. "Not for this ship," he says. "For the one you'll have. I'm old. I'd like to see it."
+
+    The others come after. Not all of them. But the ones who sat on your bench all summer come up. Or most of them.
   choices:
     - id: take
-      text: Take their oaths. Then take Bangor.
+      text: Take their oaths. Then take the prow, up the hill to the abbey.
       effects:
-        - { command: true }
-        - { set: flag.bg_command }
-        - { set: flag.owes_jarl }
-        - { deed: { type: deed, text: Took command of the Raven on the field at Bangor, weight: 4 } }
+        - { captain: Steinarr }
+        - { set: flag.bg_steinarr }
+        - { set: flag.bg_acclaimed }
+        - { shares: 2 }
+        - { deed: { type: deed, text: "Was chosen by the Raven's men on the field at Bangor, and given the prow", weight: 3 } }
         - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ] }
         - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ] }
         - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ] }
         - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ] }
         - { plunder: { next: b_leave } }
       result: |
-        You stand up off Ásgeir's chest. You are captain of a forty-oar ship, at sixteen, in Ireland, with an Irish king a day's ride away and an abbey full of silver on the hill.
+        The prow is the place of honour in a ship, and the place where men die first: the first man ashore, the first into the wall, the first the other side sees. Two shares at the dividing, for it.
 
-        "Well?" you say. "Are we going up there, or not?"
+        You walk up the hill at the front of them, with your oath-men at your back and Steinarr behind them, watching you all the way.
 
 # serving on: the plunder under Ásgeir or Steinarr
 - id: b_serve
@@ -388,8 +397,8 @@
   title: Leaving the lough
   text: |
     You row out of Belfast Lough on the evening tide with the Raven low in the water.
-    [if flag.bg_command]
-    She is yours. The men at the oars are yours, more or less, and the silver under the benches is theirs, and the jarl's, and Ásgeir's, and some of it is yours. Home is a fortnight north and east. Which way you go is your affair now.
+    [if flag.bg_acclaimed]
+    Steinarr is at the steering-oar and you are in the prow, where the men put you. They row facing the stern, as men do, but when they want to know where the ship is going they look past Steinarr to you, and he knows it.
     [elif flag.bg_steinarr]
     Steinarr is at the steering-oar. Ásgeir is wrapped in his cloak under the stern-deck, going home to be buried in the hill above the fjord. The men row quietly.
     [else]

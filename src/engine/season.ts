@@ -135,6 +135,8 @@ export function serviceShare(state: GameState, content: ContentBundle, rng?: Rng
   state.silver += mine;
   earn(state, mine);
   state.loot = 0;
+  // a summer's extra shares are for that summer; the prow-man keeps his share and a half
+  svc.shares = state.flags.prow_man ? 1.5 : 1;
   lines.push(pot > 0
     ? `${svc.captain} divides it on the strand in front of everyone: a quarter to the ship, the rest to the oars. Your ${svc.shares > 1 ? `${svc.shares} shares come` : 'share comes'} to ${formatSilver(mine)}.`
     : `${svc.captain} has nothing to divide but his thanks, and he is short of those too.`);

@@ -1,5 +1,5 @@
 # Boasts sworn over the bragarfull at Yule (FRAME-PHASE2 §4.4). Keep one and it is a deed; break it and honour falls.
-- { id: own_ship, text: "I will stand at my own steering-oar before next Yule.", days: 360 }
+- { id: own_ship, text: "Within two winters I will stand at my own steering-oar.", days: 730 }
 - { id: first_over, text: "Next summer I will be first over the wall, wherever we go.", days: 300 }
 - { id: thorgils_words, text: "Thorgils Hrappsson will eat his words before the ice breaks.", days: 90 }
 - { id: irish_cup, text: "I will drink from an Irish king's own cup.", days: 720 }

@@ -362,7 +362,9 @@
     The bragarfull comes round. Before it reaches you, the jarl's man reckons last year's boasts, as is the custom, one by one, so the hall can hear who kept his word.
     [if boast.own_ship == 2]
     Yours: you swore to stand at your own steering-oar. You did. The hall bangs the tables.
-    [elif boast.own_ship >= 1]
+    [elif boast.own_ship == 1]
+    Yours: you swore to stand at your own steering-oar within two winters. One of them is gone. "A year left," says the jarl's man, and somebody at the back says "Plenty," and somebody else says "Not for him," and the hall laughs, not unkindly.
+    [elif boast.own_ship >= 3]
     Yours: you swore to stand at your own steering-oar. You haven't. The hall goes quiet in the way that is worse than laughing.
     [/if]
     [if boast.irish_cup == 2]

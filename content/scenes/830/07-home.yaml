@@ -62,8 +62,8 @@
   title: Home
   text: |
     You come up the fjord on a still grey afternoon [if month >= 9]in early autumn[elif month == 8]at the end of summer[else]in high summer, with the hay still standing[/if], and the Raven is low in the water.
-    [if flag.bg_command]
-    You are standing at her steering-oar.
+    [if flag.bg_acclaimed]
+    You are standing in her prow, where the men put you on the field at Bangor.
     [/if]
 
     You remember being eight on the shingle, watching a ship come in like this. There are boys on the shingle now, watching you. One of them has his mouth open.
@@ -89,7 +89,7 @@
   choices:
     - id: embrace
       text: Go past your father and take your brother in your arms.
-      effects: [ { set: flag.h_brother_close }, { add: { honour: 1 } }, &jarl_reckoning { if: flag.bg_command, then: [ { queue: { scene: h_jarl, days: 0 } } ] } ]
+      effects: [ { set: flag.h_brother_close }, { add: { honour: 1 } }, &jarl_reckoning { if: flag.bg_acclaimed, then: [ { queue: { scene: h_jarl, days: 0 } } ] } ]
       result: |
         He is stiff as a post for a moment. Then he hits you on the back hard enough to rattle your teeth, which is the same thing.
 
@@ -121,68 +121,68 @@
 # The jarl's reckoning: a boy of sixteen brings the jarl's ship home without the jarl's captain.
 - id: h_jarl
   kind: queued
-  requires: [flag.bg_command]
+  requires: [flag.bg_acclaimed]
   art: home_fjord
-  title: The jarl's reckoning
+  title: The jarl's notice
   text: |
-    Jarl Eystein doesn't send for you. He comes down to the landing himself, the next morning, slowly, a big grey man leaning on a spear-shaft, with half his household behind him, and stands at the Raven's stern and looks her over, strake by strake, before he looks at you.
+    Jarl Eystein doesn't send for you. He comes down to the landing himself, the next morning, slowly, a big grey man leaning on a spear-shaft, with half his household behind him, and stands at the Raven's stern and talks to Steinarr for a long time before he looks at you.
     [if fate.asgeir_falls && !flag.bg_covered]
-    "Ásgeir Kolsson was my sister's son," he says. "I put him in that stern myself, eleven summers ago. Now I'm told he's lying under a cairn in Ireland, and a boy who'd never been further than Karmøy in his life brought my ship home in his place." He doesn't raise his voice. He doesn't need to. "Tell me how that happened."
+    "Ásgeir Kolsson was my sister's son," he says. "I put him in that stern myself, eleven summers ago. Now I'm told he's lying under a cairn in Ireland, and his men wanted to give my ship to a boy who'd never been further than Karmøy in his life." He doesn't raise his voice. He doesn't need to. "Tell me why they'd want that."
     [else]
-    Ásgeir is beside him on a litter, with his leg bound and his ruined hand in his lap. The jarl doesn't look at him. "My sister's son tells me he gave you my ship," he says. "On a field in Ireland, bleeding. He's always been generous with what isn't his." He looks at you. "Tell me why I shouldn't take her back."
+    Ásgeir is beside him on a litter, with his leg bound and his ruined hand in his lap. "My sister's son tells me his men wanted you at the steering-oar," the jarl says. "On a field in Ireland, bleeding. He tells me you had the sense to say no, or Steinarr had the sense to say it for you." He looks at you. "Which was it?"
     [/if]
     [if flag.bg_challenged]
-    Steinarr is in the crowd with his arm in a sling. You wait for him to speak. He doesn't, which from Steinarr is a kind of speech.
+    Steinarr is beside him with his arm in a sling. You wait for him to speak. He doesn't, which from Steinarr is a kind of speech.
     [/if]
     [break]
     Every man on the landing is listening. So is every man who isn't, by tonight.
   choices:
     - id: straight
-      text: Tell it straight. How he fell, who stood where, and what you did after.
+      text: Tell it straight. How he fell, who stood where, and why you took the prow.
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
-          You tell it the way it happened, not the way it would sound best: the javelin, the banner, the levy breaking, the sea-chest, the men coming up one at a time. You don't make yourself bigger than you were. You don't have to.
+          You tell it the way it happened, not the way it would sound best: the javelin, the banner, the levy breaking, the men shouting, and Steinarr's hand on the steering-oar. You don't make yourself bigger than you were. You don't have to.
 
-          When you've finished the jarl is quiet a while. "Nineteen, Ásgeir was, when I gave him a ship," he says at last. "He lost her the first summer. You brought mine home full." He turns to go, and stops. "She's yours to sail next summer. For my quarter. Lose her, and you'll row for me till you've paid for her."
-        effects: [ { set: flag.h_jarl_trust }, { favour: 2 }, { deed: { type: deed, text: "Brought the jarl's ship home from Ireland, and answered for it on the landing", weight: 3, witnesses: 80 } } ]
+          When you've finished the jarl is quiet a while. "Nineteen, Ásgeir was, when I gave him a ship," he says at last. "He lost her the first summer, because nobody told him he was a boy." He turns to go, and stops. "Two summers in the prow. Then come and see me. Don't come sooner."
+        effects: [ { set: flag.h_jarl_trust }, { favour: 2 }, { deed: { type: deed, text: "Answered to the jarl on the landing for the day at Bangor", weight: 2, witnesses: 80 } } ]
       failure:
         text: |
-          You tell it, and it comes out wrong: too fast, too much about you, and the bit about the sea-chest sounds, said aloud on a cold landing, like a boy who climbed onto a box.
+          You tell it, and it comes out wrong: too fast, too much about you, and the part where the men shouted your name sounds, said aloud on a cold landing, like a boy telling his mother about a game.
 
-          The jarl hears you out. "You'll sail her next summer," he says, "because the men will row for you and I haven't got anyone better. Don't mistake that for anything else." He takes his quarter of the heap that afternoon, and Ásgeir's, and has it weighed twice.
+          The jarl hears you out. "Steinarr," he says, without looking at you, "keep him in the prow. It's where the loud ones learn to be quiet, or die." He goes back up the hill.
         effects: [ { set: flag.h_jarl_doubt }, { favour: -1 }, { add: { honour: -1 } } ]
     - id: sword
       text: Lay Ásgeir's sword at his feet, and say nothing at all.
       visible_if: "fate.asgeir_falls && !flag.bg_covered"
       effects: [ { set: flag.h_jarl_trust }, { favour: 2 }, { add: { honour: 1 } }, { item: { id: asgeir_sword } } ]
       result: |
-        You take it out of the stern, wrapped in Ásgeir's own cloak, and lay it on the shingle at the jarl's feet, and step back.
+        Steinarr has had it all the way home. Now he gives it to you without being asked, which surprises you both, and you take it out of the stern, wrapped in Ásgeir's own cloak, and lay it on the shingle at the jarl's feet, and step back.
 
         He looks down at it, and doesn't move. Then he bends, slowly, an old man's bending, and picks it up, and holds it out to you hilt first.
 
-        "He'd want it to go on west," he says. "Not hang on my wall. Carry it." He goes back up the hill without another word. That night men are telling it in every house in the fjord.
+        "He'd want it to go on west," he says. "Not hang on my wall. Carry it. Earn it." He goes back up the hill without another word. That night men are telling it in every house in the fjord.
     - id: men
       text: Let the men who swore to you speak for you.
       requires: [{ any: [man.ketill.sworn, man.ulf.sworn, man.hallvard.sworn] }]
-      effects: [ { set: flag.h_jarl_trust }, { favour: 1 }, { add: { crew.morale: 1 } } ]
+      effects: [ { set: flag.h_jarl_trust }, { favour: 1 } ]
       result: |
         [if man.ketill.sworn]
-        Ketill steps out of the crowd before you can say anything. "I've rowed for you twenty years, Eystein," he says. "I rowed with Ásgeir eleven. I'm telling you this one will do." Then he steps back, because he's said more words together than anyone on the landing has ever heard from him.
+        Ketill steps out of the crowd before you can say anything. "I've rowed for you twenty years, Eystein," he says. "I rowed with Ásgeir eleven. I've sworn to this one, for later. I'd like to live to see later." Then he steps back, because he's said more words together than anyone on the landing has ever heard from him.
         [elif man.ulf.sworn]
         Ulf steps out and tells it, loudly and at length and with some improvements, and by the end of it half the landing is laughing and the other half is banging their shields, and the jarl has to hold up his hand for quiet.
         [else]
         Hallvard steps out and says that the ravens followed the ship from Iona to Bangor, and from Bangor home, and that he has never in his life seen them follow a ship like that. The jarl is not a fool. But the landing is listening, and he knows it.
         [/if]
 
-        "Well," says the jarl. "The men have spoken. She's yours to sail next summer, for my quarter." He looks at you a moment longer. "Men who'll speak for you on a cold morning are worth more than the ship. Keep them."
+        "Well," says the jarl. "Men who'll swear to a boy with no ship." He looks at you a moment longer. "Keep them. In two summers you'll need them."
     - id: offer
-      text: Offer him Ásgeir's share of the heap for Ásgeir's widow, before he asks.
-      effects: [ { add: { loot: -48, honour: 1 } }, { set: flag.h_jarl_trust }, { favour: 2 }, { set: flag.h_asgeir_widow } ]
+      text: Give your prow-share to Ásgeir's widow, before anyone asks.
+      effects: [ { shares: 1 }, { add: { honour: 1 } }, { set: flag.h_jarl_trust }, { favour: 2 }, { set: flag.h_asgeir_widow } ]
       result: |
-        The jarl's eyebrows go up. A pound, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
+        The jarl's eyebrows go up. A whole share of the summer, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
 
-        "That wasn't yours to give," the jarl says. "It was hers anyway." But something in his face has changed. "You'll sail her next summer, for my quarter. Bring her home again."
+        "That wasn't yours to give," the jarl says. "It was hers anyway." But something in his face has changed. "Two summers in the prow. Then come and see me."
 
 - id: h_gyda
   kind: spine
@@ -335,8 +335,8 @@
     [if flag.i_mercy || flag.i_colman_spared]
     At the monks he is quiet, and you can hear the fire.
     [/if]
-    [if flag.bg_command]
-    At the steering-oar he laughs until he coughs, and coughs until your mother comes.
+    [if flag.bg_acclaimed]
+    At the sea-chest, and the prow, he laughs until he coughs, and coughs until your mother comes. "They wanted to give a boy the ship," he wheezes. "And the boy had the sense not to drown them."
     [/if]
 
     When you've finished he lies back.

@@ -7,7 +7,7 @@
 - { who: ulf, when: sea, requires: [nickname], text: "Ulf has been practising your name all morning, in different voices. The one he likes best is the one the jarl would use." }
 - { who: ulf, when: sea, requires: ["!nickname"], text: "\"When I get my name,\" says Ulf, \"it'll be something with blood in it.\" Bersi suggests Ulf Nosebleed. It takes Ketill to separate them." }
 - { who: ketill, when: sea, text: "Ketill rows the way other men breathe. When you look back at him he nods at your oar: lower, longer. He is right. He is always right about oars." }
-- { who: ketill, when: sea, requires: [flag.bg_command], text: "\"Your father would have done it differently,\" Ketill says, watching you at the steering-oar. A long pause. \"Worse.\"" }
+- { who: ketill, when: sea, requires: [flag.bg_acclaimed, "!service"], text: "\"Your father would have done it differently,\" Ketill says, watching you at the steering-oar. A long pause. \"Worse.\"" }
 - { who: hallvard, when: sea, text: "Hallvard watches a raven cross the bow, left to right, and says nothing for so long that the whole ship starts to worry." }
 - { who: hallvard, when: sea, requires: [flag.i_colman_read], text: "\"The valley,\" Hallvard says, out of nowhere, at the oar behind you. \"The one the monk read about. Where do you think it is?\"" }
 - { who: bersi, when: sea, text: "Bersi has worked out what each man's share will be if the wind holds, if it doesn't, and if Ulf falls overboard. The last one is the best." }

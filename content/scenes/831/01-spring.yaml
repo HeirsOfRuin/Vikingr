@@ -23,7 +23,7 @@
     And a man with a hand missing tells the hall about Conaille, a little Irish kingdom on a bay south of Bangor. Its king, Máel Brigte, caught three Norse traders on his beach last autumn and hanged them from his gate. No Norse ship has yet gone into that bay with its shields up. "Somebody should," he says, and looks round the hall.
     [break]
     [if service]
-    {captain} has listened to all of it with his arms folded. Afterwards, on the landing, he tells the men what he has decided. Orkney first, then Skye for Kolbeinn's silver, then south to Conaille, to see whether a king hangs as easily as a trader.
+    {captain} has listened to all of it with his arms folded. Afterwards, on the landing, he tells the men what he has decided. Kaupang first, to sell last year's captives and put iron in the men's hands. Then Orkney, then Skye for Kolbeinn's silver, then south to Conaille, to see whether a king hangs as easily as a trader.
 
     He looks round at the faces. When he gets to yours, he waits.
     [else]
@@ -61,7 +61,7 @@
     - id: agree
       text: Nod. Conaille it is.
       visible_if: service
-      effects: [ { route: [orkney, skye, conaille] }, { shares: 1 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+      effects: [ { route: [kaupang, orkney, skye, conaille] }, { if: flag.prow_man, then: [ { shares: 1.5 } ], else: [ { shares: 1 } ] }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
       result: You nod. {captain} looks satisfied, which in him is hard to tell from looking hungry.
     - id: lindisfarne
       text: Argue for Lindisfarne instead. A church full of silver, and no king to defend it.
@@ -72,11 +72,11 @@
           You say what everybody is thinking: a king in a ringfort has a household of fighting men, and a church on a tidal island has monks. You were at Bangor. You know what an Irish levy costs.
 
           The men who were at Bangor with you start nodding before you've finished. {captain} chews on it, and spits, and says, "Lindisfarne. And if it's been picked clean, I'll take it out of your share."
-        effects: [ { route: [orkney, lindisfarne] }, { shares: 1 }, { set: flag.j_argued }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+        effects: [ { route: [kaupang, orkney, lindisfarne] }, { if: flag.prow_man, then: [ { shares: 1.5 } ], else: [ { shares: 1 } ] }, { set: flag.j_argued }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
       failure:
         text: |
           You make the case. {captain} hears you out, and then says, "Monks don't hang Norsemen from their gates. Kings do. I want the king." It is not an argument you can answer, and he knows it.
-        effects: [ { route: [orkney, skye, conaille] }, { shares: 1 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+        effects: [ { route: [kaupang, orkney, skye, conaille] }, { if: flag.prow_man, then: [ { shares: 1.5 } ], else: [ { shares: 1 } ] }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
     - id: shares
       text: Ask {captain} for two shares this year, for what you did last year.
       visible_if: service
@@ -86,11 +86,11 @@
           He looks at you a long while. Then he looks at the men behind you, who are all, somehow, finding something interesting to do with their hands.
 
           "Two shares," he says. "If you earn them. If you don't, one, and I'll tell everyone why."
-        effects: [ { route: [orkney, skye, conaille] }, { shares: 2 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+        effects: [ { route: [kaupang, orkney, skye, conaille] }, { shares: 2 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
       failure:
         text: |
           "Two shares," says {captain}, "for a man who still can't take a reef in without asking Ketill how." The men laugh. It isn't cruel. It's worse: it's fond.
-        effects: [ { route: [orkney, skye, conaille] }, { shares: 1 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
+        effects: [ { route: [kaupang, orkney, skye, conaille] }, { if: flag.prow_man, then: [ { shares: 1.5 } ], else: [ { shares: 1 } ] }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
 
 - id: j_gyda
   kind: phase

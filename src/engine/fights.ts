@@ -20,6 +20,9 @@ import { creditWeapon, FITTING, GEAR_MAX, GEAR_QUALITY, hasFitting, heroArmour, 
 import { DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
 
+/** What a crew's victory is worth to an oarsman in it: the captain's deed, mostly. */
+export const SERVICE_DEED = 0.5;
+
 export function heroDuelSide(state: GameState, content: ContentBundle, kind: DuelState['kind']): DuelSide {
   const end = effAttr(state, content, 'end');
   return {
@@ -237,8 +240,10 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   const atWhere = b.place ? ` at ${where}` : ' at sea';
   // "the Ulster levy", not "The Ulster levy", in the middle of a sentence
   const foeName = (content.foes[b.foeId]?.name ?? 'them').replace(/^The /, 'the ');
-  if (won && b.context === 'sea') addDeed(state, content, { type: 'sea_fight_won', text: `Beat ${foeName === 'them' ? 'a crew' : foeName} at sea`, witnesses, mult });
-  if (won && b.context === 'scene') addDeed(state, content, { type: 'battle_won', text: `Beat ${foeName}${b.place ? atWhere : ''}`, witnesses, mult });
+  // at another man's oar the crew's victory is the captain's: he was there (docs/FRAME-BEGINNINGS.md)
+  const crewMult = mult * (state.service ? SERVICE_DEED : 1);
+  if (won && b.context === 'sea') addDeed(state, content, { type: 'sea_fight_won', text: `Beat ${foeName === 'them' ? 'a crew' : foeName} at sea`, witnesses, mult: crewMult });
+  if (won && b.context === 'scene') addDeed(state, content, { type: 'battle_won', text: `Beat ${foeName}${b.place ? atWhere : ''}`, witnesses, mult: crewMult });
   for (const d of b.deeds) {
     if (d.who) {
       const m = state.men.find((x) => x.id === d.who);
@@ -270,7 +275,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     if (left) lines.push(`The ships are full: ${formatSilver(left)} stays on the strand.`);
     if (won) {
       state.stats.raids += 1;
-      addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}`, witnesses, mult });
+      addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}`, witnesses, mult: crewMult });
       lines.unshift(`${pl.name} is yours for the afternoon. You carry off ${formatSilver(take)} in silver, plate and cloth.`);
       journal(state, `Raided ${pl.name}: ${formatSilver(take)}.`);
     } else if (take) {

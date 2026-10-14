@@ -23,11 +23,11 @@
     The horn comes down the bench to you. It is heavier than it looks.
   choices:
     - id: ship
-      text: Swear you will stand at your own steering-oar before next Yule.
+      text: Swear you will stand at your own steering-oar within two winters.
       visible_if: service
       effects: [ { boast: own_ship }, { add: { flag.y_hall: 1 } } ]
       result: |
-        "Before next Yule," you say, "I'll stand at my own steering-oar." It sounds bigger out loud than it did in your head.
+        "Within two winters," you say, "I'll stand at my own steering-oar." It sounds bigger out loud than it did in your head.
 
         A few men laugh. More bang the tables. Ásgeir's old crew bang loudest.
       next: y_volva
@@ -178,8 +178,8 @@
           You stand. You are taller than you were in the spring, and the hall sees it.
           [if flag.i_first]
           "I was first through the gate at Iona while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask Ásgeir's men who was first."
-          [elif flag.bg_command]
-          "I brought the Raven home from Ireland while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask her crew who stood at the steering-oar."
+          [elif flag.bg_acclaimed]
+          "The Raven's men put me in her prow on the field at Bangor while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask her crew who they chose."
           [else]
           "I stood in the wall at Bangor while Thorgils was over the side of his father's boat, feeding his breakfast to the fish. Ask the Irish."
           [/if]
@@ -407,8 +407,8 @@
     By morning everyone in the district knows what they are calling you. Your mother has heard it. Your father pretends he hasn't.
     [elif flag.i_first]
     Somewhere in the last night of it, the hall decides what to call you. It comes from Ulf, who has told the story of the gate at Iona so many times that the gate is now three times the size and made of iron. They call you Gate-Breaker.
-    [elif flag.bg_command]
-    Somewhere in the last night of it, the hall decides what to call you. A boy of sixteen who brought a forty-oar ship home from Ireland: they call you Raven, after her, and they don't mean it unkindly.
+    [elif flag.bg_acclaimed]
+    Somewhere in the last night of it, the hall decides what to call you. A boy of sixteen whom a forty-oar ship's crew wanted for their captain, and who stood in her prow instead: they call you Raven, after her, and they don't mean it unkindly.
     [elif fate.asgeir_falls && flag.bg_covered]
     Somewhere in the last night of it, the hall decides what to call you. Ásgeir's men tell it: the boy who stood at his shoulder and took the spear on his shield. They call you Skjöldr: the Shield.
     [elif flag.i_burned_books]
@@ -434,7 +434,7 @@
             - if: flag.i_first
               then: [ { nickname: Gate-Breaker } ]
               else:
-                - if: flag.bg_command
+                - if: flag.bg_acclaimed
                   then: [ { nickname: Raven } ]
                   else:
                     - if: "fate.asgeir_falls && flag.bg_covered"

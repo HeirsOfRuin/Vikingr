@@ -1,5 +1,6 @@
 // Plunder against the alarm (DESIGN §11.3, step 3). After the assault, each round takes more,
 // and the countryside wakes. Leave in time, or lose what you are carrying getting back to the ships.
+import { SERVICE_DEED } from './fights';
 import { stow } from './fleet';
 import type { ContentBundle } from '../content/schema';
 import type { GameState, PlunderState } from './state';
@@ -88,7 +89,7 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
   state.stats.raids += 1;
   if (p.captives) state.captives += p.captives;
   const mult = POSITION_FAME[state.position];
-  addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}${p.burned ? ' and burned it' : ''}`, witnesses: state.crew.men, mult: mult * (p.burned ? 1.2 : 1) });
+  addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}${p.burned ? ' and burned it' : ''}`, witnesses: state.crew.men, mult: mult * (p.burned ? 1.2 : 1) * (state.service ? SERVICE_DEED : 1) });
   lines.push(`In all: ${formatSilver(taken)}${p.captives ? `, and ${plural(p.captives, 'captive')}` : ''}.`);
   journal(state, `Raided ${pl.name}: ${formatSilver(taken)}${p.captives ? `, ${plural(p.captives, 'captive')}` : ''}${p.burned ? '; burned it' : ''}.`);
   const burnt = `${p.place}_burning`;

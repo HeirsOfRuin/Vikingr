@@ -75,10 +75,9 @@
 # a Danish hersir with an offer: a hook toward Hedeby, Frisia and King Horik (§21a career paths)
 - id: k_ubbi
   kind: queued
-  requires: ["!service"]
   title: Ubbi
   text: |
-    He finds you at the ship at dusk: a big man with a red beard and a mail shirt better than any on the smith's poles, and two men behind him who don't look at anything but your hands.
+    He finds you [if service]on the beach below the ships[else]at the ship[/if] at dusk: a big man with a red beard and a mail shirt better than any on the smith's poles, and two men behind him who don't look at anything but your hands.
     [if flag.se_ubbi]
     "Little ship," he says, grinning. "I told you to come to Hedeby. You came to Kaupang. It's a start."
     [else]
@@ -87,10 +86,14 @@
 
     His name is Ubbi, and he is a hersir of King Horik's, and he is going to Frisia next summer with as many ships as he can find, because the emperor's sons are fighting each other and Dorestad is the richest market in the north and nobody is watching it.
 
+    [if service]
+    "I've been watching your ship," he says. "Not the man at the steering-oar. You." He looks you up and down. "You're young. That mends. The day you have a ship of your own, bring her to Hedeby. Next spring, the one after: Frisia will still be there, and so will I. A full share for every bench, and the king's silver ring on your arm."
+    [else]
     "I could use a Norwegian," he says. "Your people don't run. Bring your ship to Hedeby next spring, and you'll have a full share for every bench, and the king's silver ring on your arm."
+    [/if]
   choices:
     - id: yes
-      text: Clasp his hand. Next spring, Hedeby.
+      text: Clasp his hand. Hedeby, when you have a ship.
       effects: [ { set: flag.ubbi_sworn }, { know: hedeby }, { favour: -1 } ]
       result: |
         He crushes your hand in his and laughs. "Good. Bring the loud one, too," he says, nodding at Ulf. "I like a man you can hear in the dark."

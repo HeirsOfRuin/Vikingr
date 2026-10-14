@@ -1,8 +1,8 @@
 # The living legends the hero is measured against (DESIGN §13). Curves are fame by year; dates
 # follow the sources where there are any, and the sagas' tradition where there are not.
-- { id: horik, name: "Horik, king of the Danes", born: 790, died: 854, curve: [[830, 60], [845, 110], [853, 90]], note: "King of the Danes from 827. Sent the fleet that burned Hamburg in 845. Killed in a civil war in 854." }
-- { id: ragnar, name: "Ragnar", born: 800, died: 860, curve: [[830, 30], [844, 90], [846, 200], [858, 150]], note: "The Reginherus who took Paris in 845. The sagas made him Ragnar Loðbrók; the Franks say he died of a flux soon after. Men say many things." }
-- { id: turgeis, name: "Turgeis", born: 800, died: 845, curve: [[830, 40], [840, 110], [844, 130]], note: "Raided Ireland in the 830s and 840s. Drowned in Lough Owel by Máel Sechnaill in 845." }
+- { id: horik, name: "Horik, king of the Danes", born: 790, died: 854, curve: [[830, 150], [845, 190], [853, 140]], note: "King of the Danes from 827. Sent the fleet that burned Hamburg in 845. Killed in a civil war in 854." }
+- { id: ragnar, name: "Ragnar", born: 800, died: 860, curve: [[830, 55], [844, 110], [846, 220], [858, 160]], note: "The Reginherus who took Paris in 845. The sagas made him Ragnar Loðbrók; the Franks say he died of a flux soon after. Men say many things." }
+- { id: turgeis, name: "Turgeis", born: 800, died: 845, curve: [[830, 70], [840, 130], [844, 150]], note: "Raided Ireland in the 830s and 840s. Drowned in Lough Owel by Máel Sechnaill in 845." }
 - { id: hastein, name: "Hastein", born: 815, died: 893, curve: [[840, 30], [859, 120], [862, 200], [880, 170]], note: "The Loire and the Mediterranean voyage of 859–861. Still raiding in England in the 890s." }
 - { id: bjorn, name: "Björn Ironside", born: 830, died: 870, curve: [[850, 60], [858, 120], [862, 220]], note: "Led the Mediterranean voyage with Hastein. A son of Ragnar, if the sagas are right." }
 - { id: olaf, name: "Olaf of Dublin", born: 820, died: 873, curve: [[849, 40], [853, 120], [870, 160]], note: "Came to Dublin in 853 and ruled it with Ivar." }
@@ -10,3 +10,7 @@
 - { id: halfdan, name: "Halfdan", born: 832, died: 877, curve: [[865, 80], [871, 150]], note: "A leader of the Great Army, later king in Northumbria." }
 - { id: rurik, name: "Rurik", born: 830, died: 879, curve: [[860, 70], [862, 140]], note: "Called to rule at Novgorod, as the Rus chronicle tells it, around 862." }
 - { id: harald, name: "Harald Fairhair", born: 850, died: 932, curve: [[870, 60], [872, 180], [885, 250]], note: "Won at Hafrsfjord (the traditional date is 872) and made himself king over the Norwegians." }
+# Added with the slower rise (docs/FRAME-BEGINNINGS.md): the great men of the 830s a boy of sixteen is measured against.
+- { id: harald_klak, name: "Harald Klak", born: 785, died: 852, curve: [[830, 110], [840, 80], [851, 40]], note: "A king of the Danes driven out by Horik's kin; baptized at Ingelheim in 826, and given Rüstringen in Frisia by the emperor to hold against them." }
+- { id: halfdan_black, name: "Hálfdan the Black", born: 810, died: 860, curve: [[830, 50], [845, 90], [859, 100]], note: "A king in Vestfold and the Uplands, Harald Fairhair's father, as the sagas tell it. Drowned through the spring ice of the Randsfjord." }
+- { id: rorik, name: "Rorik", born: 810, died: 873, curve: [[834, 60], [850, 140], [870, 120]], note: "Harald Klak's kinsman. Held Dorestad for the emperor Lothar, and lost it, and held it again." }

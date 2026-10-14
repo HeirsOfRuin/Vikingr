@@ -100,9 +100,9 @@ describe('playtest 3', () => {
     expect(s.pending?.t === 'scene' && s.pending.id).toBe('hd_frisia');
   });
 
-  it('the jarl answers for his ship when a boy brings her home', () => {
+  it('the jarl takes notice of the boy the Raven\'s men chose (FRAME-BEGINNINGS: he no longer takes the ship)', () => {
     const s = captain();
-    s.flags.bg_command = 1;
+    s.flags.bg_acclaimed = 1;
     s.flags.bg_left = 1;
     s.fates.asgeir_falls = 1;
     open(s, 'h_return');

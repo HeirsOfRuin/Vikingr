@@ -61,13 +61,15 @@ bg_colman_freed: { description: "Colmán was set free at Bangor" }
 bg_colman_betrayed: { description: "Colmán warned the strand at Bangor" }
 bg_covered: { description: "Stood at Ásgeir's shoulder at Bangor" }
 bg_front: { description: "Stood in the front rank at Bangor" }
-bg_command: { description: "Took command of the Raven at Bangor" }
+bg_acclaimed: { description: "The Raven's men chose him on the field at Bangor; he took the prow" }
 bg_steinarr: { description: "Steinarr took the Raven after Bangor" }
 bg_challenged: { description: "Fought Steinarr for the steering-oar" }
 bg_mocked: { description: "Laughed at for asking Ásgeir for a ship" }
 bg_left: { description: "Has left Bangor for home" }
 bg_ulf_pulled: { description: "Ulf dragged him out of the surf at Bangor" }
 asgeir_patron: { description: "Ásgeir will speak for him to the jarl" }
+jarl_promise: { description: "The jarl said: come back after the second summer" }
+prow_man: { description: "The prow-man of the ship he rows in: first ashore, a share and a half" }
 # home
 h_brother_close: { description: "Embraced Hallbjörn at the homecoming" }
 h_brother_debt: { description: "Knows the farm is in debt to Bárð" }
