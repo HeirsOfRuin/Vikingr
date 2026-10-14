@@ -143,3 +143,114 @@
       text: Take them aboard. Monks sell.
       effects: [ { captives: 6 }, { add: { honour: -1 } } ]
       result: They come aboard without a fight. They go on singing in the bilge all the way to market, and nobody can make them stop.
+
+# ---- the new waters (docs/FRAME-PLACES-2.md) ----
+- id: rg_stad
+  kind: pool
+  trigger: sea
+  chance: 0.5
+  cooldown_days: 200
+  requires: ["bound == hladir || place == hladir", "!service"]
+  art: storm
+  title: Rounding Stad
+  text: |
+    Stad is the headland every sailor on this coast talks about the way old women talk about a bad son: a great wall of rock sticking out into the open sea, with no shelter on either side of it, and the swell coming in from the west with nothing to stop it all the way from the edge of the world.
+
+    The wind is getting up. Your steersman looks at the sky, and at the headland, and at you.
+  choices:
+    - id: round
+      text: Round it now, before it gets worse.
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: It's bad, off the point. The ship climbs every wave like a horse at a wall and comes down the other side like a dropped stone. But she comes round, and in the lee of it the sea goes flat as a pond, and the men laugh the way men laugh when they've been afraid.
+        effects: [ { add: { crew.morale: 1, skill.seamanship: 1 } } ]
+      failure:
+        text: Halfway round, a sea comes over the bow and takes two men and half the stores with it. You get round. You don't get them back.
+        effects: [ { add: { crew.men: -2, provisions: -60, crew.morale: -1 } } ]
+    - id: wait
+      text: Haul up in the last cove and wait for the weather.
+      effects: [ { days: 3 } ]
+      result: Three days in a cove that smells of seaweed, eating dried fish and listening to the sea beat on Stad. Then the wind drops, and you round it in an afternoon, and nobody admits they were glad you waited.
+
+- id: rg_baltic
+  kind: pool
+  trigger: sea
+  chance: 0.15
+  cooldown_days: 200
+  requires: ["bound.people == baltic || bound == gotland", "!service"]
+  art: open_sea
+  title: Small boats
+  text: |
+    They come out from behind a low island at dawn: six boats, small, fast, low in the water, with a dozen men in each and their shields laid along the sides. Kurs, your steersman says, from the coast to the east. They've been raiding the Swedes for longer than the Swedes have been raiding anyone else.
+
+    They don't attack. Not yet. They spread out, two on each side and two behind, and keep pace with you, and wait to see what you'll do.
+  choices:
+    - id: fight
+      text: Turn on the nearest boat before the others close.
+      danger: true
+      effects: [ { battle: { foe: island_men, men: 24, terrain: ship } } ]
+      result: You put the helm over and go straight at them, and they come in from every side at once, which is what they wanted.
+    - id: run
+      text: Crack on sail and run for open water.
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: They follow you half the day, and then, one by one, they turn back toward the land. They were waiting for you to be stupid. You weren't.
+      failure:
+        text: Small boats are fast. They catch you at dusk, and swarm aboard from three sides, and by the time you've thrown them off again, two of your men are dead and the stores are short.
+        effects: [ { add: { crew.men: -2, provisions: -40, crew.morale: -1 } } ]
+    - id: pay
+      text: Hold up a bag of silver, and see if they take it.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24, crew.morale: -1 } } ]
+      result: They take it, and wave, and go. Your men don't look at you for a while.
+
+- id: rg_channel
+  kind: pool
+  trigger: sea
+  chance: 0.15
+  cooldown_days: 200
+  requires: ["year >= 832", "bound.people == english || bound.people == frankish", "!service"]
+  art: open_sea
+  title: The coastguard
+  text: |
+    The Narrow Sea is full of ships, and one of them isn't a trader. She comes out of a river mouth on the Frankish side under oars, long and low, with a cross on her sail and mailed men along her sides. The old emperor set guard-ships on these coasts, your steersman says, and the new one has kept a few of them.
+
+    She means to look at you. If she doesn't like what she sees, she has friends up the river.
+  choices:
+    - id: trader
+      text: Cover the shields, show them a trader's face, and talk.
+      check: { skill: trade, attr: pre, difficulty: 5 }
+      success:
+        text: Their captain comes aboard, looks at your cargo, which is mostly ballast, and at your men, who are mostly trying to look like merchants. He takes a toll and a cask of your ale and goes away, and you can't tell whether he believed you or just didn't want the fight.
+        effects: [ { add: { silver: -6 } } ]
+      failure:
+        text: Their captain takes one look at your men and blows a horn, and you run, with the guard-ship on your tail and two more coming out of the river behind it. You get away. Every port on this coast will know your sail now.
+        effects: [ { standing: { people: frankish, n: -1 } }, { days: 1 } ]
+    - id: fight
+      text: Run out the oars, and take her.
+      danger: true
+      effects: [ { battle: { foe: frankish_levy, men: 22, terrain: ship } } ]
+      result: She sees you coming, and doesn't run. Franks don't, much.
+    - id: avoid
+      text: Stand out to sea, and give the coast a wide berth.
+      effects: [ { days: 1 } ]
+      result: You lose a day in the open water, and the guard-ship follows you to the edge of sight and then turns back, satisfied.
+
+- id: rg_salt
+  kind: pool
+  trigger: sea
+  chance: 0.3
+  cooldown_days: 200
+  requires: ["bound == noirmoutier || bound == nantes", "!service"]
+  art: open_sea
+  title: The salt-boats
+  text: |
+    Off the mouth of the Loire you come on the salt-boats: a dozen fat little craft, low in the water with sacks of grey salt, going up the river to Nantes on the flood tide. Their crews are farmers and boys. They see your sail and scatter like hens.
+  choices:
+    - id: take
+      text: Take the nearest three, and their salt.
+      effects: [ { add: { loot: 50 } }, { standing: { people: frankish, n: -1 } } ]
+      result: It's barely a fight. The boys jump over the side and swim for the shore, and you take the boats and the salt and leave the boats on the sand, empty. Salt sells well in the north. Every winter, every farm, every barrel of herring.
+    - id: let
+      text: Let them go. They're not worth the trouble.
+      result: They don't believe it. They keep looking back at you all the way up the river, waiting for the trick.

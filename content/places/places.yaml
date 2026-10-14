@@ -13,7 +13,7 @@ places:
     region: West Norway
     trade: { cheap: [soapstone, whetstones, furs, ivory, stockfish], dear: [wine, salt, glass, grain] }
     tells: [karmoy, shetland, kaupang]
-    rumours: [faroes, hedeby]
+    rumours: [faroes, hedeby, hladir]
     desc: The home fjord. Steep sides, thin fields, good timber, and too many sons for the land.
     known: true
     active: true
@@ -63,6 +63,7 @@ places:
     active: true
   - id: iona
     name: Iona
+    rumours: [man]
     lon: -6.41
     lat: 56.33
     kind: monastery
@@ -77,6 +78,7 @@ places:
     raid: { wealth: 720, defenders: 14, foe: monks_tenants, terrain: beach }
   - id: bangor
     name: Bangor
+    rumours: [man]
     lon: -5.67
     lat: 54.66
     kind: monastery
@@ -99,7 +101,7 @@ places:
     standing: 2
     region: Vík
     trade: { cheap: [whetstones, soapstone, furs], dear: [glass, wine, salt, amber] }
-    tells: [karmoy, hedeby]
+    tells: [karmoy, hedeby, hladir]
     rumours: [hedeby, birka, dorestad, aldeigjuborg]
     desc: "The market at Skíringssalr: a beach of booths and smoke under the king's hall, where Danes, Frisians and Swedes sell everything, and buy everything, including people."
     known: false
@@ -107,13 +109,14 @@ places:
     market: true
   - id: lindisfarne
     name: Lindisfarne
+    tells: [york]
     lon: -1.8
     lat: 55.67
     kind: monastery
     people: english
     standing: -2
     region: Northumbria
-    rumours: [york]
+    rumours: [york, sheppey]
     desc: "The holy island where it began, forty years ago. Twice a day the sea covers the sands between it and the mainland, and twice a day it lets you walk across."
     known: false
     active: true
@@ -128,7 +131,7 @@ places:
     region: The Hebrides
     trade: { cheap: [wool], dear: [salt, wine, soapstone] }
     tells: [iona, orkney]
-    rumours: [faroes, man]
+    rumours: [man, faroes]
     desc: "Skye. Black mountains, sea lochs, and here and there a Norse steading built on top of a Pictish one, where the settlers have stopped going home."
     known: false
     active: true
@@ -141,34 +144,34 @@ places:
     standing: -4
     region: Ireland
     tells: [bangor]
-    rumours: [armagh, dublin, clonmacnoise]
+    rumours: [dublin, armagh, clonmacnoise]
     desc: "Conaille Muirthemne, on Dundalk Bay: a small Irish kingdom with a king in a ringfort, cattle on the plain, and no Norse ship yet seen in its bay."
     known: false
     active: true
     raid: { wealth: 1300, defenders: 26, foe: conaille_men, terrain: field }
   # ---- later phases ----
-  - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, people: norse, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir." }
-  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes.", standing: 0, active: true, market: true, tells: [ribe], rumours: [birka, dorestad, truso], trade: { cheap: [glass, wine, salt], dear: [furs, ivory, soapstone, down] } }
+  - { id: hladir, name: "Hlaðir", lon: 10.45, lat: 63.45, people: norse, kind: hall, region: Trøndelag, desc: "The seat of the jarls of Hlaðir, at the head of the Trondheim fjord.", rumour: "The jarl of Hlaðir's seat, he says, five days north along the coast, at the head of a fjord so long and fat with farms that the jarl there thinks himself as good as any king. The furs and the walrus-ivory come down to him from the north, and he knows it.", standing: 2, active: true, market: true, rumours: [faroes], trade: { cheap: [furs, ivory, stockfish, down], dear: [grain, wine, salt, glass] } }
+  - { id: hedeby, name: "Hedeby", lon: 9.57, lat: 54.49, people: danish, kind: market, region: Denmark, desc: "The Danes' great market at the root of Jutland.", rumour: "The Danes' great market at the root of Jutland, behind a wall of earth. King Horik takes a toll of everything that passes, and everything passes.", standing: 0, active: true, market: true, tells: [ribe, truso], rumours: [birka, dorestad, truso], trade: { cheap: [glass, wine, salt], dear: [furs, ivory, soapstone, down] } }
   - { id: ribe, name: "Ribe", lon: 8.76, lat: 55.33, people: danish, kind: market, region: Denmark, desc: "A market on the west coast of Jutland.", rumour: "A Danish market on the west side of Jutland, older than Hedeby, where the Frisian ships come in with wine and cloth.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [dorestad, walcheren], trade: { cheap: [wine, glass, grain], dear: [furs, soapstone, whetstones, wool, amber] } }
-  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read.", standing: 1, active: true, market: true, tells: [hedeby], rumours: [gotland, aldeigjuborg, uppsala], trade: { cheap: [furs, amber], dear: [glass, wine, salt, stockfish] } }
-  - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings.", rumour: "The Swedes' great temple, he says, a day inland from Birka: a hall roofed with gold, and three great mounds of the old kings, and a grove where they hang the sacrifices every ninth year, men and horses and dogs together." }
-  - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea.", rumour: "A rich island in the middle of the eastern sea, he says, where every farmer buries his silver in the floor and the traders come from every shore of the Baltic." }
-  - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast.", rumour: "An amber market at the mouth of a river on the far side of the eastern sea, he says, among people who speak no tongue anyone in Hedeby knows, and sell amber by the sack." }
+  - { id: birka, name: "Birka", lon: 17.54, lat: 59.33, people: swedish, kind: market, region: Svealand, desc: "The Swedes' market on Lake Mälaren.", rumour: "The Swedes' market on an island in a lake as big as a sea, where the silver comes from the east in coins with writing on them that nobody can read.", standing: 1, active: true, market: true, tells: [uppsala, gotland, hedeby], rumours: [aldeigjuborg], trade: { cheap: [furs, amber], dear: [glass, wine, salt, stockfish] } }
+  - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings.", rumour: "The Swedes' great temple, he says, a day inland from Birka: a hall roofed with gold, and three great mounds of the old kings, and a grove where they hang the sacrifices every ninth year, men and horses and dogs together.", standing: 0, active: true, tells: [birka] }
+  - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea.", rumour: "A rich island in the middle of the eastern sea, he says, where every farmer buries his silver in the floor and the traders come from every shore of the Baltic.", standing: 0, active: true, market: true, tells: [truso, birka], trade: { cheap: [wool, furs], dear: [salt, wine, glass, whetstones] }, raid: { wealth: 1300, defenders: 55, foe: gotlanders, terrain: field } }
+  - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast.", rumour: "An amber market at the mouth of a river on the far side of the eastern sea, he says, among people who speak no tongue anyone in Hedeby knows, and sell amber by the sack.", standing: 0, active: true, market: true, tells: [gotland], rumours: [aldeigjuborg], trade: { cheap: [amber, furs], dear: [salt, wine, whetstones, glass] } }
   - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves." }
   - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky.", trade: { cheap: [wool, down], dear: [grain, salt, whetstones] } }
-  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain." }
-  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey.", rumour: "The black pool on the Liffey, where the Irish have a fort and a ford. A good harbour, he says, for a man who meant to stay the winter in Ireland. Nobody has, yet." }
+  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain.", standing: -1, active: true, tells: [dublin], raid: { wealth: 550, defenders: 18, foe: island_men, terrain: beach } }
+  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey.", rumour: "The black pool on the Liffey, where the Irish have a fort and a ford. A good harbour, he says, for a man who meant to stay the winter in Ireland. Nobody has, yet.", standing: -2, active: true, tells: [man, conaille], rumours: [clonmacnoise], raid: { wealth: 900, defenders: 30, foe: leinster_men, terrain: field } }
   - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, people: gael, kind: monastery, region: Ireland, desc: "The chief church of the Irish.", rumour: "The chief church of all the Irish, inland from the bay at Conaille. Saint Patrick's own house. The richest church in Ireland, and it knows it.", standing: -2, active: true, art: iona_dawn, raid: { wealth: 2200, defenders: 70, foe: airgialla_men, terrain: field } }
-  - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, people: gael, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon.", rumour: "A great monastery on the Shannon in the middle of Ireland, so far from the sea that the monks think they're safe. A ship that could get up the Shannon would find out if they're right." }
-  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, people: english, kind: town, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse.", rumour: "The Northumbrian king's city on the Ouse, with a minster and a market and walls the Romans built. Too big for one ship. Not too big for a fleet." }
-  - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, people: english, kind: island, region: Kent, desc: "An island in the mouth of the Thames." }
-  - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, people: english, kind: market, region: Mercia, desc: "The market on the Thames." }
-  - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, people: frisian, kind: market, region: Frisia, desc: "The richest market of the Frankish north.", rumour: "The richest market of the Franks, on the Rhine, so rich they say the streets are paved with broken pots. The emperor's sons are fighting each other, and nobody is guarding it.", standing: 0, active: true, market: true, trade: { cheap: [wine, glass, grain, salt], dear: [furs, ivory, amber, down, whetstones] }, raid: { wealth: 4200, defenders: 110, foe: frisian_levy, terrain: field } }
-  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth.", rumour: "An island in the mouths of the Scheldt, he says, flat as a table, with a church and a count's tollhouse, and the Frisian ships going past it all summer to the markets up the rivers.", standing: 0, active: true, raid: { wealth: 700, defenders: 24, foe: frisian_levy, terrain: beach } }
-  - { id: noirmoutier, name: "Noirmoutier", lon: -2.25, lat: 47.0, people: frankish, kind: monastery, region: Frankia, desc: "A monastery island off the Loire." }
-  - { id: nantes, name: "Nantes", lon: -1.55, lat: 47.22, people: frankish, kind: town, region: Frankia, desc: "A city on the Loire." }
-  - { id: rouen, name: "Rouen", lon: 1.1, lat: 49.44, people: frankish, kind: town, region: Frankia, desc: "A city on the Seine." }
-  - { id: paris, name: "Paris", lon: 2.35, lat: 48.85, people: frankish, kind: town, region: Frankia, desc: "The Franks' city on the Seine." }
+  - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, people: gael, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon.", rumour: "A great monastery on the Shannon in the middle of Ireland, so far from the sea that the monks think they're safe. A ship that could get up the Shannon would find out if they're right.", standing: -2, active: true, raid: { wealth: 2000, defenders: 48, foe: clonmacnoise_men, terrain: field } }
+  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, people: english, kind: town, standing: -1, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse.", rumour: "The Northumbrian king's city on the Ouse, with a minster and a market and walls the Romans built. Too big for one ship. Not too big for a fleet.", active: true, market: true, tells: [sheppey, lindisfarne], rumours: [sheppey], trade: { cheap: [wool, grain], dear: [wine, furs, whetstones, soapstone] }, raid: { wealth: 3000, defenders: 120, foe: northumbrian_levy, terrain: field } }
+  - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, people: english, kind: island, region: Kent, desc: "Sheep island in the Thames mouth, with a minster on it.", rumour: "An island in the mouth of the Thames, he says, all sheep and marsh and a minster of nuns on the hill, founded by a queen. The London ships go past it every tide.", active: true, tells: [london, walcheren], raid: { wealth: 850, defenders: 20, foe: kentish_men, terrain: beach } }
+  - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, people: english, kind: market, region: Mercia, desc: "The market on the Thames.", rumour: "The Mercian king's market on the Thames, he says, a long strand of jetties and workshops outside the old Roman walls, where the Frisians bring wine and take wool, and the king's reeve takes a toll off both.", standing: -1, active: true, market: true, tells: [sheppey], trade: { cheap: [wool, grain, glass], dear: [furs, ivory, amber, whetstones] }, raid: { wealth: 2400, defenders: 70, foe: london_reeve, terrain: field } }
+  - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, people: frisian, kind: market, region: Frisia, desc: "The richest market of the Frankish north.", rumour: "The richest market of the Franks, on the Rhine, so rich they say the streets are paved with broken pots. The emperor's sons are fighting each other, and nobody is guarding it.", standing: 0, active: true, market: true, trade: { cheap: [wine, glass, grain, salt], dear: [furs, ivory, amber, down, whetstones] }, raid: { wealth: 4200, defenders: 110, foe: frisian_levy, terrain: field }, rumours: [london, york] }
+  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth.", rumour: "An island in the mouths of the Scheldt, he says, flat as a table, with a church and a count's tollhouse, and the Frisian ships going past it all summer to the markets up the rivers.", standing: 0, active: true, raid: { wealth: 700, defenders: 24, foe: frisian_levy, terrain: beach }, rumours: [noirmoutier], tells: [sheppey] }
+  - { id: noirmoutier, name: "Noirmoutier", lon: -2.25, lat: 47.0, people: frankish, kind: monastery, region: Frankia, desc: "A monastery island off the Loire.", rumour: "Saint Philibert's island off the mouth of the Loire, he says, with salt-pans all round it and a monastery that has been raided so often the monks keep their saint's bones packed for travelling.", active: true, tells: [nantes], raid: { wealth: 800, defenders: 22, foe: monks_tenants, terrain: beach } }
+  - { id: nantes, name: "Nantes", lon: -1.55, lat: 47.22, people: frankish, kind: town, region: Frankia, desc: "A city on the Loire.", rumour: "A walled city on the Loire, a day upriver from the salt islands, with a bishop and a count and a cathedral, and the wine of half of Frankia coming down the river past it.", active: true, market: true, tells: [noirmoutier], rumours: [rouen, paris], trade: { cheap: [wine, salt, glass], dear: [furs, amber, ivory, whetstones] }, raid: { wealth: 2400, defenders: 64, foe: frankish_levy, terrain: field } }
+  - { id: rouen, name: "Rouen", lon: 1.1, lat: 49.44, people: frankish, kind: town, region: Frankia, desc: "A city on the Seine.", rumour: "A city on the Seine, he says, three days up the river from the sea, with an archbishop and stone churches and the river trade of half of Frankia going past its walls." }
+  - { id: paris, name: "Paris", lon: 2.35, lat: 48.85, people: frankish, kind: town, region: Frankia, desc: "The Franks' city on the Seine.", rumour: "The Franks' old city on an island in the Seine, he says, far up the river, with more churches than houses, and the richest abbey in Frankia a morning's ride away. Nobody has been up the Seine that far with a ship. Yet." }
 
 legs:
   - { a: home_fjord, b: karmoy, days: 1, kind: coastal }
@@ -201,3 +204,21 @@ legs:
   - { a: ribe, b: walcheren, days: 4, kind: coastal }
   - { a: walcheren, b: dorestad, days: 2, kind: river }
   - { a: conaille, b: armagh, days: 1.5, kind: river }
+  # the twelve new places (docs/FRAME-PLACES-2.md)
+  - { a: home_fjord, b: hladir, days: 5, kind: coastal }
+  - { a: birka, b: uppsala, days: 1, kind: river }
+  - { a: birka, b: gotland, days: 3, kind: open }
+  - { a: hedeby, b: gotland, days: 5, kind: open }
+  - { a: gotland, b: truso, days: 3, kind: open }
+  - { a: hedeby, b: truso, days: 6, kind: coastal }
+  - { a: bangor, b: man, days: 1, kind: open }
+  - { a: man, b: dublin, days: 1.5, kind: open }
+  - { a: conaille, b: dublin, days: 1.5, kind: coastal }
+  - { a: dublin, b: clonmacnoise, days: 5, kind: river }
+  - { a: lindisfarne, b: york, days: 3, kind: coastal }
+  - { a: york, b: sheppey, days: 5, kind: coastal }
+  - { a: walcheren, b: sheppey, days: 2, kind: open }
+  - { a: sheppey, b: london, days: 1.5, kind: river }
+  - { a: sheppey, b: noirmoutier, days: 6, kind: coastal }
+  - { a: walcheren, b: noirmoutier, days: 7, kind: coastal }
+  - { a: noirmoutier, b: nantes, days: 1, kind: river }

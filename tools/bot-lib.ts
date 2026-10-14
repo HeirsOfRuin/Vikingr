@@ -194,6 +194,8 @@ export class Bot {
     const raid = pick((a) => a.t === 'raid');
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
+    // the old sailors at the fire: a round of ale for a rumour (FRAME-FOUNDATION §1), once a year a port
+    if (state.silver > 20) { const ls = pick((a) => a.t === 'listen'); if (ls) return ls; }
     // holds nearly full in mid-summer: share out on the strand and go on (playtest 4)
     if (state.loot > 0 && holdRoom(state, content) < 200) { const d = pick((a) => a.t === 'divide' && a.how === 'fair'); if (d) return d; }
     // the trading beach, once a landfall, when there is something to sell or silver to spend

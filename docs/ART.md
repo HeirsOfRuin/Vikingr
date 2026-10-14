@@ -91,3 +91,21 @@ Standalone images at about 2.5:1 work best (see the round 2 notes). Prompt add-o
 | `conaille` | Dún Delgan | A flat green plain behind a brown bay, a round earth ringfort with a palisade and a thatched hall on a rise | Still morning, smoke rising straight |
 
 Once these arrive, each place gets `art:` in `content/places/places.yaml` and its scenes get the key.
+
+## Shot list: the twelve new places (wanted, 2026-10-14)
+Same format and prompt add-on as the 831 places. Nantes and York had Roman walls patched in timber: stone is right there, and only there.
+
+| Key | Scene | Composition | Light |
+|---|---|---|---|
+| `hladir` | The jarl of Hlaðir's hall | A long timber hall on a rise above a river mouth, a wide green fjord with farms along it, ships drawn up below | Long northern summer evening, low gold sun |
+| `uppsala` | The mounds | Three huge grass burial mounds in a row, a long timber hall beyond with a shining roof-ridge, a dark grove behind with shapes hanging in the trees | Flat grey noon, very still |
+| `gotland` | The silver island | Flat green farmland, tall carved picture-stones by a farm gate, a low coast with ships | Bright, wind in the grass |
+| `truso` | The amber coast | Wooden jetties at a river mouth behind a long sand spit, low marsh, horsemen in the distance on a road lined with heaps of goods | Hazy, pale sky |
+| `man` | Mön | A green hilly island rising to a mountain, a small stone chapel on a headland, a sheltered harbour | Clear day, long view to other coasts |
+| `dublin` | The black pool | A dark pool where a small river meets a wide one, a timber church on a ridge, a ford of woven hurdles, farms | Dull afternoon, rain coming |
+| `clonmacnoise` | Ciarán's city | A crowded monastic town on a ridge above a broad slow river: many small churches, timber houses, a crowd, armed men lining the ridge | Morning mist lifting off water-meadows |
+| `york` | Eoforwic | A river below old Roman walls patched with timber, a wooden minster inside, a wic of jetties and Frisian ships outside | Overcast, smoke from many fires |
+| `sheppey` | The minster on the hill | Flat marsh and sheep, the wide Thames mouth, a small stone church inside a wall on the only hill, a beached longship | Bright, big sky |
+| `london` | Lundenwic | A long strand of jetties, warehouses and smoke along a broad river bend, the empty ruined Roman walls on a hill to one side | Busy morning, river traffic |
+| `noirmoutier` | Saint Philibert's island | A low island of shining salt-pans, a monastery behind a new earth-and-timber wall, salt heaps on the shore | Hard white sunlight |
+| `nantes` | Nantes | A walled city on a hill above a wide shallow river full of islands, a stone cathedral, river boats at a quay below, mounted men in mail | Warm, late afternoon |

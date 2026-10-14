@@ -298,12 +298,16 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   state.pending = { t: 'report', title: won ? 'Victory' : b.over === 'lost' ? 'Defeat' : 'The fight is broken off', lines, next };
 }
 
+export const SCOUTED_SURPRISE = 0.25;
+
 /** A raid on a place: the approach decides how many of the defenders are awake (Phase 1: one roll). */
 export function startRaid(state: GameState, content: ContentBundle, rng: RngCursor, placeId: string): void {
   const p = content.places[placeId];
   const ps = state.places[placeId];
   if (!p?.raid || !ps) throw new Error(`${placeId} cannot be raided`);
-  const surprise = rng.float() < 0.3 + 0.05 * state.hero.skills.cunning + 0.03 * effAttr(state, content, 'wit');
+  // a place he has scouted (its arrival scene: the walls counted, the feast-day learned) is easier to catch asleep
+  const scouted = state.flags[`${placeId}_scouted`] ? SCOUTED_SURPRISE : 0;
+  const surprise = rng.float() < 0.3 + scouted + 0.05 * state.hero.skills.cunning + 0.03 * effAttr(state, content, 'wit');
   const men = Math.max(3, Math.round(p.raid.defenders * ps.defence * coastMult(state, content, placeId) * (surprise ? 0.45 : 1) * (0.85 + 0.3 * rng.float())));
   learn(state, 'cunning', 2);
   state.seasonRaids.push(placeId);

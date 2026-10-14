@@ -1,0 +1,400 @@
+# The twelve new places (docs/FRAME-PLACES-2.md): one arrival scene each, the first time he puts in.
+# A place he scouts (flag <place>_scouted) is easier to catch asleep when he comes back to raid it.
+
+# ---- the north ----
+- id: pl_hladir
+  kind: place
+  trigger: arrive
+  at: [hladir]
+  once: true
+  requires: ["!service"]
+  title: The jarl of Hlaðir
+  text: |
+    The Trondheim fjord goes on for a day and a half, wide and green, with more farms along it than you have seen in one place in your life. At the head of it, on a rise above the river mouth, is the jarl of Hlaðir's hall, and it is bigger than Jarl Eystein's. Your men notice. Nobody says it.
+
+    The jarl gives you a seat and ale and looks at you the way a big dog looks at a smaller one that has walked into its yard. The jarls of Hlaðir and the jarls of Hordaland have been measuring each other since before either of you was born.
+
+    At the far end of the hall there's a man from Hálogaland, the far north, dressed in more furs than the weather needs, who has come down with a ship-load of walrus hide and ivory and wants everyone to know it.
+  choices:
+    - id: gift
+      text: Give the jarl a gift worth his hall. Let him see Hordaland has manners.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { standing: { place: hladir, n: 3 } }, { set: flag.hladir_friend } ]
+      result: The jarl weighs your gift in his hand, and then, slowly, smiles. "Eystein's men have better manners than Eystein," he says, loud enough for the hall. You'll be welcome here. Whether that's a thing to tell your own jarl is another question.
+    - id: north
+      text: Sit with the man from Hálogaland, and let him talk about the north.
+      effects: [ { add: { skill.lore: 1, skill.trade: 1 } }, { set: flag.halogaland_tale } ]
+      result: |
+        He talks all night. North of his own farm, he says, there is nobody but the Finns, who pay him tribute in marten-skins and reindeer-hides and bird-feathers and ropes of whale-hide. Further north still, the coast turns east, and he has followed it, five days and then nine, to where it turns south into a sea nobody has a name for, with people on its shores who speak almost like the Finns but not quite. He went, he says, to see what was there. And for the walrus. Mostly for the walrus.
+    - id: boast
+      text: Answer the jarl's look. Tell his hall what Hordaland men have done in Ireland.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: You tell it well, and his hall listens, and at the end of it the jarl raises his horn to you, a little stiffly. You have made friends among his young men tonight, and given him something to think about.
+        effects: [ { standing: { place: hladir, n: 1 } }, { deed: { type: deed, text: "Out-talked the jarl of Hlaðir's hall", weight: 1 } } ]
+      failure:
+        text: His skald answers you, in verse, and his verse is better than your prose. The hall laughs. It's good-natured, mostly. Mostly.
+        effects: [ { standing: { place: hladir, n: -1 } } ]
+
+- id: pl_uppsala
+  kind: place
+  trigger: arrive
+  at: [uppsala]
+  once: true
+  requires: ["!service"]
+  title: The mounds
+  text: |
+    You leave the ship at the river landing and walk the last of the way, and come up over a rise, and there they are: three mounds, each the size of a hill, built by men, over kings who were old when your grandfather's grandfather was born. Beyond them is the temple, a long hall with its roof-ridge shining in the sun. Gold leaf, people say. It might be.
+
+    Behind the temple is the grove. You can see from here that there are things hanging in the trees. Some of them are horses. Your men stop talking.
+    [if flag.birka_ansgar]
+
+    The Swedes here know about the Frankish monk in Birka, and they don't like him. One of the temple's men asks you, quite politely, if you've been listening to him. It doesn't feel like a question you should get wrong.
+    [/if]
+  choices:
+    - id: horse
+      text: Buy a horse, and give it to the grove.
+      requires: ["silver >= 36"]
+      effects: [ { add: { silver: -36, hamingja: 1, skill.lore: 1 } }, { standing: { place: uppsala, n: 2 } } ]
+      result: |
+        The temple's men do it properly, in the old way, and hang what's left in the trees beside the others. On the walk back to the ship nobody says anything for a long while. Then one of the men says he feels lucky. They all feel lucky. Some of that is the ale.
+    - id: mound
+      text: Climb the tallest mound at dusk, alone, and sit on the old king's head.
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: You sit up there until the stars come out. Nothing speaks to you. But you come down knowing something about kings that you didn't know going up, though you'd be hard put to say what. The men say you look different. You probably don't.
+        effects: [ { add: { hamingja: 1 } } ]
+      failure:
+        text: A temple-man finds you up there and is very upset about it, and you have to pay a good deal of silver to make him less upset.
+        effects: [ { add: { silver: -24 } }, { standing: { place: uppsala, n: -2 } } ]
+    - id: king
+      text: Go to the king's hall and ask about the river road east.
+      effects: [ { add: { skill.trade: 1 } }, { set: flag.birka_east }, { standing: { place: uppsala, n: 1 } } ]
+      result: The king's men have all been east, or say they have. The rivers, the portages, the Khazars, the silver. They talk about it the way your father's men talked about Ireland twenty years ago. In twenty years, you think, everyone in Hordaland will be talking about the east too.
+
+# ---- the Baltic ----
+- id: pl_gotland
+  kind: place
+  trigger: arrive
+  at: [gotland]
+  once: true
+  requires: ["!service"]
+  title: The silver island
+  text: |
+    Gotland is flat and green and full of farms, and every farm is rich. You can see it in the cattle, and the women's brooches, and the tall stones by the farm gates carved with ships and horsemen and long processions of the dead.
+
+    Everyone here trades. Every farmer has been to Birka and Hedeby and further, and come home, and buried what he made under his floor, and gone again. Nobody tells you this. You can tell by the way they look at your ship: like men who have a great deal to lose and have decided they won't.
+  choices:
+    - id: trade
+      text: Trade honestly, and drink with them after.
+      effects: [ { add: { skill.trade: 1 } }, { standing: { place: gotland, n: 2 } } ]
+      result: They're hard bargainers and good company. One of them, drunk, shows you a single silver coin from somewhere so far east he can't say its name. Then he puts it back in his purse, very carefully, and doesn't drink any more.
+    - id: count
+      text: Walk the farms, and count the men and the mail and the roads to the shore.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: You count them, and the roads, and which farms are furthest from help. Nobody stops you. When you come back to the ship your men look at your face, and then at each other.
+        effects: [ { set: flag.gotland_scouted } ]
+      failure:
+        text: A farmer's boy follows you all afternoon, and by evening the whole island knows that the Norwegian with the ship was counting their spears. The next morning there are a lot more of them on the beach.
+        effects: [ { standing: { place: gotland, n: -2 } } ]
+    - id: go
+      text: Buy water and bread and leave them in peace.
+      result: They sell you water and bread at a fair price and watch you all the way out to sea. They are still watching when you can no longer see them.
+
+- id: pl_truso
+  kind: place
+  trigger: arrive
+  at: [truso]
+  once: true
+  requires: ["!service"]
+  title: The amber coast
+  text: |
+    Truso is a market of wooden jetties at the mouth of a river, behind a long spit of sand, among people who call themselves the Este and speak a tongue nobody aboard has heard. Amber lies about in heaps here like gravel. The children play with it.
+
+    You've come in the middle of a funeral. A rich man died last month; he lies in his house still, unburned, kept cold in some way that nobody will explain to you. Today they are dividing his goods.
+    [break]
+    They've laid it all out along the road in heaps, a mile of it: the biggest heap furthest from the town, the smallest nearest. And every man with a fast horse lines up at the far end, and when the horn goes they ride for it, and whoever reaches a heap first takes it.
+
+    A Truso man, through a trader who speaks some Norse, asks if you'd like to borrow a horse.
+  choices:
+    - id: race
+      text: Borrow a horse and ride for the dead man's silver.
+      check: { skill: cunning, attr: agi, difficulty: 6 }
+      success:
+        text: You don't win the big heap. Nobody from outside ever does. But you get the third, a pile of cloth and a silver cup and a sword with its edge gone, and the Este cheer you as if you'd won, because you rode like a madman and didn't fall off.
+        effects: [ { add: { silver: 48 } }, { standing: { place: truso, n: 2 } }, { deed: { type: deed, text: "Rode for a dead man's silver at Truso, and took a heap", weight: 1 } } ]
+      failure:
+        text: The horse knows the road better than you do, and doesn't like you, and puts you into a ditch halfway along it. You come back on foot, covered in mud, with your ribs on fire. The Este are delighted.
+        effects: [ { injury: cracked_ribs }, { standing: { place: truso, n: 1 } } ]
+    - id: amber
+      text: Buy amber while everyone else is watching the race.
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: The sellers have all gone to the race but one old woman, who sells you a sack of it for almost nothing to be rid of you. It'll sell for five times as much in Hedeby.
+        effects: [ { add: { loot: 60 } } ]
+      failure:
+        text: The one seller who stayed behind is the sharpest trader on the coast, and you pay full price. It'll still sell in Hedeby. Just.
+        effects: [ { add: { loot: 12 } } ]
+    - id: drink
+      text: Drink with the headmen. They drink mare's milk; the poor drink mead.
+      effects: [ { add: { skill.lore: 1 } }, { standing: { place: truso, n: 1 } } ]
+      result: The mare's milk is sour and fizzing and goes to your head faster than you'd have believed. The headmen think this is very funny. You end the night trying to explain where Norway is with a stick in the sand, and they end it trying to explain to you why the dead man isn't buried yet, and nobody understands anybody, and it's one of the better nights you've had.
+
+# ---- the Irish Sea ----
+- id: pl_man
+  kind: place
+  trigger: arrive
+  at: [man]
+  once: true
+  requires: ["!service"]
+  title: Mön
+  text: |
+    Man sits in the middle of the Irish Sea like a stone in a river, with the whole sea going round it. On a clear day, the islanders say, from the top of their mountain you can see five kingdoms: Ireland, Scotland, Wales, England and Man. And the sixth, they add, which is heaven, straight up.
+
+    They speak Irish here, or something close to it, and they have a king of their own, and little stone chapels on every headland with a hermit in each one. The harbours are good. Your steersman walks round the biggest of them twice, looking at it, and says nothing, and you know exactly what he's thinking. A man could winter here, and reach anywhere in the Irish Sea from it in two days.
+  choices:
+    - id: king
+      text: Send the island's king a gift, and ask for a safe harbour.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { standing: { place: man, n: 4 } } ]
+      result: The king of Man is a careful man in a small kingdom between bigger ones, and he takes your gift, and gives you his word, and keeps it. You have a harbour in the middle of the Irish Sea now, for as long as you don't make him regret it.
+    - id: sheep
+      text: Take sheep off the hills. They have plenty.
+      effects: [ { add: { provisions: 120 } }, { standing: { place: man, n: -3 } } ]
+      result: Sheep are easy. The shepherds are not, quite, but there aren't many of them. You sail with the deck full of mutton and the island's beacons burning behind you.
+    - id: harbour
+      text: Spend a day sounding the harbour, and marking where the ships would lie.
+      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.man_harbour } ]
+      result: You sound it, and mark it, and draw it in the sand for your steersman, who draws it better. One day, you think, somebody is going to hold this island and rule the sea from it. You'd quite like that to be you.
+
+- id: pl_dublin
+  kind: place
+  trigger: arrive
+  at: [dublin]
+  once: true
+  requires: ["!service"]
+  title: The black pool
+  text: |
+    Where the little river comes down into the Liffey there's a pool so deep and dark the Irish named the place after it: Duibhlinn, the black pool. There's a church on the ridge above it, and a scatter of farms, and a ford of woven hurdles across the Liffey a little upstream that every road in Leinster seems to come to.
+
+    The Irish here don't run when they see your sail. They come down to the water to look, and some of them even want to trade. They've seen Northmen before. They haven't seen any stay.
+
+    The pool is deep enough to float a fleet, and sheltered from every wind but one. You can't stop looking at it.
+  choices:
+    - id: camp
+      text: Walk the ridge above the pool, and see where a ship-fort would stand.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.dublin_scouted }, { set: flag.dublin_longphort } ]
+      result: |
+        You walk it twice. A ditch from the river to the pool, a bank and a stockade on top, the ships drawn up inside. A hundred men could hold it against an Irish king's whole hosting, and winter in it, and raid all Leinster in the spring. Nobody has done it yet. Somebody will.
+    - id: trade
+      text: Trade with the church's people. They have hides and cattle and want iron.
+      effects: [ { add: { skill.trade: 1, silver: 12 } }, { standing: { place: dublin, n: 2 } } ]
+      result: The church's steward is a careful man with very clean hands, and drives a hard bargain in good Latin and worse Norse. You part friends, or as near as a Christian priest and a Northman with a ship can be.
+    - id: cattle
+      text: Take the cattle at the ford, and go.
+      effects: [ { add: { loot: 40 } }, { standing: { place: dublin, n: -3 } } ]
+      result: The herdsmen run. The cattle don't, being cattle. You eat well for a week, and the next time you come up the Liffey, the Irish will be waiting at the ford.
+
+- id: pl_clonmacnoise
+  kind: place
+  trigger: arrive
+  at: [clonmacnoise]
+  once: true
+  requires: ["!service"]
+  title: Ciarán's city
+  text: |
+    It takes five days: up the Liffey as far as the ships will go, then dragging them overland on rollers with the men cursing, then a lake, then the Shannon, wide and slow and brown, through bog and water-meadow with herons standing in it like old men.
+
+    And then Clonmacnoise, on a ridge above the river, and it isn't a monastery. It's a city. Churches, a dozen of them, little stone ones and big wooden ones. Workshops, and houses, and a great crowd of people. Pilgrims. Students: you hear English spoken, and something that might be Frankish. A road coming in from every side of Ireland.
+
+    The monks see you, and don't run. A great many armed men come out of the houses instead, and stand in a line on the ridge, and wait.
+  choices:
+    - id: count
+      text: Lie off in the river, and count them, and their gates, and their churches.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.clonmacnoise_scouted } ]
+      result: You count them. The tenants of Clonmacnoise, you learn later, have fought the tenants of other monasteries in pitched battles, and won. They don't look like monks' men. They look like they are waiting for you to try.
+    - id: tribute
+      text: Send a man up under a green branch. Tell them you'll go away for silver.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: The abbot's steward comes down to the shore himself and pays, without haggling, which tells you how rich they are. "Go with God," he says, "and go far." You go. For now.
+        effects: [ { add: { loot: 120, honour: -1 } }, { standing: { place: clonmacnoise, n: -1 } } ]
+      failure:
+        text: The steward listens, and laughs, and goes back up the hill. The line on the ridge gets longer.
+    - id: leave
+      text: Pray to whoever is listening that the Shannon takes you home, and turn the ships.
+      result: Five days back to the sea, and the men grumbling the whole way about rollers. But you've seen it now. And you know the way.
+
+# ---- the English coast ----
+- id: pl_york
+  kind: place
+  trigger: arrive
+  at: [york]
+  once: true
+  requires: ["!service"]
+  title: Eoforwic
+  text: |
+    York stands where two rivers meet, behind walls the Romans built and the English have patched with timber. Inside the walls there's the king's hall and the minster and the bishop. Outside, along the river, there's the wic, where the Frisian traders live in their own quarter and the ships tie up in rows.
+    [if year < 840]
+
+    King Eanred rules Northumbria, and has for twenty years. He's old now. Everybody is waiting.
+    [else]
+
+    The old king Eanred is dead, and his son Æthelred has the hall, and the great men of Northumbria are already arguing over whether he'll keep it.
+    [/if]
+
+    They let you tie up in the wic, because you came with goods, and because the Frisians speak for you. They watch you every step you take.
+  choices:
+    - id: trade
+      text: Trade in the Frisian quarter, and stay outside the walls.
+      effects: [ { add: { skill.trade: 1 } }, { standing: { place: york, n: 2 } } ]
+      result: The Frisians are the same here as everywhere, polite and patient and very good at sums. They tell you York is the richest town north of London, and that its walls are older than its kings, and that one ship couldn't take it and a hundred could. Then they change the subject.
+    - id: walls
+      text: Walk round the walls, and count the gates and the spears.
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: You walk round twice, and talk to a drunk guard, and buy a priest a cup of wine. The walls are old. In two places the timber patches are rotten. The king's household is a hundred men at most, and most of them are elsewhere in the summer.
+        effects: [ { set: flag.york_scouted } ]
+      failure:
+        text: The king's reeve has you followed, and then has you asked, politely, to leave by the morning tide. You leave by the morning tide.
+        effects: [ { standing: { place: york, n: -2 } } ]
+    - id: minster
+      text: Go into the minster, and see the books they talk about.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        An old priest shows you, because you ask, and because nobody else has asked him in years. A room full of books, more than you'd have thought there were in the world. A man from this minster, he says, went to the Frankish emperor's court and taught the emperor himself. He turns a page, very carefully, and shows you a picture of a lion. You have never seen a lion. Neither, it turns out, has he.
+
+- id: pl_sheppey
+  kind: place
+  trigger: arrive
+  at: [sheppey]
+  once: true
+  requires: ["!service"]
+  title: The minster on the hill
+  text: |
+    Sheppey is marsh and sheep, flat and green, with the Thames going past it into the sea, wide as a lake. On the one hill there's a minster of nuns, founded by a queen two hundred years ago, with a stone church and a wall and a bell.
+
+    You've barely beached the ship when the gate opens and a party comes down the hill: an old woman in black, two younger ones carrying baskets, and a frightened reeve with a spear he plainly doesn't know how to use.
+
+    The old woman is the abbess. Through the reeve, who has a little Frisian and less Norse, she offers you bread, and cheese, and a cask of ale. And she asks you, very courteously, to go away.
+  choices:
+    - id: bread
+      text: Take the bread, thank her, and go.
+      effects: [ { add: { provisions: 60, honour: 1 } }, { standing: { place: sheppey, n: 3 } } ]
+      result: The abbess watches you go from the beach. You think she might be praying for you. It's hard to tell, with Christians, whether that's a kindness or a threat.
+    - id: silver
+      text: Thank her for the bread. Then ask for the church's silver as well.
+      effects: [ { add: { loot: 80, honour: -1 } }, { standing: { place: sheppey, n: -3 } } ]
+      result: She gives it you. She doesn't argue, because she can count your men. But she looks at you as she hands it over, and says something in English, quietly, that makes the reeve go white.
+    - id: warn
+      text: Laugh, and tell her you'll be back for the rest.
+      effects: [ { add: { honour: -1 } }, { standing: { place: sheppey, n: -2 } } ]
+      result: She nods, as if you'd told her the weather. By the next summer, you hear later, there's a beacon on the hill and a watch on the beach and the reeve has learned which end of the spear goes in front.
+
+- id: pl_london
+  kind: place
+  trigger: arrive
+  at: [london]
+  once: true
+  requires: ["!service"]
+  title: Lundenwic
+  text: |
+    Up the Thames on the tide, past marshes and more marshes, and then the river bends and there it is: the old Roman city on its hill to the right, walls and ruins and a church or two, nearly empty. And to the left of it, along the strand, the living town: a long sprawl of jetties and warehouses and workshops and alehouses and smoke, and ships from everywhere tied up three deep.
+    [if year < 840]
+
+    The Mercian king, Wiglaf, owns all of it, and his reeve takes a toll of everything that comes up the river. Everything.
+    [else]
+
+    The Mercian king owns all of it, and his reeve takes a toll of everything that comes up the river. Everything.
+    [/if]
+
+    The reeve comes down to your ship before the ropes are tied. He has a tally-stick, three men with spears, and a face that has seen a great many Northmen and not been impressed by any of them.
+  choices:
+    - id: toll
+      text: Pay the toll, and trade.
+      requires: ["silver >= 12"]
+      effects: [ { add: { silver: -12, skill.trade: 1 } }, { standing: { place: london, n: 3 } } ]
+      result: You pay. The reeve cuts a notch in his stick, and suddenly everybody on the strand is very friendly. London, you learn, runs on that stick.
+    - id: stare
+      text: Tell the reeve you don't pay tolls to men with three spears.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: He looks at you, and at your men, and at his three spears, and cuts a notch in his stick anyway, and goes away without your silver. Everybody on the strand saw it. Some of them are laughing at him. He'll remember that longer than he remembers you.
+        effects: [ { set: flag.london_scouted } ]
+      failure:
+        text: He blows a horn. More spears than three come down the strand. You pay the toll, and twice the toll as a fine, and the Frisians on the next ship look at you with great pity.
+        effects: [ { add: { silver: -24 } }, { standing: { place: london, n: -2 } } ]
+    - id: pilot
+      text: Hire a Frisian pilot who knows the sands from here to the Loire.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24, skill.seamanship: 1 } }, { know: noirmoutier } ]
+      result: He's an old man called Hessel with one hand and a memory for sandbanks like a priest's for sins. He rows a summer with you, and teaches your steersman the Narrow Sea and the long coast south to the salt islands at the mouth of the Loire.
+
+# ---- Frankia ----
+- id: pl_noirmoutier
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  requires: ["!service"]
+  title: Saint Philibert's island
+  text: |
+    Noirmoutier lies low off the mouth of the Loire, with the salt-pans shining all round it like broken mirrors and the monastery in the middle, behind a new wall of earth and timber the emperor gave the monks leave to build.
+    [if year >= 836]
+
+    The monastery is empty. The monks have gone, the salt-workers say, inland, and taken their saint's bones with them in a cart. They had been raided too often. You are not the first Northman they have seen this summer, or the third.
+    [else]
+
+    The monks are still here, just. Their saint's bones are kept in a box in the church, and every summer when the raiding season starts they put the box in a cart and take it inland, and every autumn they bring it back. They are very tired of it.
+    [/if]
+
+    The salt is everywhere: in heaps by the pans, in sacks on the shore, waiting for the boats from Nantes.
+  choices:
+    - id: salt
+      text: Take the salt. It's worth more in the north than the monks' silver.
+      effects: [ { add: { loot: 60 } }, { standing: { place: noirmoutier, n: -2 } } ]
+      result: You fill the bilge with it. Salt, the men say, is the best plunder there is. It doesn't fight back, nobody comes after it, and every farm in Norway needs it.
+    - id: monk
+      text: Find the old monk who stayed behind, and make him talk about the Loire.
+      effects: [ { add: { skill.lore: 1 } }, { know: nantes }, { set: flag.nantes_scouted } ]
+      result: |
+        He's old and half-deaf and doesn't care any more what you do to him, so he tells you everything, in bad Latin and worse Frankish that one of your men half-follows. Nantes, a day upriver. A bishop, a count, stone walls. And every year at midsummer, on the feast of Saint John, the whole country comes into the city for the fair, and they open the gates and leave them open. He tells you this as if it were a curse. Maybe it is.
+    - id: leave
+      text: Leave the island be. There is nothing here the last ships didn't take.
+      result: You water the ships and go. The salt-workers watch you from the pans, leaning on their rakes, and don't bother to run.
+
+- id: pl_nantes
+  kind: place
+  trigger: arrive
+  at: [nantes]
+  once: true
+  requires: ["!service"]
+  title: Nantes
+  text: |
+    A day up the Loire, wide and shallow and full of islands, and then Nantes on its hill above the river: stone walls, a cathedral, a bishop's palace, a count's hall, and a quay below the walls crowded with river-boats bringing down wine and taking up salt.
+
+    The count's men come down to the quay in mail, a dozen of them, mounted, and look at you without any expression at all. They are the best-armed men you've ever seen. They don't attack you. They don't have to.
+
+    The quay-master, a fat Breton, says that Northmen may trade here if they pay, and behave, and leave by the next tide.
+  choices:
+    - id: wine
+      text: Pay, behave, and buy wine.
+      requires: ["silver >= 12"]
+      effects: [ { add: { silver: -12, skill.trade: 1 } }, { standing: { place: nantes, n: 2 } } ]
+      result: The wine here is better than anything that reaches Hedeby, and cheaper, and the Bretons who sell it are friendlier than the Franks, because they hate the Franks more than they hate you. You learn a great deal about the count from them. None of it is good.
+    - id: feast
+      text: Ask, carefully, when the city keeps its great feasts.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          Midsummer, the Bretons say: the feast of Saint John. The whole country comes in for it, and the gates stand open from dawn to dark. They say it the way people say things they haven't thought about. You think about it all the way back down the river.
+        effects: [ { set: flag.nantes_scouted } ]
+      failure:
+        text: The fat quay-master hears you asking, and has a word with the count's men, and you leave on the next tide with a dozen mailed horsemen watching from the bank all the way down.
+        effects: [ { standing: { place: nantes, n: -2 } } ]
+    - id: bishop
+      text: Ask to see the bishop's church.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        They let you in, with two of the count's men behind you. It is the biggest building you have ever stood inside: stone, and painted, and full of gold and candle-smoke and singing. The bishop is old and kind and asks you, through a monk, whether you know about Christ. You tell him you've heard. He says he will pray that you hear more. The count's men look at you as if they'd like to pray for something else.

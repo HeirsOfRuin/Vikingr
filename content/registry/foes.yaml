@@ -49,3 +49,34 @@
   quality: 1
   doctrine: { missiles: 3, flank: 2, hold: 2, give: 1 }
   desc: "The hosting of the Airgialla, called out to defend Patrick's church: javelin-men, horse on the wings, and monks behind them singing."
+# the twelve new places (docs/FRAME-PLACES-2.md)
+- id: gotlanders
+  name: The Gotland farmers
+  quality: 1
+  doctrine: { hold: 3, push: 2, missiles: 1 }
+  desc: Rich, stubborn farmers with good mail they can afford and nobody to answer to. They have been fighting off men like you since their grandfathers' time.
+- id: leinster_men
+  name: The men of Leinster
+  quality: 1
+  doctrine: { missiles: 3, give: 2, flank: 2, hold: 1 }
+  desc: A Leinster king's war-band and the farmers of the Liffey plain. Javelins, light shields, and fast feet in their own bogs.
+- id: clonmacnoise_men
+  name: The monastery's fighting tenants
+  quality: 1
+  doctrine: { hold: 3, missiles: 2, push: 1 }
+  desc: Clonmacnoise has fought pitched battles against other monasteries' tenants within living memory, and won some. They do not run because a shield-wall is coming.
+- id: kentish_men
+  name: The men of Kent
+  quality: 1
+  doctrine: { hold: 3, push: 1, missiles: 1, give: 1 }
+  desc: The West Saxon king's reeve and the Kentish farmers of the marsh. Spears and long shields, and a habit of coming in numbers when they come.
+- id: london_reeve
+  name: The king's reeve and the wic
+  quality: 1
+  doctrine: { hold: 3, missiles: 2, push: 1 }
+  desc: The Mercian king's reeve, his household, and every trader on the strand with a spear and something to lose.
+- id: frankish_levy
+  name: The count's men
+  quality: 2
+  doctrine: { hold: 2, push: 2, flank: 2, missiles: 1 }
+  desc: "A Frankish count's household: mailed horsemen who fight on foot when they must, with the city's militia behind them. Better armed than you, and they know it."

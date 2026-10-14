@@ -309,3 +309,14 @@ o_peace: { description: "Paid the wergild and the jarl's price: peace with Hrapp
 o_hunted: { description: "Came home without paying: Hrapp's house hunts him" }
 outlaw_ended: { description: "The outlaw's time is served: he may sail home" }
 hs_we_broke: { description: "The surety's peace was broken by his own raid, not by their kin (docs/FRAME-HIRD-HOSTAGES.md)" }
+# the twelve new places (docs/FRAME-PLACES-2.md); <place>_scouted makes a raid there likelier to catch them asleep
+hladir_friend: { description: "Gave the jarl of Hlaðir a gift worth his hall" }
+halogaland_tale: { description: "Heard the Hálogaland man tell of the far north and the walrus coast" }
+man_harbour: { description: "Sounded the harbour on Man: a winter base in the Irish Sea" }
+dublin_longphort: { description: "Walked the ridge above the black pool and saw where a ship-fort would stand" }
+gotland_scouted: { description: "Counted Gotland's men and roads" }
+dublin_scouted: { description: "Walked the ground at Duibhlinn" }
+clonmacnoise_scouted: { description: "Counted Clonmacnoise's fighting tenants and gates" }
+york_scouted: { description: "Found the rotten places in York's walls" }
+london_scouted: { description: "Faced down the reeve at Lundenwic, and saw how few spears he has" }
+nantes_scouted: { description: "Learned that Nantes opens its gates for the feast of Saint John" }
