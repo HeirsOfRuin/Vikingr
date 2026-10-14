@@ -119,13 +119,13 @@
   text: |
     Your father is mending the byre roof, the way he does every spring, swearing at it the way he does every spring.
 
-    You swore over the jarl's horn that you would put three marks of silver in his hand. You have them.
+    You swore over the jarl's horn that you would put a pound and a half of silver in his hand. You have it.
   choices:
     - id: give
       text: Climb up and give it to him.
       effects: [ { add: { silver: -72 } }, { keep_boast: father_silver }, { set: flag.father_paid } ]
       result: |
-        You climb up beside him and hold it out: three marks, weighed out on the jarl's own scales so there can be no argument.
+        You climb up beside him and hold it out: a pound and a half, weighed out on the jarl's own scales so there can be no argument.
 
         He looks at it a long time without taking it. Then he takes it, and puts it inside his shirt, and goes on mending the roof.
 

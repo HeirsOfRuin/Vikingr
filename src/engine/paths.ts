@@ -55,6 +55,9 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   /** Hardship (docs/FRAME-HARDSHIP.md): how far men grudge him, his buried silver, a bad harvest this winter. */
   envy: (s) => s.hard?.envy ?? 0,
   hoard: (s) => s.base.hoard,
+  /** Arm-rings he holds (src/engine/rings.ts). */
+  'rings.silver': (s) => s.rings?.silver ?? 0,
+  'rings.gold': (s) => s.rings?.gold ?? 0,
   trophies: (s) => s.base.trophies.length,
   dearth: (s) => (s.hard?.dearth !== undefined && s.hard.dearth === (s.flags._winter ?? -1) ? 1 : 0),
   muster: (s) => s.musterPool,

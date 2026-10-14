@@ -25,7 +25,7 @@ export const BASE: Record<BaseLevel, { name: string; desc: string; thralls: numb
   farm: { name: 'Your own farm', desc: 'A longhouse of your own, turf-roofed, with a byre at one end, a field, a strip of shore, and a door nobody else can shut on you.', thralls: 6, perThrall: 3, income: 12, muster: 1 },
   hall: { name: 'Your hall', desc: 'A hall with carved posts and a high seat, long enough to feast forty men, where your trophies hang and your name is said at the door.', thralls: 12, perThrall: 3, income: 24, muster: 4 },
 };
-/** A farm of his own: 8 marks. A hall on it: 24 marks, and a name men know. */
+/** A farm of his own: 4 pounds. A hall on it: 12 pounds, and a name men know. */
 export const FARM_PRICE = 192;
 export const HALL_PRICE = 576;
 export const HALL_FAME = 30;

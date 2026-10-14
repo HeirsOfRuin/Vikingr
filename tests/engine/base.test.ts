@@ -93,9 +93,9 @@ describe('the base', () => {
     let s = winterHome();
     s = act(content, s, { t: 'hoard_in', n: 1000 });
     expect(s.base.hoard).toBe(1000);
-    s = act(content, s, { t: 'hoard_in', n: 1000 - 24 }); // all but a mark
-    expect(s.silver).toBe(24);
-    expect(s.base.hoard).toBe(2000 - 24);
+    s = act(content, s, { t: 'hoard_in', n: 1000 - 48 }); // all but a pound
+    expect(s.silver).toBe(48);
+    expect(s.base.hoard).toBe(2000 - 48);
     s = act(content, s, { t: 'hoard_out' });
     expect(s.silver).toBe(2000);
     expect(s.base.hoard).toBe(0);

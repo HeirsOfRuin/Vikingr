@@ -25,7 +25,7 @@
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48 } }, { give: stores }, { favour: 1 }, { deed: { type: open_handed, text: "Fed the district in the bad year", weight: 3, witnesses: 120 } } ]
       result: |
-        You open the doors and stand by them while the grain goes out a sack at a time, and you make a point of knowing every name. It costs you two marks of silver to fill the storehouse up again, at the price grain is this winter, which is a robber's price.
+        You open the doors and stand by them while the grain goes out a sack at a time, and you make a point of knowing every name. It costs you a pound of silver to fill the storehouse up again, at the price grain is this winter, which is a robber's price.
 
         At the spring thing, men you barely know come up to grip your hand. Nobody says why. Everybody knows why.
     - id: sell
@@ -176,7 +176,7 @@
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { envy: -1.5 } ]
       result: |
-        You count four marks onto the cloak in front of the mound, slowly, so everyone can see the scales are honest. Þorbjörn takes it with his jaw working. He wanted the fight, and you've given him silver instead, which is harder to tell stories about.
+        You count two pounds onto the cloak in front of the mound, slowly, so everyone can see the scales are honest. Þorbjörn takes it with his jaw working. He wanted the fight, and you've given him silver instead, which is harder to tell stories about.
     - id: oath
       text: Call your own oath-helpers. Make them prove it.
       check: { skill: speech, attr: pre, difficulty: 6 }
@@ -285,7 +285,7 @@
       result: |
         He takes it the way a jarl takes a gift: graciously, and as if it was his already. Your ship goes into his boat-house with his men at her oars. At the spring thing he calls you his friend, in front of everyone, and the men who were starting to whisper about you go back to whispering about each other.
     - id: silver
-      text: Offer him ten marks, for his hall.
+      text: Offer him five pounds, for his hall.
       requires: ["silver >= 240"]
       effects: [ { add: { silver: -240 } }, { favour: 1 }, { envy: -2 } ]
       result: |
@@ -377,9 +377,20 @@
   choices:
     - id: go
       text: Give him an arm-ring, and your blessing, and a ship to Sogn.
-      effects: [ { add: { silver: -24 } }, { give: ring }, { man: { id: ketill, leave: true } }, { deed: { type: ring_giving, text: "Sent old Ketill home to Sogn with an arm-ring", weight: 2, witnesses: 60 } } ]
+      requires: ["rings.silver >= 1 || rings.gold >= 1"]
+      effects:
+        - { if: "rings.gold >= 1", then: [ { ring: { metal: gold, n: -1 } } ], else: [ { ring: { metal: silver, n: -1 } } ] }
+        - { give: ring }
+        - { man: { id: ketill, leave: true } }
+        - { deed: { type: ring_giving, text: "Sent old Ketill home to Sogn with an arm-ring", weight: 2, witnesses: 60 } }
       result: |
-        In the spring you walk him down to the landing yourself. He grips your arm at the boat, wrist to wrist, the way he did the first morning you ever rowed out of the fjord, at sixteen. "You'll do," he says. It's the most he's ever said about you. Then he gets in the boat and doesn't look back, because he never did.
+        In the spring you walk him down to the landing yourself. He grips your arm at the boat, wrist to wrist, the way he did the first morning you ever rowed out of the fjord, at sixteen, and the ring on his arm knocks against yours. "You'll do," he says. It's the most he's ever said about you. Then he gets in the boat and doesn't look back, because he never did.
+    - id: silver
+      text: Give him half a pound of hacksilver, and your blessing.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { man: { id: ketill, leave: true } } ]
+      result: |
+        You weigh it out on your own scales in front of him, and he watches the scales and not you, and nods. It's fair. It's not a ring. In the spring he goes down to the landing on his own, early, before you're up, and that's fair too.
     - id: steward
       text: Ask him to stay, and keep your farm for you while you're away.
       visible_if: ["base != father"]

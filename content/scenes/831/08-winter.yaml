@@ -61,27 +61,27 @@
 
     Bárð has his scales out on the table in his house when you come, and his wife beside him, and Gyða behind them, very straight, with her hands folded so tightly the knuckles are white.
     [if flag.gyda_price_low]
-    "Two marks," Bárð says. "And the knife." He doesn't smile. He looks as if he wants to.
+    "A pound," Bárð says. "And the knife." He doesn't smile. He looks as if he wants to.
     [elif flag.gyda_price_high]
-    "Four marks," Bárð says, and looks at you as if he already knows.
+    "Two pounds," Bárð says, and looks at you as if he already knows.
     [else]
-    "Three marks," Bárð says.
+    "A pound and a half," Bárð says.
     [/if]
   choices:
     - id: pay_low
-      text: Put two marks on the scales.
+      text: Put a pound on the scales.
       visible_if: flag.gyda_price_low
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48 } }, { set: flag.married_gyda } ]
       next: w1_feast
     - id: pay
-      text: Put three marks on the scales.
+      text: Put a pound and a half on the scales.
       visible_if: "!flag.gyda_price_low && !flag.gyda_price_high"
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } }, { set: flag.married_gyda } ]
       next: w1_feast
     - id: pay_high
-      text: Put four marks on the scales.
+      text: Put two pounds on the scales.
       visible_if: flag.gyda_price_high
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.married_gyda } ]
@@ -146,7 +146,7 @@
     Bárð still hasn't forgiven anybody. He sends his cows to graze on your father's side of the stream, every day, and waits to see what you'll do about it.
   choices:
     - id: pay
-      text: Go to Bárð with two marks, and make peace.
+      text: Go to Bárð with a pound, and make peace.
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48, honour: 1 } }, { set: flag.bard_peace } ]
       result: |
@@ -252,7 +252,7 @@
     The farm owes Bárð for the calves. It has owed him since last spring. Bárð has been patient, and now he isn't, and in the spring he will take the best of the cows. "I can't ask Father," Hallbjörn says. "He'd die of it."
   choices:
     - id: pay
-      text: Pay the debt. Two marks.
+      text: Pay the debt. A pound.
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48, honour: 1 } }, { set: flag.brother_ally } ]
       result: |
@@ -338,7 +338,7 @@
 
     He doesn't bring it down. He looks at you, and then at your men at the edge of the cloak with their hands on their axes, and lowers his.
 
-    "Blood on the cloak," he says. "That's the law. Three marks, and we're done."
+    "Blood on the cloak," he says. "That's the law. A pound and a half, and we're done."
   choices:
     - id: pay
       text: Pay him. It's the law.
@@ -371,7 +371,7 @@
     You swore to drink from an Irish king's cup. It is still to come.
     [/if]
     [if boast.father_silver == 2]
-    You swore three marks into your father's hand. Your father, at the bottom of the hall, raises his cup.
+    You swore a pound and a half into your father's hand. Your father, at the bottom of the hall, raises his cup.
     [/if]
     [if boast.first_over == 3]
     You swore to be first over the wall. You weren't. Somebody says so, loudly, and is told to shut up, and doesn't.

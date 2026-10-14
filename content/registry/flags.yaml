@@ -98,7 +98,7 @@ thorgils_paid: { description: "Paid the Hrappssons for Thorgils's leg" }
 thorgils_feud: { description: "Refused the Hrappssons: a feud" }
 thorgils_thing_won: { description: "The Thing said the cloak settled it" }
 thorgils_thing_lost: { description: "The Thing made him pay the Hrappssons" }
-father_paid: { description: "Put three marks in his father's hand" }
+father_paid: { description: "Put a pound and a half in his father's hand" }
 # the dead
 mourned_ketill: { description: "Said the words over Ketill" }
 mourned_ulf: { description: "Named Ulf over his pyre" }
@@ -118,8 +118,8 @@ j_promise_broken: { description: "Broke his promise of the king of Conaille" }
 j_trusted: { description: "The jarl trusts him with his goods" }
 j_argued: { description: "Talked his captain round to Lindisfarne" }
 gyda_price: { description: "Bárð named the bride-price for Gyða" }
-gyda_price_low: { description: "Haggled Bárð down to two marks" }
-gyda_price_high: { description: "Haggled Bárð up to four marks" }
+gyda_price_low: { description: "Haggled Bárð down to a pound" }
+gyda_price_high: { description: "Haggled Bárð up to two pounds" }
 gyda_eloped: { description: "Ran off with Gyða without paying Bárð" }
 # the sea
 se_ubbi: { description: "Traded news with Ubbi the Dane at sea" }

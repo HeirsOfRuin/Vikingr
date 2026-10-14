@@ -111,7 +111,7 @@
     [/if]
   choices:
     - id: wergild
-      text: Offer him three marks to settle it, here, in front of witnesses.
+      text: Offer him a pound and a half to settle it, here, in front of witnesses.
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } }, { ally: { id: onund, meet: true, rel: 5 } }, { set: flag.hrapp_paid } ]
       result: He looks at the silver a long time. Then he takes it, and spits in the sea, and says the words. It's done. He'll never like you. But it's done.
@@ -158,7 +158,7 @@
       text: Trade with him, carefully, and drink with him after.
       check: { skill: trade, attr: wit, difficulty: 5 }
       success:
-        text: You trade, and it's close, and at the end of it he laughs and admits you've beaten him by an ørtug. He respects that more than anything you could have said.
+        text: You trade, and it's close, and at the end of it he laughs and admits you've beaten him by five coins. He respects that more than anything you could have said.
         effects: [ { ally: { id: sigtrygg, meet: true, rel: 3 } }, { add: { silver: 24 } } ]
       failure:
         text: You trade, and he wins, and is gracious about it, and you can't work out until you're out of the harbour exactly how.
@@ -245,7 +245,7 @@
       danger: true
       effects: [ { days: 4 }, { battle: { foe: danish_raiders, men: 34, terrain: beach, win: g_levy_won, lose: g_levy_lost } } ]
     - id: silver
-      text: Send three marks for the jarl's men, and keep your ships for your own summer.
+      text: Send a pound and a half for the jarl's men, and keep your ships for your own summer.
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } } ]
       result: The jarl takes the silver. He doesn't send thanks. A man who sends silver to a levy is a man with something better to do, and everybody knows it.
@@ -265,8 +265,8 @@
   choices:
     - id: share
       text: Take the share he gives you, in front of the levy.
-      effects: [ { favour: 3 }, { add: { loot: 150 } }, { deed: { type: battle_won, text: "Stood with the jarl's levy against the Danish raiders", weight: 3, witnesses: 200 } } ]
-      result: He gives you the best of the Danes' plunder, and his hand, and says your name to the whole levy. That's worth more than the plunder, and you both know it.
+      effects: [ { favour: 3 }, { add: { loot: 150 } }, { ring: { metal: silver } }, { deed: { type: battle_won, text: "Stood with the jarl's levy against the Danish raiders", weight: 3, witnesses: 200 } } ]
+      result: He gives you the best of the Danes' plunder, and a silver ring off his own arm, and his hand, and says your name to the whole levy. That's worth more than the plunder, and you both know it.
 
 - id: g_levy_lost
   kind: spine

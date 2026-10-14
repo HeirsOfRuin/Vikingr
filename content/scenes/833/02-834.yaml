@@ -111,12 +111,15 @@
     Ubbi finds you on the jetties at dusk, with his face black with smoke and his beard singed, and puts a horn of wine in your hand.
 
     "The richest market in the north," he says, looking at it burning. "And nobody watching it." He laughs, and then stops laughing, and drinks. "Next year there'll be less of it. And the year after that, less. And then one day there won't be anything here at all but the river." He shrugs. "Drink."
+
+    Then he works a ring off his own arm, twisted gold, a Frankish count's by the look of it, and pushes it onto yours over the knuckles. "For the jetties," he says.
   choices:
     - id: mint
       text: Go down to the mint, and take the coin-die. The emperor's own name.
       effects:
         - { item: { id: dorestad_coin } }
         - { keep_boast: dorestad }
+        - { ring: { metal: gold } }
         - { set: flag.fr_dorestad_done }
         - { deed: { type: deed, text: "Was at the burning of Dorestad, and took the emperor's coin-die from the mint", weight: 6, witnesses: 800 } }
         - { ally: { id: ubbi, rel: 2 } }
@@ -129,6 +132,7 @@
       text: Drink with Ubbi, and watch it burn.
       effects:
         - { keep_boast: dorestad }
+        - { ring: { metal: gold } }
         - { set: flag.fr_dorestad_done }
         - { deed: { type: deed, text: "Was at the burning of Dorestad", weight: 5, witnesses: 800 } }
         - { ally: { id: ubbi, rel: 3 } }
@@ -139,6 +143,7 @@
       text: Go into the burning streets and see what's left of the people.
       effects:
         - { keep_boast: dorestad }
+        - { ring: { metal: gold } }
         - { set: flag.fr_dorestad_done }
         - { add: { honour: 1 } }
         - { captives: 6 }

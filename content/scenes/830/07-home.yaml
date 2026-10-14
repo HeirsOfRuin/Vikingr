@@ -180,7 +180,7 @@
       text: Offer him Ásgeir's share of the heap for Ásgeir's widow, before he asks.
       effects: [ { add: { loot: -48, honour: 1 } }, { set: flag.h_jarl_trust }, { favour: 2 }, { set: flag.h_asgeir_widow } ]
       result: |
-        The jarl's eyebrows go up. Two marks, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
+        The jarl's eyebrows go up. A pound, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
 
         "That wasn't yours to give," the jarl says. "It was hers anyway." But something in his face has changed. "You'll sail her next summer, for my quarter. Bring her home again."
 
@@ -306,7 +306,7 @@
       requires: ["silver >= 4"]
       effects: [ { set: flag.colman_freed_home }, { captives: -1 }, { add: { silver: -4, honour: 1, man.hallvard.loyalty: 1, man.ulf.loyalty: -1 } } ]
       result: |
-        You pay the trader four ørtugar to take one man to Dublin and put him ashore there unharmed, and you tell him what you'll do if he doesn't.
+        You pay the trader twenty coins to take one man to Dublin and put him ashore there unharmed, and you tell him what you'll do if he doesn't.
 
         Colmán stands on the trader's deck with his hands free, looking at them. "I will pray for you," he says.
 

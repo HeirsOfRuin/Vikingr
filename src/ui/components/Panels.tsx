@@ -17,6 +17,7 @@ import { Bar } from './Actions';
 import { tierAt, TIER_NAMES } from '../../engine/standing';
 import { BASE, FARM_PRICE, HALL_FAME, HALL_PRICE, hallPrice, winterYield } from '../../engine/base';
 import { envyWords, SETBACK, upkeepBill } from '../../engine/hardship';
+import { ringWords } from '../../engine/rings';
 import { baseActions } from '../../engine/index';
 import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
@@ -213,6 +214,7 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
           <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : state.flags.betrothed ? 'Betrothed; the wedding is at the winter nights.' : 'No wife yet.'}{state.flags.child_son ? ` A son${state.flags.child_daughter ? ' and a daughter' : ''}.` : ''}</dd>
           <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> — captives you keep instead of selling</span>}</dd>
           <dt>Each winter</dt><dd>{formatSilver(winterYield(state)) || 'nothing'}{b.wife ? <span class="muted"> (a quarter more, for her running of it)</span> : null}</dd>
+          <dt>Arm-rings</dt><dd>{ringWords(state) === 'none' ? <span class="muted">None. The smith can make a silver one; gold comes from plunder, or from a lord's hand.</span> : ringWords(state)}</dd>
           <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small"> — safe from the sea, not from men who know where to dig</span></dd>
           {bill.total > 0 && <><dt>Winter's keep</dt><dd>{formatSilver(bill.total)}<span class="muted small"> — the men's meat and Yule gifts {formatSilver(bill.men + bill.sworn)}, the ships' tar and rope {formatSilver(bill.ships)}; it comes off the heap at the autumn share-out</span></dd></>}
           <dt>The district</dt><dd>{envyWords(envy)}</dd>

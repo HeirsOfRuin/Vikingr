@@ -50,10 +50,10 @@
 
     His name is Hessel. He trades out of Dorestad, he says, and has for twenty years, and in all that time the count has never once paid him what he owed. "So now," he says, smiling, "I sell what I know. And what I know is Dorestad."
     [break]
-    He knows where the jetties are weakest, which ford over the old Rhine the count's men don't watch, and when the night watch on the toll-house changes. He knows how many men the count left behind when he rode south to fight for the emperor's sons. "Fewer than you think," he says. "More than you'd like. Three marks."
+    He knows where the jetties are weakest, which ford over the old Rhine the count's men don't watch, and when the night watch on the toll-house changes. He knows how many men the count left behind when he rode south to fight for the emperor's sons. "Fewer than you think," he says. "More than you'd like. A pound and a half."
   choices:
     - id: pay
-      text: Pay him three marks.
+      text: Pay him a pound and a half.
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } }, { set: flag.fr_dorestad_ways } ]
       result: |
@@ -69,7 +69,7 @@
         effects: [ { set: flag.fr_dorestad_ways }, { add: { honour: -1 } } ]
       failure:
         text: |
-          He laughs at you. "The count," he says, "would hang you first and thank me after." He walks off up the beach. You hear later he sold it to a Dane for four marks.
+          He laughs at you. "The count," he says, "would hang you first and thank me after." He walks off up the beach. You hear later he sold it to a Dane for two pounds.
     - id: no
       text: Tell him you don't buy towns from men who'd sell their own.
       effects: [ { add: { honour: 1 } } ]

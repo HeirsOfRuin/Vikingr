@@ -90,6 +90,8 @@ const baseEffect = z.union([
   z.object({ fire: z.enum(['hoard', 'trophies', 'people']) }).strict(),
   z.object({ lose_ship: z.enum(['wreck', 'give']) }).strict(),
   z.object({ jarl_men: z.literal(true) }).strict(),
+  // arm-rings (src/engine/rings.ts): given to him (n > 0) or given away (n < 0)
+  z.object({ ring: z.object({ metal: z.enum(['silver', 'gold']), n: z.number().int().optional() }).strict() }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */
 export const effect: z.ZodType<Effect> = z.lazy(() => z.union([baseEffect, z.object({ if: condInput, then: z.array(effect), else: z.array(effect).optional() }).strict()]));

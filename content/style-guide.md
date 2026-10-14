@@ -51,7 +51,7 @@ That is the register: the worst thing in the world, met with understatement.
 ## Period texture
 - **Time:** days and nights, seasons, the sailing season, Yule, the winter nights (*vetrnætr*), midsummer. Ages in winters: "you were twelve winters old". No hours or minutes.
 - **Distance:** days' sail, days' rowing, a bowshot, a spear's throw.
-- **Money:** silver by weight. Marks, aurar, ørtugar; hacksilver, arm-rings, coins weighed and nicked to test them. Prices to be calibrated in `docs/ECONOMY.md`.
+- **Money:** silver by weight, as pounds of hacksilver and coins for the change (240 to the pound); arm-rings of silver or gold, which are things a man holds, not prices. Coins are weighed and nicked to test them like any hacksilver. Never marks or aurar in the prose (the author, 2026-10-14).
 - **Address:** names and nicknames, "kinsman", "friend", by patronymic, "jarl" or "lord" (*dróttinn*) for those above. Never "sir" or "my lord".
 - **What they call themselves:** Northmen, by region (Hordar, Rogalanders, Danes), or by what they do. *Víking* is something you go on ("to go a-viking", *fara í víking*), not an ethnicity. Their enemies say Northmen, Danes, heathens, foreigners (*Gaill* in Irish).
 - **Old Norse terms** only where they carry meaning, glossed on first use and in the codex.

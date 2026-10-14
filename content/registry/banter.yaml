@@ -29,7 +29,7 @@
 
 # ---- the winter benches ----
 - { who: ulf, when: hall, text: "Ulf has a girl at the next farm, he says. Then he has a girl at the farm after that. By midwinter he has worked his way up the whole fjord, in the telling." }
-- { who: bersi, when: hall, text: "Bersi has lent Ulf two ørtugar at a rate of interest that would make a Frisian blush. Ulf hasn't noticed." }
+- { who: bersi, when: hall, text: "Bersi has lent Ulf ten coins at a rate of interest that would make a Frisian blush. Ulf hasn't noticed." }
 - { who: hallvard, when: hall, text: "Hallvard carves runes on a stick by the fire, and when Ulf asks what they say, he puts the stick in the fire." }
 - { who: ketill, when: hall, text: "Ketill sits by your father in the evenings, and they talk about a summer twenty years ago, and both of them laugh in the same places." }
 - { who: ketill, when: hall, requires: [flag.ormr_dead], text: "\"Ormr would have hated a quiet death,\" says Ketill. \"He'll have told them in the hall that he went down fighting.\"" }

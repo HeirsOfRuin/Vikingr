@@ -2,6 +2,7 @@
 // the winter hall, and the turn of the year.
 import { endFelag, FAVOUR, favourMuster, jarlCut, partnerCut, shiftFavour } from './allies';
 import { rollTradeNews } from './trade';
+import { addRings, giveRing, ringWords } from './rings';
 import { ABLATE, earn, EXPECT_PER_FAME, give, payUpkeep, promiseMen, rollFire, rollHarvest, turnOfYear, dearthOf } from './hardship';
 import { addShip, masterShares, MUSTER_PER_SHIP } from './fleet';
 import type { ContentBundle } from '../content/schema';
@@ -112,7 +113,7 @@ export type ShareHow = keyof typeof LEADER_SHARE;
 /** Captives go to the traders before the shares are counted. */
 /** At another man's oar, the share of the plunder that goes to the oars (the rest is the ship's and the captain's). */
 export const SERVICE_OARS_SHARE = 0.75;
-export const CAPTIVE_PRICE = 24; // about a mark a head (docs/ECONOMY.md)
+export const CAPTIVE_PRICE = 24; // about half a pound a head (docs/ECONOMY.md)
 function sellCaptives(state: GameState, lines: string[]): void {
   if (state.captives <= 0) return;
   const price = state.captives * CAPTIVE_PRICE;
@@ -224,7 +225,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
 
 // ---- the winter hall ----
 
-export type HallWhat = 'feast' | 'gift' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall' | 'jarl_gift';
+export type HallWhat = 'feast' | 'gift' | 'gift_gold' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall' | 'jarl_gift';
 
 export function feastCost(state: GameState): number {
   return mouths(state) + FEAST_GUESTS;
@@ -256,14 +257,11 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       if (state.flags.skald && told.length) lines.push('Your skald has the hall laughing and then silent, in the right places.');
       break;
     }
-    case 'gift': {
+    case 'gift':
+    case 'gift_gold': {
       const m = state.men.find((x) => x.id === arg && x.alive);
       if (!m) throw new Error(`no sworn man ${arg}`);
-      state.silver -= ORTUG_PER_MARK;
-      addLoyalty(m, 3);
-      give(state, 'ring');
-      addDeed(state, content, { type: 'ring_giving', text: `Gave an arm-ring to ${m.name}`, witnesses: state.crew.men });
-      lines.push(`You take an arm-ring from your own arm and put it on ${m.name}'s, in front of the hall.`);
+      lines.push(giveRing(state, content, m, what === 'gift_gold' ? 'gold' : 'silver'));
       break;
     }
     case 'train': {
@@ -304,6 +302,16 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       break;
     }
     case 'jarl_gift': {
+      if (arg === 'gold') {
+        // a gold ring is a gift a jarl remembers
+        addRings(state, 'gold', -1);
+        shiftFavour(state, FAVOUR.gift * 2);
+        give(state, 'jarl');
+        give(state, 'jarl');
+        lines.push('You send the jarl a ring of twisted gold at midwinter, wrapped in a marten skin. He wears it at the Yule feast, on the arm he raises his horn with, and when he drinks to the district he looks down the hall at you.');
+        journal(state, 'Sent the jarl a gold arm-ring.');
+        break;
+      }
       state.silver -= FAVOUR.giftCost;
       shiftFavour(state, FAVOUR.gift);
       give(state, 'jarl');
@@ -445,7 +453,7 @@ export function chapterCard(state: GameState, content: ContentBundle, year: numb
   if (bench.length) lines.push(`Bench-mates who have not sworn: ${bench.map((m) => m.name).join(', ')}.`);
   const dead = state.men.filter((m) => !m.alive && m.diedOn !== null && dateOf(m.diedOn).year >= year - 1);
   if (dead.length) lines.push(`Dead this year: ${dead.map((m) => m.name).join(', ')}.`);
-  lines.push(`Silver: ${formatSilver(state.silver)}. Fame: ${Math.round(livingFame(state))}.`);
+  lines.push(`Silver: ${formatSilver(state.silver)}${state.base.hoard ? `, and ${formatSilver(state.base.hoard)} in the hoard` : ''}. Arm-rings: ${ringWords(state)}. Fame: ${Math.round(livingFame(state))}.`);
   const open = state.boasts.filter((b) => b.state === 'open');
   if (open.length) lines.push(`Sworn over the cup, and not yet done: ${open.map((b) => content.boasts[b.id]?.text).join(' ')}`);
   if (untoldCount(state)) lines.push('Some of last year\'s deeds were never told. They are already being forgotten.');

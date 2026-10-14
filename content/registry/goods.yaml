@@ -1,4 +1,4 @@
-# Trade goods (docs/FRAME-TRADE-ALLIES.md). price: ørtugar a lot at base; bulk: ørtugar of hold space a lot takes.
+# Trade goods (docs/FRAME-TRADE-ALLIES.md). price: ørtugar (5 coins each) a lot at base; bulk: ørtugar of hold space a lot takes.
 - { id: furs, name: Furs, lot: "a bale of marten and fox", price: 30, bulk: 20 }
 - { id: ivory, name: Walrus ivory, lot: "a bundle of tusks", price: 40, bulk: 10 }
 - { id: amber, name: Amber, lot: "a sack of amber", price: 30, bulk: 8 }

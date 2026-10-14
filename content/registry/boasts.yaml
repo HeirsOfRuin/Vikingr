@@ -3,13 +3,13 @@
 - { id: first_over, text: "Next summer I will be first over the wall, wherever we go.", days: 300 }
 - { id: thorgils_words, text: "Thorgils Hrappsson will eat his words before the ice breaks.", days: 90 }
 - { id: irish_cup, text: "I will drink from an Irish king's own cup.", days: 720 }
-- { id: father_silver, text: "I will put three marks of silver in my father's hand.", days: 360 }
+- { id: father_silver, text: "I will put a pound and a half of silver in my father's hand.", days: 360 }
 - { id: dorestad, text: "I will see Dorestad, the richest market of the Franks, and take something from it.", days: 360 }
 - { id: two_ships, text: "By next Yule two ships will follow my steering-oar.", days: 360, goal: { when: "ships >= 2" } }
 # The yearly pool (content/scenes/world/winter.yaml, g_yule). Repeatable; the engine keeps them when the goal is met.
 # 330 days: they fall due before the next Yule, so the reckoning there can tell them.
 - { id: yule_raids, text: "This summer two places will pay me, in silver or in blood.", days: 330, repeat: true, goal: { stat: raids, n: 2 } }
-- { id: yule_plunder, text: "I will bring home ten marks of plunder before next Yule.", days: 330, repeat: true, goal: { stat: plunder, n: 240 } }
+- { id: yule_plunder, text: "I will bring home five pounds of plunder before next Yule.", days: 330, repeat: true, goal: { stat: plunder, n: 240 } }
 - { id: yule_shieldwall, text: "I will stand in two shield-walls before next Yule, and walk off the field both times.", days: 330, repeat: true, goal: { stat: battlesWon, n: 2 } }
 - { id: yule_duel, text: "Before next Yule I will beat a man in single combat.", days: 330, repeat: true, goal: { stat: duelsWon, n: 1 } }
 - { id: yule_farm, text: "By next Yule I will sit at my own hearth, on my own land.", days: 330, goal: { when: "base != father" } }

@@ -107,12 +107,12 @@
 
     You tell him. He listens with his head on one side, the way he listens to a cow's breathing.
 
-    "Three marks," he says. "By the winter nights. Silver, weighed on my scales, not on yours. And a name men say without laughing. Then you can have her, and she can have you, and God help the pair of you." He says god, not gods. He has been trading with Irishmen.
+    "A pound and a half," he says. "By the winter nights. Silver, weighed on my scales, not on yours. And a name men say without laughing. Then you can have her, and she can have you, and God help the pair of you." He says god, not gods. He has been trading with Irishmen.
     [break]
     Gyða is behind the byre, where everybody does their meeting. "Well?" she says.
   choices:
     - id: agree
-      text: Tell her you'll have the three marks by the winter nights.
+      text: Tell her you'll have the pound and a half by the winter nights.
       effects: [ { set: flag.gyda_price } ]
       result: |
         "Good," Gyða says. "Don't die. I'd have to start again with someone stupider." She kisses you, the way she did the spring before, on the side of the mouth, and goes back in.
@@ -121,18 +121,18 @@
       check: { skill: trade, attr: wit, difficulty: 5 }
       success:
         text: |
-          You haggle. Bárð enjoys it more than he lets on. In the end it is two marks, and a good knife for him, and a promise that his name gets said at your wedding before your father's.
+          You haggle. Bárð enjoys it more than he lets on. In the end it is a pound, and a good knife for him, and a promise that his name gets said at your wedding before your father's.
 
           When you come out, Gyða is laughing. "He's never come down for anyone," she says. "He likes you. That's worse."
         effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_low } ]
       failure:
         text: |
-          You haggle. Bárð lets you talk until you run out, and then says, "Four marks," and goes back to his cow.
+          You haggle. Bárð lets you talk until you run out, and then says, "Two pounds," and goes back to his cow.
 
           Gyða has heard all of it through the wall. "Well done," she says. "Shall I tell him you'd like to try for five?"
         effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_high } ]
     - id: release
-      text: Tell her the truth. You won't have three marks, and you won't ask her to wait.
+      text: Tell her the truth. You won't have a pound and a half, and you won't ask her to wait.
       effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_declined }, { add: { honour: 1 } } ]
       result: |
         She hears you out with her arms folded. When you've finished she's quiet a long while.

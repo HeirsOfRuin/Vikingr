@@ -17,7 +17,7 @@
     And at the far end of the beach, past the fish, there is a pen of people, and a man standing on a barrel calling prices.
   choices:
     - id: mail
-      text: Buy the mail shirt. Four marks.
+      text: Buy the mail shirt. Two pounds.
       visible_if: "!item.mail"
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.mail }, { item: { id: mail, equip: true } } ]
@@ -27,7 +27,7 @@
         Ulf wants to try it on. You let him, later. He doesn't give it back for an hour.
       next: k_market
     - id: sword
-      text: Buy a Frankish sword, with the maker's name in the blade. Three marks.
+      text: Buy a Frankish sword, with the maker's name in the blade. A pound and a half.
       visible_if: "!item.frankish_sword && !item.grandfather_sword"
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } }, { set: flag.frankish_sword }, { item: { id: frankish_sword, equip: true } } ]

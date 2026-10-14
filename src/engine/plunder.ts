@@ -10,6 +10,7 @@ import { formatSilver, plural } from './format';
 import { POSITION_FAME } from './tuning';
 import { onRaided } from './standing';
 import { coastPlunderStart } from './hardship';
+import { plunderRing } from './rings';
 
 export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'leave';
 export const ALARM_MAX = 10;
@@ -36,6 +37,8 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
       p.alarm += 1.5 + rng.float() * 1.5;
       const things = ['altar plate and a silver-bound book', 'a reliquary and two candlesticks', 'cloth, wax and a chest of coin', 'the abbot\'s cup and a gilded cross', 'hacksilver from a hole under a floor'];
       p.log.push(`You strip the next house: ${things[rng.int(things.length)]}. ${formatSilver(take)}.`);
+      const ring = plunderRing(state, rng, ps.wealth + take);
+      if (ring) p.log.push(ring);
       break;
     }
     case 'captives': {

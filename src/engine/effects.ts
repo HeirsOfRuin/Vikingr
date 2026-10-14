@@ -1,4 +1,5 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
 import { dateOf } from './calendar';
 import { bestAlly, killCaptain, meet, partner, partnerInFight, shiftFavour, shiftRel, swearFelag } from './allies';
@@ -202,6 +203,11 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('recover_hoard' in e) recoverHoard(state, e.recover_hoard);
     else if ('fire' in e) burn(state, content, e.fire);
     else if ('lose_ship' in e) loseShip(state, content, e.lose_ship);
+    else if ('ring' in e) {
+      const n = e.ring.n ?? 1;
+      addRings(state, e.ring.metal, n);
+      journal(state, n > 0 ? `You have ${n === 1 ? `a ${e.ring.metal} arm-ring` : `${n} ${e.ring.metal} arm-rings`} more.` : `Gave away ${-n === 1 ? `a ${e.ring.metal} arm-ring` : `${-n} ${e.ring.metal} arm-rings`}.`);
+    }
     else if ('jarl_men' in e) {
       // the jarl mans his benches, for a quarter of the summer's heap
       state.flags.jarl_men = dateOf(state.day).year;

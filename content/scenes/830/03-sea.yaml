@@ -259,19 +259,19 @@
 
     "And lost it with them," says Ketill.
 
-    "Details," says Bersi. He shakes them in his fist. "An eyrir a throw, for the young men. Who's brave?"
+    "Details," says Bersi. He shakes them in his fist. "Fifteen coins a throw, for the young men. Who's brave?"
   choices:
     - id: play
-      text: Play, for an eyrir a throw.
+      text: Play, for fifteen coins a throw.
       requires: ["silver >= 3"]
       check: { skill: trade, attr: wit, difficulty: 4 }
       success:
         text: |
-          You win the first throw, and the third, and the fifth. Bersi's smile gets thinner and thinner. By the end of the night you are four aurar up and Bersi is explaining, to anyone who will listen, how luck evens out.
+          You win the first throw, and the third, and the fifth. Bersi's smile gets thinner and thinner. By the end of the night you are sixty coins up and Bersi is explaining, to anyone who will listen, how luck evens out.
         effects: [ { add: { silver: 12, man.bersi.loyalty: -1 } } ]
       failure:
         text: |
-          You win the first throw. After that you don't win anything at all, and by the end of the night Bersi has two aurar of yours and is being very kind about it.
+          You win the first throw. After that you don't win anything at all, and by the end of the night Bersi has thirty coins of yours and is being very kind about it.
         effects: [ { add: { silver: -6, man.bersi.loyalty: 1 } } ]
     - id: watch
       text: Watch his hands instead of the dice.

@@ -73,10 +73,10 @@ describe('playtest 3', () => {
     let s = captain();
     s.silver = 240;
     const ins = listActions(s, content).filter((o) => o.action.t === 'hoard_in').map((o) => (o.action as { n?: number }).n);
-    expect(ins).toEqual([24, 120, 216]);
-    s = act(content, s, { t: 'hoard_in', n: 24 });
-    expect(s.silver).toBe(216);
-    expect(s.base.hoard).toBe(24);
+    expect(ins).toEqual([48, 120, 192]);
+    s = act(content, s, { t: 'hoard_in', n: 48 });
+    expect(s.silver).toBe(192);
+    expect(s.base.hoard).toBe(48);
   });
 
   it('a rumoured place on a known sea road can be sailed to', () => {

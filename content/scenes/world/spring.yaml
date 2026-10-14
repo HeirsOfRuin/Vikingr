@@ -9,14 +9,14 @@
   art: muster
   title: A ship for sale
   text: |
-    Thorkell Long-Chin died at Yule, and his widow is selling his karvi on the jarl's landing: twenty-eight oars, a patched sail, a good keel, and a smell of old fish that will never come out. She wants eight marks, and she wants them before somebody from the next fjord comes and offers seven.
+    Thorkell Long-Chin died at Yule, and his widow is selling his karvi on the jarl's landing: twenty-eight oars, a patched sail, a good keel, and a smell of old fish that will never come out. She wants four pounds, and she wants them before somebody from the next fjord comes and offers seven.
 
     {captain} sees you looking at her. "You've rowed for me long enough to know how it's done," he says. "Maybe too long. A man can get used to a bench."
     [break]
     The jarl's steward is on the landing too, watching who looks at what. The jarl has an old karvi of his own hauled up behind the boatshed, and a habit of lending it out, for a quarter of what it brings home.
   choices:
     - id: buy
-      text: Weigh out eight marks for Thorkell's karvi.
+      text: Weigh out four pounds for Thorkell's karvi.
       requires: ["silver >= 192"]
       effects:
         - { add: { silver: -192 } }
@@ -37,4 +37,4 @@
     - id: bench
       text: Stay at your oar another year.
       result: |
-        You put your sea-chest under your old bench. {captain} doesn't say anything. Neither do you. Thorkell's widow sells the karvi to the man from the next fjord, for seven marks.
+        You put your sea-chest under your old bench. {captain} doesn't say anything. Neither do you. Thorkell's widow sells the karvi to the man from the next fjord, for three and a half pounds.

@@ -17,7 +17,7 @@
     "A year more, you said," he says. "It's been more than a year. She's twenty. Her mother's started looking at widowers." He spits, carefully, away from your door. "Have you got it or haven't you?"
   choices:
     - id: pay
-      text: Weigh out four marks on his own scales.
+      text: Weigh out two pounds on his own scales.
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.married_gyda }, { clear: flag.gyda_courting } ]
       next: w1_feast
@@ -71,13 +71,13 @@
   text: |
     Harek receives you at the high seat, with his beard in his fist and his daughter behind him pretending to mend something.
 
-    "I know why you've come," he says. "Everyone in the hall knows why you've come. Sit down." He looks you over, slowly, from boots to hair. "Six marks. And a name I've heard of before you told me it. My daughter will have her own high seat, not a bench in her husband's father's house."
+    "I know why you've come," he says. "Everyone in the hall knows why you've come. Sit down." He looks you over, slowly, from boots to hair. "Three pounds. And a name I've heard of before you told me it. My daughter will have her own high seat, not a bench in her husband's father's house."
     [if flag.ingibjorg_promised]
     "You came back," he says, more quietly. "I'll say that for you. Most of them don't."
     [/if]
   choices:
     - id: pay
-      text: Weigh out six marks, here, in front of the hall.
+      text: Weigh out three pounds, here, in front of the hall.
       requires: ["silver >= 144", "fame.living >= 20"]
       effects: [ { add: { silver: -144 } }, { set: flag.betrothed }, { set: flag.ingibjorg_betrothed }, { standing: { place: orkney, n: 1 } } ]
       result: |
@@ -89,7 +89,7 @@
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
         text: |
-          Harek laughs, which he does about once a year. "He talks like a jarl," he says to the hall. "Let's see if he fights like one. Six marks, and you can bring the name with you after."
+          Harek laughs, which he does about once a year. "He talks like a jarl," he says to the hall. "Let's see if he fights like one. Three pounds, and you can bring the name with you after."
         effects: [ { set: flag.ingibjorg_promised }, { add: { flag.y_hall: 1 } } ]
       failure:
         text: |
@@ -284,14 +284,14 @@
 
     "I'll be plain," she says. "I'm a widow with a booth, money owed me, and a beach full of men who think I'll be easier to rob than my husband was. I need a husband men are afraid of. You need a wife who can count." She ticks it off on scarred fingers. "I've asked about you. You'll do."
     [break]
-    "There's a Dane called Ívarr who owes me twelve marks for work my husband did, and tells everyone he paid it. Get it out of him, and I'll believe you can keep the rest. Or put four marks in my husband's strongbox, so I know you're not marrying me for it." She folds her arms. "Either."
+    "There's a Dane called Ívarr who owes me six pounds for work my husband did, and tells everyone he paid it. Get it out of him, and I'll believe you can keep the rest. Or put two pounds in my husband's strongbox, so I know you're not marrying me for it." She folds her arms. "Either."
   choices:
     - id: ivarr
       text: Go and find Ívarr.
       danger: true
       effects: [ { fight: { foe: ivarr_dane, kind: duel, lethal: false, win: g_asta_won, lose: g_asta_lost } } ]
     - id: silver
-      text: Put four marks in the strongbox.
+      text: Put two pounds in the strongbox.
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.betrothed }, { set: flag.asta_betrothed } ]
       result: |
@@ -308,7 +308,7 @@
   text: |
     You find Ívarr at the Danish end of the beach and tell him, in front of his crew, what he owes and to whom. He tells you to go and drown. Then he tells you a great deal more, until you knock him down.
 
-    He pays. Not twelve marks: nine, and a cloak, and the promise of the rest by midsummer, made on his knees in the shingle with half the beach watching.
+    He pays. Not six pounds: four and a half, and a cloak, and the promise of the rest by midsummer, made on his knees in the shingle with half the beach watching.
 
     Ásta counts it twice on her own scales. Then she looks at your knuckles, and at you.
 
@@ -317,7 +317,7 @@
     - id: done
       text: It is.
       effects: [ { set: flag.betrothed }, { set: flag.asta_betrothed }, { standing: { place: kaupang, n: 1 } }, { deed: { type: deed, text: "Beat a debt out of Ívarr the Dane on the beach at Kaupang", weight: 2 } } ]
-      result: She'll come north before the winter nights, she says, when the booth is let. "And Ívarr's other three marks are a wedding present. Collect them on the way."
+      result: She'll come north before the winter nights, she says, when the booth is let. "And Ívarr's other pound and a half is a wedding present. Collect them on the way."
 
 - id: g_asta_lost
   kind: spine
@@ -330,7 +330,7 @@
     "Well," she says at last. "You went. That's more than the last three did." She looks at the strongbox. "The other way's still open."
   choices:
     - id: pay
-      text: Put four marks in the strongbox.
+      text: Put two pounds in the strongbox.
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.betrothed }, { set: flag.asta_betrothed } ]
       result: She weighs it twice and writes it on a stick. "I'll come north before the winter nights," she says. "Wash your face first."
@@ -365,4 +365,4 @@
         - { add: { silver: 240 } }
         - { standing: { place: kaupang, n: 3 } }
         - { deed: { type: deed, text: "Married Ásta, the silversmith's widow of Kaupang", weight: 2, witnesses: 30 } }
-      result: She watches you do it and nods, satisfied. The strongbox has ten marks in it. It will have more by spring.
+      result: She watches you do it and nods, satisfied. The strongbox has five pounds in it. It will have more by spring.

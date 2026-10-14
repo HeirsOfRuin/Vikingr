@@ -20,7 +20,7 @@ export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
 
 // instant actions (the hoard, the wall, shops) are deliberate choices, never a fallback: they don't move time
-const INSTANT = ['shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint'];
+const INSTANT = ['shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint', 'make_ring', 'cut_ring'];
 const fallback = (opts: ActionOption[]) => (opts.find((o) => o.enabled && !INSTANT.includes(o.action.t)) ?? opts.find((o) => o.enabled)!).action;
 const find = (opts: ActionOption[], pred: (a: Action) => boolean) => opts.find((o) => o.enabled && pred(o.action));
 
@@ -157,7 +157,14 @@ export class Bot {
     if (state.hero.hp < hpMax(state, content) * 0.7) return h('rest') ?? h('train')!;
     if (untoldCount(state) > 0) { const f = h('feast'); if (f) return f; }
     const sulky = aliveMen(state).sort((a, b) => a.loyalty - b.loyalty)[0];
-    if (sulky && sulky.loyalty <= 4 && state.silver > 60) { const g = h('gift', sulky.id); if (g) return g; }
+    // a ring for the sulkiest man: the smith makes one first if there is none to give
+    if (sulky && sulky.loyalty <= 4) {
+      const g = h('gift_gold', sulky.id) ?? h('gift', sulky.id);
+      if (g) return g;
+      if (state.silver > 60) { const mk = pick((a) => a.t === 'make_ring'); if (mk) return mk; }
+    }
+    // a gold ring is worth more to the jarl than in the chest
+    { const jg = h('jarl_gift', 'gold'); if (jg) return jg; }
     const sk = h('skald'); if (sk && state.deeds.some((d) => d.told !== null && !d.verse)) return sk;
     if (state.flags.owes_jarl && state.silver > 260) { const b = h('buy_ship'); if (b) return b; }
     const hang = pick((a) => a.t === 'hang'); if (hang) return hang;

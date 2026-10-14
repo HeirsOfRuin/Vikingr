@@ -48,10 +48,10 @@
         That gets a roar. The jarl raises his own cup to you. It is not clear whether he is mocking you.
       next: y_volva
     - id: father
-      text: Swear you will put three marks of silver in your father's hand.
+      text: Swear you will put a pound and a half of silver in your father's hand.
       effects: [ { boast: father_silver } ]
       result: |
-        "My father bought my oar with a cow and his pride," you say. "I'll put three marks of silver in his hand for it."
+        "My father bought my oar with a cow and his pride," you say. "I'll put a pound and a half of silver in his hand for it."
 
         It isn't the kind of boast the hall likes best; there's nobody to kill in it. But the old men nod, and at the end of the bench your father looks down into his cup and stays looking.
       next: y_volva
@@ -115,7 +115,7 @@
       requires: ["silver >= 3"]
       effects: [ { add: { silver: -3, hamingja: 1, man.hallvard.loyalty: 1 } }, { set: flag.y_paid_volva } ]
       result: |
-        You put three ørtugar in her lap. She weighs them in her catskin glove without looking.
+        You put fifteen coins in her lap. She weighs them in her catskin glove without looking.
 
         "You're wondering," she says, "whether any of it is true." She gives you back one of the coins. "Some of it. That's the trouble with it."
       next: y_flyting

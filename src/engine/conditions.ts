@@ -148,7 +148,7 @@ function leafLabel(c: Extract<Cond, { t: 'cmp' | 'truthy' }>, content: ContentBu
   return `${name} ${op} ${value}`;
 }
 
-/** Requirement label describing what is unmet ("Weapons 3, Silver 2 marks"). */
+/** Requirement label describing what is unmet ("Weapons 3, Silver 1 pound"). */
 export function unmetLabel(input: CondInput, state: GameState, content: ContentBundle): string {
   const describe = (c: Cond, onlyUnmet: boolean): string[] => {
     if (onlyUnmet && evalCond(c, state, content)) return [];

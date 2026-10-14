@@ -129,8 +129,8 @@ export function sellLot(state: GameState, content: ContentBundle, at: string, go
   if (!state.tradeYear.deed && state.tradeYear.profit >= TRADE.deedProfit) {
     state.tradeYear.deed = true;
     addDeed(state, content, { type: 'deed', text: 'Made a rich trading voyage', weight: 3, witnesses: 30 });
-    journal(state, `Ten marks' profit in trade this year.`);
-    lines.push('Ten marks clear profit this year, and the merchants on the beach have started greeting you by name.');
+    journal(state, `Five pounds' profit in trade this year.`);
+    lines.push('Five pounds of silver clear profit this year, and the merchants on the beach have started greeting you by name.');
   }
   return lines.join(' ');
 }

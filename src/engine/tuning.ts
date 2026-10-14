@@ -17,9 +17,14 @@ export const SERVICE_ROUTE = ['orkney', 'iona', 'bangor'] as const;
 export const HALL_ACTIONS = 5;
 export const HALL_ACTION_DAYS = 24;
 
-// ---- silver: stored in ørtugar. 3 ørtugar = 1 eyrir, 8 aurar = 1 mark ----
+// ---- silver: weighed, not counted (the author, 2026-10-14). Shown as pounds of hacksilver and silver coins:
+// 240 coins to the pound, the Carolingian reckoning the annals use for tribute. The engine counts in the old
+// ørtug (a third of an ounce; 5 coins' weight), so every amount in the content is in ørtugar: 48 to the pound. ----
 export const ORTUG_PER_EYRIR = 3;
 export const ORTUG_PER_MARK = 24;
+export const ORTUG_PER_POUND = 48;
+export const COINS_PER_ORTUG = 5;
+export const COINS_PER_POUND = ORTUG_PER_POUND * COINS_PER_ORTUG;
 
 // ---- sailing ----
 /** Daily storm chance by month (Jan..Dec). */

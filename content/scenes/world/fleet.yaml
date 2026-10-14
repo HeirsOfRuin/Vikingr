@@ -35,7 +35,7 @@
       visible_if: "man.bersi.sworn && !man.bersi.master"
       effects: [ { master: bersi } ]
       result: |
-        Bersi's first act as a shipmaster is to count everything in her: oars, rope, casks, men. His second is to tell you exactly what she's worth, to the ørtug. "I'll bring her home full," he says. "Of everything." You believe him. That's what worries you.
+        Bersi's first act as a shipmaster is to count everything in her: oars, rope, casks, men. His second is to tell you exactly what she's worth, to the coin. "I'll bring her home full," he says. "Of everything." You believe him. That's what worries you.
     - id: hired
       text: Leave her with {newmaster}. Hired men don't sulk.
       result: |
@@ -54,7 +54,7 @@
     "There's a Dane in the harbour," he says, "who'll give me four shares and no questions to bring a ship like mine into his fleet. I'd rather stay. But a man has to eat." He doesn't say whose ship he means. He doesn't have to.
   choices:
     - id: pay
-      text: Give him two marks now, and his four shares.
+      text: Give him a pound now, and his four shares.
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48 } } ]
       result: He takes it, and thanks you, and you both know he'll be back next year with the same Dane in another harbour.

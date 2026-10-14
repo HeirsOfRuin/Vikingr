@@ -44,7 +44,7 @@ const SHOTS: [RegExp, string][] = [
   [/^Thorgils$/, 'flyting'], [/^The name$/, 'the-name'], [/^Spring, 831$/, 'spring-card'], [/The ice goes out/, 'spring-831'],
 ];
 /** Buttons to prefer, in order; otherwise the first enabled choice. Plunder leaves after two rounds. */
-const PREFER = [/^Continue/, 'Let the men handle it', 'Let instinct take it', /^Sail on$/, /^Row (out|on|home) with/, /Haul up/, /Take your share/, /Train with the men/];
+const PREFER = [/^Continue/, 'Let the men handle it', 'Let instinct take it', /^Sail on$/, /^Row (out|on|home) with/, /Haul up/, /Take your share/, /Train with the men/, /Practise with your bench-mates/];
 
 try {
   await page.goto(`http://localhost:${port}/`);

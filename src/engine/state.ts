@@ -264,7 +264,10 @@ export interface GameState {
   /** This year's trade profit, and whether its deed has been earned. */
   tradeYear?: { year: number; profit: number; deed: boolean };
   hamingja: number;
+  /** Silver, by weight, in ørtugar: shown as pounds and coins (src/engine/format.ts). */
   silver: number;
+  /** Arm-rings he holds, to give or to cut up (src/engine/rings.ts). */
+  rings?: Record<import('./rings').Metal, number>;
   loot: number;
   provisions: number; // man-days
   ships: Ship[];

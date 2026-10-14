@@ -7,7 +7,7 @@
   text: |
     Nobody sleeps much. The news goes round the district in the dark the way news does, and by midnight there are men walking in from three valleys to see it.
 
-    The law is old and simple. A cloak five ells square, pegged out on the holm. Three shields each. The man who is challenged strikes first. The man who steps off the cloak with both feet has run, and the man who is wounded so his blood falls on the cloak can stop it there, by paying three marks to the other.
+    The law is old and simple. A cloak five ells square, pegged out on the holm. Three shields each. The man who is challenged strikes first. The man who steps off the cloak with both feet has run, and the man who is wounded so his blood falls on the cloak can stop it there, by paying a pound and a half to the other.
     [break]
     Ketill finds you behind the jarl's byre, where you have gone to be sick.
 
@@ -36,7 +36,7 @@
       text: Go to the jarl, and offer to let the law settle it with silver.
       effects: [ { set: flag.y_withdrew }, { add: { honour: -2 } }, { if: "!nickname", then: [ { nickname: Grautr } ] } ]
       result: |
-        The jarl listens, and his face doesn't change. He fines Thorgils a mark for the insult and you a mark for the challenge, and that is the law satisfied.
+        The jarl listens, and his face doesn't change. He fines Thorgils half a pound for the insult and you half a pound for the challenge, and that is the law satisfied.
 
         It isn't the hall satisfied. The hall wanted a fight, and you took it away from them, and they don't forgive that kind of thing quickly. On the way out, somebody behind you says "Porridge," quietly, and the men round him laugh.
       next: y_name
@@ -96,11 +96,11 @@
     Your father stands in the doorway behind you and says nothing. It is your affair. He has made that very clear.
   choices:
     - id: pay
-      text: Pay what the law asks. Two marks.
+      text: Pay what the law asks. A pound.
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48, honour: 1 } }, { set: flag.thorgils_paid } ]
       result: |
-        You count it out on the chopping block in front of the house: two marks, most of what you have. Grímr weighs it, and nods, and takes it.
+        You count it out on the chopping block in front of the house: a pound, most of what you have. Grímr weighs it, and nods, and takes it.
 
         "That's that, then," he says. It is, more or less. The Hrappssons nod to you at the Thing after that, and once, years later, Ozurr buys you a drink.
     - id: refuse
@@ -125,5 +125,5 @@
         text: |
           "Bring it to the Thing," you say. Grímr laughs. "We will. And everybody there will remember who wouldn't pay."
 
-          They go. In spring the law-speaker hears it and says you owe a mark, and you pay it, and everyone remembers anyway.
+          They go. In spring the law-speaker hears it and says you owe half a pound, and you pay it, and everyone remembers anyway.
         effects: [ { set: flag.thorgils_thing_lost }, { add: { silver: -24 } } ]

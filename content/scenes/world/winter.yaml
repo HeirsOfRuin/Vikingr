@@ -34,10 +34,10 @@
       effects: [ { boast: yule_raids }, { add: { flag.y_hall: 1 } } ]
       result: The hall bangs the tables. Two is a number men can count, and they will.
     - id: plunder
-      text: Swear you'll bring home ten marks of plunder before next Yule.
+      text: Swear you'll bring home five pounds of plunder before next Yule.
       visible_if: "boast.yule_plunder != 1"
       effects: [ { boast: yule_plunder }, { add: { flag.y_hall: 1 } } ]
-      result: Somebody whistles. Ten marks is a farm. The hall starts working out where it might come from.
+      result: Somebody whistles. Five pounds is a farm. The hall starts working out where it might come from.
     - id: wall
       text: Swear you'll stand in two shield-walls before next Yule, and walk off the field both times.
       visible_if: "boast.yule_shieldwall != 1"
@@ -184,16 +184,16 @@
   art: home_fjord
   title: The price of freedom
   text: |
-    One of your thralls comes to you in the byre: an older man, Irish, who's worked for you three summers and has, it turns out, been saving. Every bit of silver a guest left him, every egg he sold on the side. He has it in a rag: about a mark.
+    One of your thralls comes to you in the byre: an older man, Irish, who's worked for you three summers and has, it turns out, been saving. Every bit of silver a guest left him, every egg he sold on the side. He has it in a rag: about half a pound.
 
     "A man can buy himself," he says, in careful Norse. "That is the law. I asked."
   choices:
     - id: sell
-      text: Take his mark, and give him his freedom.
+      text: Take his silver, and give him his freedom.
       effects: [ { add: { thralls: -1, silver: 24, honour: 1 } } ]
       result: You take him to the thing at midsummer, and say it in front of witnesses, and he's a freedman. He stays on the farm afterwards, for wages, and works no differently, except that now he whistles.
     - id: gift
-      text: Give him his freedom, and let him keep his mark.
+      text: Give him his freedom, and let him keep his silver.
       effects: [ { add: { thralls: -1, honour: 1, hamingja: 1 } }, { deed: { type: deed, text: "Freed a thrall for nothing", weight: 1 } } ]
       result: He doesn't understand at first. When he does, he sits down in the straw and doesn't say anything at all. The district thinks you're mad. The district talks about it all winter.
     - id: refuse
@@ -312,7 +312,7 @@
       visible_if: "base != father"
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } }, { add: { thralls: 1 } } ]
-      result: You pay him three marks and he goes off south with it, happy enough. His share comes with a strip of shore and an old thrall who goes with the land, and the elder son becomes your neighbour, which is probably the end of your peace.
+      result: You pay him a pound and a half and he goes off south with it, happy enough. His share comes with a strip of shore and an old thrall who goes with the land, and the elder son becomes your neighbour, which is probably the end of your peace.
 
 - id: g_w_horses
   kind: phase
@@ -328,14 +328,14 @@
     A red stallion from up the valley has won four times this winter, and his owner hasn't stopped talking about it.
   choices:
     - id: bet
-      text: Bet a mark against the red horse.
+      text: Bet half a pound against the red horse.
       requires: ["silver >= 24"]
       check: { skill: lore, attr: wit, difficulty: 5 }
       success:
-        text: The red horse is tired, and you saw it, and nobody else did. He goes down on his knees in the third round, and you take a mark off his owner and two off the men who backed him.
+        text: The red horse is tired, and you saw it, and nobody else did. He goes down on his knees in the third round, and you take half a pound off his owner and a pound off the men who backed him.
         effects: [ { add: { silver: 48 } } ]
       failure:
-        text: The red horse wins again. His owner takes your mark with a smile you'd like to remove.
+        text: The red horse wins again. His owner takes your half-pound with a smile you'd like to remove.
         effects: [ { add: { silver: -24 } } ]
     - id: goad
       text: Take a goad and stand behind the other horse yourself.

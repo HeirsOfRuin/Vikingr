@@ -1,5 +1,6 @@
 // Engine facade. Three calls: newGame, view, act. Pure: act clones the state,
 // works on the copy, and returns it. The UI, the bot and the tests all use this.
+import { cutRing, makeRing, METALS, RING, ringsOf, ringWords, type Metal } from './rings';
 import type { ContentBundle, DuelMove, Order, Skill } from '../content/schema';
 import { DUEL_MOVES, SKILLS } from '../content/schema';
 import type { GameState, Pending, Position } from './state';
@@ -34,7 +35,7 @@ import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
 import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
-import { SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
+import { DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -51,6 +52,8 @@ export type Action =
   | { t: 'hoard_in'; n?: number }
   | { t: 'hoard_out'; n?: number }
   | { t: 'hang'; item: string }
+  | { t: 'make_ring' }
+  | { t: 'cut_ring'; metal: Metal }
   | { t: 'keep_thralls' }
   | { t: 'shop' }
   | { t: 'buy'; item: string }
@@ -245,18 +248,20 @@ function tradeOption(state: GameState, content: ContentBundle): ActionOption[] {
 export function baseActions(state: GameState, content: ContentBundle): ActionOption[] {
   if (state.at !== 'home_fjord' || state.voyage) return [];
   const out: ActionOption[] = [];
-  // bury a mark, half, or all but a mark; dig up a mark, or the lot
-  const MARK = ORTUG_PER_MARK;
-  const spare = Math.max(0, state.silver - MARK);
-  if (state.silver < MARK * 2) out.push(opt('Your base', { t: 'hoard_in' }, 'Bury silver in your hoard', false, 'You have nothing to spare.'));
+  // bury a pound, half, or all but a pound; dig up a pound, or the lot
+  const LB = ORTUG_PER_POUND;
+  const spare = Math.max(0, state.silver - LB);
+  if (state.silver < LB * 2) out.push(opt('Your base', { t: 'hoard_in' }, 'Bury silver in your hoard', false, 'You have nothing to spare.'));
   else {
-    out.push(opt('Your base', { t: 'hoard_in', n: MARK }, 'Bury a mark in your hoard', true, undefined, formatSilver(MARK)));
+    out.push(opt('Your base', { t: 'hoard_in', n: LB }, 'Bury a pound of silver in your hoard', true, undefined, formatSilver(LB)));
     const half = Math.floor(state.silver / 2);
-    if (half > MARK) out.push(opt('Your base', { t: 'hoard_in', n: half }, 'Bury half your silver', true, undefined, formatSilver(half)));
-    if (spare > half) out.push(opt('Your base', { t: 'hoard_in', n: spare }, 'Bury all but a mark', true, undefined, formatSilver(spare)));
+    if (half > LB) out.push(opt('Your base', { t: 'hoard_in', n: half }, 'Bury half your silver', true, undefined, formatSilver(half)));
+    if (spare > half) out.push(opt('Your base', { t: 'hoard_in', n: spare }, 'Bury all but a pound', true, undefined, formatSilver(spare)));
   }
-  if (state.base.hoard > MARK) out.push(opt('Your base', { t: 'hoard_out', n: MARK }, 'Dig up a mark from your hoard', true, undefined, `${formatSilver(state.base.hoard)} buried`));
+  if (state.base.hoard > LB) out.push(opt('Your base', { t: 'hoard_out', n: LB }, 'Dig up a pound from your hoard', true, undefined, `${formatSilver(state.base.hoard)} buried`));
   out.push(opt('Your base', { t: 'hoard_out' }, 'Dig up the whole hoard', state.base.hoard > 0, 'The hoard is empty.', state.base.hoard > 0 ? formatSilver(state.base.hoard) : undefined));
+  out.push(opt('Arm-rings', { t: 'make_ring' }, 'Have the smith make a silver arm-ring', state.silver >= RING.silver.make, `You need ${formatSilver(RING.silver.make)}.`, `${formatSilver(RING.silver.make)}; you hold ${ringWords(state)}`));
+  for (const m of METALS) if (ringsOf(state)[m] > 0) out.push(opt('Arm-rings', { t: 'cut_ring', metal: m }, `Cut a ${m} arm-ring into hacksilver`, true, undefined, formatSilver(RING[m].weight)));
   for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall`));
   return out;
 }
@@ -306,7 +311,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const d = (p as { duel: import('./state').DuelState }).duel;
       const out = DUEL_MOVES.map((m) => opt('Moves', { t: 'duel_move', move: m }, MOVE_NAMES[m]));
       out.push(opt('Other', { t: 'duel_auto' }, 'Let instinct take it'));
-      if (canYield(d)) out.push(opt('Other', { t: 'yield' }, 'Step off the cloak and pay the holmlausn', true, undefined, '3 marks; honour falls'));
+      if (canYield(d)) out.push(opt('Other', { t: 'yield' }, 'Step off the cloak and pay the holmlausn', true, undefined, `${formatSilver(DUEL.holmlausnMarks * ORTUG_PER_MARK)}; honour falls`));
       return out;
     }
     case 'battle': {
@@ -356,11 +361,17 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       }
       if (lord || state.base.level !== 'father') out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
       else if (home) out.push(opt('Hall', { t: 'hall', what: 'work' }, "Work your brother's farm", true, undefined, 'A little silver; the winter passes'));
-      for (const m of aliveMen(state)) out.push(opt('Gifts', { t: 'hall', what: 'gift', arg: m.id }, `Give ${m.name} an arm-ring`, state.silver >= ORTUG_PER_MARK, `You need ${formatSilver(ORTUG_PER_MARK)}.`, `Loyalty ${m.loyalty}/10`));
+      // only the rings he holds: made by the smith, given him, or taken (the author, 2026-10-14)
+      const r = ringsOf(state);
+      for (const m of aliveMen(state)) {
+        out.push(opt('Gifts', { t: 'hall', what: 'gift', arg: m.id }, `Give ${m.name} a silver arm-ring`, r.silver > 0, home ? 'You have no silver ring to give. The smith can make one.' : 'You have no silver ring to give.', `Loyalty ${m.loyalty}/10; you hold ${plural(r.silver, 'silver ring')}`));
+        if (r.gold > 0) out.push(opt('Gifts', { t: 'hall', what: 'gift_gold', arg: m.id }, `Give ${m.name} a gold arm-ring`, true, undefined, `Loyalty ${m.loyalty}/10; you hold ${plural(r.gold, 'gold ring')}`));
+      }
       out.push(opt('Hall', { t: 'hall', what: 'train' }, lord ? 'Train with the men' : 'Practise with your bench-mates'));
       out.push(opt('Hall', { t: 'hall', what: 'rest' }, 'Rest and heal'));
       if (state.flags.skald) out.push(opt('Hall', { t: 'hall', what: 'skald' }, 'Have the skald compose'));
       if (home && !state.service) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift' }, 'Send the jarl a gift', state.silver >= FAVOUR.giftCost, `You need ${formatSilver(FAVOUR.giftCost)}.`, `${formatSilver(FAVOUR.giftCost)}; his favour: ${favourWord(favour(state))}`));
+      if (home && !state.service && r.gold > 0) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift', arg: 'gold' }, 'Send the jarl a gold arm-ring', true, undefined, `Twice the favour of any other gift; his favour: ${favourWord(favour(state))}`));
       if (home) out.push(opt('Hall', { t: 'hall', what: 'blot' }, 'Hold a blót', state.silver >= 12, `You need ${formatSilver(12)}.`, formatSilver(12)));
       if (home && lord && !state.building) for (const t of BUILD_TYPES) {
         const st = content.ships[t]!;
@@ -375,6 +386,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     case 'shop': {
       const shops = (p as { shops: Shop[] }).shops;
       const out = forSale(state, content, shops).map((d) => opt(d.kind === 'fitting' ? 'The shipwright' : shops.includes('smith') ? 'The smith' : 'The booths', { t: 'buy', item: d.id }, `Buy ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}`, state.silver >= d.price!, `You need ${formatSilver(d.price!)}.`, formatSilver(d.price!)));
+      if (!state.service && (shops.includes('smith') || shops.includes('market'))) out.push(opt(shops.includes('smith') ? 'The smith' : 'The booths', { t: 'make_ring' }, 'Have a silver arm-ring made', state.silver >= RING.silver.make, `You need ${formatSilver(RING.silver.make)}.`, `${formatSilver(RING.silver.make)}; you hold ${ringWords(state)}`));
       const ac = armCost(state);
       if (ac !== null && !state.service) out.push(opt('Your men', { t: 'arm' }, `Arm the men: ${gearWord(Math.floor(state.crew.gear) + 1)}`, state.silver >= ac, `You need ${formatSilver(ac)}.`, `${formatSilver(ac)} for ${state.crew.men} men`));
       // kit he no longer carries, to the smith or the booths (playtest 4)
@@ -648,6 +660,13 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'hang':
       hangTrophy(state, content, action.item);
       break;
+    case 'make_ring':
+    case 'cut_ring': {
+      const line = action.t === 'make_ring' ? makeRing(state) : cutRing(state, action.metal);
+      if (state.pending?.t === 'shop') state.shopNote = line;
+      else report('Arm-rings', [line]);
+      break;
+    }
     case 'keep_thralls': {
       const n = keepCaptives(state);
       report('Thralls', [`${plural(n, 'captive')} ${n === 1 ? 'goes' : 'go'} up the hill to ${BASE[state.base.level].name.toLowerCase()}, to cut turf and carry water and muck out the byre. ${state.base.wife ? `${state.base.wife} looks them over the way she looks at a new cow.` : 'Your mother looks at them a long time, and does not say what she thinks.'}`]);

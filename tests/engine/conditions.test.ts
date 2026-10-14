@@ -21,6 +21,6 @@ describe('conditions', () => {
     expect(validateCond('skill.weapons >= 3', content)).toEqual([]);
   });
   it('labels what is unmet', () => {
-    expect(unmetLabel(['silver >= 48', 'skill.weapons >= 3'], state, content)).toBe('Silver 2 marks, Weapons 3');
+    expect(unmetLabel(['silver >= 48', 'skill.weapons >= 3'], state, content)).toBe('Silver 1 pound, Weapons 3');
   });
 });
