@@ -22,7 +22,7 @@
 
     Ásgeir chews his fish. Then he looks down the ship at you.
     [if flag.i_north || flag.i_warned]
-    "Hall's boy had eyes at Iona. What do your eyes say now?"
+    "{father}'s boy had eyes at Iona. What do your eyes say now?"
     [else]
     "Anyone else?"
     [/if]
@@ -121,7 +121,7 @@
                   then: [ { battle: { foe: ulster_levy, men: 30, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
                   else: [ { battle: { foe: ulster_levy, men: 24, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
       result: |
-        You shoulder in beside him in the front rank. He glances at you sideways. "Hall's boy," he says. "Keep your shield up and your mouth shut." Above you the banner cracks in the wind: a black raven on red.
+        You shoulder in beside him in the front rank. He glances at you sideways. "{father}'s boy," he says. "Keep your shield up and your mouth shut." Above you the banner cracks in the wind: a black raven on red.
     - id: front
       text: The front rank, beside Ulf.
       danger: true
@@ -271,7 +271,7 @@
         effects: [ { set: flag.asgeir_patron } ]
       failure:
         text: |
-          He laughs, and keeps laughing, and tells Steinarr, who tells the ship. "Hall's boy wants a ship!" For the rest of the summer, men bow when you go past.
+          He laughs, and keeps laughing, and tells Steinarr, who tells the ship. "{father}'s boy wants a ship!" For the rest of the summer, men bow when you go past.
         effects: [ { set: flag.bg_mocked } ]
     - id: on
       text: Say nothing. There is an abbey up there, and nobody in it.

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, newGame, listActions, screenOf, ActionError, type Action } from '../../src/engine/index';
 import { dateOf } from '../../src/engine/calendar';
 import type { GameState } from '../../src/engine/state';
@@ -10,7 +10,7 @@ import { playLife } from '../../tools/bot-lib';
 
 const start = () => newGame(content, { background: 'younger_son', seed: 7, name: 'Ari' });
 /** The Phase 1 sandbox: a placeholder start with a borrowed karvi (the outlaw and the freedman's son, until Phase 3). */
-const sandbox = () => newGame(content, { background: 'freedman', seed: 7, name: 'Ari' });
+const sandbox = () => sandboxGame(7);
 const doFirst = (s: GameState, pred: (a: Action) => boolean) => {
   const o = listActions(s, content).find((x) => x.enabled && pred(x.action));
   if (!o) throw new Error(`no enabled action on ${screenOf(s)}: ${listActions(s, content).map((x) => JSON.stringify(x.action)).join(' ')}`);

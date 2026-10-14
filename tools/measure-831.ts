@@ -7,6 +7,7 @@ import { tierAt, type Tier } from '../src/engine/standing';
 
 const content = loadContent();
 const runs = Number(process.argv[process.argv.indexOf('--runs') + 1]) || 200;
+const bg = process.argv.includes('--bg') ? process.argv[process.argv.indexOf('--bg') + 1]! : 'younger_son';
 const pct = (n: number, d: number) => `${Math.round((100 * n) / Math.max(1, d))}%`;
 let failed = false;
 
@@ -18,7 +19,7 @@ for (const policy of POLICIES.filter((p) => p !== 'homebody') as Policy[]) {
   const tiers: Record<string, Record<Tier, number>> = {};
   let alive = 0;
   for (let i = 0; i < runs; i++) {
-    const r = playLife(content, policy, 7000 + i, 3, 'younger_son', (s) => s.seen.sp_832 !== undefined && !s.pending);
+    const r = playLife(content, policy, 7000 + i, 3, bg, (s) => s.seen.sp_832 !== undefined && !s.pending);
     const s = r.state;
     if (r.error) { console.log(`  ERROR ${policy} ${7000 + i}: ${r.error}`); failed = true; continue; }
     if (s.death) { deaths[s.death.cause] = (deaths[s.death.cause] ?? 0) + 1; continue; }
@@ -40,7 +41,7 @@ for (const policy of POLICIES.filter((p) => p !== 'homebody') as Policy[]) {
     }
   }
   silver.sort((a, b) => a - b);
-  console.log(`\n${policy}: ${runs} lives of the younger son, through to spring 832`);
+  console.log(`\n${policy}: ${runs} lives of ${bg}, through to spring 832`);
   console.log(`  alive: ${pct(alive, runs)}   deaths: ${Object.entries(deaths).map(([k, v]) => `${k} ${pct(v, runs)}`).join(', ') || 'none'}   reached the spring 832 scene: ${pct(n.spring832 ?? 0, alive)}   a captain by then: ${pct(n.captain ?? 0, alive)}`);
   console.log(`  new places: Kaupang ${pct(n.kaupang ?? 0, alive)}, Lindisfarne ${pct(n.lindisfarne ?? 0, alive)}, Skye ${pct(n.skye ?? 0, alive)}, Conaille ${pct(n.conaille ?? 0, alive)}   revisits: Birsay ${pct(n.birsay ?? 0, alive)}, Iona ${pct(n.iona ?? 0, alive)}`);
   console.log(`  the king taken: ${pct(n.king ?? 0, alive)}, killed: ${pct(n.king_killed ?? 0, alive)}   married Gyda: ${pct(n.married ?? 0, alive)}   brother fight: ${pct(n.brother ?? 0, alive)}   Hrappssons: ${pct(n.hrapp ?? 0, alive)}   Yule 831: ${pct(n.yule ?? 0, alive)}   mail: ${pct(n.mail ?? 0, alive)}`);

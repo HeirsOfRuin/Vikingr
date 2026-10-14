@@ -17,6 +17,7 @@
 # keepsakes: carried for what they mean; scenes can test item.<id>
 - { id: red_thread, name: "Ingibjörg's red thread", kind: keepsake, desc: "Tied round your wrist on Orkney, to bring you back." }
 - { id: hallvard_hammer, name: "Hallvard's hammer", kind: keepsake, desc: "A little silver Thor's hammer on a cut thong. It stays warm." }
+- { id: orlaith_cross, name: "Órlaith's cross", kind: keepsake, desc: "A little bronze cross on a greasy thong, from an island off Ulster that burned in the first year the ships came." }
 - { id: ubbi_ring, name: "Ubbi's ring", kind: keepsake, desc: "A thin twisted ring of Danish silver, left as a reminder." }
 - { id: king_horn, name: "The king of Conaille's horn", kind: keepsake, trophy: true, desc: "A drinking-horn rimmed and tipped with silver, out of Máel Brigte's hall." }
 - { id: lindisfarne_book, name: "The Lindisfarne book", kind: keepsake, trophy: true, desc: "Painted pages of birds and beasts biting their own tails, in a jewelled cover. The monks would pay a great deal to have it back." }

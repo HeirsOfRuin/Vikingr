@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, listActions, newGame } from '../../src/engine/index';
 import type { GameState } from '../../src/engine/state';
 import { applyEffects } from '../../src/engine/effects';
@@ -9,7 +9,7 @@ import { baseStanding, driftStanding, onRaided, standing, tierAt, tierOf } from 
 const rng = () => new RngCursor(seedRng(1));
 /** A captain of his own karvi, at anchor at `at`. */
 const captainAt = (at: string): GameState => {
-  const s = newGame(content, { background: 'freedman', seed: 5, name: 'Ari' });
+  const s = sandboxGame(5);
   s.pending = null;
   s.phase = 'sailing';
   s.day = 150;

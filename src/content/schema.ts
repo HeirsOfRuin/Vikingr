@@ -223,6 +223,8 @@ export const background = z.object({
   label: z.string(),
   desc: z.string(),
   patronymic: z.string(),
+  /** His father's name, for the {father} token. */
+  father: z.string(),
   attrs,
   skills,
   honour: z.number().int(),

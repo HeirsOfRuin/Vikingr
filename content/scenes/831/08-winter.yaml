@@ -166,7 +166,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["winter == 831", "place == home_fjord", fate.brother_feud, { any: [flag.gyda_lost, flag.h_brother_feud, flag.h_brother_envy, flag.gyda_eloped, flag.married_gyda] }]
+  requires: ["winter == 831", "place == home_fjord", "background == younger_son", fate.brother_feud, { any: [flag.gyda_lost, flag.h_brother_feud, flag.h_brother_envy, flag.gyda_eloped, flag.married_gyda] }]
   art: home_fjord
   title: The boundary stone
   text: |
@@ -243,7 +243,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["winter == 831", "place == home_fjord", flag.h_brother_debt, "!fate.brother_feud"]
+  requires: ["winter == 831", "place == home_fjord", "background == younger_son", flag.h_brother_debt, "!fate.brother_feud"]
   art: home_fjord
   title: Bárð's calves
   text: |
@@ -279,7 +279,12 @@
   text: |
     You wake to the dogs, and then to the smell, and then to your mother screaming.
 
+    [if background == freedman]
+    The boatyard is on fire. The new keel is on the stocks under its shelter, and somebody has stacked brushwood against the shelter and set it alight, and your father is already in there in his shirt, beating at the flames with a wet sail. You get him out. You get most of the keel out. The shelter is gone, and the season's seasoned oak with it.
+    [/if]
+    [if background != freedman]
     The byre is on fire. Somebody has stacked brushwood against the gable end and set it alight, and the cows are bellowing inside, and by the time you get the door open and the beasts out, the roof is gone.
+    [/if]
 
     In the snow by the gate there are tracks. Three men. One of them walks with a stick.
   choices:
@@ -326,7 +331,7 @@
   choices:
     - id: go
       text: Go home.
-      effects: [ { set: flag.hrapp_ended }, { deed: { type: holmgang_won, text: Killed Grímr Hrappsson on the cloak for the burning of his father's byre } } ]
+      effects: [ { set: flag.hrapp_ended }, { deed: { type: holmgang_won, text: Killed Grímr Hrappsson on the cloak for the fire set at his father's door } } ]
       result: Nobody follows you. Behind you, the Hrappssons' women start the keening. You will hear it, some nights, for years.
 
 - id: w1_hrapp_lost

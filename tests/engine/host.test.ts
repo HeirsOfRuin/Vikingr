@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, listActions, newGame } from '../../src/engine/index';
 import type { BattleState, GameState } from '../../src/engine/state';
 import { applyEffects } from '../../src/engine/effects';
@@ -12,7 +12,7 @@ import { dayOf } from '../../src/engine/calendar';
 
 const rng = (n = 1) => new RngCursor(seedRng(n));
 const captain = (): GameState => {
-  const s = newGame(content, { background: 'freedman', seed: 4, name: 'Ari' });
+  const s = sandboxGame(4);
   s.pending = null;
   s.service = null;
   s.day = dayOf(834, 160);

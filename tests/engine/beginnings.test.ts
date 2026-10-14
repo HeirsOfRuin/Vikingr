@@ -62,3 +62,40 @@ describe('the slower rise', () => {
     expect(table.slice(0, 4).some((r) => r.hero)).toBe(false);
   });
 });
+
+describe("the freedman's son", () => {
+  it('starts in the boatyard and comes to the Raven as her bailer, on half a share', () => {
+    let s = newGame(content, { background: 'freedman', seed: 3, name: 'Ari' });
+    expect(s.pending).toEqual({ t: 'scene', id: 'f_yard' });
+    expect(s.service?.captain).toBe('Ásgeir');
+    s = act(content, s, { t: 'choose', id: 'hold' });
+    for (const id of ['still', 'learn', 'take']) {
+      while (s.pending && !listActions(s, content).some((o) => o.enabled && o.action.t === 'choose' && o.action.id === id)) s = act(content, s, listActions(s, content).find((o) => o.enabled)!.action);
+      s = act(content, s, { t: 'choose', id });
+    }
+    expect(s.flags.irish).toBe(1);
+    expect(s.service!.shares).toBe(0.5);
+    while (s.pending && !(s.pending.t === 'scene' && s.pending.id === 'm_landing')) s = act(content, s, listActions(s, content).find((o) => o.enabled)!.action);
+    expect(s.pending).toEqual({ t: 'scene', id: 'm_landing' });
+  });
+
+  it('his homecoming is his own; the younger son\'s brother is not in it', () => {
+    expect(content.scenes.h_return!.requires).toContain('background == younger_son');
+    expect(content.scenes.f_return!.requires).toContain('background == freedman');
+  });
+
+  it('spring 832: he launches the ship he built with his father', () => {
+    let s = oarsman();
+    s.hero.background = 'freedman';
+    s.day = dayOf(832, 60);
+    s.phase = 'muster';
+    s.at = 'home_fjord';
+    s.flags.f_building = 1;
+    s.flags.irish = 1;
+    s.seen.j_council = 1;
+    open(s, 'sp_832');
+    s = act(content, s, { t: 'choose', id: 'launch' });
+    expect(s.service).toBeNull();
+    expect(s.ships[0]!.name).toBe('Órlaith');
+  });
+});

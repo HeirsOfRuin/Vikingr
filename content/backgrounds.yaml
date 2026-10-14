@@ -1,9 +1,10 @@
 # The three starts (DESIGN §15). Attributes total 11; 7 skill points each.
-# Phase 1: all three use the placeholder start (a borrowed karvi and four sworn men).
+# The younger son and the freedman's son start on the Raven's benches; the outlaw joins her at Birsay (docs/FRAME-BEGINNINGS.md).
 - id: younger_son
   label: The younger son
   desc: A bóndi's second son. The farm goes to your brother. Everything else you will have to take.
   patronymic: Hallsson
+  father: Hall
   attrs: { str: 3, agi: 2, end: 2, wit: 2, pre: 2 }
   skills: { weapons: 2, shield: 2, seamanship: 1, command: 1, speech: 1 }
   honour: 1
@@ -16,7 +17,8 @@
 - id: outlaw
   label: The outlaw
   desc: You killed a man at sixteen and the district declared you outlaw. You have a deed already, a blood feud, and no harbour to call home.
-  patronymic: Grimsson
+  patronymic: Grímsson
+  father: Grímr
   attrs: { str: 3, agi: 3, end: 2, wit: 2, pre: 1 }
   skills: { weapons: 3, shield: 2, cunning: 1, seamanship: 1 }
   honour: -2
@@ -30,12 +32,14 @@
   label: The freedman's son
   desc: Your father was a thrall until his master freed him. You know boats and tools, and men remember where your family came from.
   patronymic: Leysingsson
+  father: Leysingr
   attrs: { str: 2, agi: 2, end: 3, wit: 3, pre: 1 }
   skills: { seamanship: 3, craft: 2, weapons: 1, shield: 1 }
   honour: 0
   silver: 18
   flags: [leysingi]
   men: [ketill, ulf, hallvard, bersi]
-  crew: 20
-  ship: karvi
-  start_scene: p1_start_freedman
+  crew: 36
+  ship: snekkja
+  start_scene: f_yard
+  service: { captain: Ásgeir, ship_name: the Raven }

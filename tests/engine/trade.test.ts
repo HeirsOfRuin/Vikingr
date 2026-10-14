@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, listActions, newGame } from '../../src/engine/index';
 import type { GameState } from '../../src/engine/state';
 import { buyLot, buyPrice, cargoBulk, goodsRoom, priceAt, sellLot, sellPrice, TRADE, tradesHere } from '../../src/engine/trade';
@@ -9,7 +9,7 @@ import { RngCursor, seedRng } from '../../src/engine/rng';
 import { dayOf } from '../../src/engine/calendar';
 
 const trader = (): GameState => {
-  const s = newGame(content, { background: 'freedman', seed: 4, name: 'Ari' });
+  const s = sandboxGame(4);
   s.pending = null;
   s.service = null;
   s.day = dayOf(833, 150);

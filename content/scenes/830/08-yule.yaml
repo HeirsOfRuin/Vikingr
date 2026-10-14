@@ -4,7 +4,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["place == home_fjord", "phase == winter", "!flag.placeholder_start", { any: ["!fate.ormr_dies", seen.h_ormr] }]
+  requires: ["place == home_fjord", "phase == winter", "!flag.placeholder_start", { any: ["!fate.ormr_dies", seen.h_ormr, "background != younger_son"] }]
   art: { key: yule_hall, laughter: flag.y_hall }
   when: Yule, 830
   title: Yule
@@ -51,7 +51,11 @@
       text: Swear you will put a pound and a half of silver in your father's hand.
       effects: [ { boast: father_silver } ]
       result: |
+        [if background == freedman]
+        "My father wore Hrapp's collar for thirty-one winters," you say, "and paid for his freedom in ale. I'll put a pound and a half of silver in his hand, and he'll never owe Hrapp's sons a harvest again."
+        [else]
         "My father bought my oar with a cow and his pride," you say. "I'll put a pound and a half of silver in his hand for it."
+        [/if]
 
         It isn't the kind of boast the hall likes best; there's nobody to kill in it. But the old men nod, and at the end of the bench your father looks down into his cup and stays looking.
       next: y_volva
@@ -78,7 +82,9 @@
     [break]
     She sees for the jarl first: a good harvest and a bad wife, which makes the hall laugh, and the jarl not. She sees for the farmers. Then her eyes come round the hall and stop on you, and she says, in a voice like a door opening:
 
-    [if omen.brother_feud]
+    [if background == freedman]
+    "Three lives, one collar. It came off your father's neck. Mind it doesn't find its way to yours."
+    [elif omen.brother_feud]
     "Two sons, one field. Blood on the home field before the field is ploughed. Whose blood, the field doesn't say."
     [else]
     "Two sons, one field. The elder keeps it. The younger keeps his brother. That is rarer than you'd think."
@@ -142,7 +148,11 @@
 
     He is a big man, red in the face from the fire and the ale, with a voice made for shouting at cattle. The hall goes quiet the way a hall does when it smells a fight coming.
 
+    [if background == freedman]
+    "Look at him," says Thorgils, and points at you with a rib-bone. "Leysingr's whelp. His grandmother came here in the bottom of a ship, and now he goes west in the top of one. Came home with a sunburn and a cough.
+    [else]
     "Look at him," says Thorgils, and points at you with a rib-bone. "Hall's second son. Went west with Ásgeir for silver. Came home with a sunburn and a cough.
+    [/if]
     [if flag.o_bangor_first]
     I hear the Irish were so frightened of him that they finished their dinner before they ran."
     [else]
@@ -238,7 +248,11 @@
   text: |
     Thorgils waits for the noise to settle. He has done this before. He takes a long drink, wipes his mouth on his sleeve, and starts again, slower.
 
+    [if background == freedman]
+    "A freedman's son," he says, "is a thrall who's been let off the rope. Thrall's porridge in a free man's bowl. My father fed his father that porridge for thirty winters, and now the boy goes a-viking to find something warm to eat. I'd go too, boy. But I've got a farm. Your father works on it at harvest."
+    [else]
     "A second son," he says, "is a man who eats what his brother leaves in the pot. Twenty winters of cold porridge, and now he goes a-viking to find something warm to eat. I'd go too, boy. But I've got a farm."
+    [/if]
     [if flag.gyda_lost]
     He lets that settle. "And now his brother's got the girl as well."
     [/if]
@@ -267,7 +281,7 @@
       check: { skill: speech, attr: pre, difficulty: 4 }
       success:
         text: |
-          "Cold porridge," you say. "Every winter. My brother's leavings." You put a hand on your heart. "That's why I can row from Hordaland to Ireland without stopping, Thorgils, and you get out of breath climbing onto your bench."
+          "Cold porridge," you say. "Every winter. [if background == freedman]Your father's leavings, Thorgils. Mine carried them.[else]My brother's leavings.[/if]" You put a hand on your heart. "That's why I can row from Hordaland to Ireland without stopping, Thorgils, and you get out of breath climbing onto your bench."
 
           The hall loves a man who can take a blow and give one back. They pound the tables. Somebody starts a chant of "Por-ridge! Por-ridge!", and it is, somehow, on your side.
         effects: [ { add: { flag.y_score: 1, flag.y_hall: 2 } } ]
@@ -307,7 +321,11 @@
 
     He goes too far.
 
-    "Hall's boy," he says, loud and ugly. "Your father had two sons, and the second came out the wrong end of the wrong woman. Ask your mother who she was keeping warm the winter Hall was in Ireland."
+    [if background == freedman]
+    "Thrall-born," he says, loud and ugly. "My grandfather paid a sack of meal for your grandmother, and kept her for warming. Ask your father whose son he is. My father knows."
+    [else]
+    "{father}'s boy," he says, loud and ugly. "Your father had two sons, and the second came out the wrong end of the wrong woman. Ask your mother who she was keeping warm the winter Hall was in Ireland."
+    [/if]
 
     The laughter stops as if somebody had cut its throat. Ketill puts his cup down. Ulf has stopped grinning. On the high seat, the jarl leans forward to see what you'll do.
   choices:
@@ -363,7 +381,7 @@
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
         text: |
-          You stand on the bench. It takes a while for them to see you. Then you say, "Thorgils is right. I'm a second son, and I eat porridge, and I went west and came home with a cough. And next summer I'm going west again, and he'll still be here, telling you about it."
+          You stand on the bench. It takes a while for them to see you. Then you say, "Thorgils is right. [if background == freedman]My grandmother came here in the bottom of a ship[else]I'm a second son[/if], and I eat porridge, and I went west and came home with a cough. And next summer I'm going west again, and he'll still be here, telling you about it."
 
           It isn't a joke. It lands like one anyway. Somebody shouts "Porridge!" and this time it's a cheer.
 

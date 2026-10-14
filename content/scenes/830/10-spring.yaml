@@ -69,19 +69,29 @@
   when: Spring, 831
   title: Your father's hand
   text: |
+    [if background == freedman]
+    Your father is in the boatyard, the way he is every spring, with a strake across two trestles and his adze in his hand.
+    [else]
     Your father is mending the byre roof, the way he does every spring, swearing at it the way he does every spring.
+    [/if]
 
     You swore over the jarl's horn that you would put a pound and a half of silver in his hand. You have it.
   choices:
     - id: give
-      text: Climb up and give it to him.
+      text: Give it to him.
       effects: [ { add: { silver: -72 } }, { keep_boast: father_silver }, { set: flag.father_paid } ]
       result: |
+        [if background == freedman]
+        You put it on the strake between you: a pound and a half, weighed out on the jarl's own scales so there can be no argument.
+
+        He looks at it a long time without touching it. Then he puts down the adze, which you have never seen him do in the middle of a stroke. "Hrapp's harvest," he says. "This autumn I'll be in my own field." That's all. At the Thing that spring, he stands up when the freedmen are called to their patrons' benches, and sits down on the free men's side instead, and nobody says a word.
+        [else]
         You climb up beside him and hold it out: a pound and a half, weighed out on the jarl's own scales so there can be no argument.
 
         He looks at it a long time without taking it. Then he takes it, and puts it inside his shirt, and goes on mending the roof.
 
         "The cow," he says, after a while, "was a good cow." That's all. It's enough. At the Thing that spring, he tells everyone.
+        [/if]
     - id: later
       text: Not yet. The summer may need it.
-      result: You leave him on the roof. There is still time. There is always still time, until the year turns.
+      result: You leave him to his work. There is still time. There is always still time, until the year turns.

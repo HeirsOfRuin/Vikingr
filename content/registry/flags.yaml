@@ -263,3 +263,25 @@ ha_jarl_refused: { description: "Refused the jarl a ship when he was suspicious"
 ha_ketill_stayed: { description: "Asked old Ketill for one more summer" }
 ha_ketill_steward: { description: "Made Ketill steward of the farm" }
 ha_sold_dear: { description: "Sold grain dear in a famine" }
+# ---- the freedman's son (content/scenes/830/00-freedman.yaml) ----
+f_held: { description: "Held the strakes for his father at nine" }
+f_mast: { description: "Went up Kol's mast at nine" }
+f_fire: { description: "Sat at the crew's fire and learned the rocks" }
+f_asgeir: { description: "Carried Ásgeir his supper after the wreck" }
+f_fought_thorgils: { description: "Fought Thorgils at his father's freedom-ale" }
+f_stood_still: { description: "Stood still at the freedom-ale" }
+f_hrapp_laughed: { description: "Made old Hrapp laugh at Thorgils" }
+f_shamed: { description: "Was laughed at in Hrapp's hall" }
+irish: { description: "Speaks Irish, from his grandmother Órlaith" }
+f_refused_amma: { description: "Refused his grandmother's words" }
+f_bailer: { description: "Went west as the Raven's bailer, on half a share" }
+f_oar: { description: "Asked Ásgeir for an oar and got it" }
+f_father_spoke: { description: "His father asked Ásgeir for him" }
+f_father_close: { description: "Told his father about the strakes" }
+f_paid_due: { description: "Paid his father's harvest-due to Hrapp" }
+f_building: { description: "Building a karvi with his father, winter 831" }
+f_due_paid: { description: "Paid Hrapp's patron's due on the new ship" }
+f_due_refused: { description: "Refused Hrapp's due on the new ship at the Thing" }
+f_due_thorgils: { description: "Gave Thorgils the new ship's first share" }
+i_colman_irish: { description: "Spoke to Colmán in Irish at Iona" }
+c_interpreter: { description: "Spoke for the ship at Conaille's gate, in Irish" }

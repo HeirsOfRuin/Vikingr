@@ -9,11 +9,15 @@
 
     Ásgeir Kolsson is standing on a sea-chest in the middle of it all, pointing at things. He is older than the man in the prow you remember, thicker in the neck, with grey in his beard, but he still stands as if the ground were a deck.
 
-    "Hall's boy," he says, when you come up. He looks you over the way your father looks at a calf. "You'll do. Find a bench. Find a chest. Find out who you're rowing next to, because you'll be smelling him till autumn."
+    "{father}'s boy," he says, when you come up. He looks you over the way your father looks at a calf. "You'll do. Find a bench. Find a chest. Find out who you're rowing next to, because you'll be smelling him till autumn."
     [break]
     You find out soon enough.
 
+    [if background == freedman]
+    Ketill is the oldest man at the oars, grey all through, with forearms like ship's knees. "I knew your father when he had Hrapp's collar on," he says. "He built me a færing that's still afloat, which is more than most men manage with their sons. Try to do as well."
+    [else]
     Ketill is the oldest man at the oars, grey all through, with forearms like ship's knees. "I rowed with your father," he says, "the year he went west and came back with nothing but a broken nose. Try to do better."
+    [/if]
 
     Ulf is your own age, near enough, with a grin like a split melon and a sword he can't stop touching. He tells you his whole life before you've got your chest open. It is mostly about girls and fights, and you suspect most of it is lies.
 
@@ -116,6 +120,8 @@
     Your father is there, with your mother. He doesn't say anything. He doesn't need to: his shield is on your arm.
     [elif flag.b_sword]
     Your father is there. He looks at the sword at your hip, and then at you, and nods once, and that is the end of it.
+    [elif background == freedman]
+    Your father is there, with his adze in his belt, standing a little apart. He watches the Raven's steerboard strakes all the way out of the fjord, and you, and you can't tell which he's watching more.
     [elif flag.b_slipped_away]
     Your mother is there, and she is very angry, and she has brought you a sack of food anyway.
     [else]
@@ -124,9 +130,9 @@
     [if flag.b_gyda_promise]
     Gyða is there too, at the back, with her arms folded. She doesn't wave. She watches you all the way out of the fjord.
     [/if]
-    [if fate.ormr_dies]
+    [if background == younger_son && fate.ormr_dies]
     Ormr hasn't come down. He doesn't leave his corner now.
-    [else]
+    [elif background == younger_son]
     Ormr has come down, which is a long way for him, and sits on a rock with his stump in his lap, watching the oars like a man watching a fire.
     [/if]
   choices:

@@ -57,7 +57,7 @@
   trigger: arrive
   at: [home_fjord]
   once: true
-  requires: [flag.bg_left]
+  requires: [flag.bg_left, "background == younger_son"]
   art: home_fjord
   title: Home
   text: |
@@ -125,7 +125,7 @@
   art: home_fjord
   title: The jarl's notice
   text: |
-    Jarl Eystein doesn't send for you. He comes down to the landing himself, the next morning, slowly, a big grey man leaning on a spear-shaft, with half his household behind him, and stands at the Raven's stern and talks to Steinarr for a long time before he looks at you.
+    Jarl Eystein doesn't send for you. He comes down to the landing himself, the next morning, slowly, a big grey man leaning on a spear-shaft, with half his household behind him, and stands at the Raven's stern and talks to Steinarr, low, while the whole landing pretends not to listen, before he looks at you.
     [if fate.asgeir_falls && !flag.bg_covered]
     "Ásgeir Kolsson was my sister's son," he says. "I put him in that stern myself, eleven summers ago. Now I'm told he's lying under a cairn in Ireland, and his men wanted to give my ship to a boy who'd never been further than Karmøy in his life." He doesn't raise his voice. He doesn't need to. "Tell me why they'd want that."
     [else]
@@ -289,7 +289,7 @@
       result: |
         You give them to your father. He looks at them a long time, the way he looks at weather, and then puts them to work: cutting turf, carrying water, mucking out the byre they slept in.
 
-        Hallbjörn likes having them. Your mother doesn't, and won't say why. In the winter, one of them, the youngest, runs off across the snow toward the sea, and is found three days later, frozen, a mile short of it.
+        [if background == younger_son]Hallbjörn likes having them.[else]Your father doesn't like having them, and says so, once, and then teaches the youngest to hold a strake.[/if] Your mother doesn't, and won't say why. In the winter, one of them, the youngest, runs off across the snow toward the sea, and is found three days later, frozen, a mile short of it.
     - id: colman
       text: Keep Colmán. Sell the rest.
       visible_if: "flag.i_colman_taken && !flag.bg_colman_freed"
@@ -318,7 +318,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: [fate.ormr_dies, "place == home_fjord", "phase == winter", "!flag.placeholder_start"]
+  requires: [fate.ormr_dies, "place == home_fjord", "phase == winter", "!flag.placeholder_start", "background == younger_son"]
   art: hearth_ormr
   title: Ormr's last story
   text: |

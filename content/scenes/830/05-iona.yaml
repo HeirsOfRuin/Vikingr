@@ -25,7 +25,7 @@
     [break]
     Ásgeir comes down the ship between the benches, stepping over sea-chests and legs. He crouches by your oar, close enough that you can smell last night's ale on him and this morning's fish.
 
-    "Hall's boy. Your father says you've got eyes. What do you see?"
+    "{father}'s boy. Your father says you've got eyes. What do you see?"
 
     You look. A beach of white sand in the near bay. Smoke rising from the roofs. Low ground to the north, where the land dips behind a ridge. Men in brown walking between the houses toward the bell. The bell, which has started to ring faster.
 
@@ -236,6 +236,21 @@
         Ulf looks at you. "He'll be back next year," he says, "with new ones."
 
         "Then we'll come back for the covers," says Bersi.
+      next: i_after
+    - id: irish
+      text: Answer him in Irish. Your grandmother's Irish.
+      visible_if: flag.irish
+      effects: [ { set: flag.i_colman_spared }, { set: flag.i_colman_irish }, { add: { skill.lore: 1, honour: 1 } }, { standing: { place: iona, n: 2 } } ]
+      result: |
+        He stops picking up the pages. He stares at you as if one of the carved beasts on the cover had spoken.
+
+        "Who taught you that?" he says, in Irish. You tell him: Órlaith, of Rechru, taken in the first year of the ships. He knows Rechru. Everybody on these islands knows Rechru. He says her name the right way, the way she taught you, and then he says a prayer over it, quickly, with his eyes on the door, where Ulf is.
+
+        "Take the covers," he says. "Leave me the words. And if you go to Ulster, say you spoke with Colmán of Iona, and they'll give you water, at least." Then he is gone, out the back, into the grass, with the pages against his chest.
+
+        Ulf comes in and looks at you. "What did he say?"
+
+        "He said the gold's in the covers," you tell him, which is true.
       next: i_after
     - id: take
       text: Take him. A monk who speaks Norse is worth more than one who doesn't.

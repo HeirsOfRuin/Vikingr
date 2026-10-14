@@ -1,0 +1,339 @@
+# The freedman's son (docs/FRAME-BEGINNINGS.md, part 2): four scenes, ages 9 to 15, in place of the younger
+# son's boyhood. His father Leysingr was born a thrall on Hrapp's farm; his grandmother Órlaith was taken from
+# Rechru (Rathlin) in 795, the first year the ships came to Ireland. He joins the Raven at the same muster.
+
+- id: f_yard
+  kind: spine
+  art: ship_home
+  when: Late summer, 823
+  title: The boatyard
+  text: |
+    The ship comes in with her side stove in.
+
+    You are nine. You have been in the boatyard since you could walk, under your father's feet, and you know a ship's ribs better than your own. You know what a strake sounds like when you knock on it and it's sound, and what it sounds like when it's gone soft, and what your father's face does when he hears the second sound.
+
+    Kol the Steersman's ship. She came round the headland at noon, low and slow and listing to steerboard, and the whole district went down to the shingle to see what she'd brought home, and your father went down to see what she'd lost.
+    [break]
+    Four strakes on the steerboard side, on a rock off Kintyre in the dark, Kol says. And three men, who were bailing when she struck and went over with the water. He says it standing in the shallows with his hand flat on her side, like a man with his hand on a sick horse.
+
+    "Can you have her right by the winter nights, Leysingr?"
+
+    Your father doesn't answer at once. He never answers at once. He walks the length of her twice with his adze in his belt, knocking on her strakes with his knuckle and listening. Then he says, "Yes," and Kol nods, as if he'd known, and goes up the shingle to be told about the silver.
+
+    Your father looks down at you. "Well," he says. "Don't stand there."
+  choices:
+    - id: hold
+      text: Hold the new strakes while your father fits them.
+      effects: [ { add: { skill.craft: 1 } }, { set: flag.f_held } ]
+      result: |
+        Four days with your arms over your head, holding green oak against her ribs while your father bores and rivets, and your father saying nothing in all that time but "there" and "no" and "there".
+
+        When the last rivet goes home he runs his thumb along the seam, end to end, and you hold your breath. Then he puts his hand on the back of your neck, and leaves it there a moment. It's the most he has said all week.
+      next: f_ale
+    - id: mast
+      text: Go up the mast with the new rope. Nobody else is small enough.
+      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.f_mast } ]
+      result: |
+        The mast is taller from the top than it looks from the bottom. The whole fjord tilts under you, and the men below stop work to watch, and somebody starts taking bets.
+
+        You reeve the new halyard through the block with your legs wrapped round the mast and your heart going like a hammer, and come down the way you went up, and the man who bet against you pays the man who bet for you, and the man who bet for you gives you a piece of it. It's the first silver you've ever had that wasn't found on the shingle.
+      next: f_ale
+    - id: fire
+      text: Sit at the crew's fire, where the dead men's names are being said.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.f_fire } ]
+      result: |
+        They say the names of the three who went over, again and again, the way men do, and drink to each one, and then they talk about the rock, and then about every rock between Hordaland and Ireland, and which side to pass them on, and what the water does over each one at the ebb.
+
+        You sit in the dark outside the firelight and listen until your mother comes for you. By morning you know the names of more rocks than men.
+      next: f_ale
+    - id: asgeir
+      text: Carry Kol's son his supper, and ask him about the rock.
+      effects: [ { add: { skill.speech: 1 } }, { set: flag.f_asgeir } ]
+      result: |
+        Kol's son is called Ásgeir. He is sitting apart from the others on an upturned boat, with his hands round his knees, looking at the sea, and he takes the bowl from you without seeing you.
+
+        "I was at the steering-oar," he says, when you ask. "I heard her go. There's a sound a ship makes." He looks at you properly then. "You're the boatwright's boy. You'd know it."
+
+        You tell him you do. He nods, as if that settled something, and eats his supper.
+      next: f_ale
+
+- id: f_ale
+  kind: spine
+  art: yule_hall
+  when: Midsummer, 826
+  title: The freedom-ale
+  text: |
+    Your father was thirty-one winters a thrall, and this is the day he stops.
+
+    The law is old and simple, the way the oldest laws are. A thrall who has been given himself, or bought himself, brews the freedom-ale: three measures of malt, in his own vat, with his own hands. He carries it to his old master's house, and leads his master to the high seat in front of witnesses, and pours. Until the ale is drunk he is a thrall let go. After it, he is a freedman, and his son is a freedman's son, and his son's son is a man nobody remembers to call anything at all.
+
+    Your father has been brewing for a month. He has never brewed anything in his life. The whole boatyard smells of it, and so does he.
+    [break]
+    Hrapp's hall is full. Hrapp is old and big-bellied and red-handed, and he owned your father as he owned his cows, and your grandmother before that. He lets your father lead him up the hall by the hand, as the law says, and sits in his own high seat as if he were doing your father a favour, and drinks.
+
+    "Good ale," he says, surprised, and the witnesses drink, and that's that. Your father is free. He stands in the middle of Hrapp's hall in his best shirt not knowing what to do with his hands.
+
+    Then Thorgils, Hrapp's third son, fourteen and already big, with a red face like his father's, takes a horn of your father's ale and tastes it and pours it slowly out onto the rushes.
+
+    "Thrall-piss," he says. "Brewed in a byre." His brothers laugh.
+
+    Your father doesn't move. Your father has spent thirty-one years not moving.
+  choices:
+    - id: fight
+      text: Go for Thorgils, in front of everyone.
+      effects: [ { add: { skill.weapons: 1 } }, { set: flag.f_fought_thorgils }, { set: flag.thorgils_feud } ]
+      result: |
+        He's two years older than you and a head taller, and you get two good punches into his soft red face before his brothers pull you off him and Ozurr holds you by the hair while Thorgils hits you back.
+
+        Then old Hrapp starts to laugh. He laughs until he chokes, and has to be thumped on the back. "The freedman's whelp bites," he says, when he can. "Good. I paid for the bitch. I like to see the pup bite." Nobody else laughs. Your father takes you home with your nose broken and doesn't say a word all the way, and at the door he stops, and says, "Thank you," and goes in.
+      next: f_amma
+    - id: still
+      text: Stand still. Your father did. Today is his.
+      effects: [ { add: { skill.shield: 1 } }, { set: flag.f_stood_still } ]
+      result: |
+        You stand still. It's the hardest thing you have ever done, and you are twelve, and you have done some hard things.
+
+        Thorgils looks at you, waiting, and when you don't move he loses interest and goes to find a girl. Your father sees. On the way home, in the long summer twilight, he says, "A man who doesn't move gets to choose when he does." He doesn't say anything else, then or ever, but he never says anything else to anyone that he hasn't thought about for a year.
+      next: f_amma
+    - id: laugh
+      text: Make old Hrapp laugh at his own son.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          "Brewed in a byre," you agree, loud enough for the hall. "Hrapp's byre. With Hrapp's barley. Thirty-one years of it, that Hrapp never paid him for. I'm surprised it's not better."
+
+          There's a terrible silence, and then Hrapp bellows with laughter and slaps the high seat. "He's right!" he shouts. "It's my ale! Thorgils, you've poured my ale on my floor!" The whole hall laughs at Thorgils, who goes the colour of a boiled crab, and looks at you, and keeps looking.
+        effects: [ { add: { skill.speech: 1 } }, { set: flag.f_hrapp_laughed } ]
+        next: f_amma
+      failure:
+        text: |
+          "Brewed in a byre," you say. "Your byre." It sounds clever in your head and sullen in the hall, and Thorgils cuffs you across the ear without even getting up, and Hrapp says, "Teach your pup manners, Leysingr, now you've got the time," and the hall laughs. Not at Thorgils.
+        effects: [ { set: flag.f_shamed } ]
+        next: f_amma
+
+- id: f_amma
+  kind: spine
+  art: hearth_ormr
+  when: Winter, 828
+  title: Órlaith
+  text: |
+    Your grandmother is dying slowly, the way she has done everything since you've known her.
+
+    Her name is Órlaith, which nobody in the district can say, so they call her the Irishwoman, or Hrapp's Irishwoman, though Hrapp's father sold her to your grandfather's people long ago and bought her back again when they couldn't feed her. She has a bed by the fire and a voice like dry heather, and she still prays at night, in her own tongue, to her own god, and Hrapp's people let her, because she's old and there's no harm in it.
+    [break]
+    She tells it the same way every time. The island was Rechru, off the coast of Ulster. She was eleven. It was the first year the ships came; there had never been ships like that, and the monks were still writing it down when the church was burning. The bell. The smoke. Her brothers going into the water after the boats. A hand on the back of her neck, and the sea, and then Kaupang, and a man weighing her like a sheep.
+
+    "Sixty-odd years," she says. "And you know, I still dream in Irish." She takes your wrist. Her fingers are cold and very strong. "They'll go back there, the ships. They always go back. You'll go with them. I want somebody to say my name the right way, over there. Will you learn it?"
+  choices:
+    - id: learn
+      text: Learn it. All of it.
+      effects: [ { set: flag.irish }, { add: { skill.lore: 1 } }, { item: { id: orlaith_cross } } ]
+      result: |
+        All that winter, by her bed, in the dark when the others are asleep. The words for bread and water and the way to the church. The names of the saints, and her brothers' names, and her own, said properly, which takes you a month. A prayer. And last, and best, the curses, which she says with relish and makes you repeat until you have them right.
+
+        At the end of the winter she takes the little bronze cross off her neck, on its greasy thong, and puts it over yours. "So they'll know you," she says. In the spring she dies, in her sleep, as she said she would.
+      next: f_word
+    - id: cross
+      text: Take the cross she wears. Leave the words to the priests.
+      effects: [ { item: { id: orlaith_cross } }, { add: { hamingja: 1 } } ]
+      result: |
+        She looks at you a long time. Then she takes the little bronze cross off her neck, on its greasy thong, and puts it over yours. "Wear it, then," she says. "It knows the way, even if you don't."
+
+        In the spring she dies, in her sleep, as she said she would. Hallvard, when he sees the cross the next summer, makes a sign against it. Then he asks you, quietly, where you got it.
+      next: f_word
+    - id: refuse
+      text: Tell her you're a Northman, and Northmen don't pray to hanged gods.
+      effects: [ { add: { honour: 1 } }, { set: flag.f_refused_amma } ]
+      result: |
+        She lets go of your wrist. "So was the man who bought me," she says. "A Northman." She turns her face to the wall.
+
+        In the spring she dies, in her sleep, as she said she would. You find that you remember more of the words than you meant to. Not enough.
+      next: f_word
+
+- id: f_word
+  kind: spine
+  art: home_fjord
+  when: Winter, 829
+  title: Half a share
+  text: |
+    Your father waits until the end of the winter to say it, which is how you know he has been thinking about it all winter.
+
+    "Ásgeir Kolsson is taking the Raven west in the spring, for the jarl. Forty oars." He doesn't look at you. He looks at the adze in his hands, which he has been sharpening for an hour. "I've done her strakes this winter, half of them. He wants a man aboard who knows them. A bailer. A mender." He tests the edge with his thumb. "Half a share. He says he'll put you at an oar when you've shown him you can pull one."
+    [if flag.f_asgeir]
+    "He remembered you," your father adds. "The boy with the supper. I don't know what you said to him."
+    [/if]
+    [break]
+    "Half a share," you say.
+
+    "It's half a share more than I had at your age," says your father. "I had a collar."
+
+    You will be sixteen when the ice goes out. There is the rest of the winter to decide how you mean to go.
+  choices:
+    - id: take
+      text: Take the bailer's place, and be glad of it.
+      effects: [ { shares: 0.5 }, { add: { skill.craft: 1 } }, { set: flag.f_bailer } ]
+      result: |
+        On the last night your father gives you his second-best adze, the one with the ash handle his own hands have worn smooth. "A ship that's mended at sea," he says, "gets home. Nobody sings about the man who mended her. But she gets home."
+      next: m_landing
+    - id: oar
+      text: Go to Ásgeir yourself, and ask for an oar and a full share.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          Ásgeir is in his hall with his feet up, and listens to you with his eyebrows getting higher and higher.
+
+          "A freedman's son," he says, "asking for a full share before he's been to sea." Then he laughs. "Your father never asked me for anything in his life, and I've owed him for my ship for six years. All right. An oar. If you can't pull it by Orkney you're back to the bucket."
+        effects: [ { set: flag.f_oar }, { add: { honour: 1 } } ]
+        next: m_landing
+      failure:
+        text: |
+          Ásgeir hears you out, and then says, not unkindly, "Bail first. Row after. Every man in that ship bailed once, except the jarl's nephews, and they're no use to anyone."
+        effects: [ { shares: 0.5 }, { set: flag.f_bailer } ]
+        next: m_landing
+    - id: father
+      text: Let your father ask for you. He's owed.
+      effects: [ { set: flag.f_father_spoke }, { add: { honour: -1 } } ]
+      result: |
+        He goes up to Ásgeir's hall in his good shirt, the one from the freedom-ale, and comes back an hour later and says, "An oar. A full share," and goes back to his sharpening.
+
+        You find out on the landing in the spring what it cost him: Ásgeir's men call you the boatwright's boy, all that summer, and it isn't meant kindly, and you understand that your father knew they would.
+      next: m_landing
+
+# The homecoming, for the freedman's son: his father, the strakes, and Hrapp's sons on the landing.
+- id: f_return
+  kind: place
+  trigger: arrive
+  at: [home_fjord]
+  once: true
+  requires: [flag.bg_left, "background == freedman"]
+  art: home_fjord
+  title: Home
+  text: |
+    You come up the fjord on a still grey afternoon [if month >= 9]in early autumn[elif month == 8]at the end of summer[else]in high summer, with the hay still standing[/if], and the Raven is low in the water.
+    [if flag.bg_acclaimed]
+    You are standing in her prow, where the men put you on the field at Bangor.
+    [/if]
+
+    The whole district is on the landing. Your father is at the edge of it, by the boatyard, with his adze in his belt, and the first thing he looks at is not you. It's her steerboard strakes, the ones he fitted. He walks the length of her before the keel has stopped grinding on the shingle, knocking on her with his knuckle, listening.
+
+    Then he looks at you, and you can see him counting your fingers.
+    [break]
+    Hrapp's sons are on the landing too, the three of them, because everybody is.
+    [if flag.f_fought_thorgils || flag.f_hrapp_laughed]
+    Thorgils looks at the silver at your belt and then at your face, and you can see him remembering the freedom-ale, and not liking the memory any better for four years of it.
+    [else]
+    Thorgils looks at the silver at your belt the way a man looks at a dog that has learned to open a gate.
+    [/if]
+    [if fate.asgeir_falls && !flag.bg_covered]
+    Ásgeir's wife is at the front. She sees the stern of the Raven, and who is standing in it, and who isn't, and she doesn't make a sound. She turns and walks back up the hill.
+    [/if]
+  choices:
+    - id: strakes
+      text: Tell your father about his strakes. Every sea, every rock.
+      effects:
+        - { set: flag.f_father_close }
+        - { add: { skill.craft: 1 } }
+        - &f_jarl { if: flag.bg_acclaimed, then: [ { queue: { scene: h_jarl, days: 0 } } ] }
+        - &f_gyda { if: fate.gyda_waits, then: [ { queue: { scene: h_gyda, days: 0 } } ], else: [ { if: "captives >= 1", then: [ { queue: { scene: h_captives, days: 0 } } ] } ] }
+      result: |
+        You tell him on the shingle, standing in the shallows with your hand on her side, the way Kol stood when you were nine: the gale off Hjaltland, and how she worked in it, and the seam by the mast-step that wept all the way to Iona and stopped weeping after.
+
+        He listens to all of it without a word. Then he says, "The seam by the mast-step was Hrapp's oak. I told him it was green." It's the closest thing to joy you have ever seen on him.
+    - id: hrapp
+      text: Go up to Hrapp's hall first, and pay your father's harvest-due out of your share.
+      requires: ["silver >= 24"]
+      effects:
+        - { add: { silver: -24 } }
+        - { set: flag.f_paid_due }
+        - { add: { honour: 1 } }
+        - *f_jarl
+        - *f_gyda
+      result: |
+        You walk up to Hrapp's hall with your sea-chest still on your shoulder and put half a pound of silver on the board in front of the old man. "My father's harvest-due," you say. "He'll be in his own field this year."
+
+        Hrapp weighs it, slowly, twice. Then he laughs his choking laugh. "Bought him a harvest," he says. "That's how it starts. His grandmother cost me less." Thorgils, at the end of the bench, doesn't laugh at all.
+    - id: show
+      text: Let Hrapp's sons see what you brought home, and say nothing.
+      effects:
+        - { add: { honour: 1 } }
+        - *f_jarl
+        - *f_gyda
+      result: |
+        You let them look: the arm-ring, the hacksilver in the pouch, the Irish brooch on your cloak, the scar. Ozurr shrugs. Grímr spits. Thorgils looks longest, and then says, loud, to nobody, "I hear the Irish sell their silver cheap to anyone who speaks their tongue," and walks away up the shingle.
+
+        It's the beginning of something. You both know it.
+
+# His road to a ship (docs/FRAME-BEGINNINGS.md): built with his father in the winter of 831, launched in 832.
+- id: f_keel
+  kind: phase
+  trigger: hall
+  once: true
+  requires: ["winter == 831", "place == home_fjord", "background == freedman"]
+  art: home_fjord
+  title: The keel
+  text: |
+    Your father comes to find you in the first week of the winter nights, which he never does. He stands in the door with snow on his shoulders and his adze in his belt and says, without coming in:
+
+    "Two summers of shares. And my winter, and the oak I've been seasoning since your grandmother died, that I never told you about." He looks at the fire, not at you. "That's a karvi. A small one. Twenty oars. She won't be fast, but she'll be ours, and nobody in this district has a ship they built themselves."
+    [break]
+    It will take everything you have brought home, near enough: two pounds of silver for iron and rope and sailcloth, and the whole of the winter, and his back, which isn't what it was.
+
+    "Hrapp's sons will want a piece of her," he adds. "A freedman's work owes its patron. That's the law, or it's what they'll say the law is. We'll deal with that when the keel's down."
+  choices:
+    - id: build
+      text: Lay the keel. Every coin of it.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96, skill.craft: 1 } }, { set: flag.f_building }, { queue: { scene: f_due, days: 40 } } ]
+      result: |
+        You lay the keel on the stocks at the end of the boatyard the next morning, the two of you, in the snow, and your father puts his hand flat on it the way he puts his hand on every keel he lays, and says something under his breath that might be a prayer and might be a measurement.
+
+        All winter you work on her by lamplight, strake by strake. Your hands split and heal and split again. By Yule you can see the shape of her, and men from the district come down to the boatyard on their way to the jarl's hall, and stand, and look, and say nothing, which from them is praise.
+    - id: wait
+      text: Not yet. Another summer's shares first.
+      result: |
+        Your father nods, as if he expected it. "The oak will keep," he says. "It's kept this long." He goes back out into the snow, and you hear the adze going in the boatyard until late, on somebody else's boat.
+
+- id: f_due
+  kind: queued
+  requires: ["place == home_fjord", "background == freedman", flag.f_building]
+  art: home_fjord
+  title: The patron's due
+  text: |
+    They come down to the boatyard together, the three of them, Ozurr and Grímr and Thorgils, with their cloaks pinned with silver and their hands empty, which is how you know they've come about the law.
+
+    Ozurr does the talking, because he's the eldest. "A freedman's work owes its patron," he says. "Our father freed yours, and fed him thirty years before that. Every boat he builds owes Hrapp's house a share of what it earns. That's the law at Gula, and it's the law here."
+    [break]
+    Your father has stopped working. He stands with the adze hanging from his hand, and doesn't look at you, and you understand that he will do whatever you decide, and that he has been dreading this all winter.
+
+    Thorgils is looking at the ship.
+  choices:
+    - id: pay
+      text: Pay them a pound of silver, here, and be done with it.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { set: flag.f_due_paid } ]
+      result: |
+        You weigh it out on the keel. Ozurr takes it, and nods, and they go. "Cheap," says Grímr, on the way out, loud enough for the boatyard. "Cheaper than his grandmother."
+
+        Your father picks up the adze and goes back to work. That night he says, "You shouldn't have had to." You tell him he shouldn't have either, all those years. He doesn't answer. He doesn't need to.
+    - id: thing
+      text: Tell them to bring it to the Thing. Let the law-speaker say what a freedman's son owes.
+      check: { skill: speech, attr: wit, difficulty: 6 }
+      success:
+        text: |
+          At the spring Thing the law-speaker recites the freedmen's law in his flat sing-song, all of it, while the Hrappssons stand there getting redder, and at the end of it he says that a freedman owes his patron, and a freedman's son owes his patron's house nothing at all but a seat at the bottom of the bench, and that if Hrapp's sons want a share of a ship they can build one.
+
+          The whole Thing laughs. Your father, at the bottom of the bench, doesn't. He sits there very still, the way he does, and you see his hands shaking.
+        effects: [ { set: flag.f_due_refused }, { set: flag.thorgils_feud }, { add: { honour: 1 } }, { deed: { type: deed, text: "Beat Hrapp's sons at the Thing over the freedman's due", weight: 2, witnesses: 200 } } ]
+      failure:
+        text: |
+          The law-speaker hums and haws and finds a law about it somewhere, the way law-speakers can, and says that what is built in a freedman's yard owes its patron a share in the first year. Two pounds. In front of everyone.
+
+          You pay it, because you have to. Thorgils counts it twice.
+        effects: [ { add: { silver: -96, honour: -1 } }, { set: flag.f_due_paid }, { set: flag.thorgils_feud } ]
+    - id: thorgils
+      text: Offer Thorgils a bench in her, and the first summer's share, if he'll row it.
+      effects: [ { set: flag.f_due_thorgils }, { add: { honour: -1 } } ]
+      result: |
+        It shuts them up. Ozurr looks at Grímr, and Grímr looks at Thorgils, and Thorgils looks at the ship until the silence gets embarrassing, and then at you.
+
+        "I'll take the share," he says. "I won't row. A Hrappsson doesn't row for a thrall's grandson." He walks out. His brothers follow him. Your father says nothing for the rest of the day, and nothing that night, and in the morning he says, "That was clever," in a voice that means it was the worst thing you could have done, and also the only thing.

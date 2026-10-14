@@ -21,7 +21,7 @@
     Two summers ago the jarl said: come back after the second one. This is after the second one.
     [/if]
     [break]
-    Two years ago you were a second son with a borrowed shield. Now the district has a name for you, and the name has a story behind it, and the story is still being told.
+    Two years ago you were [if background == freedman]the Raven's bailer, on half a share[else]a second son with a borrowed shield[/if]. Now the district has a name for you, and the name has a story behind it, and the story is still being told.
     [if flag.ubbi_sworn]
     Somewhere south, at Hedeby, a Dane called Ubbi is counting ships for Frisia, and one of the ships he is counting is yours.
     [/if]
@@ -41,6 +41,29 @@
       effects: [ { set: flag.sp832_done } ]
       result: |
         The written saga pauses here, at the turn of your third spring. The sea does not: you can sail on, raid, trade and winter as long as you live, and every deed you do will be told.
+    - id: launch
+      text: Go down to the boatyard. She's ready.
+      visible_if: { all: [service, flag.f_building] }
+      effects:
+          - { if: "flag.irish || item.orlaith_cross", then: [ { ship: { type: karvi, name: "Órlaith", crew: 10 } } ], else: [ { ship: { type: karvi, name: "Leysingr's Oak", crew: 10 } } ] }
+          - { set: flag.sp832_done }
+          - { keep_boast: own_ship }
+          - { deed: { type: deed, text: "Launched a ship he built with his own hands", weight: 4, witnesses: 100 } }
+          - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
+          - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
+          - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
+          - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
+      result: |
+        Half the district comes down to the boatyard to see her go in, because nobody has ever seen a freedman's son launch his own ship, and they want to be able to say they did.
+
+        She goes down the logs into the fjord on the first try, which your father says is luck and you know is him, and sits in the water as if she'd been born in it, and doesn't leak, or not much.
+        [if flag.irish || item.orlaith_cross]
+        You name her Órlaith. Nobody in the district can say it. You don't care. Your father, when he hears it, has to go and look at something at the far end of the boatyard for a while.
+        [else]
+        You call her Leysingr's Oak, after the man who seasoned her and the man who built her, who are the same man. He pretends not to hear.
+        [/if]
+
+        You are eighteen. She's yours. The written saga pauses here, at the turn of your third spring. The sea does not.
     - id: promised
       text: Go to the jarl, and remind him what he said.
       visible_if: { all: [service, { any: [flag.jarl_promise, flag.h_jarl_trust, flag.asgeir_patron] }] }

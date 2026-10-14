@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, newGame, screenOf } from '../../src/engine/index';
 import type { GameState } from '../../src/engine/state';
 import { renderText } from '../../src/engine/text';
@@ -64,7 +64,8 @@ describe('the year 830', () => {
 
   it('a boast unkept by its day costs honour', () => {
     // the sandbox hall, so no Yule scene takes the stage
-    let s = newGame(content, { background: 'freedman', seed: 7, name: 'Ari' });
+    let s = sandboxGame(7);
+    delete s.flags.placeholder_start; // no placeholder winter scene takes the stage either
     s.pending = null;
     s.phase = 'winter';
     s.hallLeft = 5;

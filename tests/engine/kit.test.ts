@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, listActions, newGame } from '../../src/engine/index';
 import type { GameState } from '../../src/engine/state';
 import { creditWeapon, equipped, giveItem, heroArmour, heroWeapon, NAME_AT, GEAR_QUALITY } from '../../src/engine/items';
@@ -9,7 +9,7 @@ import { fleetSpeed } from '../../src/engine/crew';
 import { RngCursor, seedRng } from '../../src/engine/rng';
 
 const captainHome = (): GameState => {
-  const s = newGame(content, { background: 'freedman', seed: 4, name: 'Ari' });
+  const s = sandboxGame(4);
   s.pending = null;
   s.phase = 'sailing';
   s.day = 150;
