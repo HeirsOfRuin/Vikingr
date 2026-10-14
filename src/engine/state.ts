@@ -181,6 +181,8 @@ export interface BattleState {
   heroHp: number;
   heroHpMax: number;
   heroArmour: number;
+  /** His own skill in the wall: weapons where he stands, shield to keep the blades off, command if he leads. */
+  heroSkill?: { weapons: number; shield: number; command: number; leads: boolean };
   heroHits: number[];
   named: BattleNamed[];
   deeds: { type: string; text: string; who: string | null }[];

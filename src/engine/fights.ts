@@ -95,7 +95,7 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
     }
     case 'lost': {
       if (d.lethal && rng.float() < DUEL.lethalDeathChance) {
-        kill(state, d.kind === 'holmgang' ? 'duel' : 'duel', `${state.hero.name} was killed by ${foe.name}.`);
+        kill(state, 'duel', d.kind === 'holmgang' ? `${state.hero.name} was killed on the holmgang cloak by ${foe.name}, with the whole district watching.` : `${state.hero.name} was killed by ${foe.name}.`);
         return;
       }
       state.hero.hp = 1;
@@ -142,6 +142,7 @@ export function startBattle(
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),
     heroArmour: heroArmour(state, content),
+    heroSkill: { weapons: state.hero.skills.weapons, shield: state.hero.skills.shield + shieldBonus(state, content), command: state.hero.skills.command, leads: !state.service },
     heroHits: [],
     named,
     deeds: [],
@@ -233,14 +234,17 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   const mult = POSITION_FAME[b.position] * (b.heroDown ? 1.2 : 1);
   const witnesses = state.crew.men;
   const where = b.place ? content.places[b.place]?.name ?? b.place : 'at sea';
-  if (won && b.context === 'sea') addDeed(state, content, { type: 'sea_fight_won', text: `Beat ${content.foes[b.foeId]?.name ?? 'a crew'} at sea`, witnesses, mult });
-  if (won && b.context === 'scene') addDeed(state, content, { type: 'battle_won', text: `Beat ${content.foes[b.foeId]?.name ?? 'them'} ${b.place ? 'at ' + where : ''}`.trim(), witnesses, mult });
+  const atWhere = b.place ? ` at ${where}` : ' at sea';
+  // "the Ulster levy", not "The Ulster levy", in the middle of a sentence
+  const foeName = (content.foes[b.foeId]?.name ?? 'them').replace(/^The /, 'the ');
+  if (won && b.context === 'sea') addDeed(state, content, { type: 'sea_fight_won', text: `Beat ${foeName === 'them' ? 'a crew' : foeName} at sea`, witnesses, mult });
+  if (won && b.context === 'scene') addDeed(state, content, { type: 'battle_won', text: `Beat ${foeName}${b.place ? atWhere : ''}`, witnesses, mult });
   for (const d of b.deeds) {
     if (d.who) {
       const m = state.men.find((x) => x.id === d.who);
       if (m) m.deeds += 1;
-      addDeed(state, content, { type: 'man_deed', text: d.text, witnesses });
-    } else addDeed(state, content, { type: d.type, text: `${d.text} at ${where}`, witnesses });
+      addDeed(state, content, { type: 'man_deed', text: `${d.text}${atWhere}`, witnesses });
+    } else addDeed(state, content, { type: d.type, text: `${d.text}${atWhere}`, witnesses });
   }
 
   // plunder: a raid you command goes on to the plunder rounds; in another man's ship, he divides it

@@ -1,4 +1,5 @@
 import { goodsRoom } from '../../engine/trade';
+import { epitaph } from '../../engine/saga';
 import { useEffect, useState } from 'preact/hooks';
 import type { ContentBundle, Scene } from '../../content/schema';
 import type { GameState } from '../../engine/state';
@@ -77,17 +78,13 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
 
   if (screen === 'death' && state.death) {
     const a = AFTERLIFE[state.death.afterlife]!;
-    const rank = legendTable(state, content).findIndex((r) => r.hero) + 1;
     return (
       <div class="screen prose">
         <h1>{formatDate(state.death.day)}</h1>
         <p>{state.death.text}</p>
         <h2>{a.title}</h2>
         <p>{a.text}</p>
-        <div class="card sans small">
-          Fame {Math.round(livingFame(state))}, lasting fame {lastingFame(state)}. Among the living legends of his day he stood {rank === 1 ? 'first' : `${rank}th`}. {state.deeds.length} deeds; {state.deeds.filter((d) => d.verse).length} in verse.
-        </div>
-        <p class="muted small">[Phase 1: the full saga and the judgment are written in a later phase. The deeds are in the Saga tab.]</p>
+        {epitaph(state, content).map((l, i, all) => i === all.length - 1 ? <div key={i} class="card sans small">{l} The deeds are in the Saga tab.</div> : <p key={i}>{l}</p>)}
       </div>
     );
   }

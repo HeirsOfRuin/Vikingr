@@ -102,4 +102,8 @@ export const BATTLE = {
   manHitDeath: 0.4,
   heroDownMorale: 2,
   flankRatio: 1.3,
+  /** His skills in the wall (the author, 2026-10-14: how much do skills matter?). Measured from a man of
+   *  weapons 2, shield 2, command 1: each weapons point adds to the line's blows, most in the front rank;
+   *  each shield point keeps blades off him; each command point, if he leads, adds to the blows and steadies the men. */
+  skill: { weaponsStep: 0.02, weaponsAt: { front: 1, wall: 0.6, rear: 0.2 }, shieldStep: 0.06, shieldMin: 0.6, shieldMax: 1.2, commandStep: 0.025, commandMax: 0.2, deedStep: 0.02 },
 } as const;

@@ -132,10 +132,21 @@ function matchMorale(mu: number, mine: Order): number {
 function blows(att: BattleSide, def: BattleSide, oa: Order, od: Order, b: BattleState, attIsUs: boolean, rng: RngCursor): number {
   const defenderHolds = b.context === 'raid' ? !attIsUs : false;
   let power = att.men * qualityMult(att.quality) * moraleFactor(att) * terrainMult(b.terrain, oa, defenderHolds);
-  if (attIsUs && !b.heroDown) power *= BATTLE.heroPower[b.position];
+  if (attIsUs && !b.heroDown) {
+    power *= BATTLE.heroPower[b.position];
+    const hs = b.heroSkill;
+    if (hs) power *= (1 + BATTLE.skill.weaponsStep * (hs.weapons - 2) * BATTLE.skill.weaponsAt[b.position]) * (1 + commandBonus(b));
+  }
   const m = 1 + BATTLE.matchupStep * MATCHUP[oa][od];
   const raw = BATTLE.k * power * m * INTENSITY[oa].out * INTENSITY[od].in * qualityGuard(def.quality) * (0.75 + rng.float() * 0.5);
   return Math.min(def.men, Math.round(raw));
+}
+
+/** What his command is worth to the line he leads: more blows, steadier men. Nothing if he is down or only an oarsman. */
+export function commandBonus(b: BattleState): number {
+  const hs = b.heroSkill;
+  if (!hs || !hs.leads || b.heroDown) return 0;
+  return Math.min(BATTLE.skill.commandMax, Math.max(0, BATTLE.skill.commandStep * (hs.command - 1)));
 }
 
 function loseMorale(s: BattleSide, cas: number, mine: Order, theirs: Order, mult: number) {
@@ -159,7 +170,7 @@ export function resolveRound(b: BattleState, ours: Order, theirs: Order, rng: Rn
   b.killed += toThem;
   b.lost += toUs;
   loseMorale(b.them, toThem, theirs, ours, 1);
-  loseMorale(b.us, toUs, ours, theirs, b.heroDown ? 1 : BATTLE.heroMoraleLoss[b.position]);
+  loseMorale(b.us, toUs, ours, theirs, (b.heroDown ? 1 : BATTLE.heroMoraleLoss[b.position]) * (1 - commandBonus(b)));
   b.us.last = ours;
   b.them.last = theirs;
   const mu = MATCHUP[ours][theirs];
@@ -167,7 +178,8 @@ export function resolveRound(b: BattleState, ours: Order, theirs: Order, rng: Rn
 
   // the hero in the press
   const exposure = INTENSITY[ours].in * Math.min(2, Math.max(0.5, (b.them.men + toThem) / Math.max(1, b.us.men + toUs)));
-  if (!b.heroDown && rng.float() < BATTLE.heroHit[b.position] * exposure) {
+  const guard = b.heroSkill ? Math.min(BATTLE.skill.shieldMax, Math.max(BATTLE.skill.shieldMin, 1 - BATTLE.skill.shieldStep * (b.heroSkill.shield - 2))) : 1;
+  if (!b.heroDown && rng.float() < BATTLE.heroHit[b.position] * exposure * guard) {
     const dmg = Math.max(1, 3 + rng.int(7) + Math.round(b.them.quality) - b.heroArmour);
     b.heroHp -= dmg;
     b.heroHits.push(dmg);
@@ -190,12 +202,12 @@ export function resolveRound(b: BattleState, ours: Order, theirs: Order, rng: Rn
         b.log.push(`${n.name} is hurt, and keeps his place.`);
       }
     } else if (mu > 0 && slot === 'front' && rng.float() < 0.12) {
-      b.deeds.push({ type: 'man_deed', text: `${n.name} broke through in round ${b.round}`, who: n.id });
+      b.deeds.push({ type: 'man_deed', text: `${n.name} broke their shield-wall`, who: n.id });
       b.log.push(`${n.name} breaks a man's shield and the man behind it.`);
     }
   }
-  if (!b.heroDown && b.position === 'front' && mu > 0 && rng.float() < 0.15) {
-    b.deeds.push({ type: 'front_deed', text: `cut his way through their front rank`, who: null });
+  if (!b.heroDown && b.position === 'front' && mu > 0 && rng.float() < 0.15 + (b.heroSkill ? BATTLE.skill.deedStep * (b.heroSkill.weapons - 2) : 0)) {
+    b.deeds.push({ type: 'front_deed', text: `Cut his way through their front rank`, who: null });
     b.log.push('You are through their front rank, and they know your face now.');
   }
 

@@ -10,7 +10,7 @@ import { ATTR_NAMES } from '../../engine/paths';
 import { capacity, mouths, aliveMen } from '../../engine/crew';
 import { legendTable, livingFame, lastingFame, deedFame } from '../../engine/fame';
 import { formatDate } from '../../engine/calendar';
-import { formatSilver, capitalise } from '../../engine/format';
+import { formatSilver, capitalise, plural } from '../../engine/format';
 import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
 import { Bar } from './Actions';
@@ -198,6 +198,11 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
 }
 
 /** The base (FRAME-FOUNDATION §4): what he has, who keeps it, and what is on its walls. */
+/** The jarl of the day: Eystein, or the son the thing chose after him. */
+function jarlName(state: GameState): string {
+  return state.flags.fr_jarl_hakon ? 'Jarl Hákon' : state.flags.fr_jarl_eirik ? 'Jarl Eiríkr' : 'Jarl Eystein';
+}
+
 export function HomePanel({ content, state, onAct }: { content: ContentBundle; state: GameState; onAct: (a: Action) => void }) {
   const b = state.base;
   const def = BASE[b.level];
@@ -251,7 +256,7 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
       </div>
       <div class="card">
         <h3>The jarl and the captains</h3>
-        <p class="small">Jarl Eystein: you are {favourWord(favour(state))}.{state.service ? '' : ` His favour sends ${Math.max(0, favourMuster(state))} more men to your muster.`}</p>
+        <p class="small">{jarlName(state)}: you are {favourWord(favour(state))}.{state.service ? '' : favourMuster(state) > 0 ? ` His favour sends ${plural(favourMuster(state), 'man', 'men')} more to your muster.` : favourMuster(state) < 0 ? ` His displeasure keeps ${plural(-favourMuster(state), 'man', 'men')} away from your muster.` : ' Not yet enough for him to send men to your muster.'}</p>
         {Object.keys(content.captains).filter((id) => captain(state, content, id).met).length ? (
           <dl class="kv">
             {Object.values(content.captains).filter((c) => captain(state, content, c.id).met).map((c) => {
@@ -279,7 +284,7 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
             <tbody>
               {deeds.map((d) => (
                 <tr key={d.n}>
-                  <td>{d.text}<br /><span class="muted">{formatDate(d.day)}</span></td>
+                  <td>{capitalise(d.text)}<br /><span class="muted">{formatDate(d.day)}</span></td>
                   <td>{d.verse ? 'In verse' : d.told === null ? 'Untold' : `Told (${Math.round(deedFame(d, state.day) * 10) / 10})`}</td>
                 </tr>
               ))}
