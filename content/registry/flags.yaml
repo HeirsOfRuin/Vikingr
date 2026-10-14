@@ -308,3 +308,4 @@ o_harek_ship: { description: "Sails Harek's karvi for a quarter" }
 o_peace: { description: "Paid the wergild and the jarl's price: peace with Hrapp's house" }
 o_hunted: { description: "Came home without paying: Hrapp's house hunts him" }
 outlaw_ended: { description: "The outlaw's time is served: he may sail home" }
+hs_we_broke: { description: "The surety's peace was broken by his own raid, not by their kin (docs/FRAME-HIRD-HOSTAGES.md)" }

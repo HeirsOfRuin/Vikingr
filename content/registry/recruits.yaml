@@ -1,0 +1,104 @@
+# Where new sworn men come from (docs/FRAME-HIRD-HOSTAGES.md). A recruiting scene names its origin;
+# the man is made when the scene opens. {he} in a description is his name.
+- id: bench
+  names: norse
+  temperaments: [steady, hot, greedy, pious, ambitious, dour]
+  weapons: [2, 3]
+  loyalty: [5, 7]
+  descs:
+    - "{he} has pulled an oar behind you for two summers and never once asked for anything. Now he is asking."
+    - "{he} was the one who held the gap at the last fight, when two others ran. The men noticed. So did you."
+    - "{he} is quiet, broad and very hard to knock down. He sings badly and fights well."
+    - "{he} has a scar from ear to jaw that he got in your service, and wants something to show for it besides the scar."
+    - "{he} came to the benches as a boy with no beard. He has one now, and opinions."
+
+# the oarsman who took a fallen sworn man's bench: he keeps the name the scenes already gave him
+- id: heir
+  names: norse
+  temperaments: [steady, hot, greedy, pious, ambitious, dour]
+  weapons: [2, 3]
+  loyalty: [5, 7]
+  descs:
+    - "{he} has pulled an oar behind you for two summers and never once asked for anything. Now he is asking."
+    - "{he} was the one who held the gap at the last fight, when two others ran. The men noticed. So did you."
+    - "{he} is quiet, broad and very hard to knock down. He sings badly and fights well."
+    - "{he} has a scar from ear to jaw that he got in your service, and wants something to show for it besides the scar."
+    - "{he} came to the benches as a boy with no beard. He has one now, and opinions."
+
+- id: norse
+  names: norse
+  temperaments: [steady, hot, greedy, ambitious, dour]
+  weapons: [3, 4]
+  loyalty: [3, 5]
+  descs:
+    - "{he} served a hersir in Sogn until the hersir died owing him, and has been looking for a lord who pays ever since."
+    - "{he} has a good mail shirt and a better story about where he got it, which changes each time he tells it."
+    - "{he} was in the Irish Sea with Turgeis's men and left them over a share. He doesn't say whose fault it was."
+    - "{he} is a farmer's third son with nothing to farm and a sword he bought with his first raid's share."
+    - "{he} speaks little, drinks little and watches everything. Somebody says he was outlawed in Trøndelag. Nobody asks him."
+
+- id: dane
+  names: [Tóki, Gormr, Sveinn, Áki, Tófi, Hemingr, Sigfrøðr, Ásbjôrn, Ketilbjôrn, Þorkell, Ôzurr, Hrói]
+  temperaments: [hot, greedy, ambitious, dour]
+  weapons: [3, 5]
+  loyalty: [2, 4]
+  descs:
+    - "{he} was one of King Horik's hirðmen until he killed a man at the king's own table. He says it was a fair fight. It was not a fair place."
+    - "{he} has been to Dorestad twice already, and talks about its warehouses the way other men talk about women."
+    - "{he} is a Jutlander with a Frisian wife he has not seen in three years and a long-handled axe he has never been parted from."
+    - "{he} served Harald Klak in Frankish pay, and got baptised for the shirt they gave him. He still has the shirt."
+    - "{he} wears more silver on his arms than you do, and wants you to know he could afford to leave whenever he likes."
+
+- id: gall
+  names: [Kjaran, Dufþakr, Kalman, Bjólan, Myrkjartan, Njáll, Kormákr, Feilan, Dufgus, Erpr, Konáll, Gilli]
+  temperaments: [hot, pious, ambitious, steady]
+  weapons: [3, 4]
+  loyalty: [3, 5]
+  descs:
+    - "{he} had a Norse father and an Irish mother and was welcome at neither of their fires. He fights like a man with nothing to go home to."
+    - "{he} speaks Irish and Norse both and lies fluently in each. He knows every ford between Dublin and Armagh."
+    - "{he} wears a cross and a Thor's hammer on the same thong, so as to be covered either way."
+    - "{he} was a hostage once, in a king's hall in Leinster, and learned there how kings think. He says it is mostly about cattle."
+    - "{he} has kin on both sides of every feud in the Irish Sea, and is owed blood by half of them."
+
+- id: swede
+  names: [Ásmundr, Gautr, Freysteinn, Holmgeirr, Sigvatr, Þorgautr, Vígmundr, Bjôrn, Ingifastr, Halfdan]
+  temperaments: [steady, greedy, dour, ambitious]
+  weapons: [3, 4]
+  loyalty: [3, 5]
+  descs:
+    - "{he} has been east, down the rivers to where the Rus trade with the Khazars, and came back with a limp and a bag of dirhams."
+    - "{he} was a guard on the Birka fur-boats and got tired of guarding other men's silver."
+    - "{he} sacrifices at Uppsala every ninth year and will tell you about it whether you ask or not."
+    - "{he} is a big, slow, patient man with a bow. He is the only man aboard who can hit a gull."
+
+- id: beaten
+  names: norse
+  temperaments: [hot, dour, ambitious, greedy]
+  weapons: [3, 4]
+  loyalty: [1, 3]
+  descs:
+    - "{he} was the last of their crew still standing when they threw down their axes, and the only one who didn't throw his."
+    - "{he} killed two of your men in the fight. He knows you know it. He is offering anyway."
+    - "{he} was their steersman. Whatever he owed the man who led them, he reckons it was paid when that man went over the side."
+    - "{he} has a broken nose from one of your men and a look that says he will remember which one."
+
+- id: kin
+  names: norse
+  temperaments: [steady, hot, pious, ambitious]
+  weapons: [1, 3]
+  loyalty: [7, 9]
+  descs:
+    - "{he} is young, eager and blood of your blood, which means you cannot send him home when he is a fool."
+    - "{he} has been told about you since he was small. He expects a great deal. He will be disappointed in some of it."
+    - "{he} is strong for his age and very sure of himself, the way they all are at that age, and the way you were."
+
+- id: freed
+  names: [Kjaran, Dufþakr, Kalman, Erpr, Myrkjartan, Feilan, Dufgus, Kolli, Konáll, Bjólan]
+  temperaments: [steady, pious, dour]
+  weapons: [1, 2]
+  loyalty: [6, 8]
+  descs:
+    - "{he} was taken off an Irish beach as a boy and has worked your land since. He has never once tried to run, and he has had chances."
+    - "{he} has been in your house so long that your men forget he was ever a thrall, until someone reminds them."
+    - "{he} is the best hand with an axe on the farm, and not only for wood. Your steward is a little afraid of him."

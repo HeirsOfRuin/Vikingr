@@ -96,6 +96,12 @@ const baseEffect = z.union([
   z.object({ exile_end: z.literal(true) }).strict(),
   // arm-rings (src/engine/rings.ts): given to him (n > 0) or given away (n < 0)
   z.object({ ring: z.object({ metal: z.enum(['silver', 'gold']), n: z.number().int().optional() }).strict() }).strict(),
+  // the hird grows: the scene's candidate swears on a ring, or signs on at an oar
+  z.object({ swear_cand: z.enum(['silver', 'gold']) }).strict(),
+  z.object({ cand_crew: z.literal(true) }).strict(),
+  // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
+  z.object({ take_hostage: z.object({ kind: id, captain: id.optional() }).strict() }).strict(),
+  z.object({ hostage: z.enum(['ransom', 'ransom_high', 'surety', 'sell', 'free', 'dies', 'maybe_dies', 'escape', 'fetters', 'foster', 'marry', 'hand_over', 'keep_one', 'sell_party']) }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */
 export const effect: z.ZodType<Effect> = z.lazy(() => z.union([baseEffect, z.object({ if: condInput, then: z.array(effect), else: z.array(effect).optional() }).strict()]));
@@ -153,6 +159,10 @@ export const scene = z.object({
   chance: z.number().min(0).max(1).optional(),
   once: z.boolean().optional(),
   cooldown_days: z.number().int().optional(),
+  /** A recruiting scene: the man it offers is made from this origin when it opens ({cand}, {cand_desc}). */
+  candidate: id.optional(),
+  /** A hostage scene: which party it is about ({hostage}, {hostage_name}, {hostage_kin}, {hostage_price}). */
+  hostage: z.enum(['newest', 'ransom', 'surety', 'broken', 'foster', 'noble', 'political', 'any']).optional(),
   text: z.string(),
   choices: z.array(choice).min(1),
 }).strict();
@@ -212,6 +222,35 @@ export type Fighter = z.infer<typeof fighter>;
 
 export const swornMan = z.object({ id, name: z.string(), temperament: z.enum(TEMPERAMENTS), weapons: z.number().int(), loyalty: z.number().int().min(0).max(10), desc: z.string() }).strict();
 export type SwornManDef = z.infer<typeof swornMan>;
+
+/** Where new sworn men come from (docs/FRAME-HIRD-HOSTAGES.md): names, temper, arms, loyalty, and how they are described. */
+export const recruitOrigin = z.object({
+  id,
+  /** A name list, or "norse" for the shared names registry. */
+  names: z.union([z.literal('norse'), z.array(z.string()).min(4)]),
+  temperaments: z.array(z.enum(TEMPERAMENTS)).min(1),
+  weapons: z.tuple([z.number().int(), z.number().int()]),
+  loyalty: z.tuple([z.number().int().min(0).max(10), z.number().int().min(0).max(10)]),
+  /** One line each; {he} is his name. */
+  descs: z.array(z.string()).min(2),
+}).strict();
+export type RecruitOrigin = z.infer<typeof recruitOrigin>;
+
+/** A kind of hostage (docs/FRAME-HIRD-HOSTAGES.md). {name} {place} {people} {kids} are filled when he is taken. */
+export const hostageKind = z.object({
+  id,
+  at: z.array(z.enum(PLACE_KINDS)),
+  sex: z.enum(['m', 'f']),
+  /** Extra heads in the party besides the notable (a mother's children). */
+  kids: z.tuple([z.number().int().min(0), z.number().int().min(0)]).optional(),
+  price: z.tuple([z.number().int().min(1), z.number().int().min(1)]),
+  surety: z.boolean(),
+  who: z.string(),
+  kin: z.string(),
+  desc: z.string(),
+}).strict();
+export type HostageKind = z.infer<typeof hostageKind>;
+export const hostageNames = z.partialRecord(z.enum(PEOPLES), z.object({ m: z.array(z.string()).min(3), f: z.array(z.string()).min(3) }).strict());
 
 export const rival = z.object({ id, name: z.string(), born: z.number().int(), died: z.number().int(), curve: z.array(z.tuple([z.number().int(), z.number()])).min(2), note: z.string() }).strict();
 export type Rival = z.infer<typeof rival>;
@@ -319,4 +358,6 @@ export interface ContentBundle {
   items: Record<string, ItemDef>;
   fates: Record<string, FateDef>;
   banter: BanterLine[];
+  recruits: Record<string, RecruitOrigin>;
+  hostages: { kinds: Record<string, HostageKind>; names: z.infer<typeof hostageNames> };
 }

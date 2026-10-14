@@ -57,6 +57,9 @@ export interface SwornMan {
   diedOn: number | null;
   sworn: boolean; // has given his oath to the hero (bench-mates have not)
   hurtUntil: number | null; // sits out fights until this day
+  /** A man not in the registry, made when he came (docs/FRAME-HIRD-HOSTAGES.md): where from, and what he is like. */
+  origin?: string;
+  desc?: string;
 }
 
 export interface Boast {
@@ -87,6 +90,9 @@ export interface PlunderState {
   burned: boolean;
   log: string[];
   next?: string; // scene to open when it is over
+  /** Someone worth a ransom was looked for (once a raid), and found. */
+  searched?: boolean;
+  hostage?: string;
 }
 
 export interface Deed {
@@ -307,4 +313,9 @@ export interface GameState {
   fates: Record<string, number>; // what will happen, rolled at the start (content/registry/fates.yaml)
   omens: Record<string, number>; // what the signs say will happen: the fate, right seven times in ten
   captives: number;
+  /** The man a recruiting scene offers, while it is open. */
+  cand?: SwornMan | null;
+  /** Hostages held at home, and the one a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md). */
+  hostages?: import('./hostages').Hostage[];
+  hfocus?: string | null;
 }

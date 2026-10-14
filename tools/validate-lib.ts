@@ -110,6 +110,9 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.ships[e.ship.type]) errors.push(`${where}: unknown ship type "${e.ship.type}"`);
       } else if ('voyage' in e) {
         if (!content.places[e.voyage]?.active) errors.push(`${where}: voyage to "${e.voyage}", not an active place`);
+      } else if ('take_hostage' in e) {
+        if (!content.hostages.kinds[e.take_hostage.kind]) errors.push(`${where}: unknown hostage kind "${e.take_hostage.kind}"`);
+        if (e.take_hostage.captain && !content.captains[e.take_hostage.captain]) errors.push(`${where}: unknown captain "${e.take_hostage.captain}"`);
       }
     }
     return { lethal };
@@ -146,6 +149,11 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     if ((s.kind === 'spine' || s.kind === 'queued') && s.trigger) errors.push(`scene ${s.id}: ${s.kind} scenes are opened by links, not triggers`);
     if (s.trigger && s.chance === undefined && !s.once && s.cooldown_days === undefined) errors.push(`scene ${s.id}: a sure-fire triggered scene needs once or cooldown_days, or it fires every time`);
     for (const p of s.at ?? []) if (!content.places[p]) errors.push(`scene ${s.id}: unknown place "${p}"`);
+    // the hird and hostages (docs/FRAME-HIRD-HOSTAGES.md): a {cand} needs a candidate, a {hostage} needs a party
+    if (s.candidate && !content.recruits[s.candidate]) errors.push(`scene ${s.id}: unknown recruit origin "${s.candidate}"`);
+    const all = JSON.stringify(s);
+    if (/\{cand(_desc)?\}|swear_cand|cand_crew/.test(all) && !s.candidate) errors.push(`scene ${s.id}: uses the candidate but names no candidate origin`);
+    if (/\{hostage[a-z_]*\}|\{daughter\}|"hostage":"/.test(all) && !s.hostage) errors.push(`scene ${s.id}: uses a hostage but names no hostage selector`);
     const ids = new Set<string>();
     for (const c of s.choices) {
       if (ids.has(c.id)) errors.push(`scene ${s.id}: duplicate choice id "${c.id}"`);
@@ -174,6 +182,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     'fl_master',
     // queued by the hardship rolls (src/engine/hardship.ts)
     'ha_harvest', 'ha_fire',
+    // hostages (src/engine/hostages.ts, plunder.ts): taken in a raid; a broken peace
+    'hs_taken', 'hs_broken', 'hi_heir',
   ];
   while (queue.length) {
     const id = queue.pop()!;

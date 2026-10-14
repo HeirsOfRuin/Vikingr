@@ -8,6 +8,8 @@ import { effAttr, age } from './hero';
 import { fameRank, lastingFame, livingFame } from './fame';
 import { standing } from './standing';
 import { captain } from './allies';
+import { hirdCount, hirdRoom } from './hird';
+import { hostageCount } from './hostages';
 
 export type Value = number | string | boolean;
 
@@ -61,6 +63,23 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   trophies: (s) => s.base.trophies.length,
   dearth: (s) => (s.hard?.dearth !== undefined && s.hard.dearth === (s.flags._winter ?? -1) ? 1 : 0),
   muster: (s) => s.musterPool,
+  /** The hird (docs/FRAME-HIRD-HOSTAGES.md): sworn men alive, and room at his table for more. */
+  hird: (s) => hirdCount(s),
+  'hird.room': (s) => hirdRoom(s),
+  /** Hostages: parties held, held as sureties, those that could be, fosterlings grown, noble daughters, political prisoners. */
+  hostages: (s, c) => hostageCount(s, c, 'all'),
+  'hostages.held': (s, c) => hostageCount(s, c, 'held'),
+  'hostages.surety': (s, c) => hostageCount(s, c, 'surety'),
+  'hostages.can_surety': (s, c) => hostageCount(s, c, 'canSurety'),
+  'hostages.foster': (s, c) => hostageCount(s, c, 'foster'),
+  'hostages.noble': (s, c) => hostageCount(s, c, 'noble'),
+  'hostages.political': (s, c) => hostageCount(s, c, 'political'),
+  /** The party the open scene is about: can it stand surety; how many heads. */
+  'hostage.surety': (s, c) => { const h = s.hostages?.find((x) => x.id === s.hfocus); return h ? !!c.hostages.kinds[h.kind]?.surety && h.state === 'held' : false; },
+  'hostage.n': (s) => s.hostages?.find((x) => x.id === s.hfocus)?.n ?? 0,
+  'hostage.kids': (s) => (s.hostages?.find((x) => x.id === s.hfocus)?.n ?? 1) - 1,
+  /** A prize ship already taken this year: one a year. */
+  prized: (s) => (s.flags._prize === dateOf(s.day).year ? 1 : 0),
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */
   winter: (s) => s.flags._winter ?? 0,
 };

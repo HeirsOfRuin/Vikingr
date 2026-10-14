@@ -18,6 +18,8 @@ import { tierAt, TIER_NAMES } from '../../engine/standing';
 import { BASE, FARM_PRICE, HALL_FAME, HALL_PRICE, hallPrice, winterYield } from '../../engine/base';
 import { envyWords, SETBACK, upkeepBill } from '../../engine/hardship';
 import { ringWords } from '../../engine/rings';
+import { hirdRoom } from '../../engine/hird';
+import { peopleName } from '../../engine/hostages';
 import { baseActions } from '../../engine/index';
 import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
@@ -136,7 +138,7 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
               {i > 0 && inPort && free.length > 0 && (
                 <div class="row sans small">
                   {free.map((id) => (
-                    <button key={id} class="choice" style={{ minHeight: 32, padding: '4px 8px' }} onClick={() => onAct({ t: 'appoint', ship: s.id, man: id })}>Give her to {content.men[id]?.name}</button>
+                    <button key={id} class="choice" style={{ minHeight: 32, padding: '4px 8px' }} onClick={() => onAct({ t: 'appoint', ship: s.id, man: id })}>Give her to {state.men.find((x) => x.id === id)?.name ?? content.men[id]?.name}</button>
                   ))}
                 </div>
               )}
@@ -182,7 +184,7 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
             {m.alive ? (
               <>
                 <Bar value={m.loyalty} max={10} kind="gold" />
-                <p class="small">{def?.desc}</p>
+                <p class="small">{m.desc ?? def?.desc}</p>
                 {m.sworn && <div class="row sans small">
                   {(['front', 'wall', 'rear'] as Position[]).map((p) => (
                     <button key={p} class={`choice${m.slot === p ? ' primary' : ''}`} style={{ minHeight: 36, padding: '4px 8px' }} onClick={() => onAct({ t: 'slot', man: m.id, slot: p })}>{POSITION_NAMES[p]}</button>
@@ -193,6 +195,17 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
           </div>
         );
       }) : <p class="empty">No one has sworn to you.</p>}
+      {!state.service && <p class="muted small">Room at your table for {plural(hirdRoom(state), 'more sworn man', 'more sworn men')} ({BASE[state.base.level].name.toLowerCase()}). A man swears on an arm-ring.</p>}
+      {(state.hostages ?? []).length > 0 && <>
+        <h3>Hostages</h3>
+        {state.hostages!.map((h) => (
+          <div class="card" key={h.id}>
+            <b>{h.who}</b>
+            <p class="small">{h.state === 'surety' ? `Held as surety for the peace of the ${peopleName(h.people)}: their tribute comes each spring.` : `Held for ransom. ${capitalise(h.kin)} should pay ${formatSilver(h.price)}.`} Taken {formatDate(h.taken)}.</p>
+            <p class="muted small">{content.hostages.kinds[h.kind]?.desc}</p>
+          </div>
+        ))}
+      </>}
     </div>
   );
 }

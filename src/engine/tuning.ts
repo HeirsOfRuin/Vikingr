@@ -99,7 +99,8 @@ export const BATTLE = {
   heroPower: { front: 1.1, wall: 1.0, rear: 0.95 },
   heroMoraleLoss: { front: 0.85, wall: 0.9, rear: 1.0 },
   manHit: { front: 0.06, wall: 0.03, rear: 0.01 },
-  manHitDeath: 0.4,
+  // 0.4 until 2026-10-14: a raider's sworn men died about one a year, too fast for a hird to grow (docs/FRAME-HIRD-HOSTAGES.md)
+  manHitDeath: 0.3,
   heroDownMorale: 2,
   flankRatio: 1.3,
   /** His skills in the wall (the author, 2026-10-14: how much do skills matter?). Measured from a man of

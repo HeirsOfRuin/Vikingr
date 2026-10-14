@@ -1,0 +1,272 @@
+# The hird grows (docs/FRAME-HIRD-HOSTAGES.md). New sworn men: one of his own oarsmen, a sword for hire
+# in a port, the best of a beaten crew, kin, a freed thrall. The man is made when the scene opens
+# ({cand}, {cand_desc}); he swears on a ring from the chest, or takes an oar, or goes.
+
+- id: hi_bench
+  kind: pool
+  trigger: hall
+  phase: [winter]
+  chance: 0.2
+  cooldown_days: 300
+  candidate: bench
+  requires: ["!service", "crew.men >= 10", "hird.room >= 1", "fame.living >= 15"]
+  art: yule_hall
+  title: A man at the fire
+  text: |
+    The hall is mostly asleep. The fire is down to the red, and somebody is snoring in the straw like a saw going through green wood. One of your oarsmen comes and sits down across the hearth from you without being asked, which is how you know he has been working up to it all evening.
+
+    {cand_desc}
+
+    "I've pulled for you," {cand} says. "I'll pull for you again. But a man at an oar can walk off at any beach he likes, and I don't want to be that man. I want to be yours."
+  choices:
+    - id: swear
+      text: Take his oath, here, on a silver ring.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: |
+        You take a ring from the chest and he puts both his hands between yours, the way it's done, and says the words. His voice cracks once, on "to the death". Nobody in the hall is awake to see it, and by the morning everyone knows.
+    - id: gold
+      text: Take his oath on gold. Let the hall talk about it.
+      visible_if: "rings.gold >= 1"
+      effects: [ { swear_cand: gold } ]
+      result: |
+        He looks at the gold ring a long while before he takes it, as if it might be a joke. Then he swears, loud enough to wake the hall, and the men who wake up and see what's on his arm don't go back to sleep for a while.
+    - id: wait
+      text: Tell him to earn it another summer.
+      result: '"Another summer, then," he says. He doesn''t argue. He goes back to his place in the straw, and you hear him lying awake for a long while, working out how.'
+
+- id: hi_heir
+  kind: queued
+  candidate: heir
+  art: muster
+  title: A dead man's bench
+  text: |
+    One of your sworn men went into the ground last year. The man who took his bench has pulled at it all summer, and kept the dead man's place in the wall, and has not asked for anything.
+
+    He asks now, at the muster, with the ships still on their rollers.
+
+    {cand_desc}
+
+    "I've had his bench," {cand} says. "I'd like his oath as well. Somebody has to keep it."
+  choices:
+    - id: swear
+      text: Take his oath, on a silver ring, where the dead man's kin can see it.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: He swears it at the water's edge, with the dead man's kin watching from the crowd. Afterwards one of them comes over, and grips his arm, and says nothing. That's enough.
+    - id: gold
+      text: Give him gold. The dead man would have liked that.
+      visible_if: "rings.gold >= 1"
+      effects: [ { swear_cand: gold } ]
+      result: The men cheer when they see the gold, and then go quiet, because they understand who it's for. {cand} wears it on the arm the dead man wore his.
+    - id: wait
+      text: Not yet. A bench is not an oath.
+      result: He nods. "Not yet," he says, as if marking the words to give back to you later. He will.
+
+- id: hi_port_norse
+  kind: pool
+  trigger: arrive
+  at: [kaupang, orkney, hladir, birka, faroes, shetland, karmoy, uppsala]
+  chance: 0.25
+  cooldown_days: 240
+  candidate: norse
+  requires: ["!service", "ships >= 1", "hird.room >= 1", "fame.living >= 10"]
+  title: A sword for hire
+  text: |
+    There is always a man like this on a trading beach: sitting on an upturned boat with his shield beside him and his sword across his knees, watching the ships come in and the men come off them, and working out which lord is worth the walk down the strand.
+
+    This one has picked you. He waits until your keel is on the shingle, and then he walks down.
+
+    {cand_desc}
+
+    "{cand}," he says, by way of everything. "I hear you pay your men. I hear you give rings. I'd like to find out."
+  choices:
+    - id: swear
+      text: Give him a silver ring, and take his oath.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: He swears on the beach, with your men watching and the traders not bothering to. It's a short oath, and he says it like a man who's said it before. You'll find out whether he means it this time.
+    - id: oar
+      text: Give him an oar and a share, and see what he's worth before he gets a ring.
+      effects: [ { cand_crew: true } ]
+      result: He shrugs. "An oar's a start," he says, and throws his sea-chest into your ship like a man moving into a house.
+    - id: no
+      text: You have enough mouths.
+      result: He nods, as if he'd expected it, and goes back to his boat to wait for the next ship.
+
+- id: hi_port_dane
+  kind: pool
+  trigger: arrive
+  at: [hedeby, ribe, dorestad]
+  chance: 0.25
+  cooldown_days: 240
+  candidate: dane
+  requires: ["!service", "ships >= 1", "hird.room >= 1", "fame.living >= 10"]
+  title: A Dane with a past
+  text: |
+    He's waiting at the end of the jetty with a mail shirt rolled up under one arm and a long-handled axe over his shoulder, and he looks at your ship the way a horse-trader looks at a horse.
+
+    {cand_desc}
+
+    "{cand}," he says. "You're the Norwegian. I've heard of you, a little. Not as much as you'd like. I could help with that."
+  choices:
+    - id: swear
+      text: Give him a silver ring, and take his oath.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: He swears in Danish, which is close enough, and grins when it's done. "Now," he says, "about the share." Your men exchange looks. They'll be watching him. That's probably for the best.
+    - id: oar
+      text: An oar first. Rings are for men you know.
+      effects: [ { cand_crew: true } ]
+      result: '"Fair," he says, which from the look on his face it isn''t, quite. But he comes aboard.'
+    - id: no
+      text: Danes who leave their king's table in a hurry are trouble you don't need.
+      result: He laughs, without much humour. "Everybody says that," he says, "until they need a man who's been to Dorestad."
+
+- id: hi_port_gall
+  kind: pool
+  trigger: arrive
+  at: [dublin, man, skye]
+  chance: 0.25
+  cooldown_days: 240
+  candidate: gall
+  requires: ["!service", "ships >= 1", "hird.room >= 1", "fame.living >= 10"]
+  title: Half of each
+  text: |
+    He speaks to your steersman in Irish first, to see if he'll understand, and then to you in Norse, with an accent that belongs to neither side of the water.
+
+    {cand_desc}
+
+    "{cand}," he says. "They call men like me the Gall-Gaedil here, the foreign Irish, and they don't mean it kindly. I know every river from here to Armagh, and which kings are at war this year, and which are only saying so. That's worth a ring to a man who means to raid here."
+  choices:
+    - id: swear
+      text: Give him a silver ring, and take his oath.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: He swears in both tongues, one after the other, to be sure. Hallvard watches the cross and the hammer on his chest knock against each other while he does it, and doesn't say anything, which for Hallvard is a great deal.
+    - id: oar
+      text: An oar, and his knowledge of the rivers. The ring can wait.
+      effects: [ { cand_crew: true } ]
+      result: '"The rivers are free," he says. "The ring, you''ll pay for later." He comes aboard with a bag of dried fish and a harp with two strings missing.'
+    - id: no
+      text: A man with kin on both sides of every feud is a man who'll be on one side of yours.
+      result: He spreads his hands. "Everybody's on one side of everything here," he says. "At least I tell you which."
+
+- id: hi_beaten
+  kind: queued
+  candidate: beaten
+  title: The best of them
+  text: |
+    Most of the beaten crew are just men who chose the wrong ship. One of them is something else.
+
+    {cand_desc}
+
+    "{cand}," he says, when you ask. "And before you ask the rest: I swore to that one, and that one is in the sea, and an oath to a dead man is a short oath. I'll give you a long one, if you'll have it."
+  choices:
+    - id: swear
+      text: Have it. Give him a ring, in front of the men he fought.
+      requires: ["rings.silver >= 1", "hird.room >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: Your men don't like it. One of them has a cut across the forehead from this man's axe, and says so. But they watch you put a ring on his arm, and they understand what it means, and that it's done.
+    - id: oar
+      text: Put him at an oar, between two men who'll watch him.
+      effects: [ { cand_crew: true } ]
+      result: He takes the oar without a word. The two men either side of him don't sleep much the first night. By the third, they're trading insults with him, which is how it starts.
+    - id: no
+      text: Put him ashore at the next landfall with the rest.
+      result: He nods, as if that was the answer he expected from a careful man, and doesn't speak to you again.
+
+- id: hi_kin
+  kind: phase
+  trigger: phase_start
+  phase: [muster]
+  once: true
+  candidate: kin
+  requires: ["!service", "married == 1", "hird.room >= 1", "year >= 834"]
+  art: muster
+  title: Your wife's brother
+  text: |
+    {wife}'s brother comes to the muster with his sea-chest on his shoulder and a spear that was his grandfather's, and his mother's instructions, which he has clearly been told not to repeat to you and repeats anyway.
+
+    {cand_desc}
+
+    "She says you'll look after me," {cand} says. "I said I'd look after you. We left it there."
+  choices:
+    - id: swear
+      text: Take his oath on a silver ring. Kin is kin.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: He swears it too fast and too loud, the way the young do, and then stands there with the ring on his arm turning it round and round. {wife} will hear of it before you're out of the fjord.
+    - id: oar
+      text: Put him at an oar for a summer. He can earn his ring like anyone.
+      effects: [ { cand_crew: true } ]
+      result: He's disappointed, and tries not to show it, and fails. {wife} is less disappointed than you expected. "Good," she says. "Let him learn."
+    - id: no
+      text: Send him home. You are not taking your wife's brother to die in Ireland.
+      effects: [ { add: { honour: -1 } } ]
+      result: He goes home. {wife} doesn't speak to you for three days, and her mother sends a message you are glad you can't read.
+
+- id: hi_nephew
+  kind: phase
+  trigger: phase_start
+  phase: [muster]
+  once: true
+  candidate: kin
+  requires: ["!service", "hird.room >= 1", "year >= 838", "fame.living >= 30"]
+  art: muster
+  title: A boy of your blood
+  text: |
+    The boy is fifteen, or says he is, and the son of a cousin of your father's, or something near it. The old women had it worked out, and sent him.
+
+    {cand_desc}
+
+    He has walked two days to the muster. He has heard every story they tell about you, including several you don't recognise. He wants to know if the one about the gate at Iona is true.
+  choices:
+    - id: swear
+      text: Take his oath, and give him a ring. You were younger.
+      requires: ["rings.silver >= 1"]
+      effects: [ { swear_cand: silver } ]
+      result: He swears with his voice breaking halfway through, and your older men grin at each other over his head. Someone will have to teach him to stand in the wall. You find you want it to be you.
+    - id: oar
+      text: Put him at an oar. If he lives through a summer, the ring is his.
+      effects: [ { cand_crew: true } ]
+      result: He takes the oar like it's a sword. He'll have blisters by the first evening and won't mention them.
+    - id: no
+      text: Send him home to grow.
+      result: He goes, after a long look back. You think of yourself at sixteen, on the Raven's bench, and are not sure you did him a kindness.
+
+- id: hi_freed
+  kind: pool
+  trigger: hall
+  phase: [winter]
+  at: [home_fjord]
+  chance: 0.1
+  cooldown_days: 700
+  candidate: freed
+  requires: ["!service", "thralls >= 1", "base != father", "hird.room >= 1"]
+  art: hearth_ormr
+  title: A thrall asks
+  text: |
+    {cand} comes to you after the evening meal, when the others have gone out, and stands in the doorway the way a thrall stands, half in and half out, until you tell him to come in.
+
+    {cand_desc}
+
+    He asks for his freedom. He has thought about how to say it for many nights, you can tell, and then he says it plainly. "Let me drink my freedom-ale at your table," he says, "and I'll swear to you the next morning. I have nobody else to swear to."
+    [if background == freedman]
+
+    You know this doorway. Your father stood in one like it.
+    [/if]
+  choices:
+    - id: swear
+      text: Free him at the ale, and take his oath on a ring.
+      requires: ["rings.silver >= 1"]
+      effects: [ { add: { thralls: -1, silver: -12 } }, { swear_cand: silver } ]
+      result: |
+        You brew the ale and hold the feast, small as it is, and he sits at your table for the first time with a cup in his hand and doesn't drink it, just holds it. In the morning he swears, on a ring, in front of your men. Some of them were not pleased to see a thrall sit at the table. None of them say so to him.
+    - id: free
+      text: Free him, but keep him on the farm as a free man, with his own plot.
+      effects: [ { add: { thralls: -1, silver: -12, honour: 1 } } ]
+      result: He drinks his freedom-ale and works the same fields the next morning, for himself now, and for you. He thanks you once, and then never again, which is how a free man does it.
+    - id: no
+      text: Tell him no.
+      result: He nods, and goes out, and is at work before you the next morning. Nothing in his face changes. You find you don't like how easily he does that.

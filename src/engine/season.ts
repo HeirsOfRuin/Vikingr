@@ -1,5 +1,7 @@
 // The year at home: spring muster, the autumn share-out and homecoming,
 // the winter hall, and the turn of the year.
+import { hirdLeaves, hirdRoom } from './hird';
+import { hostageYear } from './hostages';
 import { endFelag, FAVOUR, favourMuster, jarlCut, partnerCut, shiftFavour } from './allies';
 import { rollTradeNews } from './trade';
 import { addRings, giveRing, ringWords } from './rings';
@@ -413,6 +415,10 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   }
   // the winter's sickness and the winter's bills, and what the district thinks of him (docs/FRAME-HARDSHIP.md)
   const hardLines = turnOfYear(state, content, rng, year, state.at !== 'home_fjord');
+  // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
+  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng));
+  // a sworn man fell last year: the oarsman who took his bench may ask to take his oath as well
+  if (!state.service && hirdRoom(state) > 0 && state.men.some((m) => !m.alive && m.sworn && m.diedOn !== null && dateOf(m.diedOn).year >= year - 1)) state.queue.push({ scene: 'hi_heir', day: state.day });
   for (const m of aliveMen(state)) addLoyalty(m, m.loyalty > 6 ? -1 : m.loyalty < 4 ? 1 : 0);
   for (const [id, ps] of Object.entries(state.places)) {
     const base = content.places[id]?.raid?.wealth ?? 0;
@@ -465,6 +471,8 @@ export function chapterCard(state: GameState, content: ContentBundle, year: numb
   else lines.push('No ship, and no bench in anyone else\'s.');
   if (sworn.length) lines.push(`Sworn to you: ${sworn.map((m) => m.nickname ? `${m.name} ${m.nickname}` : m.name).join(', ')}.`);
   if (bench.length) lines.push(`Bench-mates who have not sworn: ${bench.map((m) => m.name).join(', ')}.`);
+  const hs = state.hostages ?? [];
+  if (hs.length) lines.push(`Hostages in your keeping: ${hs.map((h) => h.state === 'surety' ? `${h.who} (surety)` : h.who).join('; ')}.`);
   const dead = state.men.filter((m) => !m.alive && m.diedOn !== null && dateOf(m.diedOn).year >= year - 1);
   if (dead.length) lines.push(`Dead this year: ${dead.map((m) => m.name).join(', ')}.`);
   lines.push(`Silver: ${formatSilver(state.silver)}${state.base.hoard ? `, and ${formatSilver(state.base.hoard)} in the hoard` : ''}. Arm-rings: ${ringWords(state)}. Fame: ${Math.round(livingFame(state))}.`);

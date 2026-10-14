@@ -5,6 +5,8 @@ import type { ContentBundle, Scene } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
 import { test } from './conditions';
+import { makeCandidate } from './hird';
+import { pickHostage } from './hostages';
 
 export type Trigger = 'arrive' | 'sea' | 'phase_start' | 'hall';
 
@@ -27,7 +29,7 @@ export function trigger(state: GameState, content: ContentBundle, rng: RngCursor
   const sure = pool.filter((s) => s.chance === undefined);
   const pick = sure.length ? rng.pickWeighted(sure, (s) => s.weight ?? 1) : rng.pickWeighted(pool.filter((s) => rng.float() < (s.chance ?? 0)), (s) => s.weight ?? 1);
   if (!pick) return false;
-  open(state, pick.id);
+  open(state, pick.id, content);
   return true;
 }
 
@@ -36,11 +38,15 @@ export function fireQueued(state: GameState, content: ContentBundle): boolean {
   const due = state.queue.findIndex((q) => q.day <= state.day && test(content.scenes[q.scene]?.requires, state, content));
   if (due < 0) return false;
   const [q] = state.queue.splice(due, 1);
-  open(state, q!.scene);
+  open(state, q!.scene, content);
   return true;
 }
 
-export function open(state: GameState, id: string): void {
+export function open(state: GameState, id: string, content?: ContentBundle): void {
   state.pending = { t: 'scene', id };
   state.seen[id] = state.day;
+  const s = content?.scenes[id];
+  // the man a recruiting scene offers, and the party a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md)
+  if (s?.candidate) state.cand = makeCandidate(state, content!, s.candidate);
+  if (s?.hostage) state.hfocus = pickHostage(state, content!, s.hostage)?.id ?? null;
 }

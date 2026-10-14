@@ -1,0 +1,88 @@
+# Hostages (docs/FRAME-HIRD-HOSTAGES.md). A kind is taken at places of the kinds in `at`.
+# Text: {name} the notable, {place} where taken, {people} their people, {kids} the children with them.
+# Prices are in ørtugar (48 to the pound).
+kinds:
+  - id: king_son
+    at: [hall]
+    sex: m
+    price: [300, 600]
+    surety: true
+    who: "{name}, son of the king of {place}"
+    kin: "the king of {place}"
+    desc: "A king's son: worth a great deal to his father, and more to you as a surety for his father's good behaviour."
+
+  - id: queen
+    at: [hall]
+    sex: f
+    kids: [1, 2]
+    price: [400, 800]
+    surety: true
+    who: "{name}, the king of {place}'s wife, and {kids}"
+    kin: "the king of {place}"
+    desc: "A king's wife and his children. He will pay for them, or he will come for them, and either way he will remember."
+
+  - id: noble_family
+    at: [hall, town, island, market]
+    sex: f
+    kids: [1, 3]
+    price: [150, 300]
+    surety: true
+    who: "{name}, a lord's wife of {place}, and {kids}"
+    kin: "her husband"
+    desc: "A lord's wife and children, taken from their own hearth. Her husband's kin will haggle; her own kin will not forget."
+
+  - id: abbot
+    at: [monastery]
+    sex: m
+    price: [300, 700]
+    surety: false
+    who: "{name}, abbot of {place}"
+    kin: "the church"
+    desc: "An abbot. The church pays for its own, in the end, and the end can be made to come sooner."
+
+  - id: fosterling
+    at: [monastery]
+    sex: m
+    price: [150, 300]
+    surety: true
+    who: "{name}, a king's son at his letters with the monks of {place}"
+    kin: "his father the king"
+    desc: "A boy of good family sent to the monks to learn his letters. Kings fostered their sons this way. Now someone else is fostering him."
+
+  - id: merchant_heir
+    at: [market, town]
+    sex: m
+    price: [150, 400]
+    surety: false
+    who: "{name}, a rich merchant's son of {place}"
+    kin: "his father"
+    desc: "A merchant's heir. Merchants know the price of everything, and will argue about this one."
+
+  - id: captain_kin
+    at: []
+    sex: m
+    price: [120, 250]
+    surety: false
+    who: "{name}, the son of a shipmaster you beat"
+    kin: "his father"
+    desc: "A beaten captain's son. Keeping him keeps his father civil, or keeps him angry. The jarl takes an interest in men like this."
+
+names:
+  gael:
+    m: [Muiredach, Áed, Flann, Niall, Donnchad, Conchobar, Máel Sechnaill, Cathal, Fergus, Diarmait]
+    f: [Gormlaith, Eithne, Muirenn, Órlaith, Ethne, Lann, Derbforgaill, Sadb]
+  english:
+    m: [Ealdred, Osric, Wulfstan, Eadberht, Cyneheard, Æthelwulf, Beornred, Sigeric]
+    f: [Æthelburh, Eadgyth, Cyneswith, Osgyth, Wynflæd, Hildeburh]
+  frisian:
+    m: [Popko, Hessel, Liudger, Tjalling, Abbo, Wigbold, Rembert, Folkert]
+    f: [Tetta, Ida, Reinsuid, Thiadgard, Abba, Hiltrud]
+  frankish:
+    m: [Hugo, Odo, Rotger, Ebroin, Hilduin, Gauzlin, Adalhard, Vivian]
+    f: [Ermengard, Bertha, Judith, Rotrud, Gisela, Hildegard]
+  norse:
+    m: [Hrafn, Eyvindr, Þórir, Kolbeinn, Grjótgarðr, Ôlvir, Steinþórr, Vémundr]
+    f: [Ragnhildr, Ása, Gunnhildr, Þóra, Álfhildr, Sigríðr]
+  danish:
+    m: [Tóki, Gormr, Áki, Hemingr, Tófi, Sveinn]
+    f: [Ásfríðr, Þyri, Gunnvôr, Tófa]

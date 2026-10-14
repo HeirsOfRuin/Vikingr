@@ -1,5 +1,6 @@
 // Reference players. They do not need to play well; they need to play consistently,
 // so two runs are comparable (game-building skill, Part 2 #5).
+import { hirdRoom } from '../src/engine/hird';
 import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
 import { hold, holdRoom, SECONDHAND } from '../src/engine/fleet';
 import { buyPrice, sellPrice } from '../src/engine/trade';
@@ -78,7 +79,12 @@ export class Bot {
     const screen = screenOf(state);
     const pick = (pred: (a: Action) => boolean) => find(opts, pred)?.action;
     switch (screen) {
-      case 'scene': return enabled[this.rng.int(enabled.length)]!.action;
+      case 'scene': {
+        // a lord who wants men takes the oath when he can (docs/FRAME-HIRD-HOSTAGES.md)
+        const id = state.pending!.t === 'scene' ? state.pending!.id : '';
+        if (id.startsWith('hi_') && this.policy !== 'homebody') { const sw = pick((a) => a.t === 'choose' && a.id === 'swear'); if (sw) return sw; }
+        return enabled[this.rng.int(enabled.length)]!.action;
+      }
       case 'report': case 'voyage': return enabled[0]!.action;
       case 'duel': {
         const y = pick((a) => a.t === 'yield');
@@ -143,6 +149,8 @@ export class Bot {
         const limit = this.policy === 'reckless' ? 8.5 : this.policy === 'coward' ? 4 : 6.5;
         if (p && p.alarm >= limit) return pick((a) => a.t === 'plunder' && a.what === 'leave')!;
         if (p && this.policy === 'raider' && p.round === 1) return pick((a) => a.t === 'plunder' && a.what === 'captives')!;
+        // someone worth a ransom (docs/FRAME-HIRD-HOSTAGES.md): the careful raider looks, once
+        if (p && this.policy === 'raider' && p.round === 2) { const hs = pick((a) => a.t === 'plunder' && a.what === 'hostage'); if (hs) return hs; }
         return pick((a) => a.t === 'plunder' && a.what === 'grab')!;
       }
       case 'hall': return this.hall(state, content, opts);
@@ -163,6 +171,8 @@ export class Bot {
       if (g) return g;
       if (state.silver > 60) { const mk = pick((a) => a.t === 'make_ring'); if (mk) return mk; }
     }
+    // a ring in the chest for the next man who asks to swear (docs/FRAME-HIRD-HOSTAGES.md)
+    if (hirdRoom(state) > 0 && (state.rings?.silver ?? 0) < 1 && state.silver > 150) { const mk = pick((a) => a.t === 'make_ring'); if (mk) return mk; }
     // a gold ring is worth more to the jarl than in the chest
     { const jg = h('jarl_gift', 'gold'); if (jg) return jg; }
     const sk = h('skald'); if (sk && state.deeds.some((d) => d.told !== null && !d.verse)) return sk;

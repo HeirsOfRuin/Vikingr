@@ -12,8 +12,9 @@ import { POSITION_FAME } from './tuning';
 import { onRaided } from './standing';
 import { coastPlunderStart } from './hardship';
 import { plunderRing } from './rings';
+import { brokePeace, findHostage, hostagesOf, HOSTAGE } from './hostages';
 
-export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'leave';
+export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'hostage' | 'leave';
 export const ALARM_MAX = 10;
 
 export function startPlunder(state: GameState, place: string, lines: string[], next?: string, content?: ContentBundle): void {
@@ -47,6 +48,17 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
       p.captives += n;
       p.alarm += 2;
       p.log.push(`${plural(n, 'person', 'people')} roped at the neck and walked down to the ships. One of them is praying the whole way.`);
+      break;
+    }
+    case 'hostage': {
+      // once a raid: the round spent asking, and searching, and dragging someone out from behind an altar
+      p.searched = true;
+      p.alarm += HOSTAGE.alarm;
+      const h = findHostage(state, content, rng, p.place);
+      if (h) {
+        p.hostage = h.id;
+        p.log.push(`You find ${h.who}. You know what they are worth by the way the others try to hide them.`);
+      } else p.log.push('You turn the place over for anyone worth a ransom, and find only the poor, who are worth what the poor are worth.');
       break;
     }
     case 'burn': {
@@ -92,6 +104,15 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
   addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}${p.burned ? ' and burned it' : ''}`, witnesses: state.crew.men, mult: mult * (p.burned ? 1.2 : 1) * (state.service ? SERVICE_DEED : 1) });
   lines.push(`In all: ${formatSilver(taken)}${p.captives ? `, and ${plural(p.captives, 'captive')}` : ''}.`);
   journal(state, `Raided ${pl.name}: ${formatSilver(taken)}${p.captives ? `, ${plural(p.captives, 'captive')}` : ''}${p.burned ? '; burned it' : ''}.`);
+  if (!state.service) brokePeace(state, p.place, content);
+  if (p.hostage) {
+    lines.push(`And ${hostageWho(state, p.hostage)}, under guard in the ship.`);
+    state.queue.push({ scene: 'hs_taken', day: state.day });
+  }
   const burnt = `${p.place}_burning`;
   state.pending = { t: 'report', title: `Leaving ${pl.name}`, lines, next: p.next, art: p.burned && content.art[burnt] ? burnt : pl.art };
+}
+
+function hostageWho(state: GameState, id: string): string {
+  return hostagesOf(state).find((h) => h.id === id)?.who ?? 'a hostage';
 }

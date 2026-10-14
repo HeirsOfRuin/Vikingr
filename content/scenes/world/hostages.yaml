@@ -1,0 +1,234 @@
+# Hostages and political prisoners (docs/FRAME-HIRD-HOSTAGES.md). A party taken in a raid or after a
+# sea fight, held at home: ransomed through a go-between, held as a surety for a people's peace,
+# fostered, married into, sold, freed, or handed to the jarl. {hostage} is the party the scene is about.
+
+- id: hs_taken
+  kind: queued
+  hostage: newest
+  art: open_sea
+  title: Worth a ransom
+  text: |
+    They sit in the bottom of the ship among the plunder, under the eye of two of your older men: {hostage}.
+
+    You have taken enough slaves to know the difference. Slaves look at the shore. These look at you, and at your men, and at the ship, and you can see them doing the sum. They know what they're worth. They want to know whether you do.
+    [if hostage.kids >= 1]
+
+    The children don't do sums. The smallest has been sick over the side twice, and is crying for a dog that was left behind.
+    [/if]
+  choices:
+    - id: keep
+      text: Keep them all, fed and unhurt, for the {hostage_price} that {hostage_kin} will pay, or near it.
+      result: You give orders that they're to be fed from your own food and that nobody touches them. The men grumble, and obey. Some of them have daughters.
+    - id: keep_one
+      text: Keep the eldest child for ransom. Sell the rest at the next market.
+      visible_if: "hostage.kids >= 1"
+      effects: [ { hostage: keep_one } ]
+      result: The mother understands before you've finished saying it. She doesn't scream. She takes the eldest's face in both hands and says something to the child in her own language, quickly and very quietly, and then lets go. The rest go to the slave-trader at the next beach. The child does not speak again for a month.
+    - id: sell
+      text: Sell them with the other captives. A ransom is a long wait.
+      effects: [ { hostage: sell_party } ]
+      result: The slave-trader at the next landfall pays {hostage_sold} without asking who they were, and wouldn't have cared. It is quick, and it is silver, and when it gets about, as it will, their people will have a name for you.
+    - id: free
+      text: Let them go, here, on the strand. You came for silver, not this.
+      effects: [ { hostage: free } ]
+      result: You put them ashore before you sail. They stand on the beach watching you go, not believing it, and some of your men think you've gone soft. The story will reach their people before you're out of sight of land, and it will do you no harm there.
+
+- id: hs_envoy
+  kind: pool
+  trigger: hall
+  at: [home_fjord]
+  chance: 0.35
+  cooldown_days: 200
+  hostage: ransom
+  requires: ["hostages.held >= 1"]
+  title: The go-between
+  text: |
+    He comes up the fjord in a hired boat with two oarsmen and a bundle of letters he knows you can't read, and he is very polite. Men in his trade always are.
+
+    He has come about {hostage}. He says {hostage_kin} will pay. He names {hostage_price}, in weighed silver, delivered to a beach of your choosing, with oaths sworn on both sides that nobody will be waiting on that beach with spears.
+
+    He would like to see that they're alive and well before he says anything else. When he does, his face doesn't change at all, which tells you he's done this before.
+  choices:
+    - id: accept
+      text: Take the {hostage_price}, and send them home.
+      effects: [ { hostage: ransom } ]
+      result: |
+        The silver comes in the spring, to the beach you named, in a chest that takes two men to carry. Every coin of it is weighed on your own scales. It's all there. The go-between bows and takes them home, and nobody on either side has to fight anybody, which almost never happens.
+    - id: haggle
+      text: Tell him it's not enough. Ask for {hostage_high}.
+      check: { skill: trade, attr: pre, difficulty: 5 }
+      success:
+        text: He sighs, and argues, and sighs again, and agrees. You get the feeling the higher price was the price he'd been given in the first place. The silver comes in the spring, all of it.
+        effects: [ { hostage: ransom_high } ]
+      failure:
+        text: He listens, and bows, and leaves without another word. A year, perhaps, before anyone comes again. Perhaps never. Ransoms have a way of getting smaller the longer people go unfed.
+    - id: surety
+      text: Keep them as a surety instead. Their people will pay you a tribute every year, and keep the peace with you.
+      visible_if: "hostage.surety"
+      effects: [ { hostage: surety } ]
+      result: |
+        The go-between goes away with terms instead of a ransom: a tribute each spring, and peace between you and the {hostage_people} as long as they keep it. It's how the Irish kings do it among themselves, and the go-between knows it, and treats you a little differently after. As if you'd done something he understood.
+    - id: refuse
+      text: Send him away. You're not in a hurry.
+      result: He bows, and goes. "They'll pay more next year," he says on the way out, "if they still have a reason to." It's not a threat. It's arithmetic.
+
+- id: hs_sick
+  kind: pool
+  trigger: hall
+  at: [home_fjord]
+  phase: [winter]
+  chance: 0.12
+  cooldown_days: 300
+  hostage: any
+  requires: ["hostages >= 1"]
+  art: hearth_ormr
+  title: A fever in the hostage-house
+  text: |
+    One of your hostages is sick: {hostage}. The fever came in the first frost, and it isn't going.
+    [if hostage.kids >= 1]
+    It's the youngest child, and the mother hasn't slept in three days.
+    [/if]
+
+    A dead hostage is worth nothing, to you or to anyone. A hostage who dies in your keeping is worth a great deal to their kin, as a reason.
+  choices:
+    - id: healer
+      text: Send for the best healer in the district, and pay what she asks.
+      effects: [ { add: { silver: -24 } } ]
+      result: The healer comes, and stays four days, and takes a lot of your silver and a good deal of your ale. The fever breaks on the fifth day. She tells you she did it. Hallvard tells you it was the blót. The sick one does not care who did it.
+    - id: priest
+      text: Find them one of their own priests from the slave-market, and let him do what Christians do.
+      effects: [ { add: { silver: -12 } }, { hostage: maybe_dies } ]
+      result: You buy a Christian priest from a trader for less than a cow, and he prays over the sickbed for three days in Latin. Whatever happens next, the hostages will tell their kin you sent them a priest.
+    - id: wait
+      text: Let it run its course. People get sick in winter.
+      effects: [ { hostage: maybe_dies } ]
+      result: You let it run its course. Whatever comes of it, it was the winter, and nobody can say otherwise. They will say it anyway.
+
+- id: hs_escape
+  kind: pool
+  trigger: hall
+  at: [home_fjord]
+  chance: 0.08
+  cooldown_days: 400
+  hostage: ransom
+  requires: ["hostages.held >= 1", "base != hall"]
+  title: An empty bed
+  text: |
+    In the morning the place where {hostage_name} slept is empty, and so is the little boat you keep pulled up by the stream. Somebody on your farm left a door unbarred, or was paid to. Nobody is admitting which.
+
+    The boat can't have gone far. The fjord is long, and there's only one way out of it.
+  choices:
+    - id: hunt
+      text: Take six men and the fastest boat, and go after them.
+      check: { skill: cunning, attr: wit, difficulty: 4 }
+      success:
+        text: You find the boat at noon, in a cove at the mouth of the fjord, with the hostage in it trying to bail with both hands. Nobody says anything on the way back. Nobody needs to. The door gets a new bar.
+      failure:
+        text: You search every cove from the farm to the open sea and find nothing but a gull with a fish. They're gone, and the ransom with them. A hall with a proper door would have kept them.
+        effects: [ { hostage: escape } ]
+    - id: let
+      text: Let them go. Anyone who wants to be home that badly has earned it.
+      effects: [ { hostage: escape }, { add: { honour: 1 } } ]
+      result: You let them go. The men think you're mad. Then the story gets about, and some of them start telling it as if it was their idea.
+
+- id: hs_broken
+  kind: queued
+  hostage: broken
+  art: hearth_ormr
+  title: The peace is broken
+  text: |
+    [if flag.hs_we_broke]
+    You raided the {hostage_people} with their surety still under your roof. You knew it when you did it. So do they now.
+
+    No tribute will come this spring. Their go-between sends word, instead: give back {hostage_name}, and they will call it settled. Keep them, and they will call it something else.
+    [else]
+    The tribute doesn't come. Instead, word comes: the {hostage_people} have a new man in charge, or the old one has changed his mind, and the peace you agreed is a peace they've stopped keeping.
+
+    {hostage} is under your roof. In the old custom, a surety whose people break faith is forfeit: chained, or blinded, or killed, so that the next king to give a surety will think twice.
+    [/if]
+  choices:
+    - id: fetters
+      text: Put {hostage_name} in fetters. They're a prisoner now, and for sale at a prisoner's price.
+      effects: [ { hostage: fetters }, { clear: flag.hs_we_broke } ]
+      result: The smith fits the irons. {hostage_name} doesn't fight, and doesn't speak, and watches him work. Your hall is quieter for a while afterwards.
+    - id: home
+      text: Send them home. It's the {hostage_people} who'll pay for this, one way or another, not them.
+      effects: [ { hostage: free }, { clear: flag.hs_we_broke } ]
+      result: You send them home with an escort and a gift. It costs you the tribute and gains you nothing you can weigh. But the story gets told, among their people and yours, and it is not a story about a man who kills children.
+    - id: kill
+      text: Do what the custom allows. Let the next king who gives a surety remember it.
+      effects: [ { hostage: dies }, { add: { honour: -2 } }, { envy: -1 }, { deed: { type: deed, text: "Killed a forfeit hostage when the peace was broken", weight: 2 } }, { clear: flag.hs_we_broke } ]
+      result: |
+        It's done in the morning, in front of the hall, quickly. Your men watch, and none of them look away, because none of them want to be seen to. The story reaches every hall from here to Dublin by midsummer. Nobody will break a peace with you lightly again. Nobody will trust you with a child again, either.
+
+- id: hs_foster
+  kind: pool
+  trigger: hall
+  at: [home_fjord]
+  chance: 0.4
+  cooldown_days: 300
+  hostage: foster
+  requires: ["hostages.foster >= 1"]
+  art: hearth_ormr
+  title: Your fosterling
+  text: |
+    {hostage_name} has been three winters in your hall. He speaks Norse like a Norwegian now, swears like one of your oarsmen, and can handle a spear better than some of them. He still crosses himself at meals, quietly, when he thinks nobody's looking. Everybody looks.
+
+    He came to you as a hostage. Somewhere in the second winter he stopped being one, and nobody noticed when.
+  choices:
+    - id: home
+      text: Send him home to his father, with a sword and a good horse, raised in your hall.
+      effects: [ { hostage: foster } ]
+      result: |
+        He goes home in the spring with your sword on his hip and your name in his mouth. His father, they say, did not recognise him at first, and then wept. Whatever he becomes among the {hostage_people}, he will remember whose hall he grew up in. So will they.
+    - id: keep
+      text: Keep him another winter. He's worth more as a surety than as a friend.
+      result: He doesn't ask why. He's learned that much from you.
+
+- id: hs_marriage
+  kind: pool
+  trigger: hall
+  at: [home_fjord]
+  chance: 0.3
+  cooldown_days: 400
+  hostage: noble
+  requires: ["hostages.noble >= 1", "married == 0"]
+  title: Her kin's offer
+  text: |
+    The go-between from {hostage_name}'s kin comes this time with a different proposal, and makes it very carefully.
+
+    They will not pay the ransom. They will do something better. {daughter}, the eldest daughter, is of an age to marry. Her kin propose that you marry her, and send the rest of the family home, and that there be peace between your house and theirs, as there is between kin.
+
+    It is how such things have always been settled, between people who would otherwise go on killing each other. Nobody asks {daughter}, any more than they would ask you. But the go-between says she has said she will do it, if her mother goes home.
+  choices:
+    - id: marry
+      text: Accept. Marry {daughter}, and send her mother home.
+      effects: [ { hostage: marry } ]
+      result: |
+        The wedding is at midwinter, half by her people's custom and half by yours, with a priest of theirs and a godi of yours who spend the evening carefully not looking at each other. {daughter} says very little, and watches everything. Her mother goes home in the spring. Her kin are your kin now, which is a thing that can be useful, and a thing that can be used.
+    - id: no
+      text: Decline. You'll take the silver, when it comes.
+      result: The go-between bows, and goes. Her kin will be offended, and will pay less, later, and more slowly.
+
+- id: hs_jarl
+  kind: pool
+  trigger: hall
+  at: [home_fjord]
+  chance: 0.25
+  cooldown_days: 500
+  hostage: political
+  requires: ["hostages.political >= 1"]
+  title: The jarl's interest
+  text: |
+    The jarl's man comes to your door with a message, and says it in front of your men, which is the message within the message.
+
+    The jarl has heard that you hold {hostage}. The jarl keeps the peace among the shipmasters of Hordaland, and the jarl decides who holds whose kin. He would like {hostage_name} delivered to his hall, where they can be kept properly, and used properly, for everyone's good.
+  choices:
+    - id: give
+      text: Deliver {hostage_name} to the jarl's hall.
+      effects: [ { hostage: hand_over } ]
+      result: You deliver them yourself, so that it looks like your idea. The jarl thanks you warmly and makes sure everyone in his hall sees him do it. You don't see a coin of whatever he gets for them. You didn't expect to.
+    - id: keep
+      text: Tell the jarl's man that you took them, and you'll keep them.
+      effects: [ { favour: -2 } ]
+      result: The jarl's man repeats it back to you, word for word, to make sure he has it right for the jarl. He does have it right. That's the problem.

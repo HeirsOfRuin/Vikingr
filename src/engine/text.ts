@@ -5,6 +5,9 @@
 //   {newship} the newest ship; {newmaster} the first hired steersman; {mastername} the first sworn shipmaster
 //   {wife}      his wife's name                {reckoning} the Yule reckoning of this year's boasts
 //   {father}    his father's name, by his beginning (Hall, Leysingr, Grímr)
+//   {cand} {cand_desc}   the man a recruiting scene offers, and what he is like
+//   {hostage} {hostage_name} {hostage_kin} {hostage_people} {hostage_price} {hostage_high} {hostage_sold} {daughter}
+//               the party a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md)
 //   [if cond]...[elif cond]...[else]...[/if]   (not nested; cond uses the condition grammar, with && and ||)
 import { reckoning } from './boasts';
 import { hiredShip, swornShip } from './fleet';
@@ -12,6 +15,12 @@ import { bestAlly, partner } from './allies';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { test, validateCond } from './conditions';
+import { HOSTAGE, peopleName, type Hostage } from './hostages';
+import { formatSilver } from './format';
+
+function focusH(state: GameState): Hostage | undefined {
+  return state.hostages?.find((h) => h.id === state.hfocus);
+}
 
 const IF = /\[if ([^\]]+)\]([\s\S]*?)\[\/if\]/g;
 
@@ -74,6 +83,16 @@ export function renderText(text: string, state: GameState, content: ContentBundl
     .replace(/\{newmaster\}/g, () => { const s = hiredShip(state); return s ? s.master!.split(':')[1]! : 'the steersman'; })
     .replace(/\{mastername\}/g, () => { const s = swornShip(state); return s ? state.men.find((m) => `man:${m.id}` === s.master)!.name : 'your shipmaster'; })
     .replace(/\{reckoning\}/g, () => reckoning(state, content))
+    .replace(/\{cand\}/g, state.cand?.name ?? 'the man')
+    .replace(/\{cand_desc\}/g, state.cand?.desc ?? '')
+    .replace(/\{hostage\}/g, () => focusH(state)?.who ?? 'the hostage')
+    .replace(/\{hostage_name\}/g, () => focusH(state)?.name ?? 'the hostage')
+    .replace(/\{hostage_kin\}/g, () => focusH(state)?.kin ?? 'their kin')
+    .replace(/\{hostage_people\}/g, () => peopleName(focusH(state)?.people ?? ''))
+    .replace(/\{hostage_price\}/g, () => formatSilver(focusH(state)?.price ?? 0))
+    .replace(/\{hostage_high\}/g, () => formatSilver(Math.round((focusH(state)?.price ?? 0) * HOSTAGE.haggle)))
+    .replace(/\{hostage_sold\}/g, () => formatSilver((focusH(state)?.n ?? 0) * HOSTAGE.sellEach))
+    .replace(/\{daughter\}/g, () => focusH(state)?.daughter ?? 'her daughter')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n');
 }
@@ -84,6 +103,6 @@ export function checkText(text: string, content: ContentBundle): string[] {
   for (const m of text.matchAll(IF)) for (const b of branches(m[2]!, m[1]!)) if (b.cond) errs.push(...validateCond(b.cond.trim(), content));
   const stray = text.replace(IF, '').match(/\[(?:if|elif|else|\/if)[^\]]*\]/);
   if (stray) errs.push(`unbalanced ${stray[0]}`);
-  for (const m of text.matchAll(/\{([a-z]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning', 'newship', 'newmaster', 'mastername', 'ally', 'father'].includes(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
+  for (const m of text.matchAll(/\{([a-z_]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning', 'newship', 'newmaster', 'mastername', 'ally', 'father', 'cand', 'cand_desc', 'hostage', 'hostage_name', 'hostage_kin', 'hostage_people', 'hostage_price', 'hostage_high', 'hostage_sold', 'daughter'].includes(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
   return errs;
 }

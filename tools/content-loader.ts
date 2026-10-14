@@ -70,6 +70,11 @@ export function loadContent(root = ROOT): S.ContentBundle {
     items: byId(check(z.array(S.itemDef), read(reg('items.yaml')), 'registry/items.yaml'), 'item'),
     fates: byId(check(z.array(S.fateDef), read(reg('fates.yaml')), 'registry/fates.yaml'), 'fate'),
     banter: check(z.array(S.banterLine), read(reg('banter.yaml')), 'registry/banter.yaml'),
+    recruits: byId(check(z.array(S.recruitOrigin), read(reg('recruits.yaml')), 'registry/recruits.yaml'), 'recruit origin'),
+    hostages: (() => {
+      const h = check(z.object({ kinds: z.array(S.hostageKind), names: S.hostageNames }).strict(), read(reg('hostages.yaml')), 'registry/hostages.yaml');
+      return { kinds: byId(h.kinds, 'hostage kind'), names: h.names };
+    })(),
   };
   const hash = createHash('sha1').update(JSON.stringify(bundle)).digest('hex').slice(0, 12);
   return { hash, ...bundle };

@@ -9,6 +9,7 @@ import { dateOf, dayOf } from './calendar';
 import { condPaths, test, unmetLabel } from './conditions';
 import type { CondInput } from '../content/schema';
 import { applyEffects } from './effects';
+import { HOSTAGE, hostageOp, kindsAt } from './hostages';
 import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
@@ -63,6 +64,7 @@ export type Action =
   | { t: 'rest' }
   | { t: 'end_season' }
   | { t: 'winter_here' }
+  | { t: 'hostage'; id: string; op: 'free' | 'sell' }
   | { t: 'passage_home' }
   | { t: 'harek' }
   | { t: 'recruit' }
@@ -188,7 +190,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
   state.musterPool = 4 + 2 * effAttr(state, content, 'pre');
   // the first season's food comes from the farm and the jarl
   state.provisions = mouths(state) * 20;
-  open(state, bg.start_scene);
+  open(state, bg.start_scene, content);
   return state;
 }
 
@@ -376,6 +378,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (state.flags.skald) out.push(opt('Hall', { t: 'hall', what: 'skald' }, 'Have the skald compose'));
       if (home && !state.service) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift' }, 'Send the jarl a gift', state.silver >= FAVOUR.giftCost, `You need ${formatSilver(FAVOUR.giftCost)}.`, `${formatSilver(FAVOUR.giftCost)}; his favour: ${favourWord(favour(state))}`));
       if (home && !state.service && r.gold > 0) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift', arg: 'gold' }, 'Send the jarl a gold arm-ring', true, undefined, `Twice the favour of any other gift; his favour: ${favourWord(favour(state))}`));
+      // hostages (docs/FRAME-HIRD-HOSTAGES.md): ransom and surety come by their kin's go-between; these two are his alone
+      if (home) for (const h of state.hostages ?? []) {
+        out.push(opt('Hostages', { t: 'hostage', id: h.id, op: 'free' }, `Send ${h.name} home without a ransom`, true, undefined, `${h.who}; honour, and their people's goodwill`));
+        out.push(opt('Hostages', { t: 'hostage', id: h.id, op: 'sell' }, `Sell ${h.name}${h.n > 1 ? ' and the children' : ''} to the slave-trader`, true, undefined, `${formatSilver(h.n * HOSTAGE.sellEach)}; their people will not forget it`));
+      }
       if (home) out.push(opt('Hall', { t: 'hall', what: 'blot' }, 'Hold a blót', state.silver >= 12, `You need ${formatSilver(12)}.`, formatSilver(12)));
       if (home && lord && !state.building) for (const t of BUILD_TYPES) {
         const st = content.ships[t]!;
@@ -432,6 +439,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? 'More silver; more noise'),
         opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, 'Worth silver in Kaupang; slow and loud'),
         opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
+        ...(!state.service && kindsAt(content, pl.place).length ? [opt('Plunder', { t: 'plunder', what: 'hostage' }, 'Look for someone worth a ransom', !pl.searched, 'You have looked already.', 'A king\'s kin, an abbot, a lord\'s wife and children; slow and loud')] : []),
         state.service
           ? opt('Plunder', { t: 'plunder', what: 'leave' }, `Head for the ships before ${state.service.captain} blows the horn`, true, undefined, `Carrying ${formatSilver(pl.taken)}`)
           : opt('Plunder', { t: 'plunder', what: 'leave' }, 'Back to the ships, now', true, undefined, `Carrying ${formatSilver(pl.taken)}`),
@@ -536,7 +544,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       const next = state.pending?.t === 'report' ? state.pending.next : undefined;
       state.pending = null;
       delete state.shopNote;
-      if (next) open(state, next);
+      if (next) open(state, next, content);
       break;
     }
     case 'choose': {
@@ -563,7 +571,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
         if (text && pd.t === 'duel') pd.duel.log.unshift(text);
         if (text && pd.t === 'battle') pd.battle.log.unshift(text);
       } else if (text) report(scene.title, text.trim().split(/\n\s*\n/), next, typeof scene.art === 'string' ? { key: scene.art } : scene.art);
-      else if (next) open(state, next);
+      else if (next) open(state, next, content);
       break;
     }
     case 'sail':
@@ -747,6 +755,17 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       if (state.service) state.day = Math.max(state.day, dayOf(dateOf(state.day).year, LATE_SEASON_DOY));
       state.phase = 'return';
       break;
+    case 'hostage': {
+      const h = (state.hostages ?? []).find((x) => x.id === action.id);
+      if (!h) break;
+      state.hfocus = h.id;
+      const who = h.who;
+      hostageOp(state, content, rng, action.op);
+      report(action.op === 'free' ? 'Sent home' : 'Sold', [action.op === 'free'
+        ? `You send ${who} home with an escort as far as the border of their own country, and food for the road. The kin do not thank you. But they will remember it, and so will everyone who hears.`
+        : `The slave-trader looks over ${who} the way he looks over everything, and pays by the head. They go down to his boat without looking back at you. By the spring they will be in Dublin or Hedeby, and nobody there will care who they were.`]);
+      break;
+    }
     case 'winter_here':
       report('Winter abroad', winterHere(state, content, rng));
       break;

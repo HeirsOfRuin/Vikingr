@@ -2,6 +2,8 @@
 import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
 import { dateOf } from './calendar';
+import { candidateToCrew, swearCandidate } from './hird';
+import { hostageOp, hostagesOf, makeHostage } from './hostages';
 import { bestAlly, killCaptain, meet, partner, partnerInFight, shiftFavour, shiftRel, swearFelag } from './allies';
 import { startHost } from './host';
 import { addShip, appoint, desert, FLEET_MAX, hiredShip, PRIZE_HULL, shipOf, stow, swornShip } from './fleet';
@@ -127,11 +129,22 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('base' in e) {
       if (BASE_LEVELS.indexOf(e.base) > BASE_LEVELS.indexOf(state.base.level)) state.base.level = e.base;
     } else if ('prize' in e) {
-      if (!state.service && state.ships.length < FLEET_MAX) {
+      // one prize a year (the author, 2026-10-14): a free ship is a rare thing
+      if (!state.service && state.ships.length < FLEET_MAX && state.flags._prize !== dateOf(state.day).year) {
+        state.flags._prize = dateOf(state.day).year;
         const sh = addShip(state, content, { type: e.prize.type, name: e.prize.name, hull: PRIZE_HULL });
         journal(state, `Took ${sh.name} as a prize.`);
       }
-    } else if ('master' in e) {
+    } else if ('swear_cand' in e) swearCandidate(state, content, e.swear_cand);
+    else if ('cand_crew' in e) candidateToCrew(state);
+    else if ('take_hostage' in e) {
+      const h = makeHostage(state, content, rng, e.take_hostage.kind, state.at ?? state.voyage?.to ?? 'home_fjord', e.take_hostage.captain);
+      hostagesOf(state).push(h);
+      state.hfocus = h.id;
+      if (h.captain) shiftRel(state, content, h.captain, -3);
+      journal(state, `Took ${h.who} as a hostage.`);
+    } else if ('hostage' in e) hostageOp(state, content, rng, e.hostage);
+    else if ('master' in e) {
       const ship = hiredShip(state) ?? state.ships[state.ships.length - 1];
       if (ship && state.ships.length > 1) appoint(state, content, ship.id, e.master);
     } else if ('ally' in e) {

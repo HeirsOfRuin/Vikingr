@@ -46,7 +46,7 @@
   choices:
     - id: prize
       text: Keep the knarr, put a prize crew aboard, and sell her crew.
-      visible_if: "ships <= 4"
+      visible_if: "ships <= 4 && !prized"
       effects: [ { add: { loot: 120 } }, { captives: 4 }, { add: { honour: -1 } }, { prize: { type: knarr, name: The Frisian } } ]
       result: You put twelve men aboard her under a hired steersman, with the traders tied in her hold, and she wallows along in your wake for the rest of the voyage. She's slow, and ugly, and her hold would swallow a church.
     - id: strip
@@ -109,14 +109,20 @@
   choices:
     - id: prize
       text: Take her. Put a steersman in her, and men at her oars.
-      visible_if: "!service && ships <= 4"
+      visible_if: "!service && ships <= 4 && !prized"
       effects: [ { prize: { type: karvi, name: Sea-Thief } }, { add: { crew.morale: 1 } } ]
       result: The men name her Sea-Thief before you've finished speaking, which is either a joke or a warning. Her own survivors watch from the bilge. Two of them ask, that evening, if they can row for you.
     - id: oaths
       text: Offer her survivors a choice. Swear to you, or swim.
       visible_if: "!service"
-      effects: [ { add: { crew.men: 5, honour: 1 } } ]
-      result: Five of them swear, with the water lapping round their knees in the waterlogged bilge. The rest swim for it. Most of them make the shore.
+      effects: [ { add: { crew.men: 5, honour: 1 } }, { queue: { scene: hi_beaten, days: 0 } } ]
+      result: Five of them take your oars, with the water lapping round their knees in the waterlogged bilge. The rest swim for it. Most of them make the shore.
+    - id: hostage
+      text: Her steersman's son is among the beaten. Take him, to hold against his father.
+      visible_if: "!service"
+      effects: [ { take_hostage: { kind: captain_kin } }, { add: { honour: -1 } } ]
+      result: |
+        The boy is sixteen and trying not to shake. His father, bleeding from the scalp in the bilge, says that if anything happens to him you will be hunted from here to Hel's gate. You tell him that nothing will happen to him as long as his father remembers whose ship beat his. His father understands. The boy goes in your ship.
     - id: burn
       text: Burn her, so every ship on this coast sees the smoke.
       effects: [ { deed: { type: deed, text: "Burned a rival's longship at sea", weight: 2 } } ]
