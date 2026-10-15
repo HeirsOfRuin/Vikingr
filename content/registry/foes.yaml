@@ -2,101 +2,161 @@
 - id: monks_tenants
   name: Monks and their tenants
   quality: 0
+  resolve: levy
+  guile: 0
+  leader: "the abbey's steward"
   doctrine: { hold: 3, give: 2, missiles: 1 }
   desc: Lay brothers, herdsmen and tenants with spears and stones. Brave enough until the wall breaks.
 - id: ulster_levy
   name: The Ulster levy
   quality: 1
+  resolve: warriors
+  guile: 2
+  leader: "the big man in the gilded helmet"
   doctrine: { missiles: 3, give: 2, flank: 1, hold: 1, push: 1 }
   desc: An Irish king's men. Javelins, light shields, and a habit of falling back to draw you on.
 - id: rival_crew
   name: A rival crew
   quality: 1
+  resolve: warriors
+  guile: 1
+  leader: "their shipmaster"
   doctrine: { push: 3, wedge: 2, hold: 2, missiles: 1 }
   desc: Northmen like yourselves, after the same silver.
 - id: island_men
   name: Islanders
   quality: 0
+  resolve: levy
+  guile: 0
+  leader: "the headman"
   doctrine: { hold: 2, missiles: 2, give: 2 }
   desc: Farmers and fishermen who would rather you took the sheep and left.
 - id: northumbrian_levy
   name: The Northumbrian levy
   quality: 1
+  resolve: warriors
+  guile: 0
+  leader: "the reeve"
   doctrine: { hold: 3, push: 2, missiles: 1 }
   desc: The reeve's men from the mainland farms. Spears and long shields. They stand, and they are slow to break.
 - id: conaille_men
   name: The men of Conaille
   quality: 1
+  resolve: warriors
+  guile: 1
+  leader: "the king of Conaille"
   doctrine: { missiles: 3, flank: 2, give: 2, push: 1 }
   desc: A small king's household and his cattle-lords. Javelins, horses on the flanks, and a hall to fall back to.
 - id: merchant_crew
   name: A merchant's crew
   quality: 0
+  resolve: levy
+  guile: 0
+  leader: "the ship's master"
   doctrine: { hold: 3, missiles: 2, give: 1 }
   desc: Traders and their hired men. They will fight for the cargo, but not for long.
 - id: frisian_levy
   name: The Frisian count's men
   quality: 1
+  resolve: levy
+  guile: 1
+  leader: "the count's man"
   doctrine: { hold: 3, missiles: 2, push: 1, give: 1 }
   desc: Freemen of the dykes and terps, with a count's mounted household behind them. They know their own mudflats better than you do.
 - id: danish_raiders
   name: Danish raiders
   quality: 1
+  resolve: hird
+  guile: 1
+  leader: "their ship-lord"
   doctrine: { push: 2, wedge: 2, hold: 2, missiles: 1 }
   desc: Hard men off three or four ships, caught on a beach with their plunder half-loaded. They fight like men with nowhere to run.
 - id: airgialla_men
   name: The king of Airgialla's men
   quality: 1
+  resolve: levy
+  guile: 1
+  leader: "the king of the Airgialla"
   doctrine: { missiles: 3, flank: 2, hold: 2, give: 1 }
   desc: "The hosting of the Airgialla, called out to defend Patrick's church: javelin-men, horse on the wings, and monks behind them singing."
 # the twelve new places (docs/FRAME-PLACES-2.md)
 - id: gotlanders
   name: The Gotland farmers
   quality: 1
+  resolve: warriors
+  guile: 0
+  leader: "the eldest of the farmers"
   doctrine: { hold: 3, push: 2, missiles: 1 }
   desc: Rich, stubborn farmers with good mail they can afford and nobody to answer to. They have been fighting off men like you since their grandfathers' time.
 - id: leinster_men
   name: The men of Leinster
   quality: 1
+  resolve: warriors
+  guile: 2
+  leader: "the Leinster king"
   doctrine: { missiles: 3, give: 2, flank: 2, hold: 1 }
   desc: A Leinster king's war-band and the farmers of the Liffey plain. Javelins, light shields, and fast feet in their own bogs.
 - id: clonmacnoise_men
   name: The monastery's fighting tenants
   quality: 1
+  resolve: warriors
+  guile: 0
+  leader: "the abbot's steward"
   doctrine: { hold: 3, missiles: 2, push: 1 }
   desc: Clonmacnoise has fought pitched battles against other monasteries' tenants within living memory, and won some. They do not run because a shield-wall is coming.
 - id: kentish_men
   name: The men of Kent
   quality: 1
+  resolve: levy
+  guile: 1
+  leader: "the king's reeve"
   doctrine: { hold: 3, push: 1, missiles: 1, give: 1 }
   desc: The West Saxon king's reeve and the Kentish farmers of the marsh. Spears and long shields, and a habit of coming in numbers when they come.
 - id: london_reeve
   name: The king's reeve and the wic
   quality: 1
+  resolve: levy
+  guile: 0
+  leader: "the reeve"
   doctrine: { hold: 3, missiles: 2, push: 1 }
   desc: The Mercian king's reeve, his household, and every trader on the strand with a spear and something to lose.
 - id: frankish_levy
   name: The count's men
   quality: 2
+  resolve: hird
+  guile: 1
+  leader: "the count"
   doctrine: { hold: 2, push: 2, flank: 2, missiles: 1 }
   desc: "A Frankish count's household: mailed horsemen who fight on foot when they must, with the city's militia behind them. Better armed than you, and they know it."
 - id: english_fyrd
   name: The shire's fyrd
   quality: 1
+  resolve: levy
+  guile: 1
+  leader: "the ealdorman"
   doctrine: { hold: 3, push: 2, missiles: 1 }
   desc: The ealdorman's household and the freemen of the shire, called out by beacon. Long shields and spears, and more of them the longer you stay.
 - id: pictish_host
   name: The Pictish host
   quality: 1
+  resolve: warriors
+  guile: 2
+  leader: "the mormaer"
   doctrine: { missiles: 2, flank: 2, hold: 2, push: 1 }
   desc: "A mormaer's warband out of the hills: horsemen, spearmen with square shields, and a great deal of noise. The Picts have beaten bigger armies than yours."
 - id: strathclyde_men
   name: The men of Alt Clut
   quality: 2
+  resolve: hird
+  guile: 1
+  leader: "the king's champion"
   doctrine: { hold: 3, missiles: 2, push: 1 }
   desc: The Briton king's household on his rock. They have held it against Picts, Scots and English for four hundred years, and they fight like men who know it.
 - id: munster_men
   name: The men of Munster
   quality: 1
+  resolve: warriors
+  guile: 2
+  leader: "a lord of Cashel"
   doctrine: { missiles: 3, give: 2, flank: 2 }
   desc: A Munster king's men from the Lee valley. Javelins and fast feet, and a king at Cashel who means to be king of all Ireland.

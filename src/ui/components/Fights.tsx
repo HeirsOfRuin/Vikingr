@@ -7,8 +7,8 @@ import type { Action, ActionOption } from '../../engine/index';
 import { MOVE_NAMES, foeForecast } from '../../engine/duel';
 import { ORDER_NAMES, POSITION_NAMES, enemyForecast } from '../../engine/battle';
 import { Actions, Bar } from './Actions';
-import { BOUT, FOE_NEXT, FOE_TELL } from '../../engine/bout';
-import { INTENT_SHORT, INTENT_TEXT, WALL } from '../../engine/wall';
+import { BOUT, BOUT_WAYS, FOE_NEXT, FOE_TELL, boutAdvice } from '../../engine/bout';
+import { INTENT_SHORT, INTENT_TEXT, WALL, WALL_WAYS, spiritWord, wallAdvice } from '../../engine/wall';
 
 function Fighter({ s, you }: { s: DuelSide; you?: boolean }) {
   return (
@@ -39,11 +39,12 @@ function BoutView({ content, d, options, onAct }: { content: ContentBundle; d: D
         <Fighter s={d.foe} />
       </div>
       <div class="card sans small">
-        <div><b>{d.foe.name.split(' ')[0]} {FOE_TELL[b.foeIntent]}.</b>{b.foeOff ? ' He is off balance.' : ''}</div>
+        <div><b>{readLine(d.foe.name.split(' ')[0]!, b.read, b.shown.map((m) => FOE_TELL[m]))}</b>{b.foeOff ? ' He is off balance.' : ''}</div>
         {b.foeNext && <div class="muted">You can read him further: after that, he means to {FOE_NEXT[b.foeNext]}.</div>}
         {b.heroOff && <div>You are off balance: your next blow lands soft, and his lands hard.</div>}
-        {holm && <div class="muted">The cloak: you are {BOUT.edge - b.heroEdge} step{BOUT.edge - b.heroEdge === 1 ? '' : 's'} from the edge; he is {BOUT.edge - b.foeEdge}. Step off it and you have run.</div>}
-        <div class="muted">Each move below says what it will do against his. A great blow costs 3 breath, a rush 2, a cut 1; shield up and stepping back give breath back.</div>
+        {holm && <div class="muted">The cloak: you are {BOUT.edge - b.heroEdge} step{BOUT.edge - b.heroEdge === 1 ? '' : 's'} from the edge; he is {BOUT.edge - b.foeEdge}.</div>}
+        <Advice a={boutAdvice(d)} />
+        <Ways title="How single combat goes" lines={BOUT_WAYS} />
       </div>
       <div class="log recent">{d.log.slice(-4).map((l, i) => <p key={d.log.length + i}>{l}</p>)}</div>
       <Actions options={options} onAct={onAct} />
@@ -112,11 +113,13 @@ function WallView({ content, b, options, onAct }: { content: ContentBundle; b: B
             <WallSide name={b.them.name} men={b.them.men} start={b.them.start} cohesion={b.them.morale} stamina={w.themStamina} them />
           </div>
           <div class="card sans small">
-            <div><b>They are about to move: {INTENT_TEXT[w.intent]}.</b></div>
-            {b.position === 'rear' && !b.heroDown && <div class="muted">From behind the wall you can see what comes after: {INTENT_SHORT[w.next]}.</div>}
-            <div>Round {b.round + 1} of {w.maxRounds}. Ground: {groundWord}. Spears: {w.spears} volley{w.spears === 1 ? '' : 's'} left.{w.reserveMen > 0 && !w.reserveIn ? ` Reserve: ${w.reserveMen} men, waiting.` : w.reserveIn ? ' The reserve is in.' : ''}</div>
+            <div><b>{readLine('They', w.read, w.shown.map((x) => INTENT_TEXT[x].replace(/^they /, '')))}</b></div>
+            {b.position === 'rear' && !b.heroDown && w.read === 'sure' && w.guile <= 1 && <div class="muted">From behind the wall you can see what comes after: {INTENT_SHORT[w.next]}.</div>}
+            {w.leader && <div>{w.leader.charAt(0).toUpperCase() + w.leader.slice(1)}: {w.leaderDown ? 'down' : 'standing'}. {w.resolve === 'levy' ? 'A levy: it breaks early, and runs if he falls.' : w.resolve === 'hird' ? 'His own sworn men: they will close round him.' : 'Fighting men: they hold until their spirit goes.'}</div>}
+            <div>Round {b.round + 1} of {w.maxRounds}. Ground: {groundWord}.{w.reserveMen > 0 && !w.reserveIn ? ` Reserve: ${w.reserveMen} men, waiting.` : ''}</div>
             <div>You stand: <b>{b.heroDown ? 'carried out of the wall' : POSITION_NAMES[b.position].toLowerCase()}</b>. Blood {Math.max(0, b.heroHp)}/{b.heroHpMax}.</div>
-            <div class="muted">A line breaks when its spirit reaches 0, or when it is pushed back 3 steps. Each order below shows what it will do this round.</div>
+            <Advice a={wallAdvice(b)} />
+            <Ways title="How the wall fights" lines={WALL_WAYS} />
           </div>
         </>
       )}
@@ -127,12 +130,32 @@ function WallView({ content, b, options, onAct }: { content: ContentBundle; b: B
   );
 }
 
+/** What he can see of the other side's next move: sure, likely, or one of two. */
+function readLine(who: string, read: 'sure' | 'likely' | 'torn', seen: string[]): string {
+  if (read === 'sure') return `${who} ${seen[0]}.`;
+  if (read === 'likely') return `${who} look${who === 'They' ? '' : 's'} as if ${who === 'They' ? 'they' : 'he'} ${seen[0]}, but ${who === 'They' ? 'they are' : 'he is'} hard to read.`;
+  return `You cannot tell: ${who === 'They' ? 'they' : 'he'} ${seen[0]}, or ${seen[1]}.`;
+}
+
+function Advice({ a }: { a: { who: string; text: string } | null }) {
+  return a ? <div class="advice">{a.who}: “{a.text}”</div> : null;
+}
+
+function Ways({ title, lines }: { title: string; lines: string[] }) {
+  return (
+    <details class="ways">
+      <summary>{title}</summary>
+      <ul>{lines.map((l) => <li key={l}>{l}</li>)}</ul>
+    </details>
+  );
+}
+
 function WallSide({ name, men, start, cohesion, stamina, them }: { name: string; men: number; start: number; cohesion: number; stamina: number; them?: boolean }) {
   return (
     <div class={`wall${them ? ' them' : ''}`}>
       <div>{name}: {Math.max(0, men)} of {start} standing</div>
       <div class="strip" style={{ width: `${Math.max(2, (100 * men) / Math.max(start, 1))}%` }} />
-      <div class="muted">Spirit {Math.max(0, cohesion).toFixed(1)}</div>
+      <div class="muted">Spirit: {spiritWord(cohesion)}</div>
       <Bar value={Math.max(0, cohesion)} max={10} kind={them ? 'red' : 'sea'} />
       <div class="muted">Breath {stamina}/{WALL.stamina}</div>
       <Bar value={stamina} max={WALL.stamina} kind="gold" />

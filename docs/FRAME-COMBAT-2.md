@@ -126,3 +126,66 @@ Ketill's advice in the scene ("take it on the rim and let him tire") is a good l
 1. Convert every battle and duel to the new systems, including hosts (three wings, each its own wall) and boarding fights (no falling back on a ship).
 2. Retune the bots and the measurements against the new fights.
 3. Rebalance hardship against healthy crews (deferred from the morale fix).
+
+---
+
+# Revision 2: the author's verdict
+
+Josh, after playing the preview:
+1. "Definitely feels better. But it feels like it reveals too much. It just becomes choosing the one with the best numbers now."
+2. "The buttons are a bit crowded."
+3. "They felt a little long, but overall not bad." Levies, farmers and warriors should fight more or less to the death depending on morale, discipline and their commander.
+4. Cunning foes should be harder to read: "I don't like my combat to be a gamble, but I also don't want it to feel like it's been handed to me." The first year or two can be easier while a player learns. After that, renown should bring more dangerous enemies, "because they come looking to fight legends".
+
+## What changed
+| Verdict | Change |
+|---|---|
+| Reveals too much | Buttons no longer project this round's result. Each says what the order or move does and what it costs ("Lean in and shove. −2 breath"). What beats what is yours to know. A collapsible "How the wall fights" or "How single combat goes" keeps the rules to hand without answering the round. The log still reports losses after the round. |
+| Reveals too much | **Reading them.** Your eye for a fight is your wits, plus cunning, plus up to 3 for fights survived. It is set against their **guile** (0–3). An honest enemy is always read for certain. Against a cunning one, you are *sure*, or it is *likely* (right three times in four), or *one of two* (one of the two is the true move). Behind the wall you read 2 better; in the front rank, 1 worse. The log says when a move was not what it looked like. |
+| Learning curve | **An old hand shouts advice** (Ketill, a bench-mate, or the captain) until you have fought 6 fights: "Lock shields! Let them come to us!" The advice is the best answer to what you can see, so it is fooled when you are. |
+| Crowded buttons | One short line per button. Both lines' spirit is a word (steady, holding, shaken, wavering) and a bar, with no decimals. The reserve button is hidden when you kept no reserve. |
+| A little long | Battles last at most 7 rounds (was 8), and a little more blood is drawn each round. Duels last at most 16 exchanges (was 20). |
+| Who fights to the death | **Resolve**, per enemy. *Levy:* loses heart 15% faster from losses, breaks at spirit 1 (not 0), and loses 3 spirit when its leader falls. *Warriors:* as before; their leader's fall costs 2. *Hird* (a lord's sworn men): loses heart 20% slower; while their lord stands they close round him once instead of breaking; when they do break they don't run, and more of them die where they stand. |
+| Commanders | **Each enemy has a leader** (the big man in the gilded helmet, the reeve, the count). A new order, **Strike at their lord**, costs 3 breath and doubles your risk that round. It cuts him down about 25% of the time, better from the front rank or with your sworn men there, and better still against a shaken line. It is harder against a hird. Killing him yourself is a champion's deed. Leaders can also fall in the press. |
+
+## The 20 foes
+| Resolve | Foes |
+|---|---|
+| Levy | Monks' tenants, islanders, merchant crews, the Frisian, Airgialla, Kentish and London levies, the English fyrd |
+| Warriors | The Ulster men, rival crews, the Northumbrian levy (slow to break), Conaille, Gotlanders, Leinster, Clonmacnoise, the Picts, Munster |
+| Hird | Danish raiders, the Frankish count's household, Strathclyde |
+
+| Guile | Foes |
+|---|---|
+| 0 | Monks' tenants, islanders, Northumbrians, merchants, Gotlanders, Clonmacnoise, London |
+| 1 | Rival crews, Conaille, Frisians, Danes, Airgialla, Kentish men, Franks, the fyrd, Strathclyde |
+| 2 | The Ulster men, Leinster, the Picts, Munster |
+
+Single-combat fighters take their guile from their wits and how much they like a feint: Thorgils 0, Eyvind the Quiet 2.
+
+## Measured (400 runs each)
+**Bangor, in the wall:**
+
+| Play | Warned | Surprised |
+|---|---|---|
+| "Let the men handle it" (plays what you can see) | 65% | 87% |
+| Charge whenever possible | 43% | 75% |
+| Always push | 25% | 52% |
+| Random orders | 25% | 48% |
+| Always lock shields | 3% | 7% |
+
+**The holmgang against Thorgils (guile 0):**
+
+| Play | Younger son: won / died | Freedman's son: won / died |
+|---|---|---|
+| Instinct | 77% / 10% | 68% / 13% |
+| Random | 36% / 23% | 20% / 32% |
+
+The Ulster men were first made a levy, and Bangor became too easy (97% with instinct, 68% for always push). A levy breaks fast. They are "an Irish king's men", so they are warriors with guile 2.
+
+## Next: renown brings harder enemies (with the conversion of every fight)
+This needs every fight on the new systems, so it comes with the conversion:
+- **The first two summers stay gentle.** Levies and honest foes, and the old hand's advice.
+- **Renown raises the stakes.** As fame passes set marks, ordinary fights are likelier to meet veterans (+1 quality, +1 guile) and a lord's hird rather than a levy.
+- **Challengers come looking.** A man of renown is sought out by named champions: a Dane who has heard the name, an Irish king's champion, a kinsman of a man you killed. They have more guile, read you back, and offer holmgang or single combat in ports and at Yule. Refusing costs renown. Winning is worth much more.
+- **The read cuts both ways.** A champion with guile 3 is torn between two moves as often as not, even for a veteran.

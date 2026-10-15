@@ -1,7 +1,7 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
-import { BOUT, startBout } from './bout';
+import { fighterGuile, startBout } from './bout';
 import { effAttr } from './hero';
-import { startWall } from './wall';
+import { startWall, WALL } from './wall';
 import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
 import { dateOf } from './calendar';
@@ -83,13 +83,16 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('fight' in e) {
       startDuel(state, content, e.fight.foe, e.fight.kind, e.fight.lethal, e.fight.win, e.fight.lose);
       // the second form of single combat (docs/FRAME-COMBAT-2.md)
-      if (e.fight.bout && state.pending?.t === 'duel') startBout(state.pending.duel, effAttr(state, content, 'wit') + state.hero.skills.cunning >= BOUT.readAhead, rng);
+      if (e.fight.bout && state.pending?.t === 'duel') {
+        const f = content.fighters[e.fight.foe];
+        startBout(state.pending.duel, { readScore: fightEye(state, content), guile: f ? fighterGuile(f) : 0, adviser: adviser(state) }, rng);
+      }
     } else if ('battle' in e) {
       const { raid, parted, wall, ...b } = e.battle;
       startBattle(state, content, { ...b, context: raid ? 'raid' : state.voyage ? 'sea' : 'scene', place: state.at });
       if (parted && state.pending?.t === 'battle') state.pending.battle.parted = parted;
       // the second form of the shield-wall (docs/FRAME-COMBAT-2.md)
-      if (wall && state.pending?.t === 'battle') startWall(state.pending.battle, !state.service, rng);
+      if (wall && state.pending?.t === 'battle') startWall(state.pending.battle, !state.service, rng, { readScore: fightEye(state, content), adviser: adviser(state), foe: content.foes[b.foe] });
       if (raid && state.at && !state.seasonRaids.includes(state.at)) state.seasonRaids.push(state.at);
     }
     else if ('queue' in e) state.queue.push({ scene: e.queue.scene, day: state.day + e.queue.days });
@@ -279,4 +282,15 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     }
   }
   void rng;
+}
+
+/** His eye for a fight (docs/FRAME-COMBAT-2.md, revision 2): wits, cunning, and the fights he has lived through. */
+function fightEye(state: GameState, content: ContentBundle): number {
+  return effAttr(state, content, 'wit') + state.hero.skills.cunning + Math.min(3, Math.floor((state.stats.battles + state.stats.duels) / 4));
+}
+
+/** While he is new to fighting, an old hand shouts advice: a sworn man, a bench-mate, or the captain. */
+function adviser(state: GameState): string | null {
+  if (state.stats.battles + state.stats.duels >= WALL.adviceUntil) return null;
+  return state.men.find((m) => m.alive && !(m.hurtUntil && m.hurtUntil > state.day))?.name ?? state.service?.captain ?? 'An old hand';
 }

@@ -2,8 +2,11 @@
 // you answer. What decides it is what you can afford: stamina (a great blow costs three), shields (they split),
 // and on the holmgang cloak, ground (step off it and you have run). Chance moves the damage a little; it does not
 // decide what beats what. Lives inside the old DuelState (d.bout), so wounds, yielding and the story links stay.
+// Revision 2 (the author: "it reveals too much"): a cunning man is only likely to do what he seems to, or could be
+// doing one of two things; the moves no longer show what they will do this exchange.
 import type { DuelSide, DuelState } from './state';
 import type { RngCursor } from './rng';
+import { readRoll, type Read } from './wall';
 
 export type BoutMove = 'heavy' | 'quick' | 'guard' | 'bash' | 'back';
 export const BOUT_MOVES: BoutMove[] = ['heavy', 'quick', 'guard', 'bash', 'back'];
@@ -19,6 +22,13 @@ export interface BoutState {
   foeEdge: number;
   /** The hero reads him two moves ahead: wits and cunning. */
   readsAhead: boolean;
+  /** What the hero sees of his next move, and how sure he is. */
+  read: Read;
+  shown: BoutMove[];
+  readScore: number;
+  guile: number;
+  /** Who shouts advice from the edge of the cloak while he is new to this; null once he knows it. */
+  adviser: string | null;
 }
 
 export const BOUT = {
@@ -26,7 +36,7 @@ export const BOUT = {
   readAhead: 6,
   cost: { heavy: 3, quick: 1, guard: -1, bash: 2, back: -3 } as Record<BoutMove, number>,
   edge: 3,
-  maxExchanges: 20,
+  maxExchanges: 16,
   shieldHeavy: 2,
   shieldBash: 1,
   offBalanceTaken: 1.5,
@@ -55,6 +65,35 @@ export const FOE_TELL: Record<BoutMove, string> = {
   bash: 'drops his shoulder behind his shield to rush you',
   back: 'is giving ground, to get his breath',
 };
+
+/** What a cunning man's move can be mistaken for. */
+const DECOY: Record<BoutMove, BoutMove> = { heavy: 'quick', quick: 'heavy', guard: 'bash', bash: 'heavy', back: 'guard' };
+
+/** What a move says on its button: what it does and costs, nothing about this exchange. */
+export function moveDesc(d: DuelState, m: BoutMove): string {
+  switch (m) {
+    case 'heavy': return 'A great overhand blow. −3 breath';
+    case 'quick': return 'A fast cut. −1 breath';
+    case 'guard': return 'Shield up, and wait. +1 breath';
+    case 'bash': return 'Drive in behind your shield. −2 breath';
+    case 'back': return d.kind === 'holmgang' ? 'Give ground for breath. +3 breath; a step toward the edge' : 'Give ground for breath. +3 breath';
+  }
+}
+export const BOUT_ADVICE: Record<BoutMove, string> = {
+  heavy: 'Now! Hit him!',
+  quick: 'Cut him as he comes!',
+  guard: 'On the rim! Take it on the rim!',
+  bash: 'Get inside it! Shoulder him!',
+  back: 'Give him room! Get your breath!',
+};
+export const BOUT_WAYS: string[] = [
+  'A raised shield takes a great blow, but the board splits.',
+  'A shield rush beats a great blow and a raised shield. A quick cut slips it.',
+  'A quick cut beats a rush and a man stepping back. A great blow beats a quick cut.',
+  'A man knocked off his line gets his shield up late: that is when the great blow goes through.',
+  'Rush a bigger man\'s blow and you still take some of it.',
+  'Step back for breath. Three steps on the cloak and you have run.',
+];
 
 function heavyDmg(s: DuelSide): number { return 3 + s.str + s.weapon + Math.floor(s.weapons / 2); }
 function quickDmg(s: DuelSide): number { return 1 + Math.floor(s.agi / 2) + Math.floor(s.weapons / 3); }
@@ -115,8 +154,8 @@ export function boutAvailable(d: DuelState, m: BoutMove): { ok: boolean; why?: s
 
 export interface BoutProjection { toFoe: number; toHero: number; note: string; stamina: number; edge: number; shieldLeft: number; available: boolean; why?: string }
 
-export function projectBout(d: DuelState, m: BoutMove): BoutProjection {
-  const r = meet(m, d.bout!.foeIntent, d);
+export function projectBout(d: DuelState, m: BoutMove, f: BoutMove = d.bout!.foeIntent): BoutProjection {
+  const r = meet(m, f, d);
   const a = boutAvailable(d, m);
   return {
     toFoe: r.toFoe, toHero: r.toHero, note: r.note,
@@ -143,10 +182,27 @@ export function foeIntent(d: DuelState, rng: RngCursor): BoutMove {
   return rng.pickWeighted(BOUT_MOVES, (m) => w[m])!;
 }
 
-export function startBout(d: DuelState, readsAhead: boolean, rng: RngCursor): void {
-  d.bout = { foeIntent: 'guard', foeNext: null, heroOff: false, foeOff: false, heroEdge: 0, foeEdge: 0, readsAhead };
+export interface BoutSetup { readScore: number; guile: number; adviser: string | null }
+
+export function startBout(d: DuelState, setup: BoutSetup, rng: RngCursor): void {
+  d.bout = { foeIntent: 'guard', foeNext: null, heroOff: false, foeOff: false, heroEdge: 0, foeEdge: 0, readsAhead: setup.readScore >= BOUT.readAhead, read: 'sure', shown: [], readScore: setup.readScore, guile: setup.guile, adviser: setup.adviser };
   d.bout.foeIntent = foeIntent(d, rng);
-  if (readsAhead) d.bout.foeNext = foeIntent(d, rng);
+  readHim(d, rng);
+  if (d.bout.readsAhead && d.bout.read === 'sure') d.bout.foeNext = foeIntent(d, rng);
+}
+
+/** A man's guile: his wits, and how much he likes a feint. */
+export function fighterGuile(f: { guile?: number; attrs: { wit: number }; habits: Partial<Record<string, number>> }): number {
+  return f.guile ?? Math.min(3, Math.max(0, f.attrs.wit - 2) + ((f.habits.feint ?? 0) >= 3 ? 1 : 0));
+}
+
+function readHim(d: DuelState, rng: RngCursor): void {
+  const b = d.bout!;
+  b.read = readRoll(b.readScore, b.guile, rng);
+  const decoy = DECOY[b.foeIntent];
+  if (b.read === 'sure') b.shown = [b.foeIntent];
+  else if (b.read === 'likely') b.shown = [rng.float() < 0.75 ? b.foeIntent : decoy];
+  else b.shown = rng.float() < 0.5 ? [b.foeIntent, decoy] : [decoy, b.foeIntent];
 }
 
 /** One exchange. */
@@ -180,7 +236,8 @@ export function boutExchange(d: DuelState, m: BoutMove, rng: RngCursor): void {
   // a man who steps up again wins his ground back
   if (m === 'heavy' || m === 'bash' || m === 'quick') b.heroEdge = Math.max(0, b.heroEdge - (r.heroEdge ? 0 : 1));
   if (f === 'heavy' || f === 'bash' || f === 'quick') b.foeEdge = Math.max(0, b.foeEdge - (r.foeEdge ? 0 : 1));
-  d.log.push(`${MOVE_LABEL[m]} against his ${MOVE_LABEL[f].toLowerCase()}. ${r.note}${toFoe ? ` He takes ${toFoe}.` : ''}${toHero ? ` You take ${toHero}.` : ''}`);
+  const misread = !b.shown.includes(f) ? ' He was not doing what it looked like.' : '';
+  d.log.push(`${MOVE_LABEL[m]} against his ${MOVE_LABEL[f].toLowerCase()}.${misread} ${r.note}${toFoe ? ` He takes ${toFoe}.` : ''}${toHero ? ` You take ${toHero}.` : ''}`);
   const holm = d.kind === 'holmgang';
   if (d.hero.hp <= 0) { d.over = 'lost'; return; }
   if (d.foe.hp <= 0) { d.over = 'won'; return; }
@@ -189,32 +246,47 @@ export function boutExchange(d: DuelState, m: BoutMove, rng: RngCursor): void {
   if (holm && d.foe.bled && d.foe.hp < d.foe.hpMax / 2 && rng.float() < 0.3) { d.over = 'foe_yielded'; d.log.push('He looks at his blood on the cloak, and lowers his axe. He will pay.'); return; }
   if (d.exchange >= BOUT.maxExchanges) { d.over = 'parted'; return; }
   b.foeIntent = b.foeNext ?? foeIntent(d, rng);
-  b.foeNext = b.readsAhead ? foeIntent(d, rng) : null;
   // what he planned meets what happened
   if (b.foeOff && (b.foeIntent === 'heavy' || b.foeIntent === 'bash')) b.foeIntent = d.foe.shields > 0 ? 'guard' : 'back';
   if (BOUT.cost[b.foeIntent] > d.foe.stamina) b.foeIntent = 'back';
+  readHim(d, rng);
+  b.foeNext = b.readsAhead && b.read === 'sure' ? foeIntent(d, rng) : null;
 }
 
 /** Instinct: the answer that hurts him most for least, keeping breath in hand and never stepping off the cloak. */
+function moveValue(d: DuelState, m: BoutMove, f: BoutMove): number {
+  const p = projectBout(d, m, f);
+  let v = p.toFoe - p.toHero * 1.2;
+  if (p.edge >= BOUT.edge) v -= 50;
+  if (p.edge === BOUT.edge - 1) v -= 2;
+  if (p.stamina <= 1) v -= 1.5;
+  if (m === 'guard' || m === 'back') v += 0.3 * Math.max(0, 4 - d.hero.stamina);
+  const r = meet(m, f, d);
+  if (r.foeOff) v += 2;
+  if (r.heroOff) v -= 2;
+  v -= r.heroShield * 0.6;
+  v += r.foeShield * 0.4;
+  if (p.toFoe >= d.foe.hp) v += 20;
+  return v;
+}
+
+/** Instinct, and the advice from the edge of the cloak: the best answer to what he can see of his man. Torn between
+ *  two moves, the answer that does best across both. */
 export function boutAuto(d: DuelState): BoutMove {
+  const b = d.bout!;
   let best: BoutMove = 'guard', bestV = -Infinity;
   for (const m of BOUT_MOVES) {
-    const p = projectBout(d, m);
-    if (!p.available) continue;
-    let v = p.toFoe - p.toHero * 1.2;
-    if (p.edge >= BOUT.edge) v -= 50;
-    if (p.edge === BOUT.edge - 1) v -= 2;
-    if (p.stamina <= 1) v -= 1.5;
-    if (m === 'guard' || m === 'back') v += 0.3 * Math.max(0, 4 - d.hero.stamina);
-    const r = meet(m, d.bout!.foeIntent, d);
-    if (r.foeOff) v += 2;
-    if (r.heroOff) v -= 2;
-    v -= r.heroShield * 0.6;
-    v += r.foeShield * 0.4;
-    if (p.toFoe >= d.foe.hp) v += 20;
+    if (!boutAvailable(d, m).ok) continue;
+    const v = b.shown.reduce((a, f) => a + moveValue(d, m, f), 0) / Math.max(1, b.shown.length);
     if (v > bestV) { bestV = v; best = m; }
   }
   return best;
+}
+
+export function boutAdvice(d: DuelState): { who: string; text: string } | null {
+  const b = d.bout!;
+  if (!b.adviser || d.over) return null;
+  return { who: b.adviser, text: BOUT_ADVICE[boutAuto(d)] };
 }
 
 export function fightOutBout(d: DuelState, rng: RngCursor, stopToYield: boolean): void {

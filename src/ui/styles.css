@@ -177,3 +177,10 @@ textarea { min-height: 120px; font-family: var(--f-ui); font-size: 0.8rem; }
 @media (prefers-reduced-motion: reduce) {
   .wall .strip { transition: none; }
 }
+
+/* combat, revision 2: the old hand's shout, and the reference of what beats what */
+.advice { margin-top: 8px; color: var(--ochre); font-family: var(--f-prose); font-style: italic; }
+.ways { margin-top: 8px; color: var(--bone-dim); }
+.ways summary { cursor: pointer; color: var(--iron); }
+.ways ul { margin: 6px 0 0; padding-left: 18px; }
+.ways li { margin: 3px 0; }

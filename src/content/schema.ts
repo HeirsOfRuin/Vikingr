@@ -207,7 +207,18 @@ export type Leg = z.infer<typeof leg>;
 export const shipType = z.object({ id, name: z.string(), oars: z.number().int(), crew: z.number().int(), cargo: z.number().int(), speed: z.number(), cost: z.number().int(), desc: z.string() }).strict();
 export type ShipType = z.infer<typeof shipType>;
 
-export const foe = z.object({ id, name: z.string(), quality: z.number().int().min(0).max(3), doctrine: weights(ORDERS), desc: z.string() }).strict();
+export const RESOLVES = ['levy', 'warriors', 'hird'] as const;
+export type Resolve = (typeof RESOLVES)[number];
+export const foe = z.object({
+  id, name: z.string(), quality: z.number().int().min(0).max(3), doctrine: weights(ORDERS), desc: z.string(),
+  /** How they hold (docs/FRAME-COMBAT-2.md, revision 2): a levy breaks early and runs when its leader falls; a lord's
+   *  sworn men close round him and die rather than run. Defaults from quality. */
+  resolve: z.enum(RESOLVES).optional(),
+  /** How hard they are to read, 0..3: the chance their next move is shown as only likely, or one of two. */
+  guile: z.number().int().min(0).max(3).optional(),
+  /** The man who holds them together. When he falls, they waver. */
+  leader: z.string().optional(),
+}).strict();
 export type Foe = z.infer<typeof foe>;
 
 export const fighter = z.object({
@@ -219,6 +230,8 @@ export const fighter = z.object({
   armour: z.number().int().min(0).max(3),
   weapon: z.number().int().min(1).max(3),
   habits: weights(DUEL_MOVES),
+  /** How hard he is to read, 0..3. Defaults from his wits and how much he likes a feint. */
+  guile: z.number().int().min(0).max(3).optional(),
   desc: z.string(),
 }).strict();
 export type Fighter = z.infer<typeof fighter>;

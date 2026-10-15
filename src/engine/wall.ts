@@ -1,18 +1,26 @@
 // The shield-wall, second form (docs/FRAME-COMBAT-2.md). The author, 2026-10-15: "It doesn't feel like there is
 // any real strategy or tactics, just guessing and getting lucky." So:
 //  - a battle starts with deployment: where the sworn men stand, how many men are held back, where he stands;
-//  - each round the enemy's next move is shown before he chooses (from behind the wall, the move after that too);
+//  - each round he sees what the enemy is about to do, as well as he can read it (revision 2: a cunning enemy is
+//    only "likely" to do what he seems to, or could be doing one of two things);
 //  - his line has cohesion (it breaks at 0), stamina (orders cost it; a tired line hits soft) and ground (pushed
 //    back three steps, it breaks);
-//  - each order shows what it will do before he commits; chance only moves the numbers a little.
+//  - the enemy has a resolve (a levy breaks early and runs when its leader falls; a lord's sworn men close round him)
+//    and a leader he can strike at.
+// Revision 2, the author: "it reveals too much. It just becomes choosing the one with the best numbers." The orders no
+// longer show what they will do this round; what beats what is the player's to know (and a sworn man shouts advice
+// while he learns). project() stays: the men's instinct and the advice use it, on what he can see.
 // It lives inside the old BattleState (b.wall), so wounds, the dead, deeds and the story's win/lose links are as before.
+import type { Foe, Resolve } from '../content/schema';
 import type { BattleState, Position } from './state';
 import type { RngCursor } from './rng';
 import { qualityMult, qualityGuard } from './battle';
 
-export type WallOrder = 'brace' | 'press' | 'spears' | 'charge' | 'fall_back' | 'reserve';
+export type WallOrder = 'brace' | 'press' | 'spears' | 'charge' | 'fall_back' | 'reserve' | 'lord';
 export type Intent = 'brace' | 'press' | 'volley' | 'charge' | 'feint' | 'flank' | 'reform';
 export type SwornPlace = 'front' | 'spread' | 'reserve';
+/** How well he reads their next move: sure; likely (right three times in four); or one of two. */
+export type Read = 'sure' | 'likely' | 'torn';
 
 export interface WallState {
   phase: 'deploy' | 'fight';
@@ -31,8 +39,22 @@ export interface WallState {
   ground: number;
   spears: number;
   themSpears: number;
+  /** What they will really do this round, and what they mean to do after. */
   intent: Intent;
   next: Intent;
+  /** What he sees of it. */
+  read: Read;
+  shown: Intent[];
+  /** His eye for a fight (wits, cunning, fights survived) against their guile. */
+  readScore: number;
+  guile: number;
+  resolve: Resolve;
+  leader: string | null;
+  leaderDown: boolean;
+  /** A lord's men closed round him once already. */
+  stood: boolean;
+  /** Who shouts advice while he is new to the wall; null once he knows it. */
+  adviser: string | null;
   maxRounds: number;
   /** What he has been doing: the enemy learns. Pushes and charges in a row; rounds standing still in a row. */
   pushes: number;
@@ -40,13 +62,13 @@ export interface WallState {
 }
 
 export const WALL = {
-  k: 0.12,
+  k: 0.13,
   stamina: 8,
   spears: 2,
-  maxRounds: 8,
+  maxRounds: 7,
   /** Two pushing lines: one gains ground only if it is this much the stronger, men and breath together. */
   groundEdge: 1.25,
-  /** Cohesion lost for losses: this much for losing the whole line (as now: 12). */
+  /** Cohesion lost for losses: this much for losing the whole line. */
   cohesionFromLosses: 12,
   /** Deployment. */
   frontSwornPower: 1.15,
@@ -57,23 +79,67 @@ export const WALL = {
   /** The hero's blood: base chance a blade finds him in a round, by place; scaled by how hard the round is. */
   heroHit: { front: 0.12, wall: 0.05, rear: 0.012 } as Record<Position, number>,
   manHit: { front: 0.06, wall: 0.03, rear: 0.01 } as Record<Position, number>,
+  /** Reading them: "likely" is right this often. */
+  likelyTrue: 0.75,
+  /** He reads from behind the wall better, from the front rank worse. */
+  readByPlace: { front: -1, wall: 0, rear: 2 } as Record<Position, number>,
+  /** Fights survived before the old hands stop shouting advice. */
+  adviceUntil: 6,
+  /** Resolve: cohesion lost for losses (x), the spirit at which they break, what their leader's fall costs them. */
+  resolve: {
+    levy: { losses: 1.15, breakAt: 1, leaderFall: 3 },
+    warriors: { losses: 1, breakAt: 0, leaderFall: 2 },
+    hird: { losses: 0.8, breakAt: 0, leaderFall: 1.5 },
+  } as Record<Resolve, { losses: number; breakAt: number; leaderFall: number }>,
+  /** Their leader: the chance he falls in an ordinary round, and when he is struck at. */
+  leaderChance: 0.03,
+  lordStrike: 0.25,
+  lordHeroFront: 0.15,
+  lordSwornFront: 0.1,
+  lordShaken: 0.15,
+  lordHird: 0.1,
+  lordHeroRisk: 1.8,
 };
 
 export const ORDER_LABEL: Record<WallOrder, string> = {
-  brace: 'Lock shields', press: 'Push', spears: 'Throw spears', charge: 'Charge', fall_back: 'Fall back a step', reserve: 'Throw in the reserve',
+  brace: 'Lock shields', press: 'Push', spears: 'Throw spears', charge: 'Charge', fall_back: 'Fall back a step', reserve: 'Throw in the reserve', lord: 'Strike at their lord',
 };
 export const INTENT_TEXT: Record<Intent, string> = {
   brace: 'they lock shields and wait for you',
   press: 'they lean into their shields to push',
   volley: 'they ready a volley of spears and javelins',
   charge: 'they are forming a wedge to charge',
-  feint: 'they are getting ready to give ground, to draw you after them',
+  feint: 'they are giving ground, like men about to break',
   flank: 'men are slipping round the end of your line',
   reform: 'they are blown, and closing up to get their breath',
 };
 export const INTENT_SHORT: Record<Intent, string> = {
   brace: 'shields locked', press: 'a push', volley: 'a volley', charge: 'a charge', feint: 'a feigned retreat', flank: 'a flank attack', reform: 'reforming',
 };
+/** What a cunning enemy's move can be mistaken for. */
+const DECOY: Record<Intent, Intent> = { brace: 'flank', press: 'feint', volley: 'charge', charge: 'feint', feint: 'charge', flank: 'brace', reform: 'feint' };
+
+/** The shout an old hand gives, for the order he would give. */
+export const WALL_ADVICE: Record<WallOrder, string> = {
+  brace: 'Lock shields! Let them come to us!',
+  press: 'Push! Lean on them!',
+  spears: 'Spears, now, while they come on!',
+  charge: 'At them! Now, all of us!',
+  fall_back: 'Back a step! Keep the line and give them the ground!',
+  reserve: 'Bring up the rest! Now!',
+  lord: 'There, their lord! Go for him!',
+};
+/** What the wall knows, said plainly: the reference, not the answer to this round. */
+export const WALL_WAYS: string[] = [
+  'Locked shields break a charge and shrug off spears, but men coming round the flank get behind them.',
+  'A push wins against men who are throwing, reforming or blown. Into locked shields it gets nowhere.',
+  'Never follow a line that gives ground too easily.',
+  'Spears hurt men who are coming on. They do nothing to stop a shove.',
+  'A charge costs the most breath. Spend it on a tired line, or on men who are throwing.',
+  'Falling back gets breath and blunts a charge or a flank. Three steps back and the line breaks.',
+  'The reserve answers a flank, and brings breath with it.',
+  'Kill their lord and a levy runs. A lord\'s own men close round him, and fight on harder.',
+];
 
 /** What an order costs in stamina, and what it does when nothing special meets it. */
 const ORDER = {
@@ -83,6 +149,7 @@ const ORDER = {
   charge: { cost: 3, out: 1.5, in: 1.25, ground: 1 },
   fall_back: { cost: -3, out: 0, in: 0.4, ground: -1 },
   reserve: { cost: -WALL.reserveStamina, out: 0.5, in: 0.55, ground: 0 },
+  lord: { cost: 3, out: 0.8, in: 1.1, ground: 0 },
 } as const;
 const INTENT = {
   brace: { cost: -1, out: 0.35, in: 0.55, ground: 0 },
@@ -94,9 +161,24 @@ const INTENT = {
   reform: { cost: -3, out: 0.2, in: 1.3, ground: 0 },
 } as const;
 
-/** The special meetings: [our blows x, their blows x, our cohesion +/-, their cohesion +/-, why]. */
-function meeting(o: WallOrder, i: Intent, w: WallState, b: BattleState): { us: number; them: number; ourC: number; theirC: number; note: string } {
+/** What an order says on its button: what it does and what it costs, nothing about this round. */
+export function orderDesc(b: BattleState, o: WallOrder): string {
+  const w = b.wall!;
+  switch (o) {
+    case 'brace': return 'Shields locked, stand fast. +1 breath';
+    case 'press': return 'Lean in and shove. −2 breath';
+    case 'spears': return `A volley before the shields meet. −1 breath; ${w.spears} left`;
+    case 'charge': return 'Everything at once. −3 breath';
+    case 'fall_back': return 'Give a step, keep the line. +3 breath';
+    case 'reserve': return w.reserveMen > 0 && !w.reserveIn ? `${w.reserveMen} fresh men into the line, once. +3 breath` : 'Fresh men into the line, once';
+    case 'lord': return `Drive at ${w.leader ?? 'their leader'}. −3 breath; you are in the thick of it`;
+  }
+}
+
+/** The special meetings: our blows x, their blows x, our cohesion +/-, their cohesion +/-, and what it looks like. */
+function meeting(order: WallOrder, i: Intent, w: WallState): { us: number; them: number; ourC: number; theirC: number; note: string } {
   const r = { us: 1, them: 1, ourC: 0, theirC: 0, note: '' };
+  const o = order === 'lord' ? 'press' : order;
   const tiredThem = w.themStamina <= 3;
   if (o === 'brace' && i === 'charge') return { ...r, them: 0.5, us: 1.6, theirC: -1.5, note: 'Their wedge breaks on your locked shields.' };
   if (o === 'brace' && i === 'volley') return { ...r, them: 0.4, note: 'The spears thud into shield-boards and do little.' };
@@ -110,12 +192,11 @@ function meeting(o: WallOrder, i: Intent, w: WallState, b: BattleState): { us: n
   if (o === 'press' && i === 'press') return { ...r, note: w.usStamina >= w.themStamina ? 'Shield against shield; the fresher line gives less.' : 'Shield against shield; your men are the more tired.' };
   if (o === 'spears' && (i === 'press' || i === 'charge')) return { ...r, us: 1.3, note: 'Your spears go into them as they come on.' };
   if (o === 'spears' && i === 'reform') return { ...r, us: 1.3, note: 'Spears into a line that is not ready for them.' };
-  if (o === 'fall_back' && i === 'charge') return { ...r, them: 0.6, theirC: 0, note: 'You give ground in order and their charge hits air and shields.' };
+  if (o === 'fall_back' && i === 'charge') return { ...r, them: 0.6, note: 'You give ground in order and their charge hits air and shields.' };
   if (o === 'fall_back' && i === 'flank') return { ...r, them: 0.6, note: 'You fold back and the flank attack finds your face, not your side.' };
   if (o === 'reserve' && i === 'flank') return { ...r, them: 0.3, us: 1.6, theirC: -1, note: 'Your reserve meets the men coming round your flank.' };
   if (o === 'reserve') return { ...r, note: 'Fresh men come up into the line.' };
   if (i === 'flank') return { ...r, ourC: -1, note: 'Men come round the end of your line.' };
-  void b;
   return r;
 }
 
@@ -125,12 +206,12 @@ function staminaFactor(s: number): number {
 
 export interface Projection { dealt: number; taken: number; ourCohesion: number; theirCohesion: number; ourStamina: number; ground: number; note: string; available: boolean; why?: string }
 
-/** What an order will do this round, before chance: the numbers the player sees on the button. */
-export function project(b: BattleState, o: WallOrder): Projection {
+/** What an order would do this round against a move, before chance. The engine resolves the round with the move
+ *  they really make; instinct and advice use the move he can see. */
+export function project(b: BattleState, o: WallOrder, i: Intent = b.wall!.intent): Projection {
   const w = b.wall!;
-  const i = w.intent;
   const avail = available(b, o);
-  const m = meeting(o, i, w, b);
+  const m = meeting(o, i, w);
   const op = ORDER[o];
   const ip = INTENT[i];
   const front = w.sworn === 'front' ? WALL.frontSwornPower : 1;
@@ -150,11 +231,11 @@ export function project(b: BattleState, o: WallOrder): Projection {
     const ours = ourPower * staminaFactor(w.usStamina), theirs = theirPower * staminaFactor(w.themStamina);
     ground = ours > theirs * WALL.groundEdge ? 1 : ours * WALL.groundEdge < theirs ? -1 : 0;
   }
-  // a line that is not set gives ground: one that is reforming, or throwing, or busy with a flank
+  // a line that is not set gives ground: one that is reforming, or throwing
   else if (op.ground > 0 && (i === 'reform' || i === 'volley')) ground = 1;
   else if (ip.ground > 0 && o === 'spears') ground = -1;
   const ourLoss = cohesionLoss(taken, b.us.start, b.us.quality) - m.ourC + (ground < 0 ? 0.5 : 0) + (o === 'fall_back' && b.us.quality < 1 ? 0.5 : 0);
-  const theirLoss = cohesionLoss(dealt, b.them.start, b.them.quality) - m.theirC + (ground > 0 ? 0.5 : 0);
+  const theirLoss = cohesionLoss(dealt, b.them.start, b.them.quality) * WALL.resolve[w.resolve].losses - m.theirC + (ground > 0 ? 0.5 : 0);
   return {
     dealt: Math.round(dealt), taken: Math.round(taken),
     ourCohesion: Math.round((b.us.morale - ourLoss) * 10) / 10,
@@ -178,12 +259,16 @@ export function available(b: BattleState, o: WallOrder): { ok: boolean; why?: st
   if (o === 'spears' && w.spears <= 0) return { ok: false, why: 'The spears are thrown.' };
   if (o === 'reserve' && (w.reserveIn || w.reserveMen <= 0)) return { ok: false, why: w.reserveIn ? 'The reserve is already in.' : 'You kept no reserve.' };
   if (o === 'fall_back' && b.terrain === 'ship') return { ok: false, why: 'There is nowhere to fall back to on a ship.' };
+  if (o === 'lord' && (!w.leader || w.leaderDown)) return { ok: false, why: w.leader ? `${upFirst(w.leader)} is down.` : 'They have no one man to strike at.' };
+  if (o === 'lord' && b.heroDown) return { ok: false, why: 'You are down.' };
   return { ok: true };
 }
 
-export const WALL_ORDERS: WallOrder[] = ['brace', 'press', 'spears', 'charge', 'fall_back', 'reserve'];
+const upFirst = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 
-/** The enemy's next move: what tired men, men with spears left, and men whose doctrine likes it, do. Rolled ahead so it can be shown. */
+export const WALL_ORDERS: WallOrder[] = ['brace', 'press', 'spears', 'charge', 'fall_back', 'reserve', 'lord'];
+
+/** The enemy's next move: what tired men, men with spears left, and men whose doctrine likes it, do. Rolled ahead. */
 export function enemyIntent(b: BattleState, stamina: number, spears: number, round: number, rng: RngCursor): Intent {
   const d = b.them.doctrine;
   if (stamina <= 2) return rng.float() < 0.7 ? 'reform' : 'feint';
@@ -202,7 +287,26 @@ export function enemyIntent(b: BattleState, stamina: number, spears: number, rou
   return rng.pickWeighted(keys, (k) => w[k]!)!;
 }
 
-export function startWall(b: BattleState, leads: boolean, rng: RngCursor): void {
+/** How well he reads them this round. An honest enemy (guile 0) is always read; a cunning one, against his eye. */
+export function readRoll(score: number, guile: number, rng: RngCursor): Read {
+  if (guile <= 0) return 'sure';
+  const m = score + rng.int(4) - (2 * guile + 1 + rng.int(4));
+  return m >= 2 ? 'sure' : m >= -1 ? 'likely' : 'torn';
+}
+
+function readThem(b: BattleState, rng: RngCursor): void {
+  const w = b.wall!;
+  w.read = readRoll(w.readScore + WALL.readByPlace[b.position], w.guile, rng);
+  const decoy = DECOY[w.intent];
+  if (w.read === 'sure') w.shown = [w.intent];
+  else if (w.read === 'likely') w.shown = [rng.float() < WALL.likelyTrue ? w.intent : decoy];
+  else w.shown = rng.float() < 0.5 ? [w.intent, decoy] : [decoy, w.intent];
+}
+
+export interface WallSetup { readScore: number; adviser: string | null; foe?: Foe }
+
+export function startWall(b: BattleState, leads: boolean, rng: RngCursor, setup: WallSetup = { readScore: 4, adviser: null }): void {
+  const foe = setup.foe;
   b.wall = {
     phase: 'deploy',
     step: leads ? 'sworn' : 'pos',
@@ -218,6 +322,15 @@ export function startWall(b: BattleState, leads: boolean, rng: RngCursor): void 
     themSpears: WALL.spears,
     intent: 'brace',
     next: 'brace',
+    read: 'sure',
+    shown: ['brace'],
+    readScore: setup.readScore,
+    guile: foe?.guile ?? 0,
+    resolve: foe?.resolve ?? (b.them.quality < 1 ? 'levy' : b.them.quality >= 2 ? 'hird' : 'warriors'),
+    leader: foe?.leader ?? null,
+    leaderDown: false,
+    stood: false,
+    adviser: setup.adviser,
     maxRounds: WALL.maxRounds,
     pushes: 0,
     waits: 0,
@@ -226,19 +339,18 @@ export function startWall(b: BattleState, leads: boolean, rng: RngCursor): void 
   w.intent = enemyIntent(b, w.themStamina, w.themSpears, 1, rng);
   w.next = enemyIntent(b, w.themStamina, w.themSpears, 2, rng);
   // another man's wall: the scene has already put him in it, and the deployment is not his
-  if (!leads) deploy(b, 'spread', 0, b.position);
+  if (!leads) deploy(b, 'spread', 0, b.position, rng);
 }
 
-/** Deployment, before the first round: where the sworn men stand, the reserve, and where he stands. */
-/** One deployment question answered; the last one starts the fight. Another man's line: he only picks his place. */
-export function deployStep(b: BattleState, what: 'sworn' | 'reserve' | 'pos', value: string): void {
+/** One deployment question answered; the last one starts the fight. */
+export function deployStep(b: BattleState, what: 'sworn' | 'reserve' | 'pos', value: string, rng: RngCursor): void {
   const w = b.wall!;
   if (what === 'sworn') { w.sworn = value as SwornPlace; w.step = 'reserve'; return; }
   if (what === 'reserve') { w.reserveShare = Number(value); w.step = 'pos'; return; }
-  deploy(b, w.sworn, w.leads ? w.reserveShare : 0, value as Position);
+  deploy(b, w.sworn, w.leads ? w.reserveShare : 0, value as Position, rng);
 }
 
-export function deploy(b: BattleState, sworn: SwornPlace, reserveShare: number, pos: Position): void {
+export function deploy(b: BattleState, sworn: SwornPlace, reserveShare: number, pos: Position, rng: RngCursor): void {
   const w = b.wall!;
   w.sworn = sworn;
   b.position = pos;
@@ -251,9 +363,19 @@ export function deploy(b: BattleState, sworn: SwornPlace, reserveShare: number, 
   for (const n of b.named) n.slot = sworn === 'front' ? 'front' : sworn === 'reserve' ? 'rear' : n.slot;
   w.phase = 'fight';
   if (w.leads) b.log.push(`${sworn === 'front' ? 'Your sworn men take the front rank' : sworn === 'spread' ? 'Your sworn men spread through the line, one to every few benches' : 'Your sworn men stand back with the reserve'}${w.reserveMen ? `; ${w.reserveMen} men held back` : ''}. You stand ${pos === 'front' ? 'in the front rank' : pos === 'wall' ? 'in the wall' : 'behind it'}.`);
+  if (w.leader) b.log.push(`${upFirst(w.leader)} holds them together. ${w.resolve === 'levy' ? 'If he falls, they will run.' : w.resolve === 'hird' ? 'His own men stand round him.' : ''}`.trim());
+  // he reads their first move from where he has chosen to stand
+  readThem(b, rng);
 }
 
-/** One round: his order against the move they showed him. */
+/** The chance a drive at their lord cuts him down. */
+export function lordChance(b: BattleState): number {
+  const w = b.wall!;
+  return Math.max(0.05, WALL.lordStrike + (b.position === 'front' && !b.heroDown ? WALL.lordHeroFront : 0) + (w.sworn === 'front' ? WALL.lordSwornFront : 0)
+    + (b.them.morale < 3 ? WALL.lordShaken : 0) - (w.resolve === 'hird' ? WALL.lordHird : 0));
+}
+
+/** One round: his order against the move they really make. */
 export function wallRound(b: BattleState, o: WallOrder, rng: RngCursor): void {
   const w = b.wall!;
   if (b.over || w.phase !== 'fight') return;
@@ -261,7 +383,8 @@ export function wallRound(b: BattleState, o: WallOrder, rng: RngCursor): void {
   b.round += 1;
   const jitter = () => 0.85 + rng.float() * 0.3;
   const i = w.intent;
-  if (o === 'reserve') { b.us.men += w.reserveMen; b.us.start += 0; w.reserveIn = true; w.reserveMen = 0; if (w.sworn === 'reserve') b.us.morale += 1; }
+  const res = WALL.resolve[w.resolve];
+  if (o === 'reserve') { b.us.men += w.reserveMen; w.reserveIn = true; w.reserveMen = 0; if (w.sworn === 'reserve') b.us.morale += 1; }
   if (o === 'spears') w.spears -= 1;
   if (i === 'volley') w.themSpears -= 1;
   const dealt = Math.min(b.them.men, Math.round(p.dealt * jitter()));
@@ -270,26 +393,42 @@ export function wallRound(b: BattleState, o: WallOrder, rng: RngCursor): void {
   b.us.men -= taken;
   b.killed += dealt;
   b.lost += taken;
-  // the cohesion shown, give or take what chance did to the casualties
+  // the cohesion projected, give or take what chance did to the casualties
   b.us.morale = Math.min(10, p.ourCohesion - cohesionLoss(taken - p.taken, b.us.start, b.us.quality));
-  b.them.morale = Math.min(10, p.theirCohesion - cohesionLoss(dealt - p.dealt, b.them.start, b.them.quality));
+  b.them.morale = Math.min(10, p.theirCohesion - cohesionLoss(dealt - p.dealt, b.them.start, b.them.quality) * res.losses);
   w.usStamina = Math.max(0, Math.min(WALL.stamina, w.usStamina - ORDER[o].cost));
-  w.pushes = o === 'press' || o === 'charge' ? w.pushes + 1 : 0;
+  w.pushes = o === 'press' || o === 'charge' || o === 'lord' ? w.pushes + 1 : 0;
   w.waits = o === 'brace' || o === 'fall_back' ? w.waits + 1 : 0;
   w.themStamina = Math.max(0, Math.min(WALL.stamina, w.themStamina - INTENT[i].cost));
   w.ground = p.ground;
-  b.log.push(`Round ${b.round}: ${ORDER_LABEL[o].toLowerCase()} against ${INTENT_SHORT[i]}. ${p.note ? p.note + ' ' : ''}They lose ${dealt}, you lose ${taken}.`);
+  const misread = !w.shown.includes(i) ? ` It was not what it looked like: ${INTENT_SHORT[i]}.` : '';
+  b.log.push(`Round ${b.round}: ${ORDER_LABEL[o].toLowerCase()} against ${INTENT_SHORT[i]}.${misread} ${p.note ? p.note + ' ' : ''}They lose ${dealt}, you lose ${taken}.`);
+  // their leader
+  if (w.leader && !w.leaderDown) {
+    const chance = o === 'lord' ? lordChance(b) : WALL.leaderChance * ((o === 'press' || o === 'charge') && (b.position === 'front' || w.sworn === 'front') ? 2 : 1);
+    if (rng.float() < chance) leaderFalls(b, o === 'lord', rng);
+    else if (o === 'lord') { b.us.morale -= 0.5; b.log.push(`The drive at ${w.leader} is thrown back short of him.`); }
+  }
   heroAndMen(b, o, i, rng);
   // the end of it
   if (w.ground <= -3) b.us.morale = Math.min(b.us.morale, 0);
   if (w.ground >= 3) b.them.morale = Math.min(b.them.morale, 0);
+  // a lord's own men close round him once before they break
+  if (b.them.morale <= res.breakAt && w.resolve === 'hird' && w.leader && !w.leaderDown && !w.stood && b.them.men > 0 && w.ground < 3) {
+    w.stood = true;
+    b.them.morale = res.breakAt + 1.5;
+    b.log.push(`They will not run. They close round ${w.leader}, shield to shield, and the fighting gets worse.`);
+  }
   const usBroken = b.us.morale <= 0 || b.us.men <= 0;
-  const themBroken = b.them.morale <= 0 || b.them.men <= 0;
+  const themBroken = b.them.morale <= res.breakAt || b.them.men <= 0;
   if (themBroken && !usBroken) {
-    const chase = Math.round(b.them.men * 0.15);
+    // a levy runs and is cut down running; a lord's men do not run, and die where they stand
+    const chase = Math.round(b.them.men * (w.resolve === 'hird' ? 0.4 : w.resolve === 'levy' ? 0.2 : 0.15));
     b.them.men -= chase; b.killed += chase;
     b.over = 'won';
-    b.log.push(w.ground >= 3 ? `They are pushed off the field, and run. You cut down ${chase} more.` : `They break. You cut down ${chase} more as they run.`);
+    b.log.push(w.resolve === 'hird' ? `They do not run. The last of them die where they stand${w.leaderDown ? ` around ${w.leader}` : ''}: ${chase} more.`
+      : w.ground >= 3 ? `They are pushed off the field, and run. You cut down ${chase} more.`
+      : `They break. You cut down ${chase} more as they run.`);
   } else if (usBroken) {
     const chase = Math.round(b.us.men * (o === 'fall_back' ? 0.07 : 0.15));
     b.us.men -= chase; b.lost += chase;
@@ -305,11 +444,27 @@ export function wallRound(b: BattleState, o: WallOrder, rng: RngCursor): void {
     if (w.intent === 'volley' && w.themSpears <= 0) w.intent = 'press';
     if (w.intent === 'charge' && w.themStamina < 3) w.intent = 'reform';
     w.next = enemyIntent(b, w.themStamina - INTENT[w.intent].cost, w.themSpears - (w.intent === 'volley' ? 1 : 0), b.round + 2, rng);
+    readThem(b, rng);
   }
 }
 
+function leaderFalls(b: BattleState, struck: boolean, rng: RngCursor): void {
+  const w = b.wall!;
+  w.leaderDown = true;
+  b.them.morale -= WALL.resolve[w.resolve].leaderFall;
+  const who = struck && !b.heroDown && b.position === 'front' ? null : b.named.find((n) => !n.down && n.slot === 'front') ?? null;
+  if (struck && !who && !b.heroDown) {
+    b.deeds.push({ type: 'killed_champion', text: `Cut down ${w.leader}`, who: null });
+    b.log.push(`You reach ${w.leader} and cut him down under his own banner.`);
+  } else if (struck && who) {
+    b.deeds.push({ type: 'man_deed', text: `${who.name} cut down ${w.leader}`, who: who.id });
+    b.log.push(`${who.name} reaches ${w.leader} and cuts him down.`);
+  } else b.log.push(`${upFirst(w.leader!)} goes down in the press${rng.float() < 0.5 ? ', and nobody sees whose blade it was' : ''}.`);
+  b.log.push(w.resolve === 'levy' ? 'A wail goes along their line. Men at the back are already looking for the road.' : w.resolve === 'hird' ? 'His men roar and come on harder, but the heart has gone out of the rest.' : 'Their line wavers.');
+}
+
 function heroAndMen(b: BattleState, o: WallOrder, i: Intent, rng: RngCursor): void {
-  const hard = (INTENT[i].out + ORDER[o].in) / 2;
+  const hard = ((INTENT[i].out + ORDER[o].in) / 2) * (o === 'lord' ? WALL.lordHeroRisk : 1);
   const guard = b.heroSkill ? Math.min(1.2, Math.max(0.6, 1 - 0.06 * (b.heroSkill.shield - 2))) : 1;
   if (!b.heroDown && rng.float() < WALL.heroHit[b.position] * hard * guard) {
     const dmg = Math.max(1, 3 + rng.int(7) + Math.round(b.them.quality) - b.heroArmour);
@@ -339,26 +494,42 @@ function heroAndMen(b: BattleState, o: WallOrder, i: Intent, rng: RngCursor): vo
   }
 }
 
-/** "Let the men handle it" in the new wall: the order that does most harm to their line for least to his, keeping
- *  something in hand. The same numbers the player sees. */
+/** How good an order looks against a move he believes they will make. */
+function orderValue(b: BattleState, o: WallOrder, i: Intent): number {
+  const w = b.wall!;
+  const p = project(b, o, i);
+  const theirLoss = b.them.morale - p.theirCohesion + (o === 'lord' && w.leader && !w.leaderDown ? lordChance(b) * WALL.resolve[w.resolve].leaderFall : 0);
+  const ourLoss = b.us.morale - p.ourCohesion;
+  let v = theirLoss - ourLoss * 1.1 + (p.ground - w.ground) * 1.2;
+  // the day is short: a battle not won by the last rounds is a battle broken off
+  if (b.round >= w.maxRounds - 3) v += theirLoss * 0.5;
+  if (p.ourStamina <= 1 && o !== 'fall_back') v -= 1;
+  if (o === 'reserve' && b.round < 2 && i !== 'flank') v -= 1.5;
+  if (o === 'lord' && b.position === 'front') v -= 0.5;
+  if (p.theirCohesion <= WALL.resolve[w.resolve].breakAt) v += 5;
+  if (p.ourCohesion <= 0) v -= 5;
+  return v;
+}
+
+/** "Let the men handle it", and the old hand's advice: the best order against what he can see of them. When he is
+ *  torn between two moves, the order that does best across both. */
 export function wallAuto(b: BattleState): WallOrder {
+  const w = b.wall!;
   let best: WallOrder = 'brace';
   let bestV = -Infinity;
   for (const o of WALL_ORDERS) {
-    const p = project(b, o);
-    if (!p.available) continue;
-    const theirLoss = b.them.morale - p.theirCohesion;
-    const ourLoss = b.us.morale - p.ourCohesion;
-    let v = theirLoss - ourLoss * 1.1 + (p.ground - b.wall!.ground) * 1.2;
-    // the day is short: a battle not won by the last rounds is a battle broken off
-    if (b.round >= b.wall!.maxRounds - 3) v += theirLoss * 0.5;
-    if (p.ourStamina <= 1 && o !== 'fall_back') v -= 1;
-    if (o === 'reserve' && b.round < 2 && b.wall!.intent !== 'flank') v -= 1.5;
-    if (p.theirCohesion <= 0) v += 5;
-    if (p.ourCohesion <= 0) v -= 5;
+    if (!available(b, o).ok) continue;
+    const v = w.shown.reduce((a, i) => a + orderValue(b, o, i), 0) / w.shown.length;
     if (v > bestV) { bestV = v; best = o; }
   }
   return best;
+}
+
+/** The old hand's shout, while he is new to the wall. */
+export function wallAdvice(b: BattleState): { who: string; text: string } | null {
+  const w = b.wall!;
+  if (!w.adviser || w.phase !== 'fight' || b.over) return null;
+  return { who: w.adviser, text: WALL_ADVICE[wallAuto(b)] };
 }
 
 export function deployAuto(b: BattleState): { sworn: SwornPlace; reserve: number; pos: Position } {
@@ -368,7 +539,12 @@ export function deployAuto(b: BattleState): { sworn: SwornPlace; reserve: number
 export function fightOutWall(b: BattleState, rng: RngCursor): void {
   const w = b.wall!;
   // what he has already chosen stands; the men settle the rest
-  if (w.phase === 'deploy') { const d = deployAuto(b); deploy(b, w.step === 'sworn' ? d.sworn : w.sworn, w.step === 'pos' ? w.reserveShare : d.reserve, d.pos); }
+  if (w.phase === 'deploy') { const d = deployAuto(b); deploy(b, w.step === 'sworn' ? d.sworn : w.sworn, w.step === 'pos' ? w.reserveShare : d.reserve, d.pos, rng); }
   let g = 0;
   while (!b.over && g++ < 20) wallRound(b, wallAuto(b), rng);
+}
+
+/** Their spirit, in words: what a man in the line can tell. */
+export function spiritWord(c: number): string {
+  return c >= 6 ? 'steady' : c >= 4 ? 'holding' : c >= 2 ? 'shaken' : c > 0 ? 'wavering' : 'broken';
 }

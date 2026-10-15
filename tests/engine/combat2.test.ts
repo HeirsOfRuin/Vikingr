@@ -5,10 +5,10 @@ import type { BattleState, DuelState, GameState, Pending } from '../../src/engin
 import { open } from '../../src/engine/director';
 import { dayOf } from '../../src/engine/calendar';
 import { RngCursor, seedRng } from '../../src/engine/rng';
-import { deployStep, fightOutWall, project, startWall, wallAuto, wallRound, WALL } from '../../src/engine/wall';
+import { deployStep, fightOutWall, orderDesc, project, readRoll, startWall, wallAdvice, wallAuto, wallRound, WALL, type WallOrder } from '../../src/engine/wall';
 import { BOUT, boutExchange, projectBout } from '../../src/engine/bout';
 
-// docs/FRAME-COMBAT-2.md: the enemy's move is shown, every order shows what it will do, chance moves numbers only.
+// docs/FRAME-COMBAT-2.md: the enemy's move is shown as well as he can read it; orders say what they do, not what they will do.
 function bangor(seed: number, flags: Record<string, number> = {}): GameState {
   let s = newGame(content, { background: 'younger_son', seed, name: 'Ari' });
   s.pending = null; s.day = dayOf(830, 170); s.at = 'bangor'; s.phase = 'sailing';
@@ -38,20 +38,68 @@ describe('the new shield-wall (Bangor)', () => {
     startWall(b, true, new RngCursor(seedRng(1)));
     expect(b.wall!.phase).toBe('deploy');
     const men = b.us.men;
-    deployStep(b, 'sworn', 'front');
-    deployStep(b, 'reserve', '0.3');
-    deployStep(b, 'pos', 'rear');
+    const rng = new RngCursor(seedRng(2));
+    deployStep(b, 'sworn', 'front', rng);
+    deployStep(b, 'reserve', '0.3', rng);
+    deployStep(b, 'pos', 'rear', rng);
     expect(b.wall!.phase).toBe('fight');
     expect(b.wall!.reserveMen).toBe(Math.round(men * 0.3));
     expect(b.us.men).toBe(men - b.wall!.reserveMen);
   });
 
-  it("in Ásgeir's wall, goes straight to the fight and shows a projection on every order", () => {
+  it("in Ásgeir's wall, goes straight to the fight; the orders say what they do, not what they will do", () => {
     const s = bangor(1);
-    expect(battle(s).wall?.phase).toBe('fight');
+    const b = battle(s);
+    expect(b.wall?.phase).toBe('fight');
     const orders = listActions(s, content).filter((o) => o.action.t === 'wall_order');
-    expect(orders.length).toBe(6);
-    for (const o of orders.filter((x) => x.enabled)) expect(o.hint).toMatch(/\d/);
+    expect(orders.length).toBe(6); // no reserve kept in Ásgeir's wall
+    for (const o of orders) expect(o.hint).toBe(orderDesc(b, (o.action as { order: WallOrder }).order));
+    for (const o of orders) expect(o.hint).not.toMatch(/lose about|spirit/);
+  });
+
+  it('reads an honest enemy for certain, and a cunning one only sometimes', () => {
+    const rng = new RngCursor(seedRng(9));
+    for (let i = 0; i < 50; i++) expect(readRoll(3, 0, rng)).toBe('sure');
+    const reads = Array.from({ length: 400 }, () => readRoll(4, 2, rng));
+    expect(reads.filter((r) => r === 'sure').length).toBeLessThan(100);
+    expect(reads.filter((r) => r === 'torn').length).toBeGreaterThan(50);
+    const b = battle(bangor(5, { bg_seen: 1 }));
+    expect(b.wall!.guile).toBe(2);
+    let torn = 0;
+    for (let i = 0; i < 30 && !b.over; i++) {
+      if (b.wall!.read === 'torn') { torn++; expect(b.wall!.shown).toContain(b.wall!.intent); expect(b.wall!.shown.length).toBe(2); }
+      wallRound(b, 'brace', rng);
+    }
+  });
+
+  it('a levy runs when its leader falls; a lord\'s men close round him once', () => {
+    const b = battle(bangor(6, { bg_seen: 1 }));
+    expect(b.wall!.leader).toMatch(/gilded helmet/);
+    b.wall!.resolve = 'levy';
+    const before = b.them.morale;
+    const always = { float: () => 0, int: () => 0, pickWeighted: <T,>(xs: T[]) => xs[0] } as unknown as RngCursor;
+    b.wall!.intent = 'brace';
+    wallRound(b, 'lord', always);
+    expect(b.wall!.leaderDown).toBe(true);
+    expect(b.them.morale).toBeLessThanOrEqual(before - WALL.resolve.levy.leaderFall);
+    const h = battle(bangor(7));
+    h.wall!.resolve = 'hird';
+    h.them.morale = 0.5;
+    h.wall!.intent = 'brace';
+    wallRound(h, 'charge', new RngCursor(seedRng(7)));
+    expect(h.wall!.stood).toBe(true);
+    expect(h.over).toBeNull();
+  });
+
+  it('an old hand shouts advice while he is new, and stops once he has fought enough', () => {
+    const s = bangor(8);
+    expect(wallAdvice(battle(s))?.text).toBeTruthy();
+    const v = newGame(content, { background: 'younger_son', seed: 8, name: 'Ari' });
+    v.stats.battles = WALL.adviceUntil;
+    v.pending = null; v.day = dayOf(830, 170); v.at = 'bangor'; v.phase = 'sailing';
+    open(v, 'b_wall', content);
+    const w = act(content, v, { t: 'choose', id: 'wall' });
+    expect(wallAdvice(battle(w))).toBeNull();
   });
 
   it('resolves the move it showed: locked shields beat a charge, and a push into it costs more', () => {
@@ -88,7 +136,7 @@ describe('the new shield-wall (Bangor)', () => {
       while (!p.over && g++ < 20) wallRound(p, project(p, 'press').available ? 'press' : wallAuto(p), rng);
       if (p.over === 'won') push++;
     }
-    expect(auto).toBeGreaterThan(push + 15);
+    expect(auto).toBeGreaterThan(push + 10);
   });
 
   it('ends within the day', () => {
@@ -100,12 +148,16 @@ describe('the new shield-wall (Bangor)', () => {
 });
 
 describe('the new single combat (the Yule holmgang)', () => {
-  it('shows his move, and each answer with its cost', () => {
+  it('shows his move, and each answer with what it costs', () => {
     const s = holmgang(1);
     const d = duel(s);
     expect(d.bout).toBeTruthy();
+    // Thorgils swings first and keeps swinging: easy to read
+    expect(d.bout!.guile).toBe(0);
+    expect(d.bout!.read).toBe('sure');
     const moves = listActions(s, content).filter((o) => o.action.t === 'bout_move');
     expect(moves.length).toBe(5);
+    for (const m of moves) expect(m.hint).not.toMatch(/takes about/);
   });
 
   it('splits shields, not men, when a great blow meets a raised shield', () => {
