@@ -34,6 +34,14 @@ export const BOUT = {
   tired: 2,
   tiredDealt: 0.6,
   bareGuard: 0.5,
+  /** A shield raised by a man still off his line (before the off-balance multiplier). */
+  lateGuard: 0.35,
+  /** Rushing a stronger man's great blow: you still knock him off his line, and still take this much of it. */
+  biggerMan: 0.5,
+  /** Fighting on instinct: the chance an exchange goes to habit (a great blow) instead of the right answer, less per weapons point. */
+  instinctSlip: 0.4,
+  instinctSkill: 0.06,
+  instinctFloor: 0.15,
 };
 
 export const MOVE_LABEL: Record<BoutMove, string> = { heavy: 'Great blow', quick: 'Quick cut', guard: 'Shield up', bash: 'Shield rush', back: 'Step back' };
@@ -64,20 +72,20 @@ function meet(h: BoutMove, f: BoutMove, d: DuelState): Meet {
   switch (key) {
     case 'heavy/heavy': r.toFoe = hit(H, 'heavy'); r.toHero = hit(F, 'heavy'); r.note = 'You trade great blows.'; break;
     case 'heavy/quick': r.toFoe = hit(H, 'heavy'); r.toHero = hit(F, 'quick'); r.note = 'His cut lands first; your blow lands harder.'; break;
-    case 'heavy/guard': if (F.shields > 0) { r.foeShield = BOUT.shieldHeavy; r.note = 'Your blow lands on his shield and splits the board.'; } else { r.toFoe = Math.round(hit(H, 'heavy') * BOUT.bareGuard); r.note = 'He has no shield left to take it on.'; } break;
-    case 'heavy/bash': r.toHero = hit(F, 'bash'); r.heroOff = true; r.note = 'He gets inside your swing with his shield and knocks you off your line.'; break;
+    case 'heavy/guard': if (b.foeOff) { r.toFoe = Math.round(hit(H, 'heavy') * BOUT.lateGuard); r.foeShield = BOUT.shieldHeavy; r.note = 'He is still off his line; his shield comes up late and your blow goes over it.'; } else if (F.shields > 0) { r.foeShield = BOUT.shieldHeavy; r.note = 'Your blow lands on his shield and splits the board.'; } else { r.toFoe = Math.round(hit(H, 'heavy') * BOUT.bareGuard); r.note = 'He has no shield left to take it on.'; } break;
+    case 'heavy/bash': r.toHero = hit(F, 'bash'); r.heroOff = true; if (F.str < H.str) r.toFoe = Math.round(hit(H, 'heavy') * BOUT.biggerMan); r.note = 'He gets inside your swing with his shield and knocks you off your line.'; break;
     case 'heavy/back': r.foeEdge = holm ? 1 : 0; r.note = 'He steps back out of reach and your blow cuts air.'; break;
     case 'quick/heavy': r.toFoe = hit(H, 'quick'); r.toHero = hit(F, 'heavy'); r.note = 'You cut first; his blow lands harder.'; break;
     case 'quick/quick': r.toFoe = hit(H, 'quick'); r.toHero = hit(F, 'quick'); r.note = 'Two quick cuts, two thin red lines.'; break;
     case 'quick/guard': r.note = 'Your cut turns on his shield.'; break;
     case 'quick/bash': r.toFoe = hit(H, 'quick'); r.foeOff = true; r.note = 'You slip his rush and cut him as he goes past.'; break;
     case 'quick/back': r.toFoe = hit(H, 'quick'); r.foeEdge = holm ? 1 : 0; r.note = 'You catch him as he steps back.'; break;
-    case 'guard/heavy': if (H.shields > 0) { r.heroShield = BOUT.shieldHeavy; r.note = 'You take his blow on the rim. The board splits.'; } else { r.toHero = Math.round(hit(F, 'heavy') * BOUT.bareGuard); r.note = 'No shield left: you turn half of it with the haft.'; } break;
+    case 'guard/heavy': if (b.heroOff) { r.toHero = Math.round(hit(F, 'heavy') * BOUT.lateGuard); r.heroShield = BOUT.shieldHeavy; r.note = 'You are still off your line; your shield comes up late.'; } else if (H.shields > 0) { r.heroShield = BOUT.shieldHeavy; r.note = 'You take his blow on the rim. The board splits.'; } else { r.toHero = Math.round(hit(F, 'heavy') * BOUT.bareGuard); r.note = 'No shield left: you turn half of it with the haft.'; } break;
     case 'guard/quick': r.note = 'His cut turns on your shield.'; break;
     case 'guard/bash': r.heroShield = BOUT.shieldBash; r.heroOff = true; r.note = 'His rush drives your shield back into your face.'; break;
     case 'guard/guard': r.note = 'You watch each other over the rims.'; break;
     case 'guard/back': r.foeEdge = holm ? 1 : 0; r.note = 'He steps back; you let him, and get your breath too.'; break;
-    case 'bash/heavy': r.toFoe = hit(H, 'bash'); r.foeOff = true; r.note = 'You get inside his swing and knock him off his line.'; break;
+    case 'bash/heavy': r.toFoe = hit(H, 'bash'); r.foeOff = true; if (H.str < F.str) { r.toHero = Math.round(hit(F, 'heavy') * BOUT.biggerMan); r.note = 'You get inside his swing and knock him off his line, but he is the bigger man and the haft comes down on your shoulder.'; } else r.note = 'You get inside his swing and knock him off his line.'; break;
     case 'bash/quick': r.toHero = hit(F, 'quick'); r.heroOff = true; r.note = 'He slips your rush and cuts you as you go past.'; break;
     case 'bash/guard': r.foeShield = BOUT.shieldBash; r.foeOff = true; r.note = 'Your rush drives his shield back into his face.'; break;
     case 'bash/bash': r.foeShield = BOUT.shieldBash; r.heroShield = BOUT.shieldBash; r.note = 'Shield crashes on shield.'; break;
@@ -123,7 +131,7 @@ export function projectBout(d: DuelState, m: BoutMove): BoutProjection {
 export function foeIntent(d: DuelState, rng: RngCursor): BoutMove {
   const F = d.foe, b = d.bout!;
   if (F.stamina <= BOUT.tired) return 'back';
-  if (b.foeOff) return F.shields > 0 ? 'guard' : 'back';
+  if (b.foeOff) return F.shields > 0 && rng.float() < 0.5 ? 'guard' : 'back';
   const h = F.habits;
   const w: Record<BoutMove, number> = {
     heavy: F.stamina >= 3 ? (h.strike ?? 1) + (b.heroOff ? 3 : 0) : 0,
@@ -213,6 +221,8 @@ export function fightOutBout(d: DuelState, rng: RngCursor, stopToYield: boolean)
   let g = 0;
   while (!d.over && g++ < 40) {
     if (stopToYield && !d.paused && d.kind === 'holmgang' && d.hero.bled && d.hero.hp < d.hero.hpMax * 0.35) { d.paused = true; return; }
-    boutExchange(d, boutAuto(d), rng);
+    // instinct is not thought: an untrained man falls back on swinging when he should be reading his man
+    const slip = rng.float() < Math.max(BOUT.instinctFloor, BOUT.instinctSlip - BOUT.instinctSkill * d.hero.weapons);
+    boutExchange(d, slip ? (boutAvailable(d, 'heavy').ok ? 'heavy' : 'guard') : boutAuto(d), rng);
   }
 }

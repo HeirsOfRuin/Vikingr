@@ -211,6 +211,7 @@ function needsTheDead(state: GameState, req: CondInput | undefined): boolean {
   });
 }
 
+const upFirst = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 const opt = (group: string, action: Action, label: string, enabled = true, reason?: string, hint?: string): ActionOption => ({ group, action, label, enabled, reason, hint });
 
 export function screenOf(state: GameState): Screen {
@@ -322,8 +323,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (d.bout) {
         const out = BOUT_MOVES.map((m) => {
           const pr = projectBout(d, m);
-          const parts = [pr.note, pr.toFoe ? `he takes about ${pr.toFoe}` : '', pr.toHero ? `you take about ${pr.toHero}` : '', `breath ${d.hero.stamina} → ${pr.stamina}`, d.kind === 'holmgang' && pr.edge > d.bout!.heroEdge ? `${BOUT.edge - pr.edge <= 0 ? 'off the cloak' : `${BOUT.edge - pr.edge} step${BOUT.edge - pr.edge === 1 ? '' : 's'} from the edge`}` : ''].filter(Boolean);
-          return opt('Moves', { t: 'bout_move', move: m }, MOVE_LABEL[m], pr.available, pr.why, parts.join('; '));
+          const parts = [pr.toFoe ? `he takes about ${pr.toFoe}` : '', pr.toHero ? `you take about ${pr.toHero}` : '', `breath ${d.hero.stamina} → ${pr.stamina}`, d.kind === 'holmgang' && pr.edge > d.bout!.heroEdge ? `${BOUT.edge - pr.edge <= 0 ? 'off the cloak' : `${BOUT.edge - pr.edge} step${BOUT.edge - pr.edge === 1 ? '' : 's'} from the edge`}` : ''].filter(Boolean);
+          return opt('Moves', { t: 'bout_move', move: m }, MOVE_LABEL[m], pr.available, pr.why, `${pr.note} ${upFirst(parts.join('; '))}`.trim());
         });
         out.push(opt('Other', { t: 'duel_auto' }, 'Let instinct take it'));
         if (canYield(d)) out.push(opt('Other', { t: 'yield' }, 'Step off the cloak and pay the holmlausn', true, undefined, `${formatSilver(DUEL.holmlausnMarks * ORTUG_PER_MARK)}; honour falls`));
@@ -346,18 +347,21 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (b.wall) {
         const w = b.wall;
         if (w.phase === 'deploy') {
+          const auto = opt('Other', { t: 'battle_auto' }, 'Let the men handle it');
           if (w.step === 'sworn') return [
             opt('Your sworn men', { t: 'wall_deploy', what: 'sworn', value: 'front' }, 'In the front rank', true, undefined, 'The line hits harder (+15%); they are first to bleed'),
             opt('Your sworn men', { t: 'wall_deploy', what: 'sworn', value: 'spread' }, 'Spread through the line', true, undefined, 'Steadier men all along it: cohesion +1'),
             opt('Your sworn men', { t: 'wall_deploy', what: 'sworn', value: 'reserve' }, 'Back with the reserve', true, undefined, 'Safe until the reserve goes in; then cohesion +1 more'),
+            auto,
           ];
-          if (w.step === 'reserve') return [0, 0.15, 0.3].map((r) => opt('The reserve', { t: 'wall_deploy', what: 'reserve', value: String(r) }, r === 0 ? 'Every man in the line' : r < 0.2 ? `Hold back a few (${Math.round(b.us.men * r)})` : `Hold back a strong reserve (${Math.round(b.us.men * r)})`, true, undefined, r === 0 ? 'The most weight in the wall now; nothing to answer a flank or a tired line' : 'Fewer men in the wall now; fresh men later, and a flank answered'));
-          return (['front', 'wall', 'rear'] as Position[]).map((pos) => opt('Your place', { t: 'wall_deploy', what: 'pos', value: pos }, POSITION_NAMES[pos], true, undefined, pos === 'front' ? 'The line hits harder for you (+10%), and is steadier; you are first to bleed' : pos === 'wall' ? 'Less danger; the men still see you' : 'You see their move after next as well; little danger, and less fame'));
+          if (w.step === 'reserve') return [0, 0.15, 0.3].map((r) => opt('The reserve', { t: 'wall_deploy', what: 'reserve', value: String(r) }, r === 0 ? 'Every man in the line' : r < 0.2 ? `Hold back a few (${Math.round(b.us.men * r)})` : `Hold back a strong reserve (${Math.round(b.us.men * r)})`, true, undefined, r === 0 ? 'The most weight in the wall now; nothing to answer a flank or a tired line' : 'Fewer men in the wall now; fresh men later, and a flank answered')).concat(auto);
+          return (['front', 'wall', 'rear'] as Position[]).map((pos) => opt('Your place', { t: 'wall_deploy', what: 'pos', value: pos }, POSITION_NAMES[pos], true, undefined, pos === 'front' ? 'The line hits harder for you (+10%), and is steadier; you are first to bleed' : pos === 'wall' ? 'Less danger; the men still see you' : 'You see their move after next as well; little danger, and less fame')).concat(auto);
         }
         const out = WALL_ORDERS.map((o) => {
           const pr = project(b, o);
-          const parts = [pr.note, `they lose about ${pr.dealt}, you about ${pr.taken}`, `their line ${b.them.morale.toFixed(1)} → ${Math.max(0, pr.theirCohesion).toFixed(1)}`, `yours ${b.us.morale.toFixed(1)} → ${Math.max(0, pr.ourCohesion).toFixed(1)}`, `breath ${w.usStamina} → ${pr.ourStamina}`, pr.ground !== w.ground ? (pr.ground > w.ground ? 'you gain ground' : 'you give ground') : ''].filter(Boolean);
-          return opt(state.service ? 'Your shout' : 'Orders', { t: 'wall_order', order: o }, ORDER_LABEL[o], pr.available, pr.why, parts.join('; '));
+          const spirit = (from: number, to: number) => (to <= 0 ? `${from.toFixed(1)} → breaks` : `${from.toFixed(1)} → ${to.toFixed(1)}`);
+          const parts = [`they lose about ${pr.dealt}, you about ${pr.taken}`, `their spirit ${spirit(b.them.morale, pr.theirCohesion)}`, `yours ${spirit(b.us.morale, pr.ourCohesion)}`, `breath ${w.usStamina} → ${pr.ourStamina}`, pr.ground !== w.ground ? (pr.ground > w.ground ? 'you gain ground' : 'you give ground') : ''].filter(Boolean);
+          return opt(state.service ? 'Your shout' : 'Orders', { t: 'wall_order', order: o }, ORDER_LABEL[o], pr.available, pr.why, `${pr.note} ${upFirst(parts.join('; '))}`.trim());
         });
         out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
         return out;

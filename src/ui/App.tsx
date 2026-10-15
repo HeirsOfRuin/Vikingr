@@ -24,8 +24,9 @@ const NAMES = ['Hrafn', 'Asbjorn', 'Ketil', 'Orm', 'Thorir', 'Ulfar', 'Eyvind', 
 /** Playtest jumps into the year 830: where and when each chapter opens, and what has to be true first. Never saved. */
 const CHAPTERS: { scene: string; label: string; year: number; doy: number; at: string; phase: GameState['phase']; setup?: (s: GameState) => void }[] = [
   { scene: 'i_approach', label: 'Iona', year: 830, doy: 158, at: 'iona', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; if (s.service) s.service.route = ['bangor']; } },
-  { scene: 'b_lough', label: 'Bangor', year: 830, doy: 170, at: 'bangor', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; s.loot = 400; if (s.service) s.service.route = []; } },
+  { scene: 'b_lough', label: 'Bangor (the new shield-wall)', year: 830, doy: 170, at: 'bangor', phase: 'sailing', setup: (s) => { s.flags.o_iona = 1; s.loot = 400; if (s.service) s.service.route = []; } },
   { scene: 'y_feast', label: 'Yule', year: 830, doy: 358, at: 'home_fjord', phase: 'winter', setup: (s) => { s.flags.o_iona = 1; s.flags.bg_left = 1; s.flags._winter = 830; s.hallLeft = 3; } },
+  { scene: 'y_holm_eve', label: 'The Yule holmgang (the new single combat)', year: 830, doy: 359, at: 'home_fjord', phase: 'winter', setup: (s) => { s.flags.o_iona = 1; s.flags.bg_left = 1; s.flags._winter = 830; s.hallLeft = 3; } },
   { scene: 'j_council', label: 'Spring 831, as captain of the Raven', year: 831, doy: 60, at: 'home_fjord', phase: 'muster', setup: captain },
   { scene: 'c_approach', label: 'Conaille, 831, as captain', year: 831, doy: 170, at: 'conaille', phase: 'sailing', setup: captain },
   { scene: 'l_approach', label: 'Lindisfarne, 831, as captain', year: 831, doy: 165, at: 'lindisfarne', phase: 'sailing', setup: captain },

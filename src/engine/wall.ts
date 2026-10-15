@@ -40,10 +40,12 @@ export interface WallState {
 }
 
 export const WALL = {
-  k: 0.07,
+  k: 0.12,
   stamina: 8,
   spears: 2,
   maxRounds: 8,
+  /** Two pushing lines: one gains ground only if it is this much the stronger, men and breath together. */
+  groundEdge: 1.25,
   /** Cohesion lost for losses: this much for losing the whole line (as now: 12). */
   cohesionFromLosses: 12,
   /** Deployment. */
@@ -78,7 +80,7 @@ const ORDER = {
   brace: { cost: -1, out: 0.35, in: 0.55, ground: 0 },
   press: { cost: 2, out: 1.0, in: 1.0, ground: 1 },
   spears: { cost: 1, out: 0.75, in: 0.35, ground: 0 },
-  charge: { cost: 3, out: 1.7, in: 1.25, ground: 1 },
+  charge: { cost: 3, out: 1.5, in: 1.25, ground: 1 },
   fall_back: { cost: -3, out: 0, in: 0.4, ground: -1 },
   reserve: { cost: -WALL.reserveStamina, out: 0.5, in: 0.55, ground: 0 },
 } as const;
@@ -142,8 +144,12 @@ export function project(b: BattleState, o: WallOrder): Projection {
   // ground: whoever pushes harder gains it; a fall back gives it
   let ground = 0;
   if (o === 'fall_back') ground = -1;
-  else if (i === 'feint' && op.ground > 0) ground = 1;
-  else if (op.ground > 0 && ip.ground > 0) ground = ourPower * staminaFactor(w.usStamina) > theirPower * staminaFactor(w.themStamina) * 1.05 ? 1 : ourPower * staminaFactor(w.usStamina) * 1.05 < theirPower * staminaFactor(w.themStamina) ? -1 : 0;
+  // a feigned retreat gives you ground that is worth nothing: they step back, you follow, and the trap closes
+  else if (i === 'feint') ground = 0;
+  else if (op.ground > 0 && ip.ground > 0) {
+    const ours = ourPower * staminaFactor(w.usStamina), theirs = theirPower * staminaFactor(w.themStamina);
+    ground = ours > theirs * WALL.groundEdge ? 1 : ours * WALL.groundEdge < theirs ? -1 : 0;
+  }
   // a line that is not set gives ground: one that is reforming, or throwing, or busy with a flank
   else if (op.ground > 0 && (i === 'reform' || i === 'volley')) ground = 1;
   else if (ip.ground > 0 && o === 'spears') ground = -1;
@@ -219,6 +225,8 @@ export function startWall(b: BattleState, leads: boolean, rng: RngCursor): void 
   const w = b.wall;
   w.intent = enemyIntent(b, w.themStamina, w.themSpears, 1, rng);
   w.next = enemyIntent(b, w.themStamina, w.themSpears, 2, rng);
+  // another man's wall: the scene has already put him in it, and the deployment is not his
+  if (!leads) deploy(b, 'spread', 0, b.position);
 }
 
 /** Deployment, before the first round: where the sworn men stand, the reserve, and where he stands. */
@@ -242,7 +250,7 @@ export function deploy(b: BattleState, sworn: SwornPlace, reserveShare: number, 
   // the sworn men held back are the reserve's spine: they come in later, with the fresh men
   for (const n of b.named) n.slot = sworn === 'front' ? 'front' : sworn === 'reserve' ? 'rear' : n.slot;
   w.phase = 'fight';
-  b.log.push(`${sworn === 'front' ? 'Your sworn men take the front rank' : sworn === 'spread' ? 'Your sworn men spread through the line, one to every few benches' : 'Your sworn men stand back with the reserve'}${w.reserveMen ? `; ${w.reserveMen} men held back` : ''}. You stand ${pos === 'front' ? 'in the front rank' : pos === 'wall' ? 'in the wall' : 'behind it'}.`);
+  if (w.leads) b.log.push(`${sworn === 'front' ? 'Your sworn men take the front rank' : sworn === 'spread' ? 'Your sworn men spread through the line, one to every few benches' : 'Your sworn men stand back with the reserve'}${w.reserveMen ? `; ${w.reserveMen} men held back` : ''}. You stand ${pos === 'front' ? 'in the front rank' : pos === 'wall' ? 'in the wall' : 'behind it'}.`);
 }
 
 /** One round: his order against the move they showed him. */
@@ -358,7 +366,9 @@ export function deployAuto(b: BattleState): { sworn: SwornPlace; reserve: number
 }
 
 export function fightOutWall(b: BattleState, rng: RngCursor): void {
-  if (b.wall!.phase === 'deploy') { const d = deployAuto(b); deploy(b, d.sworn, d.reserve, d.pos); }
+  const w = b.wall!;
+  // what he has already chosen stands; the men settle the rest
+  if (w.phase === 'deploy') { const d = deployAuto(b); deploy(b, w.step === 'sworn' ? d.sworn : w.sworn, w.step === 'pos' ? w.reserveShare : d.reserve, d.pos); }
   let g = 0;
   while (!b.over && g++ < 20) wallRound(b, wallAuto(b), rng);
 }

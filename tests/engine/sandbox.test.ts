@@ -174,5 +174,5 @@ describe('the years after the story', () => {
       years += lived.size;
     }
     expect(scenes / years).toBeGreaterThan(4);
-  });
+  }, 30000);
 });

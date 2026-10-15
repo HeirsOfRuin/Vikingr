@@ -16,7 +16,7 @@ function Fighter({ s, you }: { s: DuelSide; you?: boolean }) {
       <div class="name">{you ? 'You' : s.name}</div>
       Blood {Math.max(0, s.hp)}/{s.hpMax}
       <Bar value={s.hp} max={s.hpMax} kind="red" />
-      Wind {Math.max(0, s.stamina)}/{s.staminaMax}
+      Breath {Math.max(0, s.stamina)}/{s.staminaMax}
       <Bar value={s.stamina} max={s.staminaMax} kind="gold" />
       {s.shields > 0
         ? <>Shields <span class="shields">{'◆'.repeat(s.shields)}</span> <span class="muted">({s.integrity} blows left in this one)</span></>

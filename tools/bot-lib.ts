@@ -94,7 +94,8 @@ export class Bot {
       }
       case 'battle': {
         const b = state.pending!.t === 'battle' ? state.pending!.battle : null;
-        if (b && b.position !== this.position() && !b.heroDown && b.round === 0) return { t: 'position', pos: this.position() };
+        if (b?.wall?.phase === 'deploy' && b.wall.step === 'pos') return { t: 'wall_deploy', what: 'pos', value: this.position() };
+        if (b && !b.wall && b.position !== this.position() && !b.heroDown && b.round === 0) return { t: 'position', pos: this.position() };
         return pick((a) => a.t === 'battle_auto')!;
       }
       case 'trade': {
