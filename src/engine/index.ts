@@ -11,6 +11,8 @@ import type { CondInput } from '../content/schema';
 import { applyEffects } from './effects';
 import { HOSTAGE, hostageOp, kindsAt } from './hostages';
 import { open, trigger } from './director';
+import { BOUT, BOUT_MOVES, boutExchange, fightOutBout, MOVE_LABEL, projectBout, type BoutMove } from './bout';
+import { deployStep, fightOutWall, ORDER_LABEL, project, wallRound, WALL_ORDERS, type WallOrder } from './wall';
 import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
@@ -77,6 +79,9 @@ export type Action =
   | { t: 'share'; how: ShareHow }
   | { t: 'hall'; what: HallWhat; arg?: string }
   | { t: 'duel_move'; move: DuelMove }
+  | { t: 'bout_move'; move: BoutMove }
+  | { t: 'wall_order'; order: WallOrder }
+  | { t: 'wall_deploy'; what: 'sworn' | 'reserve' | 'pos'; value: string }
   | { t: 'duel_auto' }
   | { t: 'yield' }
   | { t: 'order'; order: Order }
@@ -313,6 +318,17 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'duel': {
       const d = (p as { duel: import('./state').DuelState }).duel;
+      // the second form (docs/FRAME-COMBAT-2.md): every move shows what it will do against what he is about to do
+      if (d.bout) {
+        const out = BOUT_MOVES.map((m) => {
+          const pr = projectBout(d, m);
+          const parts = [pr.note, pr.toFoe ? `he takes about ${pr.toFoe}` : '', pr.toHero ? `you take about ${pr.toHero}` : '', `breath ${d.hero.stamina} → ${pr.stamina}`, d.kind === 'holmgang' && pr.edge > d.bout!.heroEdge ? `${BOUT.edge - pr.edge <= 0 ? 'off the cloak' : `${BOUT.edge - pr.edge} step${BOUT.edge - pr.edge === 1 ? '' : 's'} from the edge`}` : ''].filter(Boolean);
+          return opt('Moves', { t: 'bout_move', move: m }, MOVE_LABEL[m], pr.available, pr.why, parts.join('; '));
+        });
+        out.push(opt('Other', { t: 'duel_auto' }, 'Let instinct take it'));
+        if (canYield(d)) out.push(opt('Other', { t: 'yield' }, 'Step off the cloak and pay the holmlausn', true, undefined, `${formatSilver(DUEL.holmlausnMarks * ORTUG_PER_MARK)}; honour falls`));
+        return out;
+      }
       // the triangle, said plainly (playtest 2026-10-15: nothing on screen said what beats what)
       const answers = d.read.length ? DUEL_MOVES.filter((m) => d.read.some((r) => BEATS[m].includes(r))) : [];
       const out = DUEL_MOVES.map((m) => {
@@ -326,6 +342,26 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'battle': {
       const b = (p as { battle: import('./state').BattleState }).battle;
+      // the second form (docs/FRAME-COMBAT-2.md): deploy, then answer what they show you, and see the numbers first
+      if (b.wall) {
+        const w = b.wall;
+        if (w.phase === 'deploy') {
+          if (w.step === 'sworn') return [
+            opt('Your sworn men', { t: 'wall_deploy', what: 'sworn', value: 'front' }, 'In the front rank', true, undefined, 'The line hits harder (+15%); they are first to bleed'),
+            opt('Your sworn men', { t: 'wall_deploy', what: 'sworn', value: 'spread' }, 'Spread through the line', true, undefined, 'Steadier men all along it: cohesion +1'),
+            opt('Your sworn men', { t: 'wall_deploy', what: 'sworn', value: 'reserve' }, 'Back with the reserve', true, undefined, 'Safe until the reserve goes in; then cohesion +1 more'),
+          ];
+          if (w.step === 'reserve') return [0, 0.15, 0.3].map((r) => opt('The reserve', { t: 'wall_deploy', what: 'reserve', value: String(r) }, r === 0 ? 'Every man in the line' : r < 0.2 ? `Hold back a few (${Math.round(b.us.men * r)})` : `Hold back a strong reserve (${Math.round(b.us.men * r)})`, true, undefined, r === 0 ? 'The most weight in the wall now; nothing to answer a flank or a tired line' : 'Fewer men in the wall now; fresh men later, and a flank answered'));
+          return (['front', 'wall', 'rear'] as Position[]).map((pos) => opt('Your place', { t: 'wall_deploy', what: 'pos', value: pos }, POSITION_NAMES[pos], true, undefined, pos === 'front' ? 'The line hits harder for you (+10%), and is steadier; you are first to bleed' : pos === 'wall' ? 'Less danger; the men still see you' : 'You see their move after next as well; little danger, and less fame'));
+        }
+        const out = WALL_ORDERS.map((o) => {
+          const pr = project(b, o);
+          const parts = [pr.note, `they lose about ${pr.dealt}, you about ${pr.taken}`, `their line ${b.them.morale.toFixed(1)} → ${Math.max(0, pr.theirCohesion).toFixed(1)}`, `yours ${b.us.morale.toFixed(1)} → ${Math.max(0, pr.ourCohesion).toFixed(1)}`, `breath ${w.usStamina} → ${pr.ourStamina}`, pr.ground !== w.ground ? (pr.ground > w.ground ? 'you gain ground' : 'you give ground') : ''].filter(Boolean);
+          return opt(state.service ? 'Your shout' : 'Orders', { t: 'wall_order', order: o }, ORDER_LABEL[o], pr.available, pr.why, parts.join('; '));
+        });
+        out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
+        return out;
+      }
       const ok = availableOrders(b, 'us');
       // what beats what, said plainly, and the best answer to what they look likely to do (playtest 2026-10-15)
       const fc = enemyForecast(b);
@@ -849,21 +885,29 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       break;
     case 'share': report('The share-out', shareOut(state, content, action.how, rng)); break;
     case 'hall': report('The hall', hallAction(state, content, rng, action.what, action.arg)); break;
+    case 'bout_move':
     case 'duel_move':
     case 'duel_auto':
     case 'yield': {
       const d = (state.pending as { t: 'duel'; duel: import('./state').DuelState }).duel;
       if (action.t === 'yield') d.over = 'yielded';
+      else if (action.t === 'bout_move') boutExchange(d, action.move, rng);
+      else if (action.t === 'duel_auto' && d.bout) fightOutBout(d, rng, true);
       else if (action.t === 'duel_auto') fightOut(d, duelInstinct, rng, true);
       else resolveExchange(d, action.move, habitPolicy(d, 'foe', rng), rng);
       if (d.over) finishDuel(state, content, rng, d);
       break;
     }
+    case 'wall_deploy':
+    case 'wall_order':
     case 'order':
     case 'battle_auto':
     case 'position': {
       const b = (state.pending as { t: 'battle'; battle: import('./state').BattleState }).battle;
-      if (action.t === 'position') {
+      if (action.t === 'wall_deploy') { deployStep(b, action.what, action.value); if (b.wall?.phase === 'fight') state.position = b.position; }
+      else if (action.t === 'wall_order') wallRound(b, action.order, rng);
+      else if (action.t === 'battle_auto' && b.wall) fightOutWall(b, rng);
+      else if (action.t === 'position') {
         b.position = action.pos;
         state.position = action.pos;
         b.log.push(`You take your place: ${POSITION_NAMES[action.pos].toLowerCase()}.`);

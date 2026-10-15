@@ -156,6 +156,8 @@ export interface DuelState {
   over: null | 'won' | 'lost' | 'yielded' | 'foe_yielded' | 'parted' | 'dead';
   win?: string;
   lose?: string;
+  /** The second form of single combat (docs/FRAME-COMBAT-2.md): shown intent, stamina, shields, the cloak's edge. */
+  bout?: import('./bout').BoutState;
 }
 
 export interface BattleSide {
@@ -206,6 +208,8 @@ export interface BattleState {
   allyMen?: number;
   /** A host: the other wings of the line (docs/FRAME-HOSTS-FRISIA.md). */
   host?: import('./host').HostState;
+  /** The second form of the shield-wall (docs/FRAME-COMBAT-2.md): deployment, shown intent, stamina, ground. */
+  wall?: import('./wall').WallState;
 }
 
 export type Pending =

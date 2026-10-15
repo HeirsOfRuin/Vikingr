@@ -7,6 +7,8 @@ import type { Action, ActionOption } from '../../engine/index';
 import { MOVE_NAMES, foeForecast } from '../../engine/duel';
 import { ORDER_NAMES, POSITION_NAMES, enemyForecast } from '../../engine/battle';
 import { Actions, Bar } from './Actions';
+import { BOUT, FOE_NEXT, FOE_TELL } from '../../engine/bout';
+import { INTENT_SHORT, INTENT_TEXT, WALL } from '../../engine/wall';
 
 function Fighter({ s, you }: { s: DuelSide; you?: boolean }) {
   return (
@@ -23,7 +25,35 @@ function Fighter({ s, you }: { s: DuelSide; you?: boolean }) {
   );
 }
 
+/** The second form of single combat (docs/FRAME-COMBAT-2.md): what he is about to do is shown; every move shows its price. */
+function BoutView({ content, d, options, onAct }: { content: ContentBundle; d: DuelState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  const foe = content.fighters[d.foeId];
+  const b = d.bout!;
+  const holm = d.kind === 'holmgang';
+  return (
+    <div>
+      <h2>{holm ? 'The holmgang' : 'Single combat'}{d.lethal && <span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span>}</h2>
+      {foe && <p class="muted small">{foe.desc}</p>}
+      <div class="fighters">
+        <Fighter s={d.hero} you />
+        <Fighter s={d.foe} />
+      </div>
+      <div class="card sans small">
+        <div><b>{d.foe.name.split(' ')[0]} {FOE_TELL[b.foeIntent]}.</b>{b.foeOff ? ' He is off balance.' : ''}</div>
+        {b.foeNext && <div class="muted">You can read him further: after that, he means to {FOE_NEXT[b.foeNext]}.</div>}
+        {b.heroOff && <div>You are off balance: your next blow lands soft, and his lands hard.</div>}
+        {holm && <div class="muted">The cloak: you are {BOUT.edge - b.heroEdge} step{BOUT.edge - b.heroEdge === 1 ? '' : 's'} from the edge; he is {BOUT.edge - b.foeEdge}. Step off it and you have run.</div>}
+        <div class="muted">Each move below says what it will do against his. A great blow costs 3 breath, a rush 2, a cut 1; shield up and stepping back give breath back.</div>
+      </div>
+      <div class="log recent">{d.log.slice(-4).map((l, i) => <p key={d.log.length + i}>{l}</p>)}</div>
+      <Actions options={options} onAct={onAct} />
+      {d.log.length > 4 && <div class="log">{d.log.slice(0, -4).reverse().map((l, i) => <p key={i}>{l}</p>)}</div>}
+    </div>
+  );
+}
+
 export function DuelView({ content, d, options, onAct }: { content: ContentBundle; d: DuelState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  if (d.bout) return <BoutView content={content} d={d} options={options} onAct={onAct} />;
   const fc = foeForecast(d);
   const foe = content.fighters[d.foeId];
   const seen = DUEL_MOVES.filter((m) => d.seen[m]).map((m) => `${MOVE_NAMES[m]} ${d.seen[m]}`).join(', ');
@@ -60,7 +90,58 @@ function Wall({ name, men, start, morale, them }: { name: string; men: number; s
   );
 }
 
+/** The second form of the shield-wall (docs/FRAME-COMBAT-2.md): deployment, then their move shown, and the price of each answer. */
+function WallView({ content, b, options, onAct }: { content: ContentBundle; b: BattleState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  const foe = content.foes[b.foeId];
+  const w = b.wall!;
+  const groundWord = w.ground === 0 ? 'the lines are where they met' : w.ground > 0 ? `you have pushed them back ${w.ground} step${w.ground === 1 ? '' : 's'} (at 3 they break)` : `they have pushed you back ${-w.ground} step${w.ground === -1 ? '' : 's'} (at 3 your line breaks)`;
+  return (
+    <div>
+      <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span></h2>
+      {foe && <p class="muted small">{foe.desc}</p>}
+      {w.phase === 'deploy' ? (
+        <div class="card sans small">
+          <div><b>{b.them.name}: about {b.them.men}. {b.us.name}: {b.us.men}.</b></div>
+          <div>Before the horns: {w.step === 'sworn' ? 'where do your sworn men stand?' : w.step === 'reserve' ? 'how many men do you hold back?' : 'where do you stand?'}</div>
+          {!w.leads && <div class="muted">You do not command this wall. Where you stand, and what you shout, is yours.</div>}
+        </div>
+      ) : (
+        <>
+          <div class="walls">
+            <WallSide name={b.us.name} men={b.us.men} start={b.us.start} cohesion={b.us.morale} stamina={w.usStamina} />
+            <WallSide name={b.them.name} men={b.them.men} start={b.them.start} cohesion={b.them.morale} stamina={w.themStamina} them />
+          </div>
+          <div class="card sans small">
+            <div><b>They are about to move: {INTENT_TEXT[w.intent]}.</b></div>
+            {b.position === 'rear' && !b.heroDown && <div class="muted">From behind the wall you can see what comes after: {INTENT_SHORT[w.next]}.</div>}
+            <div>Round {b.round + 1} of {w.maxRounds}. Ground: {groundWord}. Spears: {w.spears} volley{w.spears === 1 ? '' : 's'} left.{w.reserveMen > 0 && !w.reserveIn ? ` Reserve: ${w.reserveMen} men, waiting.` : w.reserveIn ? ' The reserve is in.' : ''}</div>
+            <div>You stand: <b>{b.heroDown ? 'carried out of the wall' : POSITION_NAMES[b.position].toLowerCase()}</b>. Blood {Math.max(0, b.heroHp)}/{b.heroHpMax}.</div>
+            <div class="muted">A line breaks when its spirit reaches 0, or when it is pushed back 3 steps. Each order below shows what it will do this round.</div>
+          </div>
+        </>
+      )}
+      <div class="log recent">{b.log.slice(-4).map((l, i) => <p key={b.log.length + i}>{l}</p>)}</div>
+      <Actions options={options} onAct={onAct} />
+      {b.log.length > 4 && <div class="log">{b.log.slice(0, -4).reverse().map((l, i) => <p key={i}>{l}</p>)}</div>}
+    </div>
+  );
+}
+
+function WallSide({ name, men, start, cohesion, stamina, them }: { name: string; men: number; start: number; cohesion: number; stamina: number; them?: boolean }) {
+  return (
+    <div class={`wall${them ? ' them' : ''}`}>
+      <div>{name}: {Math.max(0, men)} of {start} standing</div>
+      <div class="strip" style={{ width: `${Math.max(2, (100 * men) / Math.max(start, 1))}%` }} />
+      <div class="muted">Spirit {Math.max(0, cohesion).toFixed(1)}</div>
+      <Bar value={Math.max(0, cohesion)} max={10} kind={them ? 'red' : 'sea'} />
+      <div class="muted">Breath {stamina}/{WALL.stamina}</div>
+      <Bar value={stamina} max={WALL.stamina} kind="gold" />
+    </div>
+  );
+}
+
 export function BattleView({ content, b, options, onAct }: { content: ContentBundle; b: BattleState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  if (b.wall) return <WallView content={content} b={b} options={options} onAct={onAct} />;
   const fc = enemyForecast(b);
   const likely = [...ORDERS].filter((o) => fc[o] > 0).sort((x, y) => fc[y] - fc[x]).slice(0, 2);
   const foe = content.foes[b.foeId];

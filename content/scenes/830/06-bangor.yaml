@@ -112,14 +112,14 @@
         - { position: front }
         - &bangor_battle
           if: flag.bg_traders
-          then: [ { battle: { foe: ulster_levy, men: 15, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+          then: [ { battle: { foe: ulster_levy, men: 15, terrain: field, win: b_field, lose: b_rout, parted: b_rout, wall: true } } ]
           else:
             - if: flag.bg_scouted
-              then: [ { battle: { foe: ulster_levy, men: 19, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+              then: [ { battle: { foe: ulster_levy, men: 19, terrain: field, win: b_field, lose: b_rout, parted: b_rout, wall: true } } ]
               else:
                 - if: flag.bg_seen
-                  then: [ { battle: { foe: ulster_levy, men: 30, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
-                  else: [ { battle: { foe: ulster_levy, men: 24, terrain: field, win: b_field, lose: b_rout, parted: b_rout } } ]
+                  then: [ { battle: { foe: ulster_levy, men: 30, terrain: field, win: b_field, lose: b_rout, parted: b_rout, wall: true } } ]
+                  else: [ { battle: { foe: ulster_levy, men: 24, terrain: field, win: b_field, lose: b_rout, parted: b_rout, wall: true } } ]
       result: |
         You shoulder in beside him in the front rank. He glances at you sideways. "{father}'s boy," he says. "Keep your shield up and your mouth shut." Above you the banner cracks in the wind: a black raven on red.
     - id: front

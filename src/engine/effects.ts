@@ -1,4 +1,7 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { BOUT, startBout } from './bout';
+import { effAttr } from './hero';
+import { startWall } from './wall';
 import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
 import { dateOf } from './calendar';
@@ -77,11 +80,16 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         m.nickname = e.man.nickname;
         journal(state, `${m.name} is called ${e.man.nickname} now.`);
       }
-    } else if ('fight' in e) startDuel(state, content, e.fight.foe, e.fight.kind, e.fight.lethal, e.fight.win, e.fight.lose);
-    else if ('battle' in e) {
-      const { raid, parted, ...b } = e.battle;
+    } else if ('fight' in e) {
+      startDuel(state, content, e.fight.foe, e.fight.kind, e.fight.lethal, e.fight.win, e.fight.lose);
+      // the second form of single combat (docs/FRAME-COMBAT-2.md)
+      if (e.fight.bout && state.pending?.t === 'duel') startBout(state.pending.duel, effAttr(state, content, 'wit') + state.hero.skills.cunning >= BOUT.readAhead, rng);
+    } else if ('battle' in e) {
+      const { raid, parted, wall, ...b } = e.battle;
       startBattle(state, content, { ...b, context: raid ? 'raid' : state.voyage ? 'sea' : 'scene', place: state.at });
       if (parted && state.pending?.t === 'battle') state.pending.battle.parted = parted;
+      // the second form of the shield-wall (docs/FRAME-COMBAT-2.md)
+      if (wall && state.pending?.t === 'battle') startWall(state.pending.battle, !state.service, rng);
       if (raid && state.at && !state.seasonRaids.includes(state.at)) state.seasonRaids.push(state.at);
     }
     else if ('queue' in e) state.queue.push({ scene: e.queue.scene, day: state.day + e.queue.days });
