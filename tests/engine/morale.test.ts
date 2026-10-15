@@ -9,9 +9,10 @@ import { dayOf } from '../../src/engine/calendar';
 // Playtest 2026-10-15: a crew at morale 2 or less counted as broken before a blow was struck,
 // and lost every fight against any odds ("93 to 14"); each loss cost more morale.
 describe('a sullen crew', () => {
-  it('starts a fight just above breaking, not broken', () => {
-    expect(battleMorale(0)).toBeGreaterThan(BATTLE.breakMorale);
-    expect(battleMorale(7)).toBe(7);
+  it('carries its camp mood into the wall as a modifier, not a cliff', () => {
+    expect(battleMorale(0)).toBeGreaterThan(BATTLE.breakMorale + 1);
+    expect(battleMorale(10)).toBeLessThanOrEqual(8);
+    expect(battleMorale(6)).toBeGreaterThan(battleMorale(2));
   });
 
   it('beats a handful of islanders even at morale 0, and is told it is sullen', () => {

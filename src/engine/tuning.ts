@@ -90,12 +90,19 @@ export const BATTLE = {
   k: 0.05,
   matchupStep: 0.4,
   breakMorale: 2,
+  /** Camp morale into battle morale: base + scale x camp (src/engine/fights.ts battleMorale). */
+  moraleBase: 4,
+  moraleScale: 0.4,
+  /** What a battle does to the crew's camp morale. */
+  wonMorale: 1,
+  lostMorale: 1,
   breakStrength: 0.3,
   routPursuit: 0.15,
   moraleFromLosses: 12,
   moraleFromMatchup: 0.5,
   giveGroundMorale: 0.3,
-  heroHit: { front: 0.16, wall: 0.07, rear: 0.015 },
+  // front 0.16, wall 0.07 until 2026-10-15: measured when most fights broke in round 1 (the sullen-crew bug)
+  heroHit: { front: 0.12, wall: 0.05, rear: 0.012 },
   heroPower: { front: 1.1, wall: 1.0, rear: 0.95 },
   heroMoraleLoss: { front: 0.85, wall: 0.9, rear: 1.0 },
   manHit: { front: 0.06, wall: 0.03, rear: 0.01 },
@@ -110,6 +117,9 @@ export const BATTLE = {
   alePerMan: 0.5,
   aleDays: 20,
   heroDownMorale: 2,
+  /** The hero cut down in the wall dies this often: his side won (carried out), or lost (left behind). Was 0.4 either way. */
+  downDeathWon: 0.2,
+  downDeathLost: 0.5,
   flankRatio: 1.3,
   /** His skills in the wall (the author, 2026-10-14: how much do skills matter?). Measured from a man of
    *  weapons 2, shield 2, command 1: each weapons point adds to the line's blows, most in the front rank;

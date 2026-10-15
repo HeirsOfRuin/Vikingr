@@ -121,11 +121,12 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
 
 // ---- battle ----
 
-/** A sullen crew still forms a wall: it starts the fight just above breaking, and breaks at the first bad turn.
- *  (Playtest, 2026-10-15: a crew at morale 2 or less counted as broken before a blow was struck, and lost every
- *  fight, against any odds, and each loss cost more morale.) */
+/** A crew's mood in camp colours how it stands in the wall; it does not decide it. Camp morale 0..10 becomes
+ *  battle morale BATTLE.moraleBase .. moraleBase + 10 * moraleScale (4..8), against a foe's 6 + quality.
+ *  (Playtest, 2026-10-15: battle morale was camp morale; a crew at 2 or less was broken before a blow was struck,
+ *  a sullen crew broke at the first bad round, and each loss cost more morale. The author lost every fight.) */
 export function battleMorale(campMorale: number): number {
-  return Math.max(campMorale, BATTLE.breakMorale + 1);
+  return BATTLE.moraleBase + BATTLE.moraleScale * Math.max(0, Math.min(10, campMorale));
 }
 
 export function startBattle(
@@ -147,7 +148,7 @@ export function startBattle(
     them: { name: foe.name, men: opts.men, start: opts.men, quality: foe.quality, morale: 6 + foe.quality - (!state.service && hasFitting(state.ships[0], 'carved_prow') ? FITTING.prowMorale : 0), doctrine: foe.doctrine, last: null },
     position: state.position,
     round: 0,
-    log: [...(ally.line ? [ally.line] : []), `${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`, ...(!state.service && state.crew.morale <= BATTLE.breakMorale + 1 ? ['Your men are sullen and slow to lock shields. They will stand, but they will not stand long if this goes badly.'] : [])],
+    log: [...(ally.line ? [ally.line] : []), `${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`, ...(!state.service && state.crew.morale <= 3 ? ['Your men are sullen and slow to lock shields. They will stand, but they will not stand long if this goes badly.'] : [])],
     heroDown: false,
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),
@@ -209,7 +210,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     const named = creditWeapon(state, content, rng, 1);
     if (named) lines.push(named);
   }
-  state.crew.morale += won ? 1 : b.over === 'lost' ? -2 : -0.5;
+  state.crew.morale += won ? BATTLE.wonMorale : b.over === 'lost' ? -BATTLE.lostMorale : -0.5;
   state.crew.morale -= namedLost.length * 0.5;
   for (const m of aliveMen(state)) addLoyalty(m, won ? 1 : 0);
 
@@ -217,7 +218,8 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   state.hero.hp = Math.max(0, b.heroHp);
   for (const h of b.heroHits) if (h >= 5) addWound(state, content, woundFor(rng, h >= 7), b.place ? `the fight at ${content.places[b.place]?.name ?? b.place}` : 'a fight at sea', rng);
   if (b.heroDown) {
-    if (rng.float() < 0.4) {
+    // a man cut down in a wall that holds is carried out by his own; one left on a field his men ran from is not
+    if (rng.float() < (won ? BATTLE.downDeathWon : BATTLE.downDeathLost)) {
       kill(state, 'battle', `${state.hero.name} fell${b.place ? ' at ' + (content.places[b.place]?.name ?? b.place) : ' in a fight at sea'}, in the ${b.position === 'front' ? 'front rank' : 'shield-wall'}.`);
       return;
     }
