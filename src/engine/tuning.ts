@@ -101,6 +101,14 @@ export const BATTLE = {
   manHit: { front: 0.06, wall: 0.03, rear: 0.01 },
   // 0.4 until 2026-10-14: a raider's sworn men died about one a year, too fast for a hird to grow (docs/FRAME-HIRD-HOSTAGES.md)
   manHitDeath: 0.3,
+  /** Mending a crew's spirits in port (playtest 2026-10-15): rest steadies them up to this; a round of ale lifts
+   *  them by aleMorale, up to aleCap, for alePerMan ørtugar a head, once every aleDays at a port. */
+  restMorale: 0.5,
+  restCap: 5,
+  aleMorale: 2,
+  aleCap: 7,
+  alePerMan: 0.5,
+  aleDays: 20,
   heroDownMorale: 2,
   flankRatio: 1.3,
   /** His skills in the wall (the author, 2026-10-14: how much do skills matter?). Measured from a man of

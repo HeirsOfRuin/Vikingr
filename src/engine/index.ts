@@ -12,7 +12,7 @@ import { applyEffects } from './effects';
 import { HOSTAGE, hostageOp, kindsAt } from './hostages';
 import { open, trigger } from './director';
 import { hpMax, learn, effAttr } from './hero';
-import { addRecruits, aliveMen, capacity, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
+import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
 import { commitReserve, fightOutHost, hostRound } from './host';
@@ -36,7 +36,7 @@ import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
 import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
-import { DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
+import { BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -47,6 +47,7 @@ export type Action =
   | { t: 'forage' }
   | { t: 'resupply' }
   | { t: 'guest' }
+  | { t: 'ale' }
   | { t: 'hire' }
   | { t: 'land' }
   | { t: 'listen' }
@@ -485,6 +486,13 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           out.push(...tradeOption(state, content));
           const year = dateOf(state.day).year;
           if (GUEST_DAYS[tier] > 0) out.push(opt('Here', { t: 'guest' }, 'Ask for guest-right', state.places[at]?.guested !== year, 'You have had their hospitality this year.', `Food for ${GUEST_DAYS[tier]} days, free, once a year`));
+          // a crew's spirits can be mended in port, not only by winning (playtest 2026-10-15)
+          if (!state.service && state.crew.men > 0) {
+            const cost = Math.ceil(state.crew.men * BATTLE.alePerMan);
+            const last = state.places[at]?.aled;
+            const fresh = last === undefined || state.day - last >= BATTLE.aleDays;
+            out.push(opt('Here', { t: 'ale' }, 'Stand the men a round', fresh && state.silver >= cost && state.crew.morale < BATTLE.aleCap, !fresh ? 'You stood them a round here not long ago.' : state.crew.morale >= BATTLE.aleCap ? 'Their spirits are high enough.' : `You need ${formatSilver(cost)}.`, `${formatSilver(cost)}; the crew is ${moraleWord(state.crew.morale)}`));
+          }
           const hire = hireable(state, content, at);
           if (canHire(state, content, at) > 0) out.push(opt('Here', { t: 'hire' }, hire > 0 ? `Hire ${plural(hire, 'man', 'men')} here` : 'Hire men here', hire > 0, 'No benches free, or no silver for the gift.', `${formatSilver(hire * SIGN_ON_GIFT)}`));
           out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them; and they will remember' : 'Food for the crew; the locals will remember'));
@@ -701,8 +709,19 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       report('Uncharted water', ['The last land you know goes down behind you. After that there is only the sea, and what the old men said.', ...r.lines], undefined, { key: 'open_sea' });
       break;
     }
+    case 'ale': {
+      const cost = Math.ceil(state.crew.men * BATTLE.alePerMan);
+      state.silver -= cost;
+      state.places[state.at!]!.aled = state.day;
+      state.crew.morale = Math.min(BATTLE.aleCap, state.crew.morale + BATTLE.aleMorale);
+      clampMorale(state);
+      state.day += 1;
+      report('A round for the men', [`You stand the whole crew ale at the longest table in ${content.places[state.at!]!.name}, ${formatSilver(cost)} of it, and sit with them while they drink it. By the end of the night they are singing, badly, and by the morning they are talking about the next fight as if they meant to win it.`]);
+      break;
+    }
     case 'guest': {
       const days = GUEST_DAYS[tierAt(state, content, state.at!)];
+      state.crew.morale = Math.min(BATTLE.aleCap, state.crew.morale + 1);
       state.provisions += mouths(state) * days;
       state.places[state.at!]!.guested = dateOf(state.day).year;
       state.day += 1;
@@ -748,6 +767,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'rest':
       state.day += 3;
       heal(state, content, 3, 0.8);
+      // three quiet days ashore steady a shaken crew, though they won't lift a sullen one past ordinary
+      if (state.crew.morale < BATTLE.restCap) state.crew.morale = Math.min(BATTLE.restCap, state.crew.morale + BATTLE.restMorale);
       state.provisions = Math.max(0, state.provisions - mouths(state) * (state.at === 'home_fjord' ? 0 : 3));
       break;
     case 'end_season':

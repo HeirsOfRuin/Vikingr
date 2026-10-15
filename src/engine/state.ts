@@ -228,6 +228,8 @@ export interface PlaceState {
   hired?: number;
   /** The year he last asked for guest-right here. */
   guested?: number;
+  /** The day he last stood his crew a round here. */
+  aled?: number;
   /** He has made landfall here (its people have told him of their neighbours). */
   visited?: boolean;
   /** The year he last listened to the old sailors here. */

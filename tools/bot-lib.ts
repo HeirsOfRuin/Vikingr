@@ -194,6 +194,8 @@ export class Bot {
     const raid = pick((a) => a.t === 'raid');
     if (raid && this.policy !== 'homebody') return raid;
     this.visited.add(at);
+    // a sullen crew loses: mend it in port before the next fight (playtest 2026-10-15)
+    if (state.crew.morale <= 4) { const al = pick((a) => a.t === 'ale'); if (al) return al; }
     // the old sailors at the fire: a round of ale for a rumour (FRAME-FOUNDATION §1), once a year a port
     if (state.silver > 20) { const ls = pick((a) => a.t === 'listen'); if (ls) return ls; }
     // holds nearly full in mid-summer: share out on the strand and go on (playtest 4)

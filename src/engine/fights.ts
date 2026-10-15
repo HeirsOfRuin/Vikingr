@@ -17,7 +17,7 @@ import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { onRaided } from './standing';
 import { creditWeapon, FITTING, GEAR_MAX, GEAR_QUALITY, hasFitting, heroArmour, heroWeapon, shieldBonus } from './items';
-import { DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
+import { BATTLE, DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
 
 /** What a crew's victory is worth to an oarsman in it: the captain's deed, mostly. */
@@ -121,6 +121,13 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
 
 // ---- battle ----
 
+/** A sullen crew still forms a wall: it starts the fight just above breaking, and breaks at the first bad turn.
+ *  (Playtest, 2026-10-15: a crew at morale 2 or less counted as broken before a blow was struck, and lost every
+ *  fight, against any odds, and each loss cost more morale.) */
+export function battleMorale(campMorale: number): number {
+  return Math.max(campMorale, BATTLE.breakMorale + 1);
+}
+
 export function startBattle(
   state: GameState,
   content: ContentBundle,
@@ -136,11 +143,11 @@ export function startBattle(
     foeId: foe.id,
     terrain: opts.terrain,
     // his men's arms, and the ship's fittings, count only in a ship he commands (FRAME-FOUNDATION §2)
-    us: { name: state.service ? `${state.service.captain}'s men` : 'Your men', men: ours, start: ours, quality: state.crew.quality + (state.service ? 0 : state.crew.gear * GEAR_QUALITY + (opts.context === 'sea' && hasFitting(state.ships[0], 'shield_rack') ? FITTING.rackQuality : 0)), morale: state.crew.morale, doctrine: {}, last: null },
+    us: { name: state.service ? `${state.service.captain}'s men` : 'Your men', men: ours, start: ours, quality: state.crew.quality + (state.service ? 0 : state.crew.gear * GEAR_QUALITY + (opts.context === 'sea' && hasFitting(state.ships[0], 'shield_rack') ? FITTING.rackQuality : 0)), morale: battleMorale(state.crew.morale), doctrine: {}, last: null },
     them: { name: foe.name, men: opts.men, start: opts.men, quality: foe.quality, morale: 6 + foe.quality - (!state.service && hasFitting(state.ships[0], 'carved_prow') ? FITTING.prowMorale : 0), doctrine: foe.doctrine, last: null },
     position: state.position,
     round: 0,
-    log: [...(ally.line ? [ally.line] : []), `${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`],
+    log: [...(ally.line ? [ally.line] : []), `${foe.name}: about ${opts.men} of them. ${state.service ? `${state.service.captain} has ${ours}` : `You have ${ours}`}.`, ...(!state.service && state.crew.morale <= BATTLE.breakMorale + 1 ? ['Your men are sullen and slow to lock shields. They will stand, but they will not stand long if this goes badly.'] : [])],
     heroDown: false,
     heroHp: Math.max(1, Math.round(state.hero.hp)),
     heroHpMax: hpMax(state, content),

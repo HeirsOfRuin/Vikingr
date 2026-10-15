@@ -43,6 +43,9 @@ export function fleetSpeed(state: GameState, content: ContentBundle): number {
   return slowest * (rowers < oars * 0.5 ? 0.8 : 1);
 }
 
+/** The crew's mood in a word: what the UI and the port actions say. */
+export const moraleWord = (m: number) => (m >= 8 ? 'eager' : m >= 6 ? 'steady' : m >= 4 ? 'grumbling' : m >= 2 ? 'sullen' : 'close to leaving');
+
 export function clampMorale(state: GameState): void {
   state.crew.morale = Math.max(0, Math.min(10, Math.round(state.crew.morale * 10) / 10));
 }

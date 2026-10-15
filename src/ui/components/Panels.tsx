@@ -65,7 +65,8 @@ function KitCard({ content, state, onAct }: { content: ContentBundle; state: Gam
 
 const QUALITY = ['green', 'blooded', 'seasoned', 'veterans'];
 export const qualityWord = (q: number) => QUALITY[Math.max(0, Math.min(3, Math.floor(q)))]!;
-export const moraleWord = (m: number) => (m >= 8 ? 'eager' : m >= 6 ? 'steady' : m >= 4 ? 'grumbling' : m >= 2 ? 'sullen' : 'close to leaving');
+export { moraleWord } from '../../engine/crew';
+import { moraleWord } from '../../engine/crew';
 const luckWord = (h: number) => (h >= 3 ? 'The men say your luck is strong. They want to stand near you.' : h >= 1 ? 'The men say your luck holds.' : h <= -2 ? 'The men no longer look you in the eye.' : h < 0 ? 'Some of the men touch their amulets when you pass.' : 'Nobody has said anything about your luck yet.');
 const honourWord = (h: number) => (h >= 5 ? 'a man of his word, known for it' : h >= 2 ? 'well thought of' : h >= -1 ? 'neither praised nor blamed' : h >= -4 ? 'talked about, and not kindly' : 'a name men spit after');
 const loyaltyWord = (l: number) => (l >= 8 ? 'would die for you' : l >= 6 ? 'loyal' : l >= 4 ? 'his oath holds' : l >= 2 ? 'restless' : 'about to leave');
