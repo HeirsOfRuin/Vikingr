@@ -94,7 +94,7 @@ export function makeHostage(state: GameState, content: ContentBundle, rng: RngCu
   };
 }
 
-const PEOPLE_NAMES: Record<string, string> = { gael: 'Irish', english: 'English', frisian: 'Frisians', frankish: 'Franks', norse: 'Norse', danish: 'Danes', swedish: 'Swedes', baltic: 'Balts', rus: 'Rus' };
+const PEOPLE_NAMES: Record<string, string> = { gael: 'Irish', english: 'English', frisian: 'Frisians', frankish: 'Franks', norse: 'Norse', danish: 'Danes', swedish: 'Swedes', baltic: 'Balts', rus: 'Rus', pict: 'Picts', briton: 'Britons' };
 export function peopleName(p: string): string {
   return PEOPLE_NAMES[p] ?? p;
 }

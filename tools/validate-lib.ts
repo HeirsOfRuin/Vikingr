@@ -110,7 +110,11 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.ships[e.ship.type]) errors.push(`${where}: unknown ship type "${e.ship.type}"`);
       } else if ('voyage' in e) {
         if (!content.places[e.voyage]?.active) errors.push(`${where}: voyage to "${e.voyage}", not an active place`);
+      } else if ('longphort' in e || 'longphort_lost' in e) {
+        const pid = 'longphort' in e ? e.longphort : e.longphort_lost;
+        if (!content.places[pid]) errors.push(`${where}: unknown place "${pid}"`);
       } else if ('take_hostage' in e) {
+        if (e.take_hostage.place && !content.places[e.take_hostage.place]) errors.push(`${where}: unknown place "${e.take_hostage.place}"`);
         if (!content.hostages.kinds[e.take_hostage.kind]) errors.push(`${where}: unknown hostage kind "${e.take_hostage.kind}"`);
         if (e.take_hostage.captain && !content.captains[e.take_hostage.captain]) errors.push(`${where}: unknown captain "${e.take_hostage.captain}"`);
       }

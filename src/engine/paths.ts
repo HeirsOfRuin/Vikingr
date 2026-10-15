@@ -111,6 +111,7 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     case 'known': return state.known.includes(a!);
     case 'fate': return state.fates[a!] ?? 0;
     case 'standing': return standing(state, content, a!);
+    case 'norse': return !!state.places[a!]?.norse;
     case 'item': return state.items.some((x) => x.id === a);
     case 'omen': return state.omens[a!] ?? 0;
     case 'captain': {
@@ -153,6 +154,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn', 'master'].includes(b!) ? null : `bad sworn-man path "${path}"`;
     case 'item': return content.items[a!] && !b ? null : `unknown item "${a}"`;
     case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;
+    case 'norse': return content.places[a!] && !b ? null : `unknown place "${a}" for a ship-fort`;
     case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;
     case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
     case 'captain': return content.captains[a!] && ['rel', 'met', 'alive', 'partner'].includes(b!) ? null : `bad captain path "${path}"`;
@@ -163,7 +165,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
 
 /** Paths an { add } effect may change. */
 export function checkAddPath(content: ContentBundle, path: string): string | null {
-  if (['silver', 'loot', 'honour', 'hamingja', 'provisions', 'crew.men', 'crew.morale', 'thralls', 'muster', 'hoard'].includes(path)) return null;
+  if (['silver', 'loot', 'geld', 'honour', 'hamingja', 'provisions', 'crew.men', 'crew.morale', 'thralls', 'muster', 'hoard'].includes(path)) return null;
   const [ns, a, b] = path.split('.');
   if (ns === 'flag') return content.flags[a!] ? null : `undeclared flag "${a}"`;
   if (ns === 'skill' || ns === 'attr') return checkPath(content, path);

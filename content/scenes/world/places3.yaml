@@ -1,0 +1,523 @@
+# The third batch of places (docs/FRAME-IRELAND-SEINE.md): England, Scotland, Ireland, the Seine.
+# One arrival scene each, the first time he puts in. <place>_scouted makes a raid there likelier to catch them asleep.
+
+# ---- England ----
+- id: pl_jarrow
+  kind: place
+  trigger: arrive
+  at: [jarrow]
+  once: true
+  requires: ["!service"]
+  title: Bede's house
+  text: |
+    Jarrow sits on a low rise above the Tyne mudflats: a stone church, a long stone hall, a wall, and more monks than you'd expect for a place so plain.
+
+    Forty years ago a crew from the north came up this river and raided it. The monks tell the story to everyone, so they tell it to you, through a fisherman who has some Norse. The raiders' leader was killed in the fighting. Then a storm wrecked their ships at the river mouth, and the men who swam ashore were killed on the beach by the people of the Tyne.
+
+    The monks don't tell it as a threat. They tell it as a thing God did. That's worse.
+  choices:
+    - id: books
+      text: Ask to see the books of the wise man who lived here.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        An old monk shows you a book, in a room so quiet you can hear your own heart. Bede, he says. He wrote down everything that ever happened to the English, and worked out when Easter falls, and how the tides move with the moon. You ask what use that is. He says: you came up the river on the flood, didn't you? You did.
+    - id: count
+      text: Walk the shore and count their boats and their men.
+      effects: [ { set: flag.jarrow_scouted } ]
+      result: Not many men, and old ones. The river is shallow at the ebb, and the church is close to the water. You note the tides, the way Bede would have.
+    - id: go
+      text: Leave before the weather turns. The story stays with you.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: Out on the open sea, with the Tyne behind you, the wind gets up from the north, hard, and blows for two days. You ride it out. You think about the ships on the beach at the river mouth, forty years ago, and are glad you went when you did.
+
+- id: pl_whitby
+  kind: place
+  trigger: arrive
+  at: [whitby]
+  once: true
+  requires: ["!service"]
+  title: The minster on the cliff
+  text: |
+    Streoneshalh stands on the cliff above a river mouth, black against the sky: a minster, and long houses for monks and nuns, built by a princess two hundred years ago, they say, who ruled them all and argued with bishops and won.
+
+    A cowherd sang here once, a man who had never made a verse in his life, until an angel came to him in the byre and told him to sing. The song is still sung. A nun sings it to you, because you ask, standing in the doorway in the wind.
+  choices:
+    - id: song
+      text: Listen to the cowherd's song, all of it.
+      effects: [ { add: { skill.lore: 1, skill.speech: 1 } } ]
+      result: |
+        It's about the making of the world: heaven as a roof over the children of men. It isn't so different from what a skald might sing about Ymir and the gods. You find yourself saying it over on the voyage south. Your steersman asks what it is, and you can't quite explain.
+    - id: silver
+      text: Tell the nun the minster can pay to keep its roof.
+      effects: [ { add: { loot: 40, honour: -1 } }, { standing: { place: whitby, n: -2 } } ]
+      result: The abbess pays without argument, in old coins with English kings on them, and watches you all the way down the cliff path. They will remember your face here. Nuns, you find, have long memories.
+    - id: go
+      text: Water the ships at the river, and go.
+      result: The fishermen in the harbour watch you water and go, and don't move till your sail is down over the horizon.
+
+- id: pl_gipeswic
+  kind: place
+  trigger: arrive
+  at: [gipeswic]
+  once: true
+  requires: ["!service"]
+  title: The potters' town
+  text: |
+    Gipeswic smells of wood-smoke and wet clay: the whole town is kilns, rows of them along the river, and grey pots stacked in the yards by the thousand, waiting for ships. The East Angles' king, Æthelstan, has his face on the coins here and his reeve on the jetty.
+
+    Nobody here has seen a Northman's ship this close before. Half the town comes to look. The other half goes home and buries something.
+  choices:
+    - id: trade
+      text: Trade, politely. Buy pots for the farm and wool for the women.
+      effects: [ { add: { skill.trade: 1 } }, { standing: { place: gipeswic, n: 2 } } ]
+      result: The reeve takes his toll, and the potters take your silver, and nobody gets hurt, which surprises everybody. The pots are better than anything made at home. Your mother would have liked them.
+    - id: count
+      text: Count the king's men in the town, and the roads they'd come by.
+      check: { skill: cunning, attr: wit, difficulty: 4 }
+      success:
+        text: There aren't many. The king is a long day's ride inland, and his men with him. The town is all potters and traders, and a reeve with a bad leg.
+        effects: [ { set: flag.gipeswic_scouted } ]
+      failure:
+        text: The reeve sees you counting, and by evening there are a great many more spears in the town than there were in the morning.
+        effects: [ { standing: { place: gipeswic, n: -2 } } ]
+    - id: go
+      text: Buy water and go on.
+      result: The potters watch you go, and go back to their kilns. By the time you round the headland the smoke is rising again, as if nothing had happened.
+
+- id: pl_hamwic
+  kind: place
+  trigger: arrive
+  at: [hamwic]
+  once: true
+  requires: ["!service"]
+  title: The West Saxons' wic
+  text: |
+    Hamwic is a proper town, laid out in straight gravel streets with ditches along them, more people than Kaupang, and every house a workshop: smiths, bone-carvers, weavers, glass-melters. The wine comes in from Rouen across the sea every summer, and the wool goes out.
+
+    The king of the West Saxons owns all of it, and has an ealdorman here to keep it.
+    [if year >= 840]
+
+    The townspeople look at your ships with a kind of grim satisfaction. In 840, they tell you, thirty-three shiploads of Danes came here, and the ealdorman Wulfheard met them on the shore with the shire and beat them. Then he died that same year, of nothing anyone could see. They tell you the first part slowly.
+    [/if]
+  choices:
+    - id: trade
+      text: Trade wool and furs, and buy Frankish wine off the Rouen boats.
+      effects: [ { add: { skill.trade: 1 } }, { standing: { place: hamwic, n: 2 } } ]
+      result: The traders here deal with Franks and Frisians every week and aren't impressed by you at all, which makes them easy to deal with. The wine is good. The ealdorman's man watches you drink it.
+    - id: streets
+      text: Walk the streets, and the ditches, and the way to the ealdorman's hall.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: The town has no wall worth the name, only the ditches. The ealdorman's hall is upriver, half a day. The shire takes a day to gather, maybe two.
+        effects: [ { set: flag.hamwic_scouted } ]
+      failure:
+        text: A smith with arms like oak roots stops you in the street and asks, very politely, what you're looking for. You find you've finished looking.
+    - id: rouen
+      text: Ask the Rouen boatmen about the Seine.
+      effects: [ { know: rouen }, { add: { skill.lore: 1 } } ]
+      result: They tell you, because it's their river and they're proud of it. Three days up from the sea to Rouen, past the great abbeys in the loops of the river. And on beyond, five days more, to Paris. A ship like yours, one of them says, could go all the way. He laughs. You don't.
+
+# ---- Scotland ----
+- id: pl_applecross
+  kind: place
+  trigger: arrive
+  at: [applecross]
+  once: true
+  requires: ["!service"]
+  art: celtic_monastery
+  title: The sanctuary
+  text: |
+    The monastery stands on a green shelf above the shore, under mountains that come straight down out of the cloud: a timber church, a scatter of huts, and a great stone cross on the headland, carved all over with knotwork, standing against the sky like a man.
+
+    There are other crosses, smaller, further out, set in a ring around the whole bay. The sanctuary, a fisherman tells you: Máel Rubai's ground. Six miles all round. Any man inside the crosses is under the saint's protection, they say, and any man who breaks it is cursed.
+
+    You are inside the crosses now. You came by sea. Nobody thought to put a cross in the water.
+  choices:
+    - id: respect
+      text: Water the ships, and leave the sanctuary as you found it.
+      effects: [ { add: { hamingja: 1, honour: 1 } }, { standing: { people: gael, n: 1 } } ]
+      result: |
+        The monks bring you fish and bread down to the shore without being asked, and stand watching you eat it. An old one blesses your ship as you go. [if man.hallvard.alive]Hallvard spits over the side, to be on the safe side. Then he touches the prow, to be on the other safe side.[else]Your steersman spits over the side, to be on the safe side. Then he touches the prow, to be on the other safe side.[/if]
+    - id: take
+      text: A curse is a word. Take what they have.
+      effects: [ { add: { loot: 60 } }, { standing: { place: applecross, n: -4 } }, { standing: { people: gael, n: -1 } } ]
+      result: |
+        They have very little: a silver-bound book, a bell, a chalice that is mostly bronze. You take it. On the way out of the bay the wind dies, and you row for a day with the stone cross watching you over your shoulder the whole way.
+    - id: ask
+      text: Ask the old monk about the islands to the north.
+      effects: [ { add: { skill.seamanship: 1 } } ]
+      result: He knows them all, every rock and sound and tide-race between here and the Pentland Firth, because monks of his house have been sailing them in skin boats for a hundred years. He tells you, in Irish your steersman half-follows. It's the best pilotage you've ever had, and it came from a man with no ship.
+
+- id: pl_tarbat
+  kind: place
+  trigger: arrive
+  at: [tarbat]
+  once: true
+  requires: ["!service"]
+  title: The Pictish stones
+  text: |
+    The monastery at Tarbat sits on the long finger of land between two firths, with great carved stones standing round it, taller than two men: crosses on the front, and on the back, strange beasts and mirrors and combs and a crescent with a broken arrow through it, which nobody can explain to you, not even the Picts.
+
+    The Picts are not the Irish. They speak their own tongue, and keep their own kings, and fight on horseback. The monks here make books on calfskin and silver for the church, in workshops by the shore. The smell of the tannery carries a long way.
+    [if year >= 839]
+
+    Their king is dead. Last year, or the year before, the Danes caught the men of Fortriu in a great battle in the south, and killed the king, Uuen son of Unuist, and his brother, and more great men than anyone could count. Pictland has no king that everyone agrees on now. A man called Cináed is saying it should be him.
+    [/if]
+  choices:
+    - id: trade
+      text: Trade for their silverwork, and leave the stones standing.
+      effects: [ { add: { skill.trade: 1 } }, { standing: { place: tarbat, n: 2 } } ]
+      result: The silversmith is a Pict with a scarred face who used to be a warrior, he says, before he found God and a hammer. He sells you a brooch with a beast on it that bites its own tail, and you wear it from then on.
+    - id: count
+      text: Ride out with a local guide, and see where the horsemen would come from.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: Half a day's ride in every direction, and you've seen what you came for. The mormaer's hall is far up the firth. The monastery is alone on its spit, and the tide comes right up to the workshops.
+        effects: [ { set: flag.tarbat_scouted } ]
+      failure:
+        text: Your guide takes you a long way round, very slowly, to see a great many cows. Later, you realise that was the point.
+    - id: stones
+      text: Stand in front of the tallest stone, and try to read it.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        The beasts look back at you. A monk tells you the Picts were carving these before they were Christians, and carved crosses on them after, and kept the beasts. You think of the stones at home, with their ships and their serpents, and wonder if your grandsons will carve crosses on them.
+
+- id: pl_whithorn
+  kind: place
+  trigger: arrive
+  at: [whithorn]
+  once: true
+  requires: ["!service"]
+  art: celtic_monastery
+  title: The White House
+  text: |
+    Whithorn's church was the first in all this country, the monks say: Saint Ninian built it of white stone, when there was nothing else here but Britons and wolves. It's an English bishop's seat now, which tells you something about who won.
+
+    Pilgrims come by sea, from Man and Ireland and the north. They crowd the landing in their grey cloaks, with their staffs, and look at your ship the way a sheep looks at a wolf that's turned up in the queue at the shearing.
+  choices:
+    - id: pilgrims
+      text: Sell the pilgrims passage back to Man.
+      effects: [ { add: { silver: 24 } }, { standing: { place: whithorn, n: 2 } } ]
+      result: They pay, after a great deal of talk, and sit in your bilge praying the whole way to Man, which makes the crossing very quiet. At the far end, one of them gives you a blessing and another gives you a cheese. You keep the cheese.
+    - id: bishop
+      text: Ask to see the bishop, and what he keeps in his church.
+      effects: [ { set: flag.whithorn_scouted }, { add: { skill.lore: 1 } } ]
+      result: The bishop is a tired Northumbrian a long way from home, with a cough and a very good cup of wine. He shows you the saint's tomb. He doesn't show you the treasury, but you see where the door is.
+    - id: go
+      text: Leave the pilgrims to their prayers.
+      result: They are still singing on the landing when you round the point.
+
+- id: pl_alt_clut
+  kind: place
+  trigger: arrive
+  at: [alt_clut]
+  once: true
+  requires: ["!service"]
+  title: The rock on the Clyde
+  text: |
+    Alt Clut rises straight out of the river where the Clyde meets the Leven: a double crag of black rock, two hundred feet high, with a timber hall on the saddle between the peaks and a wall all round the top. The Britons have held it since before the Romans left.
+
+    The king of the Britons of Strathclyde sends down a man to ask what you want. He speaks a tongue that isn't Irish and isn't English, and his Norse is very good. He has clearly been told to be polite and to count your men.
+  choices:
+    - id: gift
+      text: Send the king a gift, and ask for his friendship.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { standing: { place: alt_clut, n: 4 } } ]
+      result: The king doesn't come down. But he sends back a horn of Rhenish wine and an invitation to take water from his river whenever you like. A king on a rock like that can afford to be generous.
+    - id: well
+      text: Ask the king's man, casually, where they get their water up there.
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: There's a well on the rock, he says, proudly, that has never failed. Never, you think, is a long time. A well can be stopped. A hall full of men can be thirsty. You don't say it. He doesn't notice you not saying it.
+        effects: [ { set: flag.alt_clut_scouted } ]
+      failure:
+        text: He looks at you for a long moment and says it's none of your business, and goes back up the rock, and the gate shuts behind him.
+        effects: [ { standing: { place: alt_clut, n: -2 } } ]
+    - id: go
+      text: Look at the rock a while longer, and go.
+      result: It's still there when you look back from the firth, black on the sky, the sort of place that makes a man want to know if it can be done.
+
+# ---- Ireland ----
+- id: pl_linn_duachaill
+  kind: place
+  trigger: arrive
+  at: [linn_duachaill]
+  once: true
+  requires: ["!service"]
+  title: Linn Duachaill
+  text: |
+    [if norse.linn_duachaill]
+    There's a ship-fort at the river mouth now: a ditch from the river to the sea-pool, a bank, a stockade, and inside it, a dozen ships drawn up and a long hall of turf and timber. Norse voices on the bank. Smoke. A market in slaves and cattle by the gate, and Irishmen trading at it, as if this were all quite normal. It is, now.
+
+    The men who hold it are from all over: Vestfold, Rogaland, Orkney, Denmark. They take you in without asking much. They've come to stay.
+    [else]
+    A river comes down into a deep pool behind a gravel spit, and the ground rises behind it, dry and defensible, with the bay at Conaille to the north and the whole midlands of Ireland inland.
+
+    There's a church, and some fishermen, and a herdsman's hut. Nothing else. Your steersman looks at the pool, and the spit, and the rising ground, and says what you're thinking: a man could hold this with a ditch and a hundred men.
+    [/if]
+  choices:
+    - id: drink
+      text: Drink with the fort's captains, and hear their news.
+      visible_if: "norse.linn_duachaill"
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        They tell you everything: which Irish kings are at war, which church paid and which burned, and how much a good slave fetches in Dublin this year. They want you to stay. Everybody here wants more ships.
+    - id: sound
+      text: Sound the pool, and walk the ground.
+      visible_if: "!norse.linn_duachaill"
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        You sound it and walk it, and mark it in your head, and when you come back in a few years, you think, somebody else will have built on it. You hope it's you.
+    - id: trade
+      text: Trade for cattle and hides.
+      effects: [ { add: { skill.trade: 1, provisions: 60 } } ]
+      result: The trade is fair, and quick. Ireland, it turns out, has more cattle than people, and both are for sale if you know who to ask.
+    - id: go
+      text: Go on south.
+      result: You leave it behind. Somebody will build here. It may as well be you, one day.
+
+- id: pl_rechru
+  kind: place
+  trigger: arrive
+  at: [rechru]
+  once: true
+  requires: ["!service"]
+  art: celtic_monastery
+  title: Rechru
+  text: |
+    Rechru is a small, high, green island off the Ulster coast, with cliffs full of birds and a little bay on the south side, and a church above the bay with a high cross in front of it.
+
+    Thirty-five years ago the first Norse ships to come to Ireland came here, and burned the church, and took the people. The monks have built it all again. They keep a lookout on the cliff now, and a bell.
+    [if background == freedman]
+
+    Your grandmother was eleven when the ships came here. Her brothers went into the water after the boats. You stand on the beach where she stood, and you can hear her voice, dry as heather, telling it the same way every time.
+    [/if]
+  choices:
+    - id: name
+      text: Find the church, and say her name in it.
+      visible_if: "background == freedman"
+      effects: [ { add: { hamingja: 1 } }, { standing: { people: gael, n: 1 } } ]
+      result: |
+        The priest is young and frightened and doesn't understand what you want, until you say "Órlaith", and the name of her father, which she made you learn. Then he goes very still. There are people on the island, he says, who are her kin. Her brothers' grandchildren. He'll tell them. You don't wait to find out what they'll say. But you've said it.
+    - id: pray
+      text: Water the ships, and leave the church standing.
+      visible_if: "background != freedman"
+      effects: [ { add: { hamingja: 1 } }, { standing: { people: gael, n: 1 } } ]
+      result: |
+        The monks watch you from the cliff all day, ready to ring the bell, and don't ring it. In the evening one of them comes down and leaves a basket of eggs on a rock and goes away again. You leave a hacksilver ring on the same rock. In the morning it's gone.
+    - id: take
+      text: Do what the first ships did.
+      effects: [ { add: { loot: 40, honour: -1 } }, { standing: { place: rechru, n: -4 } } ]
+      result: The bell rings before you're halfway up the beach. By the time you reach the church there's nobody in it, and very little worth taking. They learned that the first time.
+    - id: go
+      text: Go on.
+      result: The bell rings anyway, as you pass the headland, from habit.
+
+- id: pl_glendalough
+  kind: place
+  trigger: arrive
+  at: [glendalough]
+  once: true
+  requires: ["!service"]
+  title: The valley of the two lakes
+  text: |
+    Two days' march into the mountains south of the Liffey, the valley opens out: two dark lakes under steep wooded slopes, and between them a monastery of stone and timber, with a gatehouse and churches and the graves of Leinster's kings. Saint Kevin lived here alone, they say, in a cave above the upper lake, and a blackbird nested in his open hand while he prayed.
+    [if year >= 835]
+
+    The Norse have been here before. In 834 a war-band came up from the coast and plundered it. You can see where: new thatch, new timber, a burned stump where a church stood.
+    [/if]
+
+    Your men are tired from the march, and uneasy among the trees. Mountains are not what Norsemen are for.
+  choices:
+    - id: count
+      text: Climb the slope above the lakes and look the whole place over.
+      effects: [ { set: flag.glendalough_scouted } ]
+      result: |
+        From above you see it all: the gate, the churches, the roads in from the east and the north, and the one road out that a war-band could hold. The monks see you too, up on the slope, a man alone against the sky. Let them.
+    - id: tribute
+      text: Send a man down to the gate. Silver, or fire.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: They pay, after a day of arguing, with a chest of silver the abbot clearly had ready. They've done this before. You go back down to the coast lighter by nothing but two days' marching.
+        effects: [ { add: { loot: 100, honour: -1 } }, { standing: { place: glendalough, n: -2 } } ]
+      failure:
+        text: The abbot sends back word that the saint will protect them, and that the king of Leinster's men are a day away. You believe one of those.
+    - id: go
+      text: March back to the ships before the mountains swallow you.
+      result: The men are glad. So, if you're honest, are you.
+
+- id: pl_cork
+  kind: place
+  trigger: arrive
+  at: [cork]
+  once: true
+  requires: ["!service"]
+  title: Corcach
+  text: |
+    Up a long harbour, past islands, to where the river Lee splits into a maze of channels in a marsh, and on the high ground above the marsh, Saint Finbarr's monastery: big, busy, and rich, with ships at its landing from Frankia, by the look of the wine casks.
+
+    Munster is the biggest kingdom in Ireland, and its king at Cashel is a bishop as well as a king, which, your men agree, is cheating.
+  choices:
+    - id: wine
+      text: Buy wine from the Frankish ships, and ask them about the south.
+      effects: [ { know: noirmoutier }, { add: { skill.trade: 1 } } ]
+      result: The Frankish skippers sail to the Loire and back every summer, for salt and wine. They tell you about the salt islands at the mouth of the river, and the monks who keep their saint packed in a box. You're welcome to the road, they say. They say it like men who know you'll take it anyway.
+    - id: count
+      text: Count the channels through the marsh to the monastery landing.
+      effects: [ { set: flag.cork_scouted } ]
+      result: There are four ways in through the marsh, and only one of them is guarded. Ships could be at the landing before the bell had finished ringing.
+    - id: go
+      text: Go on west, to the end of Ireland.
+      result: The monks watch you go back down the harbour. One of them is writing something down.
+
+- id: pl_skellig
+  kind: place
+  trigger: arrive
+  at: [skellig]
+  once: true
+  requires: ["!service"]
+  art: celtic_monastery
+  title: The rock of Michael
+  text: |
+    From the mainland you can see it: two fangs of rock standing out of the Atlantic, eight miles off, with the sea breaking white round both. On the bigger one, the monks live. In stone huts like beehives, on ledges six hundred steps above the sea, praying for the whole world because nobody else will.
+
+    When you were a boy, someone took their abbot, Étgal, off that rock in a ship, and he died of hunger and thirst before anyone would pay for him. The monks went back up the steps and went on praying.
+  choices:
+    - id: climb
+      text: Row out on a calm day, and climb the six hundred steps.
+      check: { skill: seamanship, attr: end, difficulty: 5 }
+      success:
+        text: |
+          The landing is a single rock with the swell lifting and dropping the boat six feet at a time. You jump. You climb. At the top there are six old men, a garden the size of a cloak, and the whole Atlantic. One of them offers you water from a stone cistern. There is nothing to take. You understand, suddenly, why they're here. You don't share it with your men on the way down.
+        effects: [ { add: { hamingja: 1, skill.lore: 1 } }, { deed: { type: deed, text: "Climbed the six hundred steps of the Skellig", weight: 1 } } ]
+      failure:
+        text: The swell at the landing is too much. You try three times and nearly lose the boat on the third, and the monks watch you from the steps, unmoving, until you give up and row back.
+    - id: look
+      text: Look at it from the shore, and leave them to it.
+      result: You watch the rock until the sun goes down behind it, black against the gold, and the gulls go out to it in their thousands to roost. Your men are quiet.
+
+# ---- the Seine ----
+- id: pl_jumieges
+  kind: place
+  trigger: arrive
+  at: [jumieges]
+  once: true
+  requires: ["!service", "!flag.sn_841_sworn || year != 841"]
+  title: Jumièges
+  text: |
+    In a great loop of the Seine below Rouen, on the flat ground inside the bend, stands the abbey of Jumièges: stone churches with towers, cloisters, mills, barns, vineyards, and a great crowd of monks and servants and peasants who all, at the sight of your sail, begin to run in different directions.
+
+    It was founded by Saint Philibert, the same Philibert whose bones the monks of Noirmoutier keep packing into a box. He seems to have liked islands and river bends. Places with water on three sides. Places, your steersman says, that a ship can reach.
+  choices:
+    - id: count
+      text: Lie off in the river and count the barns.
+      effects: [ { set: flag.jumieges_scouted } ]
+      result: Many barns. Very full. One small gate on the landward side, and a lot of monks.
+    - id: go
+      text: Row on up to Rouen.
+      result: The monks stop running when they see you're going upriver. Then they start running again, in the same direction you're going, to warn Rouen.
+
+- id: pl_fontenelle
+  kind: place
+  trigger: arrive
+  at: [fontenelle]
+  once: true
+  requires: ["!service", "!flag.sn_841_sworn || year != 841"]
+  title: Fontenelle
+  text: |
+    The abbey of Fontenelle lies up a little side valley off the Seine, behind a stream and a mill: an old house of the Franks, rich and quiet, with a library the monks are very proud of and a great many sheep.
+
+    The abbot comes down to the landing himself before you've beached the ship. He's a practical man. He's heard what Northmen do. He would like to know, he says through a monk who speaks a little Frisian, what it would cost for that not to happen here.
+  choices:
+    - id: pay
+      text: Name a price. Take the silver and go.
+      effects: [ { add: { loot: 120, honour: -1 } }, { standing: { place: fontenelle, n: -1 } } ]
+      result: He pays, after a long and polite haggle, in Frankish coin, with a list made of what he paid. Monks write everything down.
+    - id: no
+      text: Tell him you're only passing.
+      effects: [ { add: { honour: 1 } }, { standing: { place: fontenelle, n: 2 } } ]
+      result: He looks at you as if you'd told him a joke he didn't understand. Then he gives you a cask of wine anyway, to be sure.
+
+- id: pl_saint_denis
+  kind: place
+  trigger: arrive
+  at: [saint_denis]
+  once: true
+  requires: ["!service"]
+  title: Saint-Denis
+  text: |
+    The abbey where the Frankish kings are buried stands on the plain north of Paris, walled, with a great stone church and a market and more monks than some towns have people.
+    [if year >= 840]
+    The abbot is Louis, the old emperor's grandson, the king's own cousin, a great lord in a monk's habit with a household of armed men.
+    [else]
+    The abbot is Hilduin, the emperor's chaplain, a great lord in a monk's habit who wrote the saint's life himself.
+    [/if]
+
+    The saint, they say, was beheaded on the hill above Paris, and then picked up his own head and walked here with it under his arm, preaching all the way. Your men have a great deal to say about that.
+  choices:
+    - id: market
+      text: Visit the abbey's market as a trader, and keep your axe in the ship.
+      effects: [ { add: { skill.trade: 1 } }, { set: flag.saint_denis_scouted } ]
+      result: The fair at Saint-Denis is the biggest you have ever seen. Wine, cloth, horses, swords that would cost a farm at home. And the church behind it all, with its doors open and its altars shining. You buy nothing. You look at everything.
+    - id: head
+      text: Ask the monks to tell the story of the headless saint again, slowly.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: They tell it, solemnly, with great detail about the head. Your men listen in respectful silence, and then go back to the ships and laugh until they can't stand up. You suspect the story will be told round fires in Hordaland for a hundred years, and not the way the monks tell it.
+    - id: go
+      text: Go back to the river.
+      result: The abbey's armed men watch you all the way to the water, and stay on the bank until your ship is out of sight round the bend.
+
+- id: pl_rouen
+  kind: place
+  trigger: arrive
+  at: [rouen]
+  once: true
+  requires: ["!service", "year != 841"]
+  title: Rúðuborg
+  text: |
+    Rouen stands on the north bank of the Seine where the river makes its first great bend: old Roman walls of stone, an archbishop's church, a count's hall, and a busy quay below the walls with river-boats tied up three deep. Wine goes down the river from here to Hamwic and Dorestad and Quentovic, and salt and wool come up.
+    [if year >= 842]
+
+    The walls are patched with new timber now, and black in places. The Northmen came here in 841, the boatmen tell you: Oscherus, they call the leader, Ásgeir, and burned the city and the abbeys below it. The count's men look at you very hard.
+    [/if]
+  choices:
+    - id: trade
+      text: Trade wine at the quay, and listen to the boatmen.
+      effects: [ { add: { skill.trade: 1 } }, { know: paris } ]
+      result: The boatmen talk about the river the way your men talk about the sea. Paris, five days upstream. The king's palaces. The abbeys round the city, each richer than the last. A ship that could get past Rouen, one of them says, could go anywhere. Then he remembers who he's talking to, and stops.
+    - id: walls
+      text: Walk round the walls, and find the weak places.
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: The Roman walls are old and long, and the city is small inside them. On the river side, by the quay, there are gates nobody bothers to close in the daytime.
+        effects: [ { set: flag.rouen_scouted } ]
+      failure:
+        text: The count's men take an interest in you. You find you've seen enough of Rouen, and leave on the tide.
+        effects: [ { standing: { place: rouen, n: -2 } } ]
+    - id: go
+      text: Go back downriver to the sea.
+      result: The count's men follow you along the bank on horseback for a day, until the river widens and they can't keep up.
+
+- id: pl_paris
+  kind: place
+  trigger: arrive
+  at: [paris]
+  once: true
+  requires: ["!service", "year != 845"]
+  title: Parísborg
+  text: |
+    Five days up the Seine, through a country so rich and so flat it seems to have been made on purpose for farming, the river parts round an island, and on the island there is a city: old walls, a cathedral, the count's palace, a bridge on either side. Around it, on both banks, the great abbeys: Saint-Germain, Sainte-Geneviève, and to the north Saint-Denis.
+    [if year >= 846]
+
+    It has been burned. Not all of it, but enough. Ragnar came up the river at Easter in 845 with a hundred and twenty ships, the boatmen tell you, and the king paid him seven thousand pounds of silver to go away. Seven thousand. Your men say it to each other, quietly, like a prayer.
+    [/if]
+
+    Nobody has ever brought a ship this far before you. Or nobody has come back to tell of it.
+  choices:
+    - id: look
+      text: Lie off the island and look, until they send men out.
+      effects: [ { add: { skill.lore: 1 } }, { deed: { type: deed, text: "Took his ship up the Seine to Paris", weight: 2 } } ]
+      result: It takes them half a day to send men out, and by then you've seen the bridges, and the walls, and the abbeys on both banks, with their roofs of lead. You go back down the river with the whole of Frankia staring at you from the banks.
+    - id: go
+      text: Turn back now. You've seen it.
+      result: You turn the ship in the river under the walls, slowly, so they all see you do it. Then you row away.

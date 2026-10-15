@@ -17,7 +17,7 @@ import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
 import { commitReserve, fightOutHost, hostRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
-import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
+import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, norseHeld, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
@@ -224,7 +224,7 @@ export function shopsHere(state: GameState, content: ContentBundle): Shop[] {
   if (!at || state.voyage) return [];
   const p = content.places[at]!;
   if (p.kind === 'home') return ['smith', 'shipwright'];
-  if (p.market) {
+  if (p.market || norseHeld(state, at)) {
     const t = tierAt(state, content, at);
     return t === 'hostile' || t === 'unfriendly' ? [] : ['market', 'shipwright'];
   }
@@ -468,7 +468,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       // an outlaw castaway can't go home: a trader takes him west, to the one hall that will have him
       else if (at !== 'orkney' && exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage to Orkney on a trader' : 'Work your passage to Orkney on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
       else if (at === 'orkney' && exiled(state) && !state.service) out.push(opt('Sail', { t: 'harek' }, "Go to Harek's hall, and ask for a bench", true, undefined, 'Another summer at his oar'));
-      if (place.raid) {
+      if (place.raid && !norseHeld(state, at)) {
         const done = state.seasonRaids.includes(at);
         out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.'));
       }
@@ -481,7 +481,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         } else {
           const rc = resupplyCost(state, content, at);
           if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
-          if (content.places[at]!.market) out.push(...shopOption(state, content));
+          if (content.places[at]!.market || norseHeld(state, at)) out.push(...shopOption(state, content));
           out.push(...tradeOption(state, content));
           const year = dateOf(state.day).year;
           if (GUEST_DAYS[tier] > 0) out.push(opt('Here', { t: 'guest' }, 'Ask for guest-right', state.places[at]?.guested !== year, 'You have had their hospitality this year.', `Food for ${GUEST_DAYS[tier]} days, free, once a year`));

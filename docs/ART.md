@@ -109,3 +109,20 @@ Same format and prompt add-on as the 831 places. Nantes and York had Roman walls
 | `london` | Lundenwic | A long strand of jetties, warehouses and smoke along a broad river bend, the empty ruined Roman walls on a hill to one side | Busy morning, river traffic |
 | `noirmoutier` | Saint Philibert's island | A low island of shining salt-pans, a monastery behind a new earth-and-timber wall, salt heaps on the shore | Hard white sunlight |
 | `nantes` | Nantes | A walled city on a hill above a wide shallow river full of islands, a stone cathedral, river boats at a quay below, mounted men in mail | Warm, late afternoon |
+
+## Received (2026-10-15)
+- `celtic_monastery`: a Gaelic monastery from the sea at sunrise, under mountains, with a ringed high cross and a timber church. Used for Applecross, Whithorn, Rechru and the Skellig until they have their own. Ringed crosses like this stood at Iona by the 8th century, so it is right for the period.
+
+## Shot list: the third batch (wanted)
+Same format and prompt add-on. Picts and Britons built in timber and drystone; the Franks had stone churches and Roman walls.
+
+| Key | Scene | Composition | Light |
+|---|---|---|---|
+| `dublin_fort` | The ship-fort at Duibhlinn | A dark pool beside a river, a fresh ditch and earth bank with an oak stockade, longships drawn up inside, turf halls, smoke | Wet grey morning |
+| `rouen` | Rouen in May | A river bend, old Roman stone walls with a timber gate, a stone church tower, many longships in the river | Spring morning, smoke beginning |
+| `paris` | Paris, 845 | An island city in a wide river, stone walls and churches, bridges either side, a river full of longships, an army on the far bank | Cold spring light |
+| `seine_island` | The island | A small wooded island in a wide river, gallows and ships' masts, an army watching from the far bank | Overcast, very still |
+| `alt_clut` | Alt Clut | A twin-peaked black rock rising from a wide river mouth, a timber hall and wall on the saddle | Stormy, shafts of light |
+| `tarbat` | Tarbat | A low spit between two firths, a monastery of timber and drystone, tall carved Pictish stones | Clear northern evening |
+| `glendalough` | Glendalough | A steep wooded valley with two dark lakes, a stone gatehouse and churches between them | Mist on the slopes |
+| `jarrow` | Jarrow | A stone church and hall on a low rise above wide tidal mudflats, a river mouth | Grey, low tide |

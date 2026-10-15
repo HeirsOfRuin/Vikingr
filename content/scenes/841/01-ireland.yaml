@@ -1,0 +1,224 @@
+# 841: two fleets, and the ship-fort at Duibhlinn (docs/FRAME-IRELAND-SEINE.md).
+# History: in 841 Norse crews built ship-forts (longphuirt) at Duibhlinn and Linn Duachaill and wintered in
+# Ireland for the first time; that same May, a fleet under one the Franks called Oscherus sacked Rouen.
+# In 845 Turgeis was drowned in Loch Uair by Máel Sechnaill, and Forannán of Armagh was taken to the ships.
+
+- id: sp_841
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 10
+  requires: ["year >= 841", "year <= 842", "place == home_fjord", "phase == muster", "!service", "ships >= 1"]
+  art: muster
+  when: Spring, 841
+  title: Two fleets
+  text: |
+    Two pieces of news come up the fjord with the first ships of the year, and by the end of the week nobody at the muster is talking about anything else.
+
+    The first is from Ireland. The crews who raided there last summer didn't come home. They've stayed, and they mean to stay: they're digging ship-forts at the river mouths, at Linn Duachaill below Conaille and at the black pool of Duibhlinn on the Liffey, ditch and bank and stockade, with the ships drawn up inside. They'll winter there and raid all Ireland from it in the spring. They want more ships.
+    [if flag.dublin_longphort]
+
+    You walked that ridge above the black pool, years ago, and saw exactly this. Somebody else has seen it too.
+    [/if]
+    [break]
+    The second is from the south.
+    [if fate.asgeir_falls && !flag.bg_covered]
+    A Dane called Ásgeir, no kin of the man you buried after Bangor, is gathering ships to go up the Seine to Rouen. Every man at the muster has noticed the name. Some of them think it's a sign.
+    [elif fate.asgeir_falls]
+    Ásgeir Kolsson is going to the Seine. Ásgeir, with his ruined leg and his white beard, who hasn't stood in a shield-wall since Bangor. He's gathering ships for one last summer, he says, because he means to see Rouen burn before he dies, and he'd like you at his steering-oar's side when it does.
+    [else]
+    Ásgeir Kolsson is going to the Seine. Ásgeir, grey now, the first man whose oar you pulled, gathering ships for Rouen, because the emperor is dead and his sons are fighting each other and nobody, he says, will be watching the river. He's asked for you by name.
+    [/if]
+
+    One summer. Two roads.
+  choices:
+    - id: ireland
+      text: Ireland. Put your ships in the fort at Duibhlinn, and winter there.
+      effects: [ { set: flag.ir_841_sworn }, { know: dublin }, { add: { crew.morale: 1 } } ]
+      result: |
+        Your men want it. Half of them have kin in the Irish Sea already, and the other half have heard about the Irish women. You'll need more food, more men, and a great deal of luck. And a ditch. Mostly a ditch.
+    - id: seine
+      text: The Seine, with Ásgeir. Rouen, in May.
+      effects: [ { set: flag.sn_841_sworn }, { know: rouen }, { know: walcheren }, { add: { crew.morale: 1 } } ]
+      result: |
+        [if fate.asgeir_falls && !flag.bg_covered]
+        The Dane's messenger takes your answer south. The Seine, then, under an Ásgeir who isn't yours. The men keep saying the name, as if it meant something.
+        [else]
+        You send Ásgeir your answer. He sends back three words: "Good. Bring axes." You can hear his voice saying them.
+        [/if]
+    - id: neither
+      text: Neither. Your own road, this summer.
+      result: The ships go, both fleets, without you. All year the news comes back, a piece at a time, and every piece of it makes your men look at you.
+
+- id: ir_fort
+  kind: place
+  trigger: arrive
+  at: [dublin]
+  once: true
+  weight: 20
+  requires: ["year >= 841", "!service", "norse.dublin"]
+  title: The ship-fort at Duibhlinn
+  text: |
+    [if year == 841]
+    The black pool is full of ships, and the ridge above it is full of men digging. A ditch from the Liffey round to the pool, as deep as a man and a half; the earth thrown up inside into a bank; on the bank, a stockade of split oak going up a section at a time. Inside, the ships are drawn up in rows on rollers, and the first halls are already roofed with turf.
+    [else]
+    The ship-fort at Duibhlinn has been here a year now: ditch, bank, stockade, and inside it ships in rows, halls of turf and timber, smithies, a slave-pen, and a market by the gate where Irishmen come to trade as if it had always been here. It looks like it always will be.
+    [/if]
+
+    [if flag.ir_841_sworn]
+    You came for this. Your men are already looking at the stretch of bank nobody has dug yet.
+    [/if]
+
+    Nobody is in charge, exactly. A dozen captains from a dozen places sit in the biggest hall in the evenings and argue about everything.
+    [if fame.living >= 70]
+    They know your name. When you walk in, the arguing stops.
+    [elif flag.dublin_longphort]
+    You tell them you walked this ridge years ago and saw the fort before it was here. One of them laughs. Another doesn't.
+    [/if]
+  choices:
+    - id: join
+      text: Put your ships in the fort and your men on the bank. You're one of them now.
+      effects: [ { set: flag.ir_fort_member }, { longphort: dublin }, { deed: { type: deed, text: "Raised the ship-fort at Duibhlinn with the first crews to winter in Ireland", weight: 4 } }, { queue: { scene: ir_hosting, days: 40 } } ]
+      result: |
+        Your men dig for a week, and curse for a week, and at the end of it your ships are drawn up inside the stockade beside the rest. You have a hall in Ireland. It's made of turf and it leaks. It's yours.
+    - id: lead
+      text: Take the high seat in the hall, and make the captains your men.
+      requires: [{ any: ["fame.living >= 70", { all: [flag.dublin_longphort, "fame.living >= 40", "ships >= 2"] }] }]
+      check: { skill: command, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          It takes three nights of arguing, a fight in the mud outside the hall, and a great deal of your silver in other men's hands. On the fourth night, when you walk in, they stand up. You are the first lord of the ship-fort at Duibhlinn, for as long as you can hold it.
+        effects: [ { set: flag.ir_fort_member }, { set: flag.ir_fort_lord }, { longphort: dublin }, { add: { silver: -48 } }, { deed: { type: deed, text: "Took the high seat of the ship-fort at Duibhlinn", weight: 8 } }, { queue: { scene: ir_hosting, days: 40 } } ]
+      failure:
+        text: |
+          The captains hear you out, and argue, and argue, and in the end choose a loud Rogalander with five ships because he has five ships. You are one of them. It's still a fort.
+        effects: [ { set: flag.ir_fort_member }, { longphort: dublin }, { deed: { type: deed, text: "Raised the ship-fort at Duibhlinn with the first crews to winter in Ireland", weight: 4 } }, { queue: { scene: ir_hosting, days: 40 } } ]
+    - id: trade
+      text: Trade at the gate, and keep your own ships your own.
+      effects: [ { add: { skill.trade: 1 } } ]
+      result: The captains shrug. More for them. The trade at the gate is good, and the Irish who come to it are friendlier than you'd expect. It's hard to raid a man you sell your cattle to.
+
+- id: ir_hosting
+  kind: queued
+  requires: ["norse.dublin"]
+  art: bangor_field
+  title: The hosting
+  text: |
+    They come at the end of the summer: the king of Leinster and the southern Uí Néill together, for once, because they hate each other less than they hate the fort. Spears on the ridge to the south, more than you can count, and horsemen at the ford, and the smoke of every farm round the pool that sold the fort a cow.
+    [if flag.ir_fort_lord]
+
+    The captains look at you. It's your fort. It's your fight.
+    [else]
+
+    The Rogalander in the high seat sends round to every captain: hold your stretch of the bank, and wait for the horn.
+    [/if]
+  choices:
+    - id: bank
+      text: Hold the ditch and the bank. Let them come to you.
+      danger: true
+      effects:
+        - if: flag.ir_fort_lord
+          then: [ { host: { title: "The ditch at Duibhlinn", foe: leinster_men, terrain: ford, men: 36, wings: [ { name: "The Vestfold crews", men: 90, foe_men: 75 }, { name: "The Rogaland crews", men: 80, foe_men: 65 } ], role: host, reserve: { us: 50, them: 30 }, win: ir_hosting_won, lose: ir_hosting_lost } } ]
+          else: [ { host: { title: "The ditch at Duibhlinn", foe: leinster_men, terrain: ford, men: 36, wings: [ { name: "The Vestfold crews", men: 90, foe_men: 75 }, { name: "The Rogaland crews", men: 80, foe_men: 65 } ], role: wing, reserve: { us: 50, them: 30 }, win: ir_hosting_won, lose: ir_hosting_lost } } ]
+      result: You put your men on your stretch of the bank, shields locked, the ditch below them full of water and stakes. The Irish come down off the ridge with a noise like the sea.
+    - id: sally
+      text: Take your crews out over the ford in the dark, and hit their camp before dawn.
+      danger: true
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: You find the ford in the dark by the sound of the water, and the camp by its fires, and come into it from behind with the dawn. The king's tents are in the middle. The hosting comes apart around them.
+        effects: [ { host: { title: "The camp at the ford", foe: leinster_men, terrain: field, men: 30, wings: [ { name: "The Vestfold crews", men: 80, foe_men: 50 }, { name: "The Rogaland crews", men: 70, foe_men: 50 } ], role: wing, reserve: { us: 0, them: 30 }, win: ir_hosting_won, lose: ir_hosting_lost } } ]
+      failure:
+        text: The ford is watched. You come up out of the river into a line of spears that was waiting for you.
+        effects: [ { host: { title: "The ford at Áth Cliath", foe: leinster_men, terrain: ford, men: 70, wings: [ { name: "The Vestfold crews", men: 80, foe_men: 90 }, { name: "The Rogaland crews", men: 70, foe_men: 80 } ], role: wing, reserve: { us: 20, them: 60 }, win: ir_hosting_won, lose: ir_hosting_lost } } ]
+    - id: ships
+      text: Get your own ships into the water and away. It isn't your fort.
+      visible_if: "!flag.ir_fort_lord"
+      effects: [ { add: { honour: -2, crew.morale: -2 } }, { clear: flag.ir_fort_member } ]
+      result: You're out through the gap in the stockade on the evening tide while the others hold the bank. You hear the fighting behind you until the river bends. The fort holds, as it turns out, without you. They'll remember who left.
+
+- id: ir_hosting_won
+  kind: spine
+  art: bangor_field
+  title: The fort holds
+  text: |
+    The Irish break at the ditch, and then at the ford, and then all at once, running for the ridge with the fort's crews behind them. The king's camp is left standing with the fires still lit.
+
+    Among the prisoners dragged back to the fort is a young man in a good cloak who keeps telling everyone, in Irish, who his father is, until somebody who speaks Irish tells him to stop.
+  choices:
+    - id: hostage
+      text: Keep the king's son. Leinster will pay to have him back, or keep the peace to keep him alive.
+      effects: [ { take_hostage: { kind: king_son, place: dublin, who: "{name}, a son of the king of Leinster", kin: "the king of Leinster" } }, { add: { loot: 150 } }, { captives: 6 }, { deed: { type: battle_won, text: "Held the ship-fort at Duibhlinn against the hosting of Leinster", weight: 5, witnesses: 300 } } ]
+      result: |
+        He's seventeen, and furious, and frightened, and trying very hard to be only furious. You give him a place by your own fire and a guard on the door. By Yule he's teaching your men to swear in Irish.
+    - id: camp
+      text: Strip the king's camp, and sell the prisoners at the gate.
+      effects: [ { add: { loot: 260 } }, { captives: 10 }, { deed: { type: battle_won, text: "Held the ship-fort at Duibhlinn against the hosting of Leinster", weight: 5, witnesses: 300 } } ]
+      result: The king's camp is rich. His prisoners go to the slave-pen by the gate. By the spring they'll be in Kaupang and Hedeby, and the fort will have its first winter's silver.
+
+- id: ir_hosting_lost
+  kind: spine
+  art: iona_burning
+  title: The fort burns
+  text: |
+    The Irish come over the ditch on bundles of brushwood and through the stockade with axes, and the fight goes from the bank to the halls to the ships. You get your crews into the water. Not all of them. Behind you the halls are burning, and the ships that didn't get off, and the slave-pen, with the slaves still in it.
+  choices:
+    - id: go
+      text: Row for the open sea, and count who's with you.
+      effects: [ { longphort_lost: dublin }, { add: { crew.men: -6, crew.morale: -2 } }, { clear: flag.ir_fort_member } ]
+      result: |
+        The smoke stands over the Liffey all the next day. The Irish will boast about this for a generation. But there will be other forts, the captains say, while they bind their wounds on the beach at Rechru. Nobody believes it yet. Ireland is too good to leave.
+
+- id: ir_winter
+  kind: pool
+  trigger: hall
+  phase: [winter]
+  at: [dublin]
+  chance: 0.5
+  cooldown_days: 300
+  requires: [flag.ir_fort_member, "norse.dublin"]
+  title: A winter in the fort
+  text: |
+    Winter in the ship-fort is mud, smoke, rain, and Irish ale, which is better than you expected. The Irish come to the gate every day to trade: cattle, cloth, honey, sometimes their own enemies, roped together, for sale. Some of your men have Irish women already. Some of the women have Irish brothers, who come to visit, and stay to drink, and are not quite enemies any more.
+
+    There are children in the fort by the second winter, with Norse fathers and Irish mothers and no tongue of their own yet. The Irish have a name for them already: the Gall-Gaedil, the foreign Irish.
+  choices:
+    - id: market
+      text: Run the slave market at the gate. It's what the fort is for.
+      effects: [ { add: { silver: 96, honour: -1 } }, { standing: { people: gael, n: -1 } } ]
+      result: The trade is brisk and ugly and very profitable. The ships that leave in the spring for Kaupang go low in the water, and every man in them is a man you sold.
+    - id: kin
+      text: Drink with the Irish brothers-in-law, and learn which kings are at war.
+      effects: [ { add: { skill.lore: 1, skill.speech: 1 } }, { standing: { place: dublin, n: 2 } } ]
+      result: You learn more about Ireland in one winter of Irish ale than in ten summers of raiding it. Which kings hate which. Which churches pay. Which fords are watched. And that Turgeis, in the north, is calling himself king of all the foreigners in Ireland, which the foreigners in the fort find very funny.
+    - id: men
+      text: Hire the young men of the fort for your own benches.
+      effects: [ { recruit: 8 } ]
+      result: The fort is full of young men with nothing to do till spring. Eight of them sign on with you. Two are half Irish, and fight like it.
+
+- id: ir_845
+  kind: place
+  trigger: arrive
+  at: [dublin, linn_duachaill, conaille, armagh, cork, man]
+  once: true
+  weight: 15
+  requires: ["year >= 845", "!service"]
+  title: Turgeis drowned
+  text: |
+    The news is all over the Irish Sea by the time you make landfall: Turgeis is dead. The Irish took him, Máel Sechnaill of Meath took him, and drowned him in Loch Uair with a stone round his neck, and the Irish are singing about it in every hall from here to Munster.
+
+    And there's other news, from Munster. The Norse of Luimnech on the Shannon caught the abbot of Armagh at Cluain Comarda this spring: Forannán, Patrick's heir, the greatest churchman in Ireland. They have him in their ships. They don't know what to do with him. They're asking for offers.
+  choices:
+    - id: buy
+      text: Buy Forannán from the Luimnech men. Armagh will pay more than they're asking.
+      requires: ["silver >= 240"]
+      effects: [ { add: { silver: -240 } }, { take_hostage: { kind: abbot, place: armagh, name: "Forannán", who: "Forannán, abbot of Armagh, Patrick's heir", kin: "the church of Armagh", price: 1200 } } ]
+      result: |
+        The Luimnech men are glad to be rid of him: a holy man is bad luck in a ship, they say, and he prays all night. Forannán is old and thin and very calm. He looks at you a long while, and then blesses you, which is not what you expected, and then asks for his breakfast.
+    - id: drink
+      text: Drink to Turgeis. He was a bastard, but he was our bastard.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: Your men drink to him, and the Irish in the harbour drink to Máel Sechnaill, and for one evening everybody is drunk on the same beach and nobody fights, which in Ireland is a kind of miracle.
+    - id: go
+      text: Leave Patrick's heir to the Shannon men. Holy men are trouble.
+      result: Forannán, you hear later, was ransomed after a year. The Luimnech men got very little for him. They weren't patient enough.

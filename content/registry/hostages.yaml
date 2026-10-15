@@ -83,6 +83,12 @@ names:
   norse:
     m: [Hrafn, Eyvindr, Þórir, Kolbeinn, Grjótgarðr, Ôlvir, Steinþórr, Vémundr]
     f: [Ragnhildr, Ása, Gunnhildr, Þóra, Álfhildr, Sigríðr]
+  pict:
+    m: [Bridei, Talorcan, Nechtan, Drest, Ciniod, Uuen, Eoganan]
+    f: [Derelei, Uuredech, Bredei, Eithne, Mathgerna]
+  briton:
+    m: [Arthgal, Dumnagual, Rhun, Owain, Cyngen, Eugein]
+    f: [Nest, Angharad, Tangwystl, Elen, Gwenllian]
   danish:
     m: [Tóki, Gormr, Áki, Hemingr, Tófi, Sveinn]
     f: [Ásfríðr, Þyri, Gunnvôr, Tófa]

@@ -9,7 +9,7 @@ export const ORDERS = ['hold', 'push', 'missiles', 'wedge', 'give', 'flank'] as 
 export const TERRAINS = ['beach', 'field', 'ford', 'rampart', 'ship', 'woods'] as const;
 export const PHASES = ['muster', 'sailing', 'return', 'winter'] as const;
 export const PLACE_KINDS = ['home', 'hall', 'market', 'monastery', 'town', 'island', 'landmark'] as const;
-export const PEOPLES = ['norse', 'danish', 'swedish', 'gael', 'english', 'frisian', 'frankish', 'baltic', 'rus'] as const;
+export const PEOPLES = ['norse', 'danish', 'swedish', 'gael', 'english', 'frisian', 'frankish', 'baltic', 'rus', 'pict', 'briton'] as const;
 export type People = (typeof PEOPLES)[number];
 export const TEMPERAMENTS = ['hot', 'steady', 'greedy', 'pious', 'ambitious', 'dour'] as const;
 
@@ -100,7 +100,10 @@ const baseEffect = z.union([
   z.object({ swear_cand: z.enum(['silver', 'gold']) }).strict(),
   z.object({ cand_crew: z.literal(true) }).strict(),
   // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
-  z.object({ take_hostage: z.object({ kind: id, captain: id.optional() }).strict() }).strict(),
+  z.object({ take_hostage: z.object({ kind: id, captain: id.optional(), place: id.optional(), name: z.string().optional(), who: z.string().optional(), kin: z.string().optional(), price: z.number().int().min(1).optional() }).strict() }).strict(),
+  // a Norse ship-fort (longphort) holds a place, or is lost (docs/FRAME-IRELAND-SEINE.md)
+  z.object({ longphort: id }).strict(),
+  z.object({ longphort_lost: id }).strict(),
   z.object({ hostage: z.enum(['ransom', 'ransom_high', 'surety', 'sell', 'free', 'dies', 'maybe_dies', 'escape', 'fetters', 'foster', 'marry', 'hand_over', 'keep_one', 'sell_party']) }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */

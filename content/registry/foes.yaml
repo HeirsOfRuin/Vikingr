@@ -80,3 +80,23 @@
   quality: 2
   doctrine: { hold: 2, push: 2, flank: 2, missiles: 1 }
   desc: "A Frankish count's household: mailed horsemen who fight on foot when they must, with the city's militia behind them. Better armed than you, and they know it."
+- id: english_fyrd
+  name: The shire's fyrd
+  quality: 1
+  doctrine: { hold: 3, push: 2, missiles: 1 }
+  desc: The ealdorman's household and the freemen of the shire, called out by beacon. Long shields and spears, and more of them the longer you stay.
+- id: pictish_host
+  name: The Pictish host
+  quality: 1
+  doctrine: { missiles: 2, flank: 2, hold: 2, push: 1 }
+  desc: "A mormaer's warband out of the hills: horsemen, spearmen with square shields, and a great deal of noise. The Picts have beaten bigger armies than yours."
+- id: strathclyde_men
+  name: The men of Alt Clut
+  quality: 2
+  doctrine: { hold: 3, missiles: 2, push: 1 }
+  desc: The Briton king's household on his rock. They have held it against Picts, Scots and English for four hundred years, and they fight like men who know it.
+- id: munster_men
+  name: The men of Munster
+  quality: 1
+  doctrine: { missiles: 3, give: 2, flank: 2 }
+  desc: A Munster king's men from the Lee valley. Javelins and fast feet, and a king at Cashel who means to be king of all Ireland.

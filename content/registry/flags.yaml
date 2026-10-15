@@ -320,3 +320,20 @@ clonmacnoise_scouted: { description: "Counted Clonmacnoise's fighting tenants an
 york_scouted: { description: "Found the rotten places in York's walls" }
 london_scouted: { description: "Faced down the reeve at Lundenwic, and saw how few spears he has" }
 nantes_scouted: { description: "Learned that Nantes opens its gates for the feast of Saint John" }
+# the third batch of places, and the Irish and Seine chapters (docs/FRAME-IRELAND-SEINE.md)
+jarrow_scouted: { description: "Counted Jarrow's men and noted the tides" }
+gipeswic_scouted: { description: "Found how few of the East Angle king's men keep Gipeswic" }
+hamwic_scouted: { description: "Walked Hamwic's streets and ditches" }
+tarbat_scouted: { description: "Rode the ground round Tarbat" }
+whithorn_scouted: { description: "Saw where Whithorn's treasury door is" }
+alt_clut_scouted: { description: "Learned that Alt Clut's water is one well" }
+glendalough_scouted: { description: "Looked Glendalough over from the slope" }
+cork_scouted: { description: "Counted the channels through the marsh at Corcach" }
+jumieges_scouted: { description: "Counted Jumièges's barns" }
+saint_denis_scouted: { description: "Walked the fair at Saint-Denis" }
+rouen_scouted: { description: "Found Rouen's open river gates" }
+sn_841_sworn: { description: "Went to the Seine with Ásgeir in 841" }
+sn_845_sworn: { description: "Answered Ragnar's war-arrow for the Seine in 845" }
+ir_841_sworn: { description: "Chose Ireland and the ship-fort in the spring of 841" }
+ir_fort_member: { description: "His ships are drawn up in the ship-fort at Duibhlinn" }
+ir_fort_lord: { description: "Holds the high seat of the ship-fort at Duibhlinn" }

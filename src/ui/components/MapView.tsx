@@ -142,7 +142,7 @@ export function MapView({ content, map, state, mini }: Props) {
                   <p class="muted small sans">{pickedPlace.active ? 'You have heard of it, but nobody has shown you the way. An expedition across uncharted water might find it.' : 'You have heard of it. It is beyond any sea road you could sail yet.'}</p>
                 </>
               ) : (<>
-              <p class="muted small sans">{pickedPlace.region}{pickedPlace.raid ? ' · a place to raid' : ''}{pickedPlace.market ? ' · a market' : ''}</p>
+              <p class="muted small sans">{pickedPlace.region}{pickedPlace.raid ? ' · a place to raid' : ''}{state.places[pickedPlace.id]?.norse ? ' · a Norse ship-fort' : pickedPlace.market ? ' · a market' : ''}</p>
               <p>{pickedPlace.desc}</p>
               {pickedPlace.active && pickedPlace.kind !== 'home' && <p class="small sans"><span class={`pill standing-${tierAt(state, content, pickedPlace.id)}`}>{TIER_NAMES[tierAt(state, content, pickedPlace.id)]}</span> {TIER_HINTS[tierAt(state, content, pickedPlace.id)]}</p>}
               {!pickedPlace.active && <p class="muted small sans">Beyond your reach for now. (Later phases.)</p>}

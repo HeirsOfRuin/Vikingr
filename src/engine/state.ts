@@ -232,6 +232,8 @@ export interface PlaceState {
   visited?: boolean;
   /** The year he last listened to the old sailors here. */
   listened?: number;
+  /** A Norse ship-fort holds it now (docs/FRAME-IRELAND-SEINE.md): a market, men to hire, and not a place to raid. */
+  norse?: boolean;
   /** His own buying and selling here, pushing prices: lots (+ bought, - sold) as of a day (docs/FRAME-TRADE-ALLIES.md). */
   supply?: Record<string, { n: number; day: number }>;
 }

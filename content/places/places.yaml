@@ -57,13 +57,13 @@ places:
     region: The Northern Isles
     trade: { cheap: [wool, stockfish, grain], dear: [wine, soapstone, whetstones, glass] }
     tells: [skye, lindisfarne]
-    rumours: [faroes, man, dublin]
+    rumours: [faroes, man, dublin, tarbat]
     desc: Orkney. Green islands, a chieftain's hall, and men who know the way south to the monasteries.
     known: true
     active: true
   - id: iona
     name: Iona
-    rumours: [man]
+    rumours: [man, alt_clut]
     lon: -6.41
     lat: 56.33
     kind: monastery
@@ -86,7 +86,7 @@ places:
     standing: -3
     art: bangor_field
     region: Ulster
-    tells: [conaille]
+    tells: [conaille, rechru]
     desc: A great house of the Irish monks on Belfast Lough, with a king's levy close enough to come.
     known: true
     active: true
@@ -109,7 +109,7 @@ places:
     market: true
   - id: lindisfarne
     name: Lindisfarne
-    tells: [york]
+    tells: [york, jarrow]
     lon: -1.8
     lat: 55.67
     kind: monastery
@@ -130,7 +130,7 @@ places:
     standing: 2
     region: The Hebrides
     trade: { cheap: [wool], dear: [salt, wine, soapstone] }
-    tells: [iona, orkney]
+    tells: [iona, orkney, applecross]
     rumours: [man, faroes]
     desc: "Skye. Black mountains, sea lochs, and here and there a Norse steading built on top of a Pictish one, where the settlers have stopped going home."
     known: false
@@ -143,7 +143,7 @@ places:
     people: gael
     standing: -4
     region: Ireland
-    tells: [bangor]
+    tells: [bangor, linn_duachaill]
     rumours: [dublin, armagh, clonmacnoise]
     desc: "Conaille Muirthemne, on Dundalk Bay: a small Irish kingdom with a king in a ringfort, cattle on the plain, and no Norse ship yet seen in its bay."
     known: false
@@ -159,19 +159,36 @@ places:
   - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast.", rumour: "An amber market at the mouth of a river on the far side of the eastern sea, he says, among people who speak no tongue anyone in Hedeby knows, and sell amber by the sack.", standing: 0, active: true, market: true, tells: [gotland], rumours: [aldeigjuborg], trade: { cheap: [amber, furs], dear: [salt, wine, whetstones, glass] } }
   - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves." }
   - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky.", trade: { cheap: [wool, down], dear: [grain, salt, whetstones] } }
-  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain.", standing: -1, active: true, tells: [dublin], raid: { wealth: 550, defenders: 18, foe: island_men, terrain: beach } }
-  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey.", rumour: "The black pool on the Liffey, where the Irish have a fort and a ford. A good harbour, he says, for a man who meant to stay the winter in Ireland. Nobody has, yet.", standing: -2, active: true, tells: [man, conaille], rumours: [clonmacnoise], raid: { wealth: 900, defenders: 30, foe: leinster_men, terrain: field } }
+  - { id: man, name: "Mön", lon: -4.55, lat: 54.23, people: gael, kind: island, region: The Irish Sea, desc: "The Isle of Man, between Ireland and Britain.", rumour: "An island in the middle of the Irish Sea, he says, with a king of its own, and good harbours, and a man who holds it holds the sea between Ireland and Britain.", standing: -1, active: true, tells: [dublin, whithorn], raid: { wealth: 550, defenders: 18, foe: island_men, terrain: beach } }
+  - { id: dublin, name: "Dyflinn", lon: -6.27, lat: 53.34, people: gael, kind: town, region: Ireland, desc: "The black pool on the Liffey.", rumour: "The black pool on the Liffey, where the Irish have a fort and a ford. A good harbour, he says, for a man who meant to stay the winter in Ireland. Nobody has, yet.", standing: -2, active: true, tells: [man, conaille], rumours: [clonmacnoise, glendalough, cork], trade: { cheap: [wool, grain], dear: [wine, salt, whetstones, soapstone, glass] }, raid: { wealth: 900, defenders: 30, foe: leinster_men, terrain: field } }
   - { id: armagh, name: "Armagh", lon: -6.65, lat: 54.35, people: gael, kind: monastery, region: Ireland, desc: "The chief church of the Irish.", rumour: "The chief church of all the Irish, inland from the bay at Conaille. Saint Patrick's own house. The richest church in Ireland, and it knows it.", standing: -2, active: true, art: iona_dawn, raid: { wealth: 2200, defenders: 70, foe: airgialla_men, terrain: field } }
   - { id: clonmacnoise, name: "Clonmacnoise", lon: -7.99, lat: 53.33, people: gael, kind: monastery, region: Ireland, desc: "A great monastery on the Shannon.", rumour: "A great monastery on the Shannon in the middle of Ireland, so far from the sea that the monks think they're safe. A ship that could get up the Shannon would find out if they're right.", standing: -2, active: true, raid: { wealth: 2000, defenders: 48, foe: clonmacnoise_men, terrain: field } }
-  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, people: english, kind: town, standing: -1, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse.", rumour: "The Northumbrian king's city on the Ouse, with a minster and a market and walls the Romans built. Too big for one ship. Not too big for a fleet.", active: true, market: true, tells: [sheppey, lindisfarne], rumours: [sheppey], trade: { cheap: [wool, grain], dear: [wine, furs, whetstones, soapstone] }, raid: { wealth: 3000, defenders: 120, foe: northumbrian_levy, terrain: field } }
-  - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, people: english, kind: island, region: Kent, desc: "Sheep island in the Thames mouth, with a minster on it.", rumour: "An island in the mouth of the Thames, he says, all sheep and marsh and a minster of nuns on the hill, founded by a queen. The London ships go past it every tide.", active: true, tells: [london, walcheren], raid: { wealth: 850, defenders: 20, foe: kentish_men, terrain: beach } }
+  - { id: york, name: "Jórvík", lon: -1.08, lat: 53.96, people: english, kind: town, standing: -1, region: Northumbria, desc: "The Northumbrian kings' city on the Ouse.", rumour: "The Northumbrian king's city on the Ouse, with a minster and a market and walls the Romans built. Too big for one ship. Not too big for a fleet.", active: true, market: true, tells: [sheppey, lindisfarne], rumours: [sheppey, whitby], trade: { cheap: [wool, grain], dear: [wine, furs, whetstones, soapstone] }, raid: { wealth: 3000, defenders: 120, foe: northumbrian_levy, terrain: field } }
+  - { id: sheppey, name: "Sheppey", lon: 0.85, lat: 51.4, people: english, kind: island, region: Kent, desc: "Sheep island in the Thames mouth, with a minster on it.", rumour: "An island in the mouth of the Thames, he says, all sheep and marsh and a minster of nuns on the hill, founded by a queen. The London ships go past it every tide.", active: true, tells: [london, walcheren, gipeswic, hamwic], raid: { wealth: 850, defenders: 20, foe: kentish_men, terrain: beach } }
   - { id: london, name: "Lundenwic", lon: -0.1, lat: 51.51, people: english, kind: market, region: Mercia, desc: "The market on the Thames.", rumour: "The Mercian king's market on the Thames, he says, a long strand of jetties and workshops outside the old Roman walls, where the Frisians bring wine and take wool, and the king's reeve takes a toll off both.", standing: -1, active: true, market: true, tells: [sheppey], trade: { cheap: [wool, grain, glass], dear: [furs, ivory, amber, whetstones] }, raid: { wealth: 2400, defenders: 70, foe: london_reeve, terrain: field } }
   - { id: dorestad, name: "Dorestad", lon: 5.34, lat: 51.97, people: frisian, kind: market, region: Frisia, desc: "The richest market of the Frankish north.", rumour: "The richest market of the Franks, on the Rhine, so rich they say the streets are paved with broken pots. The emperor's sons are fighting each other, and nobody is guarding it.", standing: 0, active: true, market: true, trade: { cheap: [wine, glass, grain, salt], dear: [furs, ivory, amber, down, whetstones] }, raid: { wealth: 4200, defenders: 110, foe: frisian_levy, terrain: field }, rumours: [london, york] }
-  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth.", rumour: "An island in the mouths of the Scheldt, he says, flat as a table, with a church and a count's tollhouse, and the Frisian ships going past it all summer to the markets up the rivers.", standing: 0, active: true, raid: { wealth: 700, defenders: 24, foe: frisian_levy, terrain: beach }, rumours: [noirmoutier], tells: [sheppey] }
+  - { id: walcheren, name: "Walcheren", lon: 3.6, lat: 51.5, people: frisian, kind: island, region: Frisia, desc: "An island in the Scheldt mouth.", rumour: "An island in the mouths of the Scheldt, he says, flat as a table, with a church and a count's tollhouse, and the Frisian ships going past it all summer to the markets up the rivers.", standing: 0, active: true, raid: { wealth: 700, defenders: 24, foe: frisian_levy, terrain: beach }, rumours: [noirmoutier, rouen], tells: [sheppey] }
   - { id: noirmoutier, name: "Noirmoutier", lon: -2.25, lat: 47.0, people: frankish, kind: monastery, region: Frankia, desc: "A monastery island off the Loire.", rumour: "Saint Philibert's island off the mouth of the Loire, he says, with salt-pans all round it and a monastery that has been raided so often the monks keep their saint's bones packed for travelling.", active: true, tells: [nantes], raid: { wealth: 800, defenders: 22, foe: monks_tenants, terrain: beach } }
   - { id: nantes, name: "Nantes", lon: -1.55, lat: 47.22, people: frankish, kind: town, region: Frankia, desc: "A city on the Loire.", rumour: "A walled city on the Loire, a day upriver from the salt islands, with a bishop and a count and a cathedral, and the wine of half of Frankia coming down the river past it.", active: true, market: true, tells: [noirmoutier], rumours: [rouen, paris], trade: { cheap: [wine, salt, glass], dear: [furs, amber, ivory, whetstones] }, raid: { wealth: 2400, defenders: 64, foe: frankish_levy, terrain: field } }
-  - { id: rouen, name: "Rouen", lon: 1.1, lat: 49.44, people: frankish, kind: town, region: Frankia, desc: "A city on the Seine.", rumour: "A city on the Seine, he says, three days up the river from the sea, with an archbishop and stone churches and the river trade of half of Frankia going past its walls." }
-  - { id: paris, name: "Paris", lon: 2.35, lat: 48.85, people: frankish, kind: town, region: Frankia, desc: "The Franks' city on the Seine.", rumour: "The Franks' old city on an island in the Seine, he says, far up the river, with more churches than houses, and the richest abbey in Frankia a morning's ride away. Nobody has been up the Seine that far with a ship. Yet." }
+  - { id: rouen, name: "Rúðuborg", lon: 1.1, lat: 49.44, people: frankish, kind: town, region: The Seine, desc: "Rouen: an archbishop's city on the Seine, three days up from the sea.", rumour: "A city on the Seine, he says, three days up the river from the sea, with an archbishop and stone churches and the river trade of half of Frankia going past its walls.", active: true, market: true, tells: [jumieges, fontenelle], rumours: [paris], trade: { cheap: [wine, glass, salt], dear: [furs, amber, ivory, whetstones] }, raid: { wealth: 2600, defenders: 70, foe: frankish_levy, terrain: field } }
+  - { id: paris, name: "Parísborg", lon: 2.35, lat: 48.85, people: frankish, kind: town, region: The Seine, desc: "Paris: the Franks' old city on its island in the Seine, ringed with abbeys.", rumour: "The Franks' old city on an island in the Seine, he says, far up the river, with more churches than houses, and the richest abbey in Frankia a morning's ride away. Nobody has been up the Seine that far with a ship. Yet.", active: true, tells: [saint_denis], raid: { wealth: 5000, defenders: 200, foe: frankish_levy, terrain: field } }
+  # ---- the third batch: England, Scotland, Ireland, the Seine (docs/FRAME-IRELAND-SEINE.md) ----
+  - { id: jarrow, name: "Jarrow", lon: -1.47, lat: 54.98, people: english, kind: monastery, region: Northumbria, desc: "Bede's monastery on the Tyne.", rumour: "A monastery on the Tyne, he says, where the wisest man the English ever had wrote his books. Raided once, before your father's time, and the raiders' leader died for it. The monks still talk about that.", active: true, tells: [lindisfarne, whitby], raid: { wealth: 900, defenders: 18, foe: northumbrian_levy, terrain: beach } }
+  - { id: whitby, name: "Streoneshalh", lon: -0.61, lat: 54.49, people: english, kind: monastery, region: Northumbria, desc: "Whitby: an old double house of monks and nuns on a cliff above the sea.", rumour: "A minster on a cliff over the sea, south of the Tyne, he says, where the English kings decided once whether to keep Easter like the Irish or like the Romans. They chose the Romans. The Irish still haven't forgiven them.", active: true, tells: [york], raid: { wealth: 700, defenders: 16, foe: northumbrian_levy, terrain: beach } }
+  - { id: gipeswic, name: "Gipeswic", lon: 1.16, lat: 52.05, people: english, kind: market, region: East Anglia, desc: "Ipswich: the East Angles' wic on the Orwell, all potters' kilns and jetties.", rumour: "The East Angles' market on a river south of the fens, he says, where they make pots by the thousand and send them everywhere. A king's town, with a king who has no navy worth the name.", standing: -1, active: true, market: true, tells: [sheppey], trade: { cheap: [wool, grain], dear: [furs, whetstones, soapstone, wine] }, raid: { wealth: 1100, defenders: 32, foe: english_fyrd, terrain: field } }
+  - { id: hamwic, name: "Hamwic", lon: -1.39, lat: 50.9, people: english, kind: market, region: Wessex, desc: "Southampton: the West Saxon king's trading town on the Itchen.", rumour: "The West Saxon king's market on the south coast, he says, facing Frankia, with a grid of streets and a thousand people, and the wine coming in from Rouen every summer.", standing: -1, active: true, market: true, tells: [rouen], trade: { cheap: [wool, glass], dear: [furs, whetstones, amber, ivory] }, raid: { wealth: 1600, defenders: 60, foe: english_fyrd, terrain: field } }
+  - { id: applecross, name: "Apurcrossan", lon: -5.81, lat: 57.43, people: gael, kind: monastery, region: Wester Ross, desc: "Applecross: Máel Rubai's monastery on the mainland shore opposite Skye.", rumour: "A monastery on the mainland shore across the sound from Skye, he says, founded by an Irish saint, under mountains that come straight down to the sea. Poor, and holy, and a long way from anybody who'd defend it.", active: true, art: celtic_monastery, tells: [skye], raid: { wealth: 450, defenders: 10, foe: monks_tenants, terrain: beach } }
+  - { id: tarbat, name: "Tarbat", lon: -3.79, lat: 57.83, people: pict, kind: monastery, region: Pictland, desc: "Portmahomack: a Pictish monastery on the Moray Firth, with a workshop that makes vellum and silver.", rumour: "A Pictish monastery on the Moray Firth, he says, south of Orkney, with carved stones as tall as two men and a workshop where they make books and church plate. The Picts are not the Irish. They fight in the open, and they have horses.", active: true, tells: [orkney], raid: { wealth: 1000, defenders: 26, foe: pictish_host, terrain: field } }
+  - { id: whithorn, name: "Hvítaærn", lon: -4.42, lat: 54.73, people: english, kind: monastery, region: Galloway, desc: "Whithorn: the White House of Saint Ninian, an English bishop's seat among Britons and Irish.", rumour: "The White House, he says, on the Galloway shore across from Man: the oldest church in all that country, where an English bishop sits among people who aren't English, and the pilgrims come by sea.", standing: -1, active: true, art: celtic_monastery, tells: [man], raid: { wealth: 800, defenders: 18, foe: monks_tenants, terrain: beach } }
+  - { id: alt_clut, name: "Alt Clut", lon: -4.58, lat: 55.94, people: briton, kind: hall, region: Strathclyde, desc: "Dumbarton Rock: the Briton kings' fortress on the Clyde.", rumour: "The Briton king's fortress, he says, on a rock in the mouth of the Clyde like a giant's tooth, and his whole kingdom up the valley behind it. Nobody has ever taken it. Nobody has really tried.", active: true, tells: [iona], raid: { wealth: 1800, defenders: 70, foe: strathclyde_men, terrain: field } }
+  - { id: linn_duachaill, name: "Linn Duachaill", lon: -6.34, lat: 53.88, people: gael, kind: town, region: Ireland, desc: "Annagassan: a river mouth on the bay south of Conaille, where the Norse will build a ship-fort in 841.", rumour: "A river mouth south of the bay at Conaille, he says, with a deep pool and good ground behind it, and the whole midlands of Ireland a few days' march inland.", standing: -2, active: true, tells: [conaille, dublin], trade: { cheap: [wool, grain], dear: [wine, salt, whetstones] }, raid: { wealth: 500, defenders: 20, foe: conaille_men, terrain: beach } }
+  - { id: rechru, name: "Rechru", lon: -6.25, lat: 55.2, people: gael, kind: island, region: Ulster, desc: "Rathlin: the little island off the Ulster coast where the Northmen first came to Ireland, in 795.", rumour: "An island off the north coast of Ulster, he says, where the first of our ships burned a church thirty-five years ago. There's a church there again. The Irish are stubborn.", standing: -2, active: true, art: celtic_monastery, tells: [bangor], raid: { wealth: 350, defenders: 8, foe: monks_tenants, terrain: beach } }
+  - { id: glendalough, name: "Glendalough", lon: -6.33, lat: 53.01, people: gael, kind: monastery, region: Ireland, desc: "The monastery of the two lakes, in the Wicklow mountains.", rumour: "A monastery in a valley of two lakes, he says, two days' march into the mountains south of the Liffey. Saint Kevin's. Rich with the gifts of Leinster kings, and the kings bury their dead there.", standing: -2, active: true, raid: { wealth: 1400, defenders: 30, foe: leinster_men, terrain: field } }
+  - { id: cork, name: "Corcach", lon: -8.47, lat: 51.9, people: gael, kind: monastery, region: Munster, desc: "Cork: Saint Finbarr's monastery in the marshes of the Lee.", rumour: "A great monastery in the marsh at the head of a long harbour, he says, on the south coast of Ireland, facing Frankia. The wine ships come in there. So could we.", standing: -2, active: true, tells: [skellig], rumours: [noirmoutier], raid: { wealth: 1100, defenders: 26, foe: munster_men, terrain: beach } }
+  - { id: skellig, name: "Sceilig Mhichíl", lon: -10.3, lat: 51.85, people: gael, kind: monastery, region: Munster, desc: "Skellig Michael: a hermitage on a rock in the Atlantic, six hundred steps above the sea.", rumour: "A rock in the ocean off the end of Ireland, he says, where monks live in stone beehives on ledges above the sea, closer to their god than any man should be. Somebody took their abbot off it when you were a boy, and he starved to death in a ship. They're still there.", standing: -2, active: true, art: celtic_monastery, tells: [cork], raid: { wealth: 150, defenders: 4, foe: monks_tenants, terrain: beach } }
+  - { id: jumieges, name: "Jumièges", lon: 0.82, lat: 49.43, people: frankish, kind: monastery, region: The Seine, desc: "A great abbey in a loop of the Seine below Rouen.", rumour: "A great abbey in a bend of the Seine below Rouen, he says, with nine hundred monks and servants in its best days, and a king's gifts on its altars.", active: true, tells: [rouen], raid: { wealth: 1500, defenders: 22, foe: monks_tenants, terrain: beach } }
+  - { id: fontenelle, name: "Fontenelle", lon: 0.73, lat: 49.53, people: frankish, kind: monastery, region: The Seine, desc: "Saint-Wandrille: an old abbey in a side valley of the Seine.", rumour: "An abbey up a side valley off the Seine, he says, rich and old, with an abbot who would rather pay than burn.", active: true, tells: [rouen], raid: { wealth: 1300, defenders: 20, foe: monks_tenants, terrain: beach } }
+  - { id: saint_denis, name: "Saint-Denis", lon: 2.36, lat: 48.94, people: frankish, kind: monastery, region: The Seine, desc: "The abbey where the Frankish kings are buried, a morning's ride north of Paris.", rumour: "The abbey where the Frankish kings go to be buried, he says, north of Paris: the richest house in all Frankia, with an abbot who is the king's own cousin.", active: true, tells: [paris], raid: { wealth: 3200, defenders: 60, foe: frankish_levy, terrain: field } }
 
 legs:
   - { a: home_fjord, b: karmoy, days: 1, kind: coastal }
@@ -222,3 +239,29 @@ legs:
   - { a: sheppey, b: noirmoutier, days: 6, kind: coastal }
   - { a: walcheren, b: noirmoutier, days: 7, kind: coastal }
   - { a: noirmoutier, b: nantes, days: 1, kind: river }
+  # the third batch (docs/FRAME-IRELAND-SEINE.md)
+  - { a: lindisfarne, b: jarrow, days: 1, kind: coastal }
+  - { a: jarrow, b: whitby, days: 1.5, kind: coastal }
+  - { a: whitby, b: york, days: 2, kind: coastal }
+  - { a: gipeswic, b: sheppey, days: 1.5, kind: coastal }
+  - { a: walcheren, b: gipeswic, days: 2, kind: open }
+  - { a: sheppey, b: hamwic, days: 3, kind: coastal }
+  - { a: hamwic, b: rouen, days: 2.5, kind: open }
+  - { a: walcheren, b: rouen, days: 4, kind: coastal }
+  - { a: skye, b: applecross, days: 1, kind: coastal }
+  - { a: orkney, b: tarbat, days: 2, kind: coastal }
+  - { a: man, b: whithorn, days: 1, kind: open }
+  - { a: bangor, b: whithorn, days: 1.5, kind: open }
+  - { a: iona, b: alt_clut, days: 3, kind: coastal }
+  - { a: conaille, b: linn_duachaill, days: 0.5, kind: coastal }
+  - { a: linn_duachaill, b: dublin, days: 1.5, kind: coastal }
+  - { a: bangor, b: rechru, days: 1, kind: coastal }
+  - { a: iona, b: rechru, days: 1.5, kind: open }
+  - { a: dublin, b: glendalough, days: 2, kind: river }
+  - { a: dublin, b: cork, days: 4, kind: coastal }
+  - { a: cork, b: skellig, days: 2, kind: coastal }
+  - { a: cork, b: noirmoutier, days: 6, kind: open }
+  - { a: rouen, b: jumieges, days: 0.5, kind: river }
+  - { a: rouen, b: fontenelle, days: 0.5, kind: river }
+  - { a: rouen, b: paris, days: 5, kind: river }
+  - { a: paris, b: saint_denis, days: 0.5, kind: river }

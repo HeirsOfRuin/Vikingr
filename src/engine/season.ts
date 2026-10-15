@@ -417,6 +417,12 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   const hardLines = turnOfYear(state, content, rng, year, state.at !== 'home_fjord');
   // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
   hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng));
+  // history goes on without him: in 841 the Norse build ship-forts at Duibhlinn and Linn Duachaill and winter in Ireland
+  if (year >= 841 && !state.flags._lp841) {
+    state.flags._lp841 = 1;
+    for (const id of ['dublin', 'linn_duachaill']) if (state.places[id]) { state.places[id]!.norse = true; state.places[id]!.standing = Math.max(state.places[id]!.standing ?? 0, 4); }
+    journal(state, 'News from Ireland: Norse crews mean to winter there, in ship-forts at Duibhlinn and Linn Duachaill.');
+  }
   // a sworn man fell last year: the oarsman who took his bench may ask to take his oath as well
   if (!state.service && hirdRoom(state) > 0 && state.men.some((m) => !m.alive && m.sworn && m.diedOn !== null && dateOf(m.diedOn).year >= year - 1)) state.queue.push({ scene: 'hi_heir', day: state.day });
   for (const m of aliveMen(state)) addLoyalty(m, m.loyalty > 6 ? -1 : m.loyalty < 4 ? 1 : 0);

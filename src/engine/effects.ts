@@ -27,6 +27,8 @@ function addTo(state: GameState, content: ContentBundle, path: string, n: number
   switch (path) {
     case 'silver': state.silver = Math.max(0, state.silver + n); return;
     case 'loot': if (n > 0) stow(state, content, n); else state.loot = Math.max(0, state.loot + n); return;
+    // tribute paid in weighed silver (the Seine, 845): it goes on the heap without filling the holds
+    case 'geld': state.loot += Math.max(0, n); return;
     case 'honour': state.honour = Math.max(-10, Math.min(10, state.honour + n)); return;
     case 'hamingja': state.hamingja = Math.max(-5, Math.min(5, state.hamingja + n)); return;
     case 'provisions': state.provisions = Math.max(0, state.provisions + n); return;
@@ -138,12 +140,29 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('swear_cand' in e) swearCandidate(state, content, e.swear_cand);
     else if ('cand_crew' in e) candidateToCrew(state);
     else if ('take_hostage' in e) {
-      const h = makeHostage(state, content, rng, e.take_hostage.kind, state.at ?? state.voyage?.to ?? 'home_fjord', e.take_hostage.captain);
+      const t = e.take_hostage;
+      const h = makeHostage(state, content, rng, t.kind, t.place ?? state.at ?? state.voyage?.to ?? 'home_fjord', t.captain);
+      // a named hostage the story knows (Forannán of Armagh): the scene says who, and what he is worth
+      if (t.name) h.name = t.name;
+      if (t.who) h.who = t.who.replace(/\{name\}/g, h.name);
+      if (t.kin) h.kin = t.kin;
+      if (t.price) h.price = t.price;
       hostagesOf(state).push(h);
       state.hfocus = h.id;
       if (h.captain) shiftRel(state, content, h.captain, -3);
       journal(state, `Took ${h.who} as a hostage.`);
     } else if ('hostage' in e) hostageOp(state, content, rng, e.hostage);
+    else if ('longphort' in e) {
+      const ps = state.places[e.longphort]!;
+      ps.norse = true;
+      ps.standing = Math.max(ps.standing ?? 0, 6);
+      journal(state, `A Norse ship-fort holds ${content.places[e.longphort]!.name} now.`);
+    } else if ('longphort_lost' in e) {
+      const ps = state.places[e.longphort_lost]!;
+      ps.norse = false;
+      ps.standing = Math.min(ps.standing ?? 0, -4);
+      journal(state, `The ship-fort at ${content.places[e.longphort_lost]!.name} is burned.`);
+    }
     else if ('master' in e) {
       const ship = hiredShip(state) ?? state.ships[state.ships.length - 1];
       if (ship && state.ships.length > 1) appoint(state, content, ship.id, e.master);

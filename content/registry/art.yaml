@@ -43,3 +43,8 @@
 - { id: volva, title: Heiðr the seeress }
 - { id: holmgang, title: The holmgang }
 - { id: storm, title: Storm }
+- id: celtic_monastery
+  title: A Gaelic monastery from the sea, under the mountains
+  fx:
+    - { kind: water, rect: [70, 112, 330, 48] }
+    - { kind: birds, rect: [90, 8, 300, 50], count: 3 }

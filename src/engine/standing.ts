@@ -12,7 +12,7 @@ export const STANDING_MAX = 10;
 
 /** Where a people starts, before anything has happened between you. A place can override it. */
 export const PEOPLE_BASE: Record<People, number> = {
-  norse: 2, danish: 0, swedish: 0, gael: -2, english: -2, frisian: 0, frankish: -1, baltic: 0, rus: 0,
+  norse: 2, danish: 0, swedish: 0, gael: -2, english: -2, frisian: 0, frankish: -1, baltic: 0, rus: 0, pict: -1, briton: -1,
 };
 
 export type Tier = 'hostile' | 'unfriendly' | 'wary' | 'friendly' | 'allied';
@@ -50,9 +50,14 @@ export function tierAt(state: GameState, content: ContentBundle, id: string): Ti
   return tierOf(standing(state, content, id));
 }
 
+/** A Norse ship-fort holds the place (a longphort): it trades and hires like a Norse port. */
+export function norseHeld(state: GameState, id: string): boolean {
+  return !!state.places[id]?.norse;
+}
+
 export function canHire(state: GameState, content: ContentBundle, id: string): number {
   const p = content.places[id]!;
-  if (p.kind === 'home' || !HIRING_PEOPLES.includes(p.people)) return 0;
+  if (p.kind === 'home' || !(HIRING_PEOPLES.includes(p.people) || norseHeld(state, id))) return 0;
   return Math.max(0, HIRE_POOL[tierAt(state, content, id)] - (state.places[id]?.hired ?? 0));
 }
 
@@ -146,7 +151,7 @@ export const GUEST_DAYS: Record<Tier, number> = { hostile: 0, unfriendly: 0, war
 /** Fighting your way ashore at a hostile port: about this many come down to the beach. */
 const LANDING_FOE: Record<People, string> = {
   norse: 'rival_crew', danish: 'rival_crew', swedish: 'rival_crew', gael: 'ulster_levy', english: 'northumbrian_levy',
-  frisian: 'island_men', frankish: 'island_men', baltic: 'island_men', rus: 'island_men',
+  frisian: 'island_men', frankish: 'island_men', baltic: 'island_men', rus: 'island_men', pict: 'pictish_host', briton: 'strathclyde_men',
 };
 
 export function landingFoe(content: ContentBundle, id: string): { foe: string; men: number } {
