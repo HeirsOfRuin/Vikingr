@@ -18,8 +18,8 @@ import { FAVOUR, favour, favourWord } from './allies';
 import { commitReserve, fightOutHost, hostRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, norseHeld, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
-import { adaptivePolicy as duelInstinct, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
-import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, fightOutBattle, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
+import { adaptivePolicy as duelInstinct, BEATS, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
+import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, enemyForecast, fightOutBattle, INTENSITY, MATCHUP, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom } from './base';
@@ -313,7 +313,13 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'duel': {
       const d = (p as { duel: import('./state').DuelState }).duel;
-      const out = DUEL_MOVES.map((m) => opt('Moves', { t: 'duel_move', move: m }, MOVE_NAMES[m]));
+      // the triangle, said plainly (playtest 2026-10-15: nothing on screen said what beats what)
+      const answers = d.read.length ? DUEL_MOVES.filter((m) => d.read.some((r) => BEATS[m].includes(r))) : [];
+      const out = DUEL_MOVES.map((m) => {
+        const beats = BEATS[m].map((x) => MOVE_NAMES[x].toLowerCase()).join(', ');
+        const loses = DUEL_MOVES.filter((x) => BEATS[x].includes(m)).map((x) => MOVE_NAMES[x].toLowerCase()).join(', ');
+        return opt('Moves', { t: 'duel_move', move: m }, MOVE_NAMES[m], true, undefined, `${answers.includes(m) ? 'The answer to what he leans on. ' : ''}Beats a ${beats}; loses to a ${loses}`);
+      });
       out.push(opt('Other', { t: 'duel_auto' }, 'Let instinct take it'));
       if (canYield(d)) out.push(opt('Other', { t: 'yield' }, 'Step off the cloak and pay the holmlausn', true, undefined, `${formatSilver(DUEL.holmlausnMarks * ORTUG_PER_MARK)}; honour falls`));
       return out;
@@ -321,7 +327,18 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     case 'battle': {
       const b = (p as { battle: import('./state').BattleState }).battle;
       const ok = availableOrders(b, 'us');
-      const out = ok.map((o) => opt(state.service ? 'Your shout' : 'Orders', { t: 'order', order: o }, ORDER_NAMES[o]));
+      // what beats what, said plainly, and the best answer to what they look likely to do (playtest 2026-10-15)
+      const fc = enemyForecast(b);
+      const score = (o: (typeof ok)[number]) => ok.length ? Object.entries(fc).reduce((v, [e, p]) => v + p * MATCHUP[o][e as keyof typeof MATCHUP], 0) : 0;
+      const best = Math.max(...ok.map(score));
+      const nm = (x: string) => ORDER_NAMES[x as keyof typeof ORDER_NAMES].toLowerCase();
+      const out = ok.map((o) => {
+        const beats = Object.entries(MATCHUP[o]).filter(([, v]) => v > 0).map(([e]) => nm(e)).join(' or ');
+        const loses = Object.entries(MATCHUP[o]).filter(([, v]) => v < 0).map(([e]) => nm(e)).join(' or ');
+        const weight = INTENSITY[o].out >= 1.3 ? 'Hits hardest, costs most. ' : INTENSITY[o].in <= 0.7 ? 'Costs few men, does little. ' : '';
+        const good = best > 0.05 && score(o) >= best - 0.01 ? 'A good answer to what they look likely to do. ' : '';
+        return opt(state.service ? 'Your shout' : 'Orders', { t: 'order', order: o }, ORDER_NAMES[o], true, undefined, `${good}${weight}Beats ${beats}; loses to ${loses}`);
+      });
       for (const pos of ['front', 'wall', 'rear'] as Position[]) if (pos !== b.position && !b.heroDown) out.push(opt('Your place', { t: 'position', pos }, `Move to: ${POSITION_NAMES[pos]}`));
       // the host's leader: the reserve, and a signal to the other wings (docs/FRAME-HOSTS-FRISIA.md)
       if (b.host?.role === 'host' && !b.over) {
