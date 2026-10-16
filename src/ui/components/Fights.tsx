@@ -100,6 +100,7 @@ function WallView({ content, b, options, onAct }: { content: ContentBundle; b: B
     <div>
       <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span></h2>
       {foe && <p class="muted small">{foe.desc}</p>}
+      {b.host && <HostCard b={b} />}
       {w.phase === 'deploy' ? (
         <div class="card sans small">
           <div><b>{b.them.name}: about {b.them.men}. {b.us.name}: {b.us.men}.</b></div>
@@ -163,6 +164,22 @@ function WallSide({ name, men, start, cohesion, stamina, them }: { name: string;
   );
 }
 
+/** The whole line of a host: his own part, and the wings beside it (docs/FRAME-HOSTS-FRISIA.md). */
+function HostCard({ b }: { b: BattleState }) {
+  if (!b.host) return null;
+  return (
+    <div class="card sans small">
+      <div class="muted">The line ({b.host.role === 'host' ? 'yours to command' : b.host.role === 'wing' ? 'you hold the centre' : 'you stand in it'}){b.host.reserve.us > 0 ? `; reserve ${b.host.reserve.usIn ? 'committed' : `${b.host.reserve.us} men, waiting`}` : ''}{b.host.reserve.them > 0 && b.host.reserve.themIn ? '; their reserve is in' : ''}:</div>
+      {[{ name: 'Your part of the line', us: b.us, them: b.them, over: b.over }, ...b.host.wings].map((w, i) => (
+        <div key={i} style={{ marginTop: 4 }}>
+          <b>{w.name}</b>{w.over ? <span class="muted"> — {w.over === 'won' ? 'they broke the men in front of them' : w.over === 'lost' ? 'broken' : 'spent, fallen back'}</span> : <span class="muted"> — {Math.max(0, w.us.men)} against {Math.max(0, w.them.men)}</span>}
+          {!w.over && <Bar value={Math.max(0, w.us.morale)} max={10} kind="gold" />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function BattleView({ content, b, options, onAct }: { content: ContentBundle; b: BattleState; options: ActionOption[]; onAct: (a: Action) => void }) {
   if (b.wall) return <WallView content={content} b={b} options={options} onAct={onAct} />;
   const fc = enemyForecast(b);
@@ -172,17 +189,7 @@ export function BattleView({ content, b, options, onAct }: { content: ContentBun
     <div>
       <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span></h2>
       {foe && <p class="muted small">{foe.desc}</p>}
-      {b.host && (
-        <div class="card sans small">
-          <div class="muted">The line ({b.host.role === 'host' ? 'yours to command' : b.host.role === 'wing' ? 'you hold the centre' : 'you stand in it'}){b.host.reserve.us > 0 ? `; reserve ${b.host.reserve.usIn ? 'committed' : `${b.host.reserve.us} men, waiting`}` : ''}{b.host.reserve.them > 0 && b.host.reserve.themIn ? '; their reserve is in' : ''}:</div>
-          {[{ name: 'Your part of the line', us: b.us, them: b.them, over: b.over }, ...b.host.wings].map((w, i) => (
-            <div key={i} style={{ marginTop: 4 }}>
-              <b>{w.name}</b>{w.over ? <span class="muted"> — {w.over === 'won' ? 'they broke the men in front of them' : w.over === 'lost' ? 'broken' : 'spent, fallen back'}</span> : <span class="muted"> — {Math.max(0, w.us.men)} against {Math.max(0, w.them.men)}</span>}
-              {!w.over && <Bar value={Math.max(0, w.us.morale)} max={10} kind="gold" />}
-            </div>
-          ))}
-        </div>
-      )}
+      {b.host && <HostCard b={b} />}
       <div class="walls">
         <Wall name={b.us.name} men={b.us.men} start={b.us.start} morale={b.us.morale} />
         <Wall name={b.them.name} men={b.them.men} start={b.them.start} morale={b.them.morale} them />

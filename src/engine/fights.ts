@@ -4,9 +4,13 @@ import { stow } from './fleet';
 import { coastMult } from './hardship';
 import { partner, partnerInFight } from './allies';
 import { HOST, startHost } from './host';
-import type { BattleTerrain, ContentBundle } from '../content/schema';
+import type { BattleTerrain, ContentBundle, Foe, Resolve } from '../content/schema';
 import type { BattleState, DuelSide, DuelState, GameState } from './state';
-import type { RngCursor } from './rng';
+import { RngCursor, seedRng } from './rng';
+import { startWall, WALL } from './wall';
+import { fighterGuile, startBout } from './bout';
+import { livingFame } from './fame';
+import { dateOf } from './calendar';
 import { makeDuel, sideFromFighter } from './duel';
 import { effAttr, hpMax, addWound, woundFor, kill, learn } from './hero';
 import { addDeed } from './fame';
@@ -55,7 +59,52 @@ export function startDuel(state: GameState, content: ContentBundle, foeId: strin
   d.log.push(kind === 'holmgang'
     ? `The cloak is pegged out on the turf. Three shields each. ${f.name} spits on his palms.`
     : `${f.name} comes at you.`);
+  // every single combat is fought in the second form (docs/FRAME-COMBAT-2.md)
+  startBout(d, { readScore: fightEye(state, content), guile: fighterGuile(f), adviser: adviser(state), unyielding: f.unyielding }, fightRng(state, `duel:${foeId}`));
   state.pending = { t: 'duel', duel: d };
+}
+
+/** A fight's own chance, from the save: the same fight on the same day opens the same way after a reload. */
+function fightRng(state: GameState, tag: string): RngCursor {
+  let h = 2166136261;
+  const key = `${tag}:${state.day}:${state.stats.battles}:${state.stats.duels}`;
+  for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+  return new RngCursor(seedRng((state.seed ^ h) >>> 0));
+}
+
+/** His eye for a fight (docs/FRAME-COMBAT-2.md, revision 2): wits, cunning, and the fights he has lived through. */
+export function fightEye(state: GameState, content: ContentBundle): number {
+  // while an old hand stands at his shoulder, he lends his eye as well as his voice: the first fights are gentler
+  return effAttr(state, content, 'wit') + state.hero.skills.cunning + Math.min(3, Math.floor((state.stats.battles + state.stats.duels) / 4)) + (adviser(state) ? OLD_HAND_EYE : 0);
+}
+const OLD_HAND_EYE = 2;
+
+/** While he is new to fighting, an old hand shouts advice: a bench-mate, a sworn man, or the captain. */
+export function adviser(state: GameState): string | null {
+  if (state.stats.battles + state.stats.duels >= WALL.adviceUntil) return null;
+  return state.men.find((m) => m.alive && !(m.hurtUntil && m.hurtUntil > state.day))?.name ?? state.service?.captain ?? 'An old hand';
+}
+
+/** Renown brings harder enemies (docs/FRAME-COMBAT-2.md, revision 3): from 832, a man whose name is known is more
+ *  often met by picked men, who come ready for him: better armed, harder to read, and readier to die. Not while he
+ *  pulls another man's oar: nobody comes looking for an oarsman. */
+export const RENOWN = {
+  from: 832,
+  /** Living fame at or above each mark, and the chance a fight is against veterans. */
+  tiers: [[40, 0.2], [90, 0.35], [160, 0.5]] as [number, number][],
+};
+const STEADIER: Record<Resolve, Resolve> = { levy: 'warriors', warriors: 'hird', hird: 'hird' };
+
+export function veteranChance(state: GameState): number {
+  if (state.service || dateOf(state.day).year < RENOWN.from) return 0;
+  const f = livingFame(state);
+  return RENOWN.tiers.reduce((c, [at, p]) => (f >= at ? p : c), 0);
+}
+
+function veterans(state: GameState, foe: Foe, rng: RngCursor): Foe | null {
+  if (rng.float() >= veteranChance(state)) return null;
+  const resolve = foe.resolve ?? (foe.quality < 1 ? 'levy' : foe.quality >= 2 ? 'hird' : 'warriors');
+  return { ...foe, quality: Math.min(3, foe.quality + 1), guile: Math.min(3, (foe.guile ?? 0) + 1), resolve: STEADIER[resolve] };
 }
 
 export function finishDuel(state: GameState, content: ContentBundle, rng: RngCursor, d: DuelState): void {
@@ -111,7 +160,7 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
     case 'parted':
       state.hero.hp = Math.max(1, state.hero.hp);
       lines.push('Neither of you won. It will be talked about anyway.');
-      next = d.win;
+      next = d.parted ?? d.win;
       break;
   }
   for (const l of [lw, ls]) if (l) lines.push(l);
@@ -166,6 +215,16 @@ export function startBattle(
     ...(ally.men ? { allyMen: ally.men } : {}),
     lost: 0,
   };
+  // renown: picked men, ready for him
+  const rng = fightRng(state, `battle:${foe.id}`);
+  const vet = veterans(state, foe, rng);
+  if (vet) {
+    b.them.quality = vet.quality;
+    b.them.morale += 1;
+    b.log.push(`Word of you has gone ahead of you. These are picked men, and they know whose ship it is.`);
+  }
+  // every battle is fought in the second form (docs/FRAME-COMBAT-2.md)
+  startWall(b, !state.service, rng, { readScore: fightEye(state, content), adviser: adviser(state), foe: vet ?? foe });
   state.pending = { t: 'battle', battle: b };
 }
 

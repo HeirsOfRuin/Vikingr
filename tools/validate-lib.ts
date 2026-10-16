@@ -59,6 +59,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if (!content.fighters[e.fight.foe]) errors.push(`${where}: unknown fighter "${e.fight.foe}"`);
         sceneRef(where, e.fight.win);
         sceneRef(where, e.fight.lose);
+        sceneRef(where, e.fight.parted);
         lethal ||= e.fight.lethal;
       } else if ('battle' in e) {
         if (!content.foes[e.battle.foe]) errors.push(`${where}: unknown foe "${e.battle.foe}"`);
@@ -198,7 +199,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
       const flat = (es: Effect[]): Effect[] => es.flatMap((e) => ('if' in e ? [...flat(e.then), ...flat(e.else ?? [])] : [e]));
       for (const e of flat([...(c.effects ?? []), ...(c.success?.effects ?? []), ...(c.failure?.effects ?? [])])) {
         if ('plunder' in e && e.plunder.next) queue.push(e.plunder.next);
-        if ('fight' in e) queue.push(...[e.fight.win, e.fight.lose].filter((x): x is string => !!x));
+        if ('fight' in e) queue.push(...[e.fight.win, e.fight.lose, e.fight.parted].filter((x): x is string => !!x));
         if ('battle' in e) queue.push(...[e.battle.win, e.battle.lose, e.battle.parted].filter((x): x is string => !!x));
         if ('host' in e) queue.push(...[e.host.win, e.host.lose].filter((x): x is string => !!x));
         if ('queue' in e) queue.push(e.queue.scene);

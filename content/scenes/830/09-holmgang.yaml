@@ -16,7 +16,7 @@
     - id: fight
       text: Fight him at dawn.
       danger: true
-      effects: [ { fight: { foe: thorgils, kind: holmgang, lethal: true, win: y_holm_won, lose: y_holm_lost, bout: true } } ]
+      effects: [ { fight: { foe: thorgils, kind: holmgang, lethal: true, win: y_holm_won, lose: y_holm_lost } } ]
       result: |
         They peg out the cloak on the frozen turf below the hall at first light, with the whole of Yule standing round it, breathing smoke.
 

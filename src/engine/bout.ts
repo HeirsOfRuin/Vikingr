@@ -29,6 +29,8 @@ export interface BoutState {
   guile: number;
   /** Who shouts advice from the edge of the cloak while he is new to this; null once he knows it. */
   adviser: string | null;
+  /** He came to kill, and will not pay his way off the cloak. */
+  unyielding?: boolean;
 }
 
 export const BOUT = {
@@ -37,6 +39,7 @@ export const BOUT = {
   cost: { heavy: 3, quick: 1, guard: -1, bash: 2, back: -3 } as Record<BoutMove, number>,
   edge: 3,
   maxExchanges: 16,
+  maxLethal: 40,
   shieldHeavy: 2,
   shieldBash: 1,
   offBalanceTaken: 1.5,
@@ -52,6 +55,14 @@ export const BOUT = {
   instinctSlip: 0.4,
   instinctSkill: 0.06,
   instinctFloor: 0.15,
+  /** Skill at arms: each point of weapons skill over the other man is this much more of your blows landing, and of his
+   *  failing (between the bounds). */
+  skillStep: 0.08,
+  /** A great blow on a raised shield, from a man this many points of strength over the guard (past the first): this
+   *  share of it comes through, per point. */
+  throughGuard: 0.15,
+  skillMin: 0.6,
+  skillMax: 1.5,
 };
 
 export const MOVE_LABEL: Record<BoutMove, string> = { heavy: 'Great blow', quick: 'Quick cut', guard: 'Shield up', bash: 'Shield rush', back: 'Step back' };
@@ -67,7 +78,9 @@ export const FOE_TELL: Record<BoutMove, string> = {
 };
 
 /** What a cunning man's move can be mistaken for. */
-const DECOY: Record<BoutMove, BoutMove> = { heavy: 'quick', quick: 'heavy', guard: 'bash', bash: 'heavy', back: 'guard' };
+// A false read is a bait: what he shows asks for the answer his real move beats. A great blow dressed as a rush asks
+// for a quick cut; a rush dressed as a great blow asks for a raised shield.
+const DECOY: Record<BoutMove, BoutMove> = { heavy: 'bash', quick: 'heavy', guard: 'back', bash: 'heavy', back: 'guard' };
 
 /** What a move says on its button: what it does and costs, nothing about this exchange. */
 export function moveDesc(d: DuelState, m: BoutMove): string {
@@ -94,6 +107,15 @@ export const BOUT_WAYS: string[] = [
   'Rush a bigger man\'s blow and you still take some of it.',
   'Step back for breath. Three steps on the cloak and you have run.',
 ];
+
+function throughGuard(striker: DuelSide, guard: DuelSide): number {
+  const over = striker.str - guard.str - 1;
+  return over > 0 ? Math.round(heavyDmg(striker) * BOUT.throughGuard * over) : 0;
+}
+
+function skillEdge(diff: number): number {
+  return Math.max(BOUT.skillMin, Math.min(BOUT.skillMax, 1 + BOUT.skillStep * diff));
+}
 
 function heavyDmg(s: DuelSide): number { return 3 + s.str + s.weapon + Math.floor(s.weapons / 2); }
 function quickDmg(s: DuelSide): number { return 1 + Math.floor(s.agi / 2) + Math.floor(s.weapons / 3); }
@@ -135,6 +157,12 @@ function meet(h: BoutMove, f: BoutMove, d: DuelState): Meet {
     case 'back/bash': r.heroEdge = holm ? 2 : 0; r.note = 'He drives you back across the cloak.'; break;
     case 'back/back': r.heroEdge = holm ? 1 : 0; r.foeEdge = holm ? 1 : 0; r.note = 'You both step back and breathe.'; break;
   }
+  // a much stronger man's great blow comes through a raised shield in part: you see it coming, and it still lands
+  if (key === 'guard/heavy' && !b.heroOff && H.shields > 0) r.toHero += throughGuard(F, H);
+  if (key === 'heavy/guard' && !b.foeOff && F.shields > 0) r.toFoe += throughGuard(H, F);
+  // the better swordsman lands more of what he means and less of what the other man means: fixed, not rolled
+  r.toFoe = Math.round(r.toFoe * skillEdge(H.weapons - F.weapons));
+  r.toHero = Math.round(r.toHero * skillEdge(F.weapons - H.weapons));
   // off balance, and tired arms, change the numbers
   if (b.foeOff) { r.toFoe = Math.round(r.toFoe * BOUT.offBalanceTaken); r.toHero = Math.round(r.toHero * BOUT.offBalanceDealt); }
   if (b.heroOff) { r.toHero = Math.round(r.toHero * BOUT.offBalanceTaken); r.toFoe = Math.round(r.toFoe * BOUT.offBalanceDealt); }
@@ -167,33 +195,43 @@ export function projectBout(d: DuelState, m: BoutMove, f: BoutMove = d.bout!.foe
 }
 
 /** His next move, from his habits and his state. Shown to the hero before he chooses. */
+/** What a tired or shaken man does: steps back for breath, unless he is at the edge of the cloak, where he gets his
+ *  breath behind his shield, or with no shield left, goes for a quick cut rather than step off. */
+function restMove(d: DuelState): BoutMove {
+  const cornered = d.kind === 'holmgang' && d.bout!.foeEdge + 2 >= BOUT.edge;
+  if (!cornered) return 'back';
+  return d.foe.shields > 0 || d.foe.stamina < BOUT.cost.quick ? 'guard' : 'quick';
+}
+
 export function foeIntent(d: DuelState, rng: RngCursor): BoutMove {
   const F = d.foe, b = d.bout!;
-  if (F.stamina <= BOUT.tired) return 'back';
-  if (b.foeOff) return F.shields > 0 && rng.float() < 0.5 ? 'guard' : 'back';
+  // on the cloak, a man a rush away from the edge does not give ground: he gets his breath behind his shield instead
+  const cornered = d.kind === 'holmgang' && b.foeEdge + 2 >= BOUT.edge;
+  if (F.stamina <= BOUT.tired) return restMove(d);
+  if (b.foeOff) return cornered ? restMove(d) : F.shields > 0 && rng.float() < 0.5 ? 'guard' : 'back';
   const h = F.habits;
   const w: Record<BoutMove, number> = {
     heavy: F.stamina >= 3 ? (h.strike ?? 1) + (b.heroOff ? 3 : 0) : 0,
     quick: (h.feint ?? 1) + 0.3,
     guard: F.shields > 0 ? (h.guard ?? 1) + (d.hero.stamina >= 6 ? 0.5 : 0) : 0.2,
     bash: F.shields > 0 && F.stamina >= 2 ? 0.4 + F.str * 0.2 : 0,
-    back: F.stamina <= 4 ? 1.5 : 0.1,
+    back: cornered ? 0 : F.stamina <= 4 ? 1.5 : 0.1,
   };
   return rng.pickWeighted(BOUT_MOVES, (m) => w[m])!;
 }
 
-export interface BoutSetup { readScore: number; guile: number; adviser: string | null }
+export interface BoutSetup { readScore: number; guile: number; adviser: string | null; unyielding?: boolean }
 
 export function startBout(d: DuelState, setup: BoutSetup, rng: RngCursor): void {
-  d.bout = { foeIntent: 'guard', foeNext: null, heroOff: false, foeOff: false, heroEdge: 0, foeEdge: 0, readsAhead: setup.readScore >= BOUT.readAhead, read: 'sure', shown: [], readScore: setup.readScore, guile: setup.guile, adviser: setup.adviser };
+  d.bout = { foeIntent: 'guard', foeNext: null, heroOff: false, foeOff: false, heroEdge: 0, foeEdge: 0, readsAhead: setup.readScore >= BOUT.readAhead, read: 'sure', shown: [], readScore: setup.readScore, guile: setup.guile, adviser: setup.adviser, ...(setup.unyielding ? { unyielding: true } : {}) };
   d.bout.foeIntent = foeIntent(d, rng);
   readHim(d, rng);
   if (d.bout.readsAhead && d.bout.read === 'sure') d.bout.foeNext = foeIntent(d, rng);
 }
 
-/** A man's guile: his wits, and how much he likes a feint. */
-export function fighterGuile(f: { guile?: number; attrs: { wit: number }; habits: Partial<Record<string, number>> }): number {
-  return f.guile ?? Math.min(3, Math.max(0, f.attrs.wit - 2) + ((f.habits.feint ?? 0) >= 3 ? 1 : 0));
+/** A man's guile: his wits, how much he likes a feint, and a master's way of hiding what he means. */
+export function fighterGuile(f: { guile?: number; attrs: { wit: number }; weapons: number; habits: Partial<Record<string, number>> }): number {
+  return f.guile ?? Math.min(3, Math.max(0, f.attrs.wit - 2) + ((f.habits.feint ?? 0) >= 3 ? 1 : 0) + (f.weapons >= 5 ? 1 : 0));
 }
 
 function readHim(d: DuelState, rng: RngCursor): void {
@@ -243,12 +281,14 @@ export function boutExchange(d: DuelState, m: BoutMove, rng: RngCursor): void {
   if (d.foe.hp <= 0) { d.over = 'won'; return; }
   if (holm && b.heroEdge >= BOUT.edge) { d.over = 'yielded'; d.log.push('Your heel comes down on the turf beyond the cloak. You have stepped off it.'); return; }
   if (holm && b.foeEdge >= BOUT.edge) { d.over = 'foe_yielded'; d.log.push('He steps off the cloak with both feet. He has run, and everyone saw it.'); return; }
-  if (holm && d.foe.bled && d.foe.hp < d.foe.hpMax / 2 && rng.float() < 0.3) { d.over = 'foe_yielded'; d.log.push('He looks at his blood on the cloak, and lowers his axe. He will pay.'); return; }
-  if (d.exchange >= BOUT.maxExchanges) { d.over = 'parted'; return; }
+  // the law of the cloak: a man whose blood falls on it may stop there and pay, unless he came to kill
+  if (holm && !b.unyielding && d.foe.bled && d.foe.hp < d.foe.hpMax / 2 && rng.float() < 0.3) { d.over = 'foe_yielded'; d.log.push('He looks at his blood on the cloak, and lowers his axe. He will pay.'); return; }
+  // a fight to the death is fought to the end; any other is broken off when both men are spent
+  if (d.exchange >= (d.lethal ? BOUT.maxLethal : BOUT.maxExchanges)) { d.over = 'parted'; return; }
   b.foeIntent = b.foeNext ?? foeIntent(d, rng);
   // what he planned meets what happened
   if (b.foeOff && (b.foeIntent === 'heavy' || b.foeIntent === 'bash')) b.foeIntent = d.foe.shields > 0 ? 'guard' : 'back';
-  if (BOUT.cost[b.foeIntent] > d.foe.stamina) b.foeIntent = 'back';
+  if (BOUT.cost[b.foeIntent] > d.foe.stamina) b.foeIntent = restMove(d);
   readHim(d, rng);
   b.foeNext = b.readsAhead && b.read === 'sure' ? foeIntent(d, rng) : null;
 }

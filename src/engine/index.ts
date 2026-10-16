@@ -17,7 +17,7 @@ import { hpMax, learn, effAttr } from './hero';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
-import { commitReserve, fightOutHost, hostRound } from './host';
+import { commitReserve, fightOutHost, fightOutHostWall, hostRound, hostWallRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, norseHeld, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, BEATS, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
@@ -211,6 +211,16 @@ function needsTheDead(state: GameState, req: CondInput | undefined): boolean {
   });
 }
 
+/** The host's leader: the reserve, and a signal to the other wings (docs/FRAME-HOSTS-FRISIA.md). */
+function hostOptions(b: import('./state').BattleState): ActionOption[] {
+  if (b.host?.role !== 'host' || b.over) return [];
+  const out: ActionOption[] = [];
+  if (b.host.reserve.us > 0) out.push(opt('The host', { t: 'reserve' }, 'Throw in the host\'s reserve', !b.host.reserve.usIn, 'The reserve is already in.', `${b.host.reserve.us} men, to whichever wing is closest to breaking`));
+  out.push(opt('The host', { t: 'signal', order: 'push' }, 'Signal the wings: push', true, undefined, 'The whole line goes forward next round'));
+  out.push(opt('The host', { t: 'signal', order: 'hold' }, 'Signal the wings: hold', true, undefined, 'The flanks lock shields and wait'));
+  return out;
+}
+
 const upFirst = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 const opt = (group: string, action: Action, label: string, enabled = true, reason?: string, hint?: string): ActionOption => ({ group, action, label, enabled, reason, hint });
 
@@ -361,6 +371,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const a = available(b, o);
           return opt(state.service ? 'Your shout' : 'Orders', { t: 'wall_order', order: o }, ORDER_LABEL[o], a.ok, a.why, orderDesc(b, o));
         });
+        out.push(...hostOptions(b));
         out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
         return out;
       }
@@ -378,12 +389,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         return opt(state.service ? 'Your shout' : 'Orders', { t: 'order', order: o }, ORDER_NAMES[o], true, undefined, `${good}${weight}Beats ${beats}; loses to ${loses}`);
       });
       for (const pos of ['front', 'wall', 'rear'] as Position[]) if (pos !== b.position && !b.heroDown) out.push(opt('Your place', { t: 'position', pos }, `Move to: ${POSITION_NAMES[pos]}`));
-      // the host's leader: the reserve, and a signal to the other wings (docs/FRAME-HOSTS-FRISIA.md)
-      if (b.host?.role === 'host' && !b.over) {
-        if (b.host.reserve.us > 0) out.push(opt('The host', { t: 'reserve' }, 'Throw in the reserve', !b.host.reserve.usIn, 'The reserve is already in.', `${b.host.reserve.us} men, to whichever wing is closest to breaking`));
-        out.push(opt('The host', { t: 'signal', order: 'push' }, 'Signal the wings: push', true, undefined, 'The whole line goes forward next round'));
-        out.push(opt('The host', { t: 'signal', order: 'hold' }, 'Signal the wings: hold', true, undefined, 'The flanks lock shields and wait'));
-      }
+      out.push(...hostOptions(b));
       out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
       return out;
     }
@@ -907,8 +913,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'position': {
       const b = (state.pending as { t: 'battle'; battle: import('./state').BattleState }).battle;
       if (action.t === 'wall_deploy') { deployStep(b, action.what, action.value, rng); if (b.wall?.phase === 'fight') state.position = b.position; }
-      else if (action.t === 'wall_order') wallRound(b, action.order, rng);
-      else if (action.t === 'battle_auto' && b.wall) fightOutWall(b, rng);
+      else if (action.t === 'wall_order') { if (b.host) hostWallRound(b, action.order, rng); else wallRound(b, action.order, rng); }
+      else if (action.t === 'battle_auto' && b.wall) { if (b.host) fightOutHostWall(b, rng); else fightOutWall(b, rng); }
       else if (action.t === 'position') {
         b.position = action.pos;
         state.position = action.pos;

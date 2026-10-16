@@ -40,8 +40,8 @@ const baseEffect = z.union([
   z.object({ deed: z.object({ type: id, text: z.string().optional(), weight: z.number().optional(), witnesses: z.number().int().optional() }).strict() }).strict(),
   z.object({ injury: id }).strict(),
   z.object({ man: z.object({ id, loyalty: z.number().optional(), join: z.boolean().optional(), leave: z.boolean().optional(), swear: z.boolean().optional(), nickname: z.string().optional() }).strict() }).strict(),
-  z.object({ fight: z.object({ foe: id, kind: z.enum(['duel', 'holmgang']), lethal: z.boolean(), win: id.optional(), lose: id.optional(), bout: z.boolean().optional() }).strict() }).strict(),
-  z.object({ battle: z.object({ foe: id, men: z.number().int(), terrain: z.enum(TERRAINS), raid: z.boolean().optional(), win: id.optional(), lose: id.optional(), parted: id.optional(), wall: z.boolean().optional() }).strict() }).strict(),
+  z.object({ fight: z.object({ foe: id, kind: z.enum(['duel', 'holmgang']), lethal: z.boolean(), win: id.optional(), lose: id.optional(), parted: id.optional() }).strict() }).strict(),
+  z.object({ battle: z.object({ foe: id, men: z.number().int(), terrain: z.enum(TERRAINS), raid: z.boolean().optional(), win: id.optional(), lose: id.optional(), parted: id.optional() }).strict() }).strict(),
   z.object({ queue: z.object({ scene: id, days: z.number().int().min(0) }).strict() }).strict(),
   z.object({ know: id }).strict(),
   z.object({ journal: z.string() }).strict(),
@@ -232,6 +232,8 @@ export const fighter = z.object({
   habits: weights(DUEL_MOVES),
   /** How hard he is to read, 0..3. Defaults from his wits and how much he likes a feint. */
   guile: z.number().int().min(0).max(3).optional(),
+  /** He came to kill: on the holmgang cloak he will not pay his way off when his blood falls on it. */
+  unyielding: z.boolean().optional(),
   desc: z.string(),
 }).strict();
 export type Fighter = z.infer<typeof fighter>;

@@ -66,6 +66,8 @@ export const WALL = {
   stamina: 8,
   spears: 2,
   maxRounds: 7,
+  /** At the end of the day, a side this much the steadier holds the field. */
+  fieldMargin: 1.5,
   /** Two pushing lines: one gains ground only if it is this much the stronger, men and breath together. */
   groundEdge: 1.25,
   /** Cohesion lost for losses: this much for losing the whole line. */
@@ -82,7 +84,7 @@ export const WALL = {
   /** Reading them: "likely" is right this often. */
   likelyTrue: 0.75,
   /** He reads from behind the wall better, from the front rank worse. */
-  readByPlace: { front: -1, wall: 0, rear: 2 } as Record<Position, number>,
+  readByPlace: { front: -1, wall: 0, rear: 1 } as Record<Position, number>,
   /** Fights survived before the old hands stop shouting advice. */
   adviceUntil: 6,
   /** Resolve: cohesion lost for losses (x), the spirit at which they break, what their leader's fall costs them. */
@@ -117,7 +119,8 @@ export const INTENT_SHORT: Record<Intent, string> = {
   brace: 'shields locked', press: 'a push', volley: 'a volley', charge: 'a charge', feint: 'a feigned retreat', flank: 'a flank attack', reform: 'reforming',
 };
 /** What a cunning enemy's move can be mistaken for. */
-const DECOY: Record<Intent, Intent> = { brace: 'flank', press: 'feint', volley: 'charge', charge: 'feint', feint: 'charge', flank: 'brace', reform: 'feint' };
+// A false read is a bait: a feigned retreat looks like a blown line, men going round the flank look like a push.
+const DECOY: Record<Intent, Intent> = { brace: 'reform', press: 'brace', volley: 'brace', charge: 'volley', feint: 'reform', flank: 'press', reform: 'feint' };
 
 /** The shout an old hand gives, for the order he would give. */
 export const WALL_ADVICE: Record<WallOrder, string> = {
@@ -435,8 +438,12 @@ export function wallRound(b: BattleState, o: WallOrder, rng: RngCursor): void {
     b.over = 'lost';
     b.log.push(`Your men break for the ships. ${chase} more are cut down from behind.`);
   } else if (b.round >= w.maxRounds) {
-    b.over = 'parted';
-    b.log.push('Both walls fall back, spent. Neither side has the strength to go again today.');
+    // the end of the day: the side clearly the more worn, and pushed back, gives up the field without a rout; a wall
+    // that only stood and waited has taken nothing, and both draw off
+    const margin = b.us.morale - Math.max(0, b.them.morale - res.breakAt);
+    if (margin >= WALL.fieldMargin && w.ground > 0) { b.over = 'won'; b.log.push('They have had enough. They draw off in a body and leave you the field, and their dead on it.'); }
+    else if (-margin >= WALL.fieldMargin && w.ground < 0) { b.over = 'lost'; b.log.push('Your men have had enough. They give ground and keep giving it, back to the ships, and leave the field to them.'); }
+    else { b.over = 'parted'; b.log.push('Both walls fall back, spent. Neither side has the strength to go again today.'); }
   } else {
     w.intent = w.next;
     // a plan meets the field: tired men and empty hands change it
@@ -536,10 +543,14 @@ export function deployAuto(b: BattleState): { sworn: SwornPlace; reserve: number
   return { sworn: 'spread', reserve: b.them.men > b.us.men * 1.1 ? 0.15 : 0, pos: b.position };
 }
 
-export function fightOutWall(b: BattleState, rng: RngCursor): void {
+/** The men settle what he has not chosen of the deployment; what he has chosen stands. */
+export function finishDeploy(b: BattleState, rng: RngCursor): void {
   const w = b.wall!;
-  // what he has already chosen stands; the men settle the rest
   if (w.phase === 'deploy') { const d = deployAuto(b); deploy(b, w.step === 'sworn' ? d.sworn : w.sworn, w.step === 'pos' ? w.reserveShare : d.reserve, d.pos, rng); }
+}
+
+export function fightOutWall(b: BattleState, rng: RngCursor): void {
+  finishDeploy(b, rng);
   let g = 0;
   while (!b.over && g++ < 20) wallRound(b, wallAuto(b), rng);
 }

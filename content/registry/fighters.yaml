@@ -125,3 +125,56 @@
   weapon: 2
   habits: { strike: 4, guard: 1, feint: 2 }
   desc: Nineteen winters old, quick, and hungry for a name. He means to take yours.
+# ---- challengers: men who come looking for a man of renown (docs/FRAME-COMBAT-2.md, revision 3) ----
+- id: ch_hrafn
+  name: Hrafn Ketilsson
+  attrs: { str: 4, agi: 3, end: 3, wit: 3, pre: 3 }
+  weapons: 5
+  shield: 4
+  armour: 2
+  weapon: 2
+  habits: { strike: 2, guard: 2, feint: 3 }
+  guile: 2
+  desc: A Dane off King Horik's ships, with a gilt-hilted sword and a smile that never reaches his eyes. He collects names.
+- id: ch_cu_mara
+  name: Cú Mara
+  attrs: { str: 3, agi: 4, end: 4, wit: 3, pre: 3 }
+  weapons: 7
+  shield: 4
+  armour: 2
+  weapon: 2
+  habits: { strike: 2, guard: 2, feint: 3 }
+  guile: 2
+  desc: The Hound of the Sea, an Irish king's champion. Light on his feet, a small bright shield, and a spear-shaft he uses like a second sword.
+- id: ch_kinsman
+  name: Þorvaldr Grímsson
+  attrs: { str: 5, agi: 2, end: 5, wit: 2, pre: 2 }
+  weapons: 6
+  shield: 4
+  armour: 3
+  weapon: 2
+  habits: { strike: 3, guard: 3, feint: 1 }
+  guile: 1
+  unyielding: true
+  desc: A dead man's brother. Slow, heavy, patient, and he has been practising for this since the day the news came.
+- id: ch_wolfcoat
+  name: Ögmundr Wolf-coat
+  attrs: { str: 6, agi: 3, end: 6, wit: 1, pre: 3 }
+  weapons: 7
+  shield: 1
+  armour: 0
+  weapon: 3
+  habits: { strike: 6, guard: 1, feint: 1 }
+  guile: 0
+  desc: A berserkr out of the north, in a wolf's pelt and nothing much else. You can see every blow coming. That is not the same as stopping it.
+- id: ch_grjotgard
+  name: Grjótgarðr the Old
+  attrs: { str: 4, agi: 2, end: 4, wit: 4, pre: 4 }
+  weapons: 10
+  shield: 6
+  armour: 3
+  weapon: 3
+  habits: { strike: 2, guard: 3, feint: 4 }
+  guile: 3
+  unyielding: true
+  desc: Grey to the roots, half his teeth gone, and eleven men dead on the cloak. Nobody has ever known what he would do next.

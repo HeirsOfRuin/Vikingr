@@ -3,10 +3,9 @@ import { content, sandboxGame } from '../helpers';
 import { act, listActions, newGame } from '../../src/engine/index';
 import type { BattleState, GameState } from '../../src/engine/state';
 import { applyEffects } from '../../src/engine/effects';
-import { commitReserve, fightOutHost, startHost } from '../../src/engine/host';
+import { commitReserve, fightOutHostWall, startHost } from '../../src/engine/host';
 import { swearFelag } from '../../src/engine/allies';
 import { startRaid } from '../../src/engine/fights';
-import { adaptivePolicy } from '../../src/engine/battle';
 import { RngCursor, seedRng } from '../../src/engine/rng';
 import { dayOf } from '../../src/engine/calendar';
 
@@ -31,7 +30,11 @@ describe('hosts', () => {
     const b = battle(s);
     expect(b.host!.wings).toHaveLength(2);
     expect(b.us.men).toBe(30 + s.men.filter((m) => m.alive && m.sworn && (m.hurtUntil ?? 0) <= s.day).length || b.us.men);
-    const ids = listActions(s, content).map((o) => o.action.t);
+    // his own part of the line deploys first; then the host's orders sit beside his own
+    let t = s;
+    for (let g = 0; g < 4 && battle(t).wall!.phase === 'deploy'; g++) t = act(content, t, listActions(t, content).find((o) => o.action.t === 'wall_deploy')!.action);
+    const ids = listActions(t, content).map((o) => o.action.t);
+    expect(ids).toContain('wall_order');
     expect(ids).toContain('reserve');
     expect(ids).toContain('signal');
   });
@@ -42,7 +45,7 @@ describe('hosts', () => {
       const s = captain();
       startHost(s, content, { title: 'T', foe: 'frisian_levy', terrain: 'field', context: 'scene', place: null, foeMen: 30, wings: [{ name: 'L', men: 45, foe_men: 30 }, { name: 'R', men: 45, foe_men: 30 }] });
       const b = battle(s);
-      fightOutHost(b, adaptivePolicy, rng(i));
+      fightOutHostWall(b, rng(i));
       expect(b.over).not.toBeNull();
       expect(b.host!.wings.every((w) => w.over)).toBe(true);
       if (b.over === 'won') won++;

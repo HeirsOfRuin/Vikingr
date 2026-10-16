@@ -1,10 +1,10 @@
 // Hosts (docs/FRAME-HOSTS-FRISIA.md): how often a line of wings wins, and what an absent ally or a reserve
-// does to it. "Let the men handle it" for every wing.
+// does to it. "Let the men handle it" for every wing; his own wing in the second form (docs/FRAME-COMBAT-2.md).
 import { loadContent } from './content-loader';
 import { newGame } from '../src/engine/index';
 import type { BattleState, GameState } from '../src/engine/state';
-import { commitReserve, fightOutHost, hostRound, startHost, type HostWingSpec } from '../src/engine/host';
-import { adaptivePolicy } from '../src/engine/battle';
+import { commitReserve, fightOutHostWall, hostWallRound, startHost, type HostWingSpec } from '../src/engine/host';
+import { finishDeploy, wallAuto } from '../src/engine/wall';
 import { RngCursor, seedRng } from '../src/engine/rng';
 
 const content = loadContent();
@@ -27,8 +27,9 @@ function cell(label: string, centre: number, foeCentre: number, wings: HostWingS
     startHost(s, content, { title: 'Test', foe: 'frisian_levy', terrain: 'field', context: 'scene', place: null, foeMen: foeCentre, wings, reserve, role: 'host' });
     const b = (s.pending as { battle: BattleState }).battle;
     const rng = new RngCursor(seedRng(i * 7 + 3));
-    if (commit) { hostRound(b, adaptivePolicy(b, 'us', rng), rng); hostRound(b, adaptivePolicy(b, 'us', rng), rng); if (!b.over) commitReserve(b); }
-    fightOutHost(b, adaptivePolicy, rng);
+    finishDeploy(b, rng);
+    if (commit) { hostWallRound(b, wallAuto(b), rng); hostWallRound(b, wallAuto(b), rng); if (!b.over) commitReserve(b); }
+    fightOutHostWall(b, rng);
     if (b.over === 'won') won++; else if (b.over === 'lost') lost++; else parted++;
     crewLost += b.lost;
   }

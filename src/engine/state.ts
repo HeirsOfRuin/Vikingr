@@ -156,6 +156,8 @@ export interface DuelState {
   over: null | 'won' | 'lost' | 'yielded' | 'foe_yielded' | 'parted' | 'dead';
   win?: string;
   lose?: string;
+  /** Where a fight broken off with neither man beaten goes; else the win link. */
+  parted?: string;
   /** The second form of single combat (docs/FRAME-COMBAT-2.md): shown intent, stamina, shields, the cloak's edge. */
   bout?: import('./bout').BoutState;
 }

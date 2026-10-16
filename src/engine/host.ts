@@ -7,6 +7,7 @@ import type { BattleSide, BattleState, GameState } from './state';
 import type { RngCursor } from './rng';
 import { adaptivePolicy, doctrinePolicy, resolveRound, type BattlePolicy } from './battle';
 import { startBattle } from './fights';
+import { finishDeploy, wallAuto, wallRound, type WallOrder } from './wall';
 
 export const HOST = {
   /** Morale a wing loses each round for each neighbour of its own that has broken. */
@@ -128,24 +129,28 @@ function turn(b: BattleState): void {
   }
 }
 
-/** One round of the whole line. */
-export function hostRound(b: BattleState, ours: Order, rng: RngCursor, policy: BattlePolicy = adaptivePolicy): BattleState {
+/** One round of the whole line, his own wing fought in the second form (docs/FRAME-COMBAT-2.md): his order against
+ *  what the men in front of him do; the other wings by the old round, beside him. */
+export function hostWallRound(b: BattleState, ours: WallOrder, rng: RngCursor, policy: BattlePolicy = adaptivePolicy): BattleState {
   const h = b.host!;
   turn(b);
   flank(b);
-  // the enemy throws in his reserve when a wing of his is going
-  if (!h.reserve.themIn && h.reserve.them > 0) {
-    const sides = [b.over ? null : b.them, ...h.wings.filter((w) => !w.over).map((w) => w.them)].filter((x): x is BattleSide => !!x);
-    const low = weakest(sides);
-    if (low && low.morale <= HOST.enemyReserveAt) {
-      low.men += h.reserve.them;
-      low.start += h.reserve.them;
-      low.morale += 2;
-      h.reserve.themIn = true;
-      b.log.push(`Their reserve comes down the slope at a run, ${h.reserve.them} fresh men, into the part of their line that was going.`);
-    }
-  }
-  if (!b.over) resolveRound(b, ours, doctrinePolicy(b, 'them', rng), rng);
+  enemyReserve(b);
+  if (!b.over) wallRound(b, ours, rng);
+  wingsRound(b, rng, policy);
+  if (b.over) settleHost(b, rng, policy);
+  return b;
+}
+
+/** "Let the men handle it" across a whole host, in the second form. */
+export function fightOutHostWall(b: BattleState, rng: RngCursor): BattleState {
+  finishDeploy(b, rng);
+  for (let guard = 0; guard < 60 && !b.over; guard++) hostWallRound(b, wallAuto(b), rng);
+  return b;
+}
+
+function wingsRound(b: BattleState, rng: RngCursor, policy: BattlePolicy): void {
+  const h = b.host!;
   for (const w of h.wings) {
     if (w.over) continue;
     const sb = shadow(b, w);
@@ -158,6 +163,31 @@ export function hostRound(b: BattleState, ours: Order, rng: RngCursor, policy: B
     else if (w.over === 'parted') b.log.push(`On the flank, ${w.name} and the men facing them fall back from each other, spent.`);
   }
   h.signal = null;
+}
+
+/** The enemy throws in his reserve when a wing of his is going. */
+function enemyReserve(b: BattleState): void {
+  const h = b.host!;
+  if (!h.reserve.themIn && h.reserve.them > 0) {
+    const sides = [b.over ? null : b.them, ...h.wings.filter((w) => !w.over).map((w) => w.them)].filter((x): x is BattleSide => !!x);
+    const low = weakest(sides);
+    if (low && low.morale <= HOST.enemyReserveAt) {
+      low.men += h.reserve.them;
+      low.start += h.reserve.them;
+      low.morale += 2;
+      h.reserve.themIn = true;
+      b.log.push(`Their reserve comes down the slope at a run, ${h.reserve.them} fresh men, into the part of their line that was going.`);
+    }
+  }
+}
+
+/** One round of the whole line, his wing by the old round: kept for a battle saved before the second form. */
+export function hostRound(b: BattleState, ours: Order, rng: RngCursor, policy: BattlePolicy = adaptivePolicy): BattleState {
+  turn(b);
+  flank(b);
+  enemyReserve(b);
+  if (!b.over) resolveRound(b, ours, doctrinePolicy(b, 'them', rng), rng);
+  wingsRound(b, rng, policy);
   if (b.over) settleHost(b, rng, policy);
   return b;
 }

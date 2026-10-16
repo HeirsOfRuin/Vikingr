@@ -189,3 +189,54 @@ This needs every fight on the new systems, so it comes with the conversion:
 - **Renown raises the stakes.** As fame passes set marks, ordinary fights are likelier to meet veterans (+1 quality, +1 guile) and a lord's hird rather than a levy.
 - **Challengers come looking.** A man of renown is sought out by named champions: a Dane who has heard the name, an Irish king's champion, a kinsman of a man you killed. They have more guile, read you back, and offer holmgang or single combat in ports and at Yule. Refusing costs renown. Winning is worth much more.
 - **The read cuts both ways.** A champion with guile 3 is torn between two moves as often as not, even for a veteran.
+
+---
+
+# Revision 3: every fight converted, renown, challengers
+
+Josh: "Update the rest of the fights."
+
+## Every fight is in the second form
+- **One code path.** `startBattle` and `startDuel` start every fight in the new form. That covers story battles, raids, landings, sea fights, port brawls, holmgangs and the multi-wing battles. The content flags `wall: true` and `bout: true` are gone. Old saves caught mid-fight keep the old screens until that fight ends.
+- **Hosts.** Your own part of the line is the new wall: deployment, reads, orders, resolve, their leader. The other wings fight beside it by the old rules and feed it as before: a broken wing opens your flank, and a winning wing turns men onto theirs. The host's reserve and signals sit beside your own orders. Measured: equal hosts won 96% (was 94%), and Dorestad with Ubbi's fleet 84% (was 80%).
+- **Ships.** No falling back and no feigned retreats on a deck, as before.
+
+## Fixes the conversion turned up
+| Found | Fix |
+|---|---|
+| Misreading the enemy cost little: the false move usually led you to lock shields, which is safe. Read score made no difference (60–66%). | A false read is now a bait. A feigned retreat looks like a blown line (push into the trap), and a flank looks like a push. Read score now matters: 63% at read 2 up to 97% at read 8 (Bangor, warned). |
+| Half of all battles ended "parted" when time ran out, and the story treats that as a rout. | At day's end, a side clearly steadier (1.5 spirit) that has also pushed the other back at least a step holds the field, with no rout. |
+| That made locking shields all day win 97%. | Holding the field needs ground: a wall that only stood has taken nothing. Always lock shields: 3%. |
+| Skill at arms barely mattered in single combat: a careful 16-year-old beat Eyvind 96%. | Each point of weapons skill over the other man is 8% more of your blows landing and 8% less of his, between 0.6× and 1.5×. These are fixed numbers, not a roll. |
+| A raised shield stopped all of a berserkr's blows. | A man two or more points stronger drives part of a great blow through a raised shield. |
+| The AI stepped back for breath at the edge of the cloak and was rushed off it. | A man a rush away from the edge gets his breath behind his shield instead, or with no shield, goes for a quick cut. |
+| Masters of arms had no guile. | Guile also rises with mastery: weapons 5 or more is +1. |
+| Rear position read +2 won Bangor 93%. | +1 from behind the wall. |
+| The first fights are meant to be gentler. | While the old hand is still shouting advice (your first 6 fights), he also lends his eye: +2 to the read. |
+
+## Renown brings harder enemies
+- From 832, when you command your own ship, a fight may be against **veterans**: +1 quality, +1 guile, and one step steadier (a levy fights as warriors, warriors as a hird). The log says so: "Word of you has gone ahead of you."
+- **Chance by living fame:** 20% at fame 40, 35% at 90, 50% at 160. Nobody comes looking for an oarsman.
+
+## Challengers who come looking
+Five men, each met once, gated by renown. Each can be refused, at a cost.
+
+| Challenger | When | Fight | Guile | What makes him dangerous |
+|---|---|---|---|---|
+| Hrafn Ketilsson, a collector of names | Fame 40, from 832, at a Danish, Norse, Frisian or Swedish market | Holmgang, to first blood | 2 | He lies with his feet |
+| Cú Mara, the Hound of the Sea | Fame 60, at Dublin, Linn Duachaill or Conaille | Single combat before the hosts, to the death | 2 | Skill (weapons 7): he hits often, never hard |
+| Þorvaldr Grímsson, a dead man's brother | Fame 70, at Yule in your hall | Holmgang to the death, or pay the wergild | 1 | Strong, armoured, patient; he will not pay his way off |
+| Ögmundr Wolf-coat, a berserkr | Fame 100, from 833, at a Norse hall | Single combat, to the death | 0 | Honest, and much stronger: you see every blow, and the big ones still come through your shield |
+| Grjótgarðr the Old | Fame 160, from 835, anywhere | Holmgang to the death | 3 | Weapons 10, never readable, will not yield |
+
+**Measured** (300 fights each, holmgang rules, never yielding; "reading" means the best answer to what you can see):
+
+| Hero | Hrafn | Cú Mara | Þorvaldr | Wolf-coat | Grjótgarðr |
+|---|---|---|---|---|---|
+| At 16 (weapons 2), reading | 12% | 0% | 0% | 25% | 0% |
+| At 25 (weapons 5), reading | 94% | 49% | 58% | 64% | 8% |
+| At 25, instinct | 93% | 39% | 37% | 37% | 4% |
+| Champion (weapons 7), reading | 100% | 100% | 88% | 94% | 58% |
+| Champion, instinct | 100% | 99% | 82% | 80% | 52% |
+
+**The Yule holmgang still holds:** younger son on instinct 87% won, 8% dead. Freedman's son 65% won, 18% dead (he has weapons 1). A man whose blood falls on the cloak may pay and stop, by the law in the scene. Only the challengers who came to kill refuse.

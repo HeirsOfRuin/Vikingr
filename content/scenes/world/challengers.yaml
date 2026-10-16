@@ -1,0 +1,300 @@
+# Challengers (docs/FRAME-COMBAT-2.md, revision 3): the author, "the longer they play, the higher their renown, and
+# the more dangerous some of their enemies become, because they come looking to fight legends." Five men, each met
+# once, each harder to read and harder to beat than the last. The first comes at fame 40 from 832; the last only
+# to a legend.
+
+# ---- Hrafn the Dane: a collector of names ----
+- id: ch_hrafn
+  kind: pool
+  trigger: arrive
+  chance: 0.3
+  once: true
+  requires: ["year >= 832", "!service", "fame.living >= 40"]
+  at: [hedeby, ribe, kaupang, dorestad, birka]
+  art: muster
+  title: A collector of names
+  text: |
+    He is waiting on the jetty when you tie up, as if he had known which ship was yours before you came round the point. A Dane, by the cut of his beard, with a gilt-hilted sword and a red cloak and three men behind him who are trying to look bored.
+
+    "{name}," he says. He says it the way a man says the name of a horse he means to buy. "Hrafn Ketilsson. I sail with King Horik's ships. I've killed four men whose names were bigger than mine, and now mine is bigger than theirs." He smiles. It doesn't reach his eyes. "Yours is going round the markets this year. I'd like it."
+    [break]
+    He wants a holmgang, on the strand, in the morning, before the whole market. The traders are already laying bets.
+  choices:
+    - id: fight
+      text: In the morning, then. Bring a cloak.
+      danger: true
+      effects: [ { fight: { foe: ch_hrafn, kind: holmgang, lethal: false, win: ch_hrafn_won, lose: ch_hrafn_lost, parted: ch_hrafn_parted } } ]
+    - id: refuse
+      text: Tell him your name is not for sale.
+      effects: [ { add: { honour: -1 } } ]
+      result: |
+        "Everything is for sale," says Hrafn, "in Hedeby." He bows, very low, and walks off up the jetty. By evening the story in the market is that {name} was offered the cloak and found an errand elsewhere. It isn't true, quite. It'll do.
+
+- id: ch_hrafn_won
+  kind: spine
+  art: holmgang
+  title: The strand
+  text: |
+    He is quick, and clever, and he lies with his feet the way other men lie with their mouths. Twice you go for a blow that isn't there. The third time you wait, and he shows you the same lie again, and you are inside it with your shield before he knows you've seen it.
+
+    He goes down on the wet sand with your edge at his throat, and he laughs, which you didn't expect. "Well," he says. "Keep it, then. The name."
+  choices:
+    - id: done
+      text: Take his holmlausn, and his sword-belt for the trouble.
+      effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Beat Hrafn Ketilsson, the collector of names, on the strand", weight: 4, witnesses: 300 } } ]
+      result: The traders who bet on you buy your crew ale until the barrels are empty. The ones who bet on him tell the story too. That's how you know it will last.
+
+- id: ch_hrafn_lost
+  kind: spine
+  art: holmgang
+  title: The strand
+  text: |
+    Every time you are sure where he is going, he isn't. Your second shield splits on a blow you were braced for from the other side, and then there is blood on the cloak, and it is yours.
+
+    "Thank you," says Hrafn, wiping his sword on your cloak, not his. "I'll tell it well."
+  choices:
+    - id: done
+      text: Pay, and go back to the ship.
+      effects: [ { add: { honour: -1 } } ]
+      result: He does tell it well. You hear it in three markets that summer, a little better each time, and you are a little smaller in it each time.
+
+- id: ch_hrafn_parted
+  kind: spine
+  art: holmgang
+  title: The strand
+  text: |
+    By noon neither of you can lift a shield. You stand on the cloak a sword's length apart, blowing like spent horses, and the market laughs, and then stops laughing, and then goes quiet.
+
+    "Again," says Hrafn, "next summer." He means it as a promise. You take it as one.
+  choices:
+    - id: done
+      text: Go back to the ship.
+      effects: [ { deed: { type: deed, text: "Fought Hrafn Ketilsson to a standstill on the strand", weight: 2, witnesses: 300 } } ]
+      result: Neither of you won. Both names go round the markets that summer, side by side, which pleases him less than it pleases you.
+
+# ---- Cú Mara: an Irish king's champion ----
+- id: ch_cu_mara
+  kind: pool
+  trigger: arrive
+  chance: 0.35
+  once: true
+  requires: ["year >= 832", "!service", "fame.living >= 60"]
+  at: [dublin, linn_duachaill, conaille]
+  art: celtic_monastery
+  title: The Hound of the Sea
+  text: |
+    A boy runs down the beach with a hazel rod, the sign of a herald, and behind him comes a man walking alone. Not big. Light on his feet, with a small bright shield and a spear and a long knife, and a gold torc round his neck that would buy your ship.
+
+    The boy speaks Norse, badly. "This is Cú Mara," he says, "the king's champion. The king has heard of {name}. The king says the Gall talk too much about you. The king says, let the champion settle it, as the old kings did, one man before the two hosts, and let the gods choose."
+    [break]
+    Cú Mara says nothing at all. He looks at you the way a man looks at the weather.
+  choices:
+    - id: fight
+      text: One man before the hosts. As the old kings did.
+      danger: true
+      effects: [ { fight: { foe: ch_cu_mara, kind: duel, lethal: true, win: ch_cu_mara_won, lose: ch_cu_mara_lost } } ]
+    - id: refuse
+      text: Tell the boy the king can send his whole army, if he likes, but not one man.
+      effects: [ { add: { honour: -1 } }, { standing: { n: -1 } } ]
+      result: |
+        The boy repeats it, carefully, in Irish. Cú Mara listens, and smiles for the first time, and turns and walks back up the beach. The Irish will make a song of it. You can tell from the smile that you will not like the song.
+
+- id: ch_cu_mara_won
+  kind: spine
+  art: celtic_monastery
+  title: Before the hosts
+  text: |
+    He fights like water. The spear comes from places a spear can't come from, and the little shield is never where you strike. You are bleeding in three places before you understand that he does not mean to hit you hard. He means to hit you often, until you are slow.
+
+    So you stop trying to be fast. You let him come, and come, and the fourth time the spear-point slides off your rim you are already moving, and your shoulder takes him full in the chest, and he goes down, and the knife is too short to reach you.
+
+    The Irish on the hillside make a sound like a wave going out.
+  choices:
+    - id: done
+      text: Take the torc, and nothing else.
+      effects: [ { add: { silver: 60, honour: 1 } }, { deed: { type: killed_champion, text: "Killed Cú Mara, the Hound of the Sea, before the hosts", weight: 6, witnesses: 400 } } ]
+      result: The king sends nothing. No herald, no silver, no war. For a year after, his people step aside on the strand when your crew comes up it, and none of them will meet your eye.
+
+- id: ch_cu_mara_lost
+  kind: spine
+  art: celtic_monastery
+  title: Before the hosts
+  text: |
+    You never see the blow that ends it. You are on your back on the shingle and the sky is very wide, and Cú Mara is standing over you with the spear lifted, looking at the weather.
+
+    He doesn't strike. He turns the spear round and taps you once on the chest with the butt of it, the way you'd mark a sheep, and walks away.
+  choices:
+    - id: done
+      text: Get up, eventually.
+      effects: [ { add: { honour: -2 } } ]
+      result: The song is made by the next spring. It has a very good tune. Your men will not sing it, but you hear it in every Irish port, and once, in a Norse one, from a man who should have known better.
+
+# ---- Þorvaldr Grímsson: a dead man's brother ----
+- id: ch_kinsman
+  kind: phase
+  trigger: hall
+  chance: 0.3
+  once: true
+  requires: ["place == home_fjord", "phase == winter", "!service", "fame.living >= 70"]
+  art: yule_hall
+  title: A dead man's brother
+  text: |
+    He comes in out of the snow at the end of the feast, when the fire is low and the men are past singing, and stands inside the door until the hall notices him. A heavy man, slow, with a brown beard and a shield with a new face on it.
+
+    "Þorvaldr Grímsson," he says. "You won't know the name. You killed my brother, some summer, on some beach. He had a name too, but you didn't ask it." He waits. Nobody speaks. "I've been learning since. I'm told you're very good now. So am I."
+    [break]
+    He wants the holmgang, to the death, at the thaw. Or the wergild, in full, before witnesses. He doesn't seem to mind which.
+  choices:
+    - id: fight
+      text: The holmgang. At the thaw.
+      danger: true
+      effects: [ { fight: { foe: ch_kinsman, kind: holmgang, lethal: true, win: ch_kinsman_won, lose: ch_kinsman_lost } } ]
+    - id: pay
+      text: Pay the wergild, before witnesses.
+      requires: ["silver >= 200"]
+      effects: [ { add: { silver: -200 } }, { add: { hamingja: 1 } } ]
+      result: |
+        You count it out on the high table, two hundred ørtugar, and the hall watches every one. Þorvaldr weighs it, and nods, and puts it in a bag, and grips your hand across the table, and his hand is shaking. "That's done, then," he says. It is, and some of the hall thinks less of you for it, and some more.
+    - id: refuse
+      text: Tell him his brother came to your beach with a spear, and got what he came for.
+      effects: [ { add: { honour: -1 } } ]
+      result: |
+        "That's true," says Þorvaldr. "That's what I'd say too." He goes back out into the snow. Every spring after, your mother says, a heavy man with a brown beard stands on the far shore of the fjord and looks at the ship-sheds for a while, and then goes away.
+
+- id: ch_kinsman_won
+  kind: spine
+  art: holmgang
+  title: At the thaw
+  text: |
+    He has learned. He doesn't swing wild, and he doesn't tire, and he doesn't fall for anything twice. It goes on until both of you are down to your last shields and the crowd has stopped shouting and is only watching.
+
+    In the end you have done this more times than he has, and you know, a breath before he does, that his arm is going.
+  choices:
+    - id: done
+      text: Have him buried beside his brother.
+      effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Killed Þorvaldr Grímsson on the cloak, who came for his brother's blood", weight: 4, witnesses: 120 } } ]
+      result: You don't know where his brother is buried. You send a man to find out, and he does, and it's done. Nobody else comes in out of the snow that winter.
+
+- id: ch_kinsman_lost
+  kind: spine
+  art: holmgang
+  title: At the thaw
+  text: |
+    He breaks your last shield and puts you on your knees and stands there with the sword up. Then he looks at the crowd, and at your father, and lowers it.
+
+    "One of us has to stop," he says. "It's going to be me." He walks off the cloak.
+  choices:
+    - id: done
+      text: Pay what the law says, and let it be over.
+      effects: [ { add: { honour: -1 } } ]
+      result: It is over. That is somehow the worst of it.
+
+# ---- Ögmundr Wolf-coat: a berserkr ----
+- id: ch_wolfcoat
+  kind: pool
+  trigger: arrive
+  chance: 0.3
+  once: true
+  requires: ["year >= 833", "!service", "fame.living >= 100"]
+  at: [karmoy, orkney, skye, hladir, uppsala, kaupang]
+  art: muster
+  title: The wolf-coat
+  text: |
+    The first you know of him is the noise: a howl from up the beach that stops every man on your ship with a rope in his hands. Then he comes down through the crowd, which gets out of his way, in a grey wolf's pelt with the head for a hood, bare-armed in the cold, foam at the corners of his mouth.
+
+    "Ögmundr," says a trader behind you, very quietly. "Wolf-coat. He was with the jarl's sons in the east. They say iron doesn't bite him."
+
+    The wolf-coat stops ten paces off and bites the rim of his shield, and looks at you over it, and says your name, and then nothing else that is words.
+  choices:
+    - id: fight
+      text: Draw, and meet him.
+      danger: true
+      effects: [ { fight: { foe: ch_wolfcoat, kind: duel, lethal: true, win: ch_wolfcoat_won, lose: ch_wolfcoat_lost } } ]
+    - id: spears
+      text: Have six men put spears into him before he reaches you.
+      effects: [ { add: { honour: -2 } }, { add: { crew.men: -1 } } ]
+      result: |
+        It takes four spears to put him down, and before the last one he has killed one of your men with his hands. The beach is very quiet afterward. Nobody calls it a killing to be proud of. Nobody calls it anything at all, in front of you.
+
+- id: ch_wolfcoat_won
+  kind: spine
+  art: holmgang
+  title: The wolf-coat
+  text: |
+    He is easy to read. Every blow comes from the same place, as hard as a man can swing, and every one you see coming a breath ahead. That's the only reason you're alive. Iron does bite him, it turns out. It just doesn't seem to matter to him.
+
+    The fifth cut takes him behind the knee and he goes down, still swinging, and you finish it, and stand there over him shaking for longer than you want anyone to see.
+  choices:
+    - id: done
+      text: Take the wolf's pelt.
+      effects: [ { add: { honour: 1, hamingja: 1 } }, { deed: { type: killed_champion, text: "Killed Ögmundr Wolf-coat, the berserkr, on the beach", weight: 6, witnesses: 200 } } ]
+      result: You never wear it. You hang it in the hall, and children dare each other to touch it, and none of them ever do.
+
+- id: ch_wolfcoat_lost
+  kind: spine
+  art: holmgang
+  title: The wolf-coat
+  text: |
+    You see the blow coming. You see all of them coming. It doesn't help: the shield goes, and then the arm under it, and you are on the shingle, and somebody is dragging you back by the collar while your men make a wall of spears between you and the thing in the wolf's skin.
+
+    He doesn't follow. He stands there howling at the sky until his breath gives out, and then sits down on the beach like a tired child.
+  choices:
+    - id: done
+      text: Live.
+      effects: [ { add: { honour: -1 } } ]
+      result: You live. You learn to hold a shield again by midsummer, more or less.
+
+# ---- Grjótgarðr the Old: a legend comes for a legend ----
+- id: ch_grjotgard
+  kind: pool
+  trigger: arrive
+  chance: 0.35
+  once: true
+  requires: ["year >= 835", "!service", "fame.living >= 160"]
+  at_kind: [hall, market, town]
+  art: muster
+  title: The old man
+  text: |
+    An old man is sitting on an upturned boat at the top of the beach, watching your ship come in. Grey to the roots of his hair, half his teeth gone, a sword across his knees in a scabbard so old the leather has gone black.
+
+    "Grjótgarðr," he says, when you come up the beach. Your steersman stops walking. "They tell me you're the best of them now. They told me that about the last eleven, too." He looks at you a long time, the way a man looks at a horse's teeth. "I'm old. I don't have long. I'd like to know, before I go, whether it's true."
+    [break]
+    He wants the holmgang. To the death, he says, or it isn't worth either of your time.
+  choices:
+    - id: fight
+      text: Then you'll know.
+      danger: true
+      effects: [ { fight: { foe: ch_grjotgard, kind: holmgang, lethal: true, win: ch_grjotgard_won, lose: ch_grjotgard_lost } } ]
+    - id: refuse
+      text: Tell him you don't fight old men.
+      effects: [ { add: { honour: -1 } } ]
+      result: |
+        "No," says Grjótgarðr, "you don't." He puts the sword back across his knees and goes back to watching the sea. The story goes round, as they do. In most of the tellings you were wise. In some you were afraid. You never find out which he told.
+
+- id: ch_grjotgard_won
+  kind: spine
+  art: holmgang
+  title: The old man
+  text: |
+    You don't know what he'll do. That is the whole fight: you never know. Every guard is an attack and every attack is a guard, and you lose two shields to blows you would have sworn were feints.
+
+    But he is old, and his breath goes before yours does. You see it go, and he sees you see it, and he smiles with half his teeth and lowers his guard an inch, on purpose, and you take the gift.
+  choices:
+    - id: done
+      text: Close his eyes.
+      effects: [ { add: { honour: 2, hamingja: 1 } }, { deed: { type: killed_champion, text: "Killed Grjótgarðr the Old on the cloak, who had killed eleven", weight: 10, witnesses: 300 } } ]
+      result: They bury him with his sword. You put a ring of your own in the grave beside it, and nobody asks why. Twelve, now. Somewhere there is a young man counting.
+
+- id: ch_grjotgard_lost
+  kind: spine
+  art: holmgang
+  title: The old man
+  text: |
+    You never know what he'll do, and in the end it costs you. He steps back, and you follow, and he wasn't stepping back.
+
+    He kneels beside you on the cloak, an old man's knees cracking, and holds your hand. "Nearly," he says. "Nearly. Better than the last eleven." He means it kindly.
+  choices:
+    - id: done
+      text: Pay what the law says, and get up.
+      effects: [ { add: { honour: -1 } } ]
+      result: He doesn't take the silver. He gives it to your men for ale, and sits with them while they drink it, and tells them what you did wrong. Some of it, you have to admit, is true.

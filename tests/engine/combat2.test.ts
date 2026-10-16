@@ -1,12 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { content } from '../helpers';
+import { content, sandboxGame } from '../helpers';
 import { act, listActions, newGame } from '../../src/engine/index';
 import type { BattleState, DuelState, GameState, Pending } from '../../src/engine/state';
 import { open } from '../../src/engine/director';
 import { dayOf } from '../../src/engine/calendar';
 import { RngCursor, seedRng } from '../../src/engine/rng';
 import { deployStep, fightOutWall, orderDesc, project, readRoll, startWall, wallAdvice, wallAuto, wallRound, WALL, type WallOrder } from '../../src/engine/wall';
-import { BOUT, boutExchange, projectBout } from '../../src/engine/bout';
+import { BOUT, boutExchange, foeIntent, projectBout } from '../../src/engine/bout';
+import { startBattle, startDuel, veteranChance } from '../../src/engine/fights';
+import { addDeed, livingFame } from '../../src/engine/fame';
 
 // docs/FRAME-COMBAT-2.md: the enemy's move is shown as well as he can read it; orders say what they do, not what they will do.
 function bangor(seed: number, flags: Record<string, number> = {}): GameState {
@@ -182,5 +184,42 @@ describe('the new single combat (the Yule holmgang)', () => {
     while (!d.over && g++ < 10) { d.bout!.foeIntent = 'guard'; d.hero.stamina = 5; boutExchange(d, 'back', rng); }
     expect(d.over).toBe('yielded');
     expect(d.bout!.heroEdge).toBeGreaterThanOrEqual(BOUT.edge);
+  });
+});
+
+describe('every fight in the second form, and renown (revision 3)', () => {
+  it('every battle and single combat starts in the new form, wherever it comes from', () => {
+    const s = sandboxGame(21);
+    s.phase = 'sailing'; s.at = 'man'; s.crew.men = 30;
+    startBattle(s, content, { foe: 'island_men', men: 10, terrain: 'beach', context: 'raid', place: 'man' });
+    expect((s.pending as unknown as { battle: BattleState }).battle.wall).toBeTruthy();
+    const t = sandboxGame(22);
+    startDuel(t, content, 'local_champion', 'duel', false);
+    expect((t.pending as unknown as { duel: DuelState }).duel.bout).toBeTruthy();
+  });
+
+  it('nobody comes looking for an oarsman, or for a man nobody has heard of', () => {
+    const s = sandboxGame(23);
+    s.day = dayOf(834, 150);
+    expect(veteranChance(s)).toBe(0);
+    for (let i = 0; i < 10; i++) addDeed(s, content, { type: 'deed', text: `A great deed ${i}`, weight: 10, witnesses: 400 });
+    expect(livingFame(s)).toBeGreaterThanOrEqual(40);
+    expect(veteranChance(s)).toBeGreaterThan(0);
+    s.service = { captain: 'Ásgeir', route: [], shares: 1 } as never;
+    expect(veteranChance(s)).toBe(0);
+  });
+
+  it('a man who came to kill does not pay his way off the cloak; Thorgils may', () => {
+    expect(content.fighters.ch_grjotgard!.unyielding).toBe(true);
+    expect(content.fighters.thorgils!.unyielding).toBeUndefined();
+    for (const id of ['ch_hrafn', 'ch_cu_mara', 'ch_kinsman', 'ch_wolfcoat', 'ch_grjotgard']) expect(content.scenes[id]).toBeTruthy();
+  });
+
+  it('a cornered man on the cloak does not step back off it', () => {
+    const d = duel(holmgang(30));
+    d.bout!.foeEdge = 1;
+    d.foe.stamina = 1;
+    const rng = new RngCursor(seedRng(30));
+    for (let i = 0; i < 20; i++) expect(foeIntent(d, rng)).not.toBe('back');
   });
 });
