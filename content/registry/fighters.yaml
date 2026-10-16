@@ -56,7 +56,7 @@
 - id: mael_brigte
   name: Máel Brigte, king of Conaille
   attrs: { str: 3, agi: 3, end: 3, wit: 3, pre: 3 }
-  weapons: 4
+  weapons: 3
   shield: 3
   armour: 1
   weapon: 2

@@ -306,7 +306,7 @@ function readThem(b: BattleState, rng: RngCursor): void {
   else w.shown = rng.float() < 0.5 ? [w.intent, decoy] : [decoy, w.intent];
 }
 
-export interface WallSetup { readScore: number; adviser: string | null; foe?: Foe }
+export interface WallSetup { readScore: number; adviser: string | null; foe?: Foe; placed?: boolean }
 
 export function startWall(b: BattleState, leads: boolean, rng: RngCursor, setup: WallSetup = { readScore: 4, adviser: null }): void {
   const foe = setup.foe;
@@ -341,8 +341,8 @@ export function startWall(b: BattleState, leads: boolean, rng: RngCursor, setup:
   const w = b.wall;
   w.intent = enemyIntent(b, w.themStamina, w.themSpears, 1, rng);
   w.next = enemyIntent(b, w.themStamina, w.themSpears, 2, rng);
-  // another man's wall: the scene has already put him in it, and the deployment is not his
-  if (!leads) deploy(b, 'spread', 0, b.position, rng);
+  // another man's wall: the deployment is not his, only his own place; if the scene has just put him there, not even that
+  if (!leads && setup.placed) deploy(b, 'spread', 0, b.position, rng);
 }
 
 /** One deployment question answered; the last one starts the fight. */

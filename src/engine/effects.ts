@@ -111,7 +111,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('captives' in e) state.captives = Math.max(0, state.captives + e.captives);
     else if ('shares' in e) { if (state.service) state.service.shares = e.shares; }
     else if ('plunder' in e) { if (state.at) startPlunder(state, state.at, [], e.plunder.next, content); }
-    else if ('position' in e) state.position = e.position;
+    else if ('position' in e) { state.position = e.position; state.placedOn = state.day; }
     else if ('sell_captives' in e) {
       // a market price, straight into the heap
       if (state.captives > 0) {

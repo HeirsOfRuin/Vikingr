@@ -224,7 +224,8 @@ export function startBattle(
     b.log.push(`Word of you has gone ahead of you. These are picked men, and they know whose ship it is.`);
   }
   // every battle is fought in the second form (docs/FRAME-COMBAT-2.md)
-  startWall(b, !state.service, rng, { readScore: fightEye(state, content), adviser: adviser(state), foe: vet ?? foe });
+  startWall(b, !state.service, rng, { readScore: fightEye(state, content), adviser: adviser(state), foe: vet ?? foe, placed: state.placedOn === state.day });
+  delete state.placedOn;
   state.pending = { t: 'battle', battle: b };
 }
 

@@ -83,6 +83,12 @@ export class Bot {
         // a lord who wants men takes the oath when he can (docs/FRAME-HIRD-HOSTAGES.md)
         const id = state.pending!.t === 'scene' ? state.pending!.id : '';
         if (id.startsWith('hi_') && this.policy !== 'homebody') { const sw = pick((a) => a.t === 'choose' && a.id === 'swear'); if (sw) return sw; }
+        // a challenger who came looking: anyone but a reckless man sizes him up, and refuses a much better swordsman
+        const ch = id.startsWith('ch_') ? content.fighters[id] : undefined;
+        if (ch && this.policy !== 'reckless' && ch.weapons > state.hero.skills.weapons + 1) {
+          const safe = enabled.filter((o) => o.action.t === 'choose' && o.action.id !== 'fight');
+          if (safe.length) return safe[this.rng.int(safe.length)]!.action;
+        }
         return enabled[this.rng.int(enabled.length)]!.action;
       }
       case 'report': case 'voyage': return enabled[0]!.action;
@@ -94,7 +100,12 @@ export class Bot {
       }
       case 'battle': {
         const b = state.pending!.t === 'battle' ? state.pending!.battle : null;
-        if (b?.wall?.phase === 'deploy' && b.wall.step === 'pos') return { t: 'wall_deploy', what: 'pos', value: this.position() };
+        if (b?.wall?.phase === 'deploy') {
+          const w = b.wall;
+          return w.step === 'sworn' ? { t: 'wall_deploy', what: 'sworn', value: 'spread' }
+            : w.step === 'reserve' ? { t: 'wall_deploy', what: 'reserve', value: b.them.men > b.us.men * 1.1 ? '0.15' : '0' }
+            : { t: 'wall_deploy', what: 'pos', value: this.position() };
+        }
         if (b && !b.wall && b.position !== this.position() && !b.heroDown && b.round === 0) return { t: 'position', pos: this.position() };
         return pick((a) => a.t === 'battle_auto')!;
       }

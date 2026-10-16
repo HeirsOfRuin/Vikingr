@@ -317,6 +317,8 @@ export interface GameState {
   building: string | null; // ship type being built over the winter
   musterPool: number; // men still willing to sign on this spring
   position: Position; // where he stands in the next fight
+  /** The day a scene put him in his place for the fight it starts: then he is not asked again. */
+  placedOn?: number;
   rearFights: number; // fights in a row fought from behind the wall
   service: Service | null; // rowing in another man's ship
   boasts: Boast[];

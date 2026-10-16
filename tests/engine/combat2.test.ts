@@ -215,6 +215,17 @@ describe('every fight in the second form, and renown (revision 3)', () => {
     for (const id of ['ch_hrafn', 'ch_cu_mara', 'ch_kinsman', 'ch_wolfcoat', 'ch_grjotgard']) expect(content.scenes[id]).toBeTruthy();
   });
 
+  it("in another man's wall he is asked where he stands, unless the scene has just put him there", () => {
+    const s = sandboxGame(24);
+    s.service = { captain: 'Ásgeir', route: [], shares: 1 } as never;
+    s.phase = 'sailing'; s.at = 'man';
+    startBattle(s, content, { foe: 'island_men', men: 10, terrain: 'beach', context: 'sea', place: null });
+    const w = (s.pending as unknown as { battle: BattleState }).battle.wall!;
+    expect(w.phase).toBe('deploy');
+    expect(w.step).toBe('pos');
+    expect(battle(bangor(25)).wall!.phase).toBe('fight');
+  });
+
   it('a cornered man on the cloak does not step back off it', () => {
     const d = duel(holmgang(30));
     d.bout!.foeEdge = 1;

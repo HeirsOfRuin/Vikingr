@@ -240,3 +240,21 @@ Five men, each met once, gated by renown. Each can be refused, at a cost.
 | Champion, instinct | 100% | 99% | 82% | 80% | 52% |
 
 **The Yule holmgang still holds:** younger son on instinct 87% won, 8% dead. Freedman's son 65% won, 18% dead (he has weapons 1). A man whose blood falls on the cloak may pay and stop, by the law in the scene. Only the challengers who came to kill refuse.
+
+## Found by the 10-year bot lives
+| Found | Fix |
+|---|---|
+| Nobody could choose where to stand in another man's wall unless the scene had just asked, and the bots never chose their place in their own. The coward bot fought in the line and died in battle 23% of the time (was 2%). | In another man's wall you are asked where you stand, unless the scene has just put you there (Bangor asks in the scene). Bots answer every deployment question. Coward battle deaths are back to 2%. |
+| Máel Brigte, the king at Conaille in 831, killed about 1 bot life in 10 once weapons skill counted. | He is a small king fighting in his own doorway, not a master: weapons 4 → 3. |
+| Bots accepted every lethal challenger. | Anyone but a reckless man sizes a challenger up and refuses a much better swordsman (2+ points of weapons skill over his own). |
+
+**Bot lives after the conversion** (100 runs × 3 backgrounds, 10 years):
+
+| Policy | Alive (before) | Battle deaths (before) | Duel deaths (before) | Median fame |
+|---|---|---|---|---|
+| Raider | 71% (57%) | 11% (23%) | 16% (20%) | 117 |
+| Reckless | 22% (19%) | 41% (57%) | 37% (22%) | 118 |
+| Coward | 83% (81%) | 2% (2%) | 14% (15%) | 78 |
+
+The reckless bot accepts every challenger, and they kill it. Battle deaths fell because a sensible line rarely breaks now; the hardship rebalance (deferred since the morale fix) should be looked at next, against these numbers.
+
