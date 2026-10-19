@@ -387,7 +387,7 @@
     Then the horn is in your hands again.
   choices:
     - id: dorestad
-      text: Swear you will see Dorestad, the richest market of the Franks, and take something from it.
+      text: Swear that before three summers are out you will see Dorestad, the richest market of the Franks, and take something from it.
       effects: [ { boast: dorestad }, { add: { flag.y_hall: 2 } } ]
       result: |
         The name goes round the hall like a struck bell. Dorestad: nobody here has seen it. Everybody has heard of it.

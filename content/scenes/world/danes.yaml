@@ -42,7 +42,8 @@
   at: [hedeby]
   cooldown_days: 200
   weight: 10
-  requires: [flag.ubbi_sworn, "!flag.ubbi_done", "!flag.ubbi_broken", "!service", "month >= 4", "month <= 8", "yearsince.k_ubbi >= 1"]
+  # from the ice going out: playtest 5 came to Hedeby on 11 March with his own ship, and Ubbi wasn't there to meet him
+  requires: [flag.ubbi_sworn, "!flag.ubbi_done", "!flag.ubbi_broken", "!service", "month >= 3", "month <= 8", "yearsince.k_ubbi >= 1"]
   title: Ubbi's fleet
   text: |
     There are twelve longships drawn up on the beach below the wall, with men swarming over them like flies over a carcass, and a red-bearded man standing on the stem-post of the biggest, roaring at all of them.

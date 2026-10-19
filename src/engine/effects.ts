@@ -3,6 +3,7 @@ import { effAttr } from './hero';
 import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
 import { dateOf } from './calendar';
+import { SAILING_DOY } from './tuning';
 import { candidateToCrew, swearCandidate } from './hird';
 import { hostageOp, hostagesOf, makeHostage } from './hostages';
 import { bestAlly, killCaptain, meet, partner, partnerInFight, shiftFavour, shiftRel, swearFelag } from './allies';
@@ -131,6 +132,14 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       journal(state, `You have ${content.items[e.item.id]!.name.charAt(0).toLowerCase()}${content.items[e.item.id]!.name.slice(1)}.`);
     } else if ('wife' in e) {
       state.base.wife = e.wife;
+      // one wife, and every other courtship ends with the wedding (playtest 5: the others' scenes kept coming)
+      const promised = !!state.flags.ingibjorg_promised || !!state.flags.ingibjorg_waiting;
+      for (const f of ['betrothed', 'gyda_courting', 'ingibjorg_promised', 'ingibjorg_waiting', 'ingibjorg_betrothed', 'thorunn_betrothed', 'asta_betrothed']) delete state.flags[f];
+      if (promised && !e.wife.startsWith('Ingibj')) {
+        state.flags.ingibjorg_jilted = 1;
+        if (state.places.orkney) state.places.orkney.standing = Math.max(-10, (state.places.orkney.standing ?? 0) - 2);
+        journal(state, `Word reaches Orkney that you have married ${e.wife}. Ingibjörg was promised. Harek will not forget it.`);
+      }
     } else if ('base' in e) {
       if (BASE_LEVELS.indexOf(e.base) > BASE_LEVELS.indexOf(state.base.level)) state.base.level = e.base;
     } else if ('prize' in e) {
@@ -257,7 +266,8 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       state.flags.outlaw_ended = 1;
       state.at = 'home_fjord';
       state.voyage = null;
-      state.phase = 'muster';
+      // the muster is a spring phase: a return outside spring keeps the season he is in (playtest 5: home on 1 November in muster)
+      state.phase = dateOf(state.day).doy < SAILING_DOY + 31 ? 'muster' : 'sailing';
       if (state.service) state.service.home = 'home_fjord';
       journal(state, 'Came home to Hordaland, his three winters served.');
     }

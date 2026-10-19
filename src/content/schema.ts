@@ -321,7 +321,7 @@ export const itemDef = z.object({
 }).strict();
 export type ItemDef = z.infer<typeof itemDef>;
 
-export const BOAST_STATS = ['raids', 'plunder', 'battlesWon', 'duelsWon', 'legs'] as const;
+export const BOAST_STATS = ['raids', 'plunder', 'battlesWon', 'duelsWon', 'legs', 'frontWins'] as const;
 /** A boast the engine can keep by itself: a count reached since it was sworn, or a condition come true. */
 const boastGoal = z.union([
   z.object({ stat: z.enum(BOAST_STATS), n: z.number().int().min(1) }).strict(),

@@ -35,7 +35,7 @@
   trigger: arrive
   at: [orkney]
   once: true
-  requires: ["year >= 832", "!flag.o_ingibjorg", "!married", "!flag.betrothed"]
+  requires: ["year >= 832", "!flag.o_ingibjorg", "!married", "!flag.betrothed", "!flag.ingibjorg_jilted"]
   weight: 2
   art: birsay
   title: Harek's daughter
@@ -64,7 +64,7 @@
   trigger: arrive
   at: [orkney]
   cooldown_days: 300
-  requires: ["year >= 832", "!married", "!flag.betrothed", "!flag.gyda_courting", "!service", { any: [flag.ingibjorg_waiting, flag.ingibjorg_promised] }, "!flag.ingibjorg_told", "!flag.ingibjorg_refused"]
+  requires: ["year >= 832", "!married", "!flag.betrothed", "!flag.gyda_courting", "!service", { any: [flag.ingibjorg_waiting, flag.ingibjorg_promised] }, "!flag.ingibjorg_told", "!flag.ingibjorg_refused", "!flag.ingibjorg_jilted"]
   weight: 3
   art: birsay
   title: Harek's price
@@ -107,7 +107,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["place == home_fjord", "phase == winter", flag.ingibjorg_betrothed]
+  requires: ["place == home_fjord", "phase == winter", flag.ingibjorg_betrothed, "!married"]
   weight: 10
   art: { key: yule_hall, laughter: flag.y_hall }
   title: The Orkney bride
@@ -166,7 +166,8 @@
   trigger: arrive
   at: [skye]
   cooldown_days: 300
-  requires: ["year >= 832", "!married", "!flag.betrothed", "!flag.gyda_courting", "!service", { any: [flag.sk_land_offer, flag.sk_thorunn_friend] }, "!flag.thorunn_refused", "standing.skye >= 0"]
+  # one courtship at a time: a promise to Ingibjörg is a courtship too (playtest 5)
+  requires: ["year >= 832", "!married", "!flag.betrothed", "!flag.gyda_courting", "!flag.ingibjorg_promised", "!service", { any: [flag.sk_land_offer, flag.sk_thorunn_friend] }, "!flag.thorunn_refused", "standing.skye >= 0"]
   weight: 3
   title: Þórunn's terms
   text: |
@@ -204,7 +205,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["place == home_fjord", "phase == winter", flag.thorunn_betrothed]
+  requires: ["place == home_fjord", "phase == winter", flag.thorunn_betrothed, "!married"]
   weight: 10
   art: home_fjord
   title: Forty ewes
@@ -276,7 +277,8 @@
   trigger: arrive
   at: [kaupang]
   cooldown_days: 300
-  requires: ["year >= 832", flag.asta_met, "!married", "!flag.betrothed", "!flag.gyda_courting", "!flag.asta_refused", "fame.living >= 12"]
+  # one courtship at a time: a promise to Ingibjörg is a courtship too (playtest 5)
+  requires: ["year >= 832", flag.asta_met, "!married", "!flag.betrothed", "!flag.gyda_courting", "!flag.ingibjorg_promised", "!flag.asta_refused", "fame.living >= 12"]
   weight: 3
   title: A proposition
   text: |
@@ -342,7 +344,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["place == home_fjord", "phase == winter", flag.asta_betrothed]
+  requires: ["place == home_fjord", "phase == winter", flag.asta_betrothed, "!married"]
   weight: 10
   art: { key: yule_hall, laughter: flag.y_hall }
   title: The Kaupang widow

@@ -53,3 +53,16 @@ export function numberWord(n: number): string {
 export function plural(n: number, one: string, many = one + 's'): string {
   return `${n} ${n === 1 ? one : many}`;
 }
+
+/** How a man is named in the middle of a fight: his given name, or "He" when he has none ("A big man off a fishing
+ *  boat", "The local champion"). Playtest 5: "A draws back for a great overhand blow." */
+export function callName(name: string): string {
+  return /^(A|An|The)\s/.test(name) ? 'He' : name.split(' ')[0] ?? name;
+}
+
+/** A ship named for its owner ("Þórir's knarr") is "his knarr" in a sentence that already names him. Playtest 5:
+ *  "Þórir has Þórir's knarr down on the jarl's landing." */
+export function shipOf(owner: string, ship: string): string {
+  return ship.startsWith(`${owner}'s `) ? `his ${ship.slice(owner.length + 3)}` : ship;
+}
+

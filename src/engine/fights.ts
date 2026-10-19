@@ -234,6 +234,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   state.stats.battles += 1;
   const won = b.over === 'won';
   if (won) state.stats.battlesWon += 1;
+  if (won && b.position === 'front' && !b.heroDown) state.stats.frontWins += 1;
 
   // the men
   const namedLost = b.named.filter((n) => n.down);

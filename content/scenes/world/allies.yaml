@@ -36,7 +36,8 @@
   trigger: arrive
   at: [hedeby]
   once: true
-  requires: ["year >= 833", "!flag.ubbi_broken", "!service"]
+  # a man sworn to sail with Ubbi meets him in his fleet scene (danes.yaml hd_ubbi), not here
+  requires: ["year >= 833", "!flag.ubbi_broken", "!service", { any: ["!flag.ubbi_sworn", flag.ubbi_done] }]
   title: Ubbi's hall
   text: |
     Ubbi has a hall now, inside the earth wall, with a carved door and a hearth you could roast an ox in, and he's roasting one. He sees you at the door and roars your name across the whole hall, and makes the man next to him move up the bench.
@@ -48,7 +49,7 @@
   choices:
     - id: felag
       text: Clasp his hand. A summer with Ubbi.
-      requires: ["captain.ubbi.rel >= 3"]
+      requires: [{ any: ["captain.ubbi.rel >= 3", flag.ubbi_done] }]
       effects: [ { ally: { id: ubbi, meet: true, felag: true } }, { favour: -1 } ]
       result: |
         He crushes your hand and roars for more ale. The hall cheers without knowing why. You'll have three ships of Danes at your back this summer, and every one of them louder than Ulf.

@@ -552,7 +552,8 @@
   kind: phase
   trigger: phase_start
   cooldown_days: 300
-  requires: ["background == outlaw", flag.outlawed, "!flag.outlaw_ended", "place != home_fjord", { any: ["year >= 833", "year >= 832 && flag.o_two_winters"] }]
+  # in spring, at the start of the sailing season: never at the start of a winter abroad (playtest 5: he came home on 1 November)
+  requires: ["background == outlaw", flag.outlawed, "!flag.outlaw_ended", "place != home_fjord", "month <= 5", "phase != winter", { any: ["year >= 833", "year >= 832 && flag.o_two_winters"] }]
   art: open_sea
   title: Three winters
   text: |

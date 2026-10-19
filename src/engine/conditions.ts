@@ -139,6 +139,10 @@ function leafLabel(c: Extract<Cond, { t: 'cmp' | 'truthy' }>, content: ContentBu
   const { op, value, path } = c;
   if (path === 'silver' && typeof value === 'number') return `Silver ${formatSilver(value)}`;
   const [ns, id, sub] = path.split('.');
+  // playtest 5: "Requires Captain ubbi rel 3", "Rings silver 1", "Hird room 1"
+  if ((path === 'rings.silver' || path === 'rings.gold') && op === '>=' && value === 1) return `A ${id} arm-ring in your chest`;
+  if (path === 'hird.room' && op === '>=' && value === 1) return 'Room in your hall for another sworn man';
+  if (ns === 'captain' && sub === 'rel' && typeof value === 'number') return `${content.captains[id!]?.name ?? id} must think well of you (${value})`;
   const name = ns === 'man' && sub === 'loyalty' ? `${content.men[id!]?.name ?? id}'s loyalty` : labelFor(path);
   if (typeof value === 'number') {
     if (op === '>=') return `${name} ${value}`;
@@ -161,3 +165,16 @@ export function unmetLabel(input: CondInput, state: GameState, content: ContentB
   };
   return describe(compileCond(input), true).join(', ');
 }
+
+/** Every leaf of a requirement, labelled as the player would see it: for tools that look for raw tokens. */
+export function allLabels(input: CondInput, content: ContentBundle): string[] {
+  const out: string[] = [];
+  const visit = (c: Cond): void => {
+    if (c.t === 'all' || c.t === 'any') c.of.forEach(visit);
+    else if (c.t === 'not') visit(c.of);
+    else out.push(leafLabel(c, content));
+  };
+  visit(compileCond(input));
+  return out;
+}
+

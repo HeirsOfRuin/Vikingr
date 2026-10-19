@@ -312,7 +312,7 @@ export interface GameState {
   pending: Pending | null;
   journal: LogEntry[];
   death: Death | null;
-  stats: { legs: number; storms: number; battles: number; battlesWon: number; duels: number; duelsWon: number; raids: number; plunder: number; hungerDays: number };
+  stats: { legs: number; storms: number; battles: number; battlesWon: number; duels: number; duelsWon: number; raids: number; plunder: number; hungerDays: number; /** Fights won standing in the front rank, on his feet at the end. */ frontWins: number };
   seasonRaids: string[];
   building: string | null; // ship type being built over the winter
   musterPool: number; // men still willing to sign on this spring

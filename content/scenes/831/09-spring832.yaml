@@ -3,7 +3,7 @@
   kind: phase
   trigger: phase_start
   once: true
-  requires: ["year >= 832", "place == home_fjord", "phase == muster", seen.j_council]
+  requires: ["year >= 832", "place == home_fjord", "phase == muster", seen.j_council, "!flag.outlawed"]
   art: muster
   when: Spring, 832
   title: The third spring

@@ -6,7 +6,7 @@ import type { GameState } from '../../engine/state';
 import { listActions, screenOf, type Action } from '../../engine/index';
 import type { MapData } from '../../engine/mapgrid';
 import { dateOf, formatDate, seasonName } from '../../engine/calendar';
-import { formatSilver, capitalise } from '../../engine/format';
+import { formatSilver, capitalise, shipOf } from '../../engine/format';
 import { lastingFame, livingFame, legendTable } from '../../engine/fame';
 import { mouths } from '../../engine/crew';
 import { LATE_SEASON_DOY } from '../../engine/tuning';
@@ -151,7 +151,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
         return <><h2>At sea</h2><p>Bound for {content.places[v.to]!.name}{svc ? ` in ${svc.captain}'s ship` : ''}. {v.daysAtSea} days out, the wind {v.wind}.{svc ? '' : ` Food for ${food} days.`}</p></>;
       }
       case 'muster':
-        if (svc) return <><h2>{ship}</h2><p>The ice is off the fjord. {svc.captain} has {state.ships[0]?.name ?? 'his ship'} down on the jarl's landing, loaded with water, meal, dried fish and spare oars, and he is waiting for the spring storms to blow out. Your sea-chest is under your bench. All that is left is to row.</p><p class="muted small sans">Silver: {formatSilver(state.silver)}.</p></>;
+        if (svc) return <><h2>{ship}</h2><p>The ice is off the fjord. {svc.captain} has {shipOf(svc.captain, state.ships[0]?.name ?? 'his ship')} down on the jarl's landing, loaded with water, meal, dried fish and spare oars, and he is waiting for the spring storms to blow out. Your sea-chest is under your bench. All that is left is to row.</p><p class="muted small sans">Silver: {formatSilver(state.silver)}.</p></>;
         return <><h2>The spring muster</h2><p>The ice is off the fjord. Men come down from the farms to see who is going west this year, and on whose ship. Sign them on, fill the ship with food, mend her, and go.</p><p class="muted small sans">{state.musterPool} men in the district would still sign on. Food for {food} days. Silver: {formatSilver(state.silver)}.</p></>;
       case 'return':
         if (svc) return <><h2>Home</h2><p>{ship} is hauled up on the jarl's landing, and the men are on the strand round the heap, waiting for {svc.captain} to divide the summer.</p><p class="muted small sans">In the heap: {formatSilver(state.loot)}{state.captives ? `, and ${state.captives} captives for the trader` : ''}. Your shares: {svc.shares}.</p></>;

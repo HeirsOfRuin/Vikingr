@@ -171,6 +171,7 @@ c_done: { description: "Left Conaille" }
 ingibjorg_waiting: { description: "Ingibjörg is waiting for him" }
 ingibjorg_told: { description: "Told Ingibjörg about Gyða" }
 ingibjorg_promised: { description: "Harek will talk to him next summer" }
+ingibjorg_jilted: { description: "Married another while Ingibjörg was promised to him" }
 colman_friend: { description: "Walked unarmed with Colmán on Iona" }
 colman_warned: { description: "Warned Colmán to take the books to Kells" }
 colman_betrayed_831: { description: "Told Colmán it changed nothing" }

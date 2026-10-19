@@ -1,7 +1,7 @@
 import type { ContentBundle } from '../../content/schema';
 import { DUEL_MOVES, ORDERS } from '../../content/schema';
 import type { DuelSide, DuelState, BattleState, PlunderState } from '../../engine/state';
-import { formatSilver, plural } from '../../engine/format';
+import { callName, formatSilver, plural } from '../../engine/format';
 import { ALARM_MAX } from '../../engine/plunder';
 import type { Action, ActionOption } from '../../engine/index';
 import { MOVE_NAMES, foeForecast } from '../../engine/duel';
@@ -39,7 +39,7 @@ function BoutView({ content, d, options, onAct }: { content: ContentBundle; d: D
         <Fighter s={d.foe} />
       </div>
       <div class="card sans small">
-        <div><b>{readLine(d.foe.name.split(' ')[0]!, b.read, b.shown.map((m) => FOE_TELL[m]))}</b>{b.foeOff ? ' He is off balance.' : ''}</div>
+        <div><b>{readLine(callName(d.foe.name), b.read, b.shown.map((m) => FOE_TELL[m]))}</b>{b.foeOff ? ' He is off balance.' : ''}</div>
         {b.foeNext && <div class="muted">You can read him further: after that, he means to {FOE_NEXT[b.foeNext]}.</div>}
         {b.heroOff && <div>You are off balance: your next blow lands soft, and his lands hard.</div>}
         {holm && <div class="muted">The cloak: you are {BOUT.edge - b.heroEdge} step{BOUT.edge - b.heroEdge === 1 ? '' : 's'} from the edge; he is {BOUT.edge - b.foeEdge}.</div>}

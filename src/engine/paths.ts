@@ -112,6 +112,8 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     case 'fate': return state.fates[a!] ?? 0;
     case 'standing': return standing(state, content, a!);
     case 'norse': return !!state.places[a!]?.norse;
+    /** Times he has raided a place. */
+    case 'raided': return state.places[a!]?.raided ?? 0;
     case 'item': return state.items.some((x) => x.id === a);
     case 'omen': return state.omens[a!] ?? 0;
     case 'captain': {
@@ -155,6 +157,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'item': return content.items[a!] && !b ? null : `unknown item "${a}"`;
     case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;
     case 'norse': return content.places[a!] && !b ? null : `unknown place "${a}" for a ship-fort`;
+    case 'raided': return content.places[a!] && !b ? null : `unknown place "${a}" for raided`;
     case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;
     case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
     case 'captain': return content.captains[a!] && ['rel', 'met', 'alive', 'partner'].includes(b!) ? null : `bad captain path "${path}"`;

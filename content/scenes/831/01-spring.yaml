@@ -3,7 +3,7 @@
   kind: phase
   trigger: phase_start
   once: true
-  requires: ["year >= 831", seen.sp_831, "place == home_fjord", "!flag.placeholder_start"]
+  requires: ["year >= 831", seen.sp_831, "place == home_fjord", "!flag.placeholder_start", "!flag.outlawed"]
   art: yule_hall
   when: Spring, 831
   title: The jarl's council

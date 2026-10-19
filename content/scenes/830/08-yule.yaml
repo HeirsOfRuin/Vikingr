@@ -4,7 +4,7 @@
   kind: phase
   trigger: hall
   once: true
-  requires: ["place == home_fjord", "phase == winter", "!flag.placeholder_start", { any: ["!fate.ormr_dies", seen.h_ormr, "background != younger_son"] }]
+  requires: ["place == home_fjord", "phase == winter", "!flag.placeholder_start", "!flag.outlawed", { any: ["!fate.ormr_dies", seen.h_ormr, "background != younger_son"] }]
   art: { key: yule_hall, laughter: flag.y_hall }
   when: Yule, 830
   title: Yule

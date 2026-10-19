@@ -38,7 +38,7 @@ import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
 import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
-import { BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, BIRTH_YEAR } from './tuning';
+import { BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -173,7 +173,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
     pending: null,
     journal: [],
     death: null,
-    stats: { legs: 0, storms: 0, battles: 0, battlesWon: 0, duels: 0, duelsWon: 0, raids: 0, plunder: 0, hungerDays: 0 },
+    stats: { legs: 0, storms: 0, battles: 0, battlesWon: 0, duels: 0, duelsWon: 0, raids: 0, plunder: 0, hungerDays: 0, frontWins: 0 },
     seasonRaids: [],
     building: null,
     musterPool: 0,
@@ -574,7 +574,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (at === 'home_fjord') {
         out.push(...homeActions(state, content));
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
-      } else if (doy >= WINTER_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, `Winter at ${place.name}`, tier !== 'hostile' && tier !== 'unfriendly', 'Nobody here will give you a roof.'));
+      } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, `Winter at ${place.name}`, tier !== 'hostile' && tier !== 'unfriendly', 'Nobody here will give you a roof.'));
       return out;
     }
   }

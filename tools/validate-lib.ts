@@ -208,10 +208,11 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   }
   for (const id of Object.keys(content.scenes)) if (!reached.has(id)) errors.push(`scene ${id}: unreachable (no start, trigger or link leads to it)`);
 
-  // flags
+  // flags (some are set by the engine, not by content: the end of exile, a broken promise at a wedding)
+  const ENGINE_FLAGS = ['outlaw_ended', 'ingibjorg_jilted'];
   for (const f of Object.keys(content.flags)) {
     const bgSet = Object.values(content.backgrounds).some((b) => b.flags?.includes(f));
-    if (!flagSet.has(f) && !bgSet) warnings.push(`flag ${f}: declared but never set by content`);
+    if (!flagSet.has(f) && !bgSet && !ENGINE_FLAGS.includes(f)) warnings.push(`flag ${f}: declared but never set by content`);
     if (!flagRead.has(f)) info.push(`flag ${f}: not read by any content condition (the engine may read it)`);
   }
 

@@ -1,10 +1,12 @@
 # Boasts sworn over the bragarfull at Yule (FRAME-PHASE2 §4.4). Keep one and it is a deed; break it and honour falls.
 - { id: own_ship, text: "Within two winters I will stand at my own steering-oar.", days: 730 }
-- { id: first_over, text: "Next summer I will be first over the wall, wherever we go.", days: 300 }
+# playtest 5: nothing kept it; a fight won in the front rank, on his feet at the end, does
+- { id: first_over, text: "Next summer I will be first over the wall, wherever we go.", days: 300, goal: { stat: frontWins, n: 1 } }
 - { id: thorgils_words, text: "Thorgils Hrappsson will eat his words before the ice breaks.", days: 90 }
 - { id: irish_cup, text: "I will drink from an Irish king's own cup.", days: 720 }
 - { id: father_silver, text: "I will put a pound and a half of silver in my father's hand.", days: 360 }
-- { id: dorestad, text: "I will see Dorestad, the richest market of the Franks, and take something from it.", days: 360 }
+# playtest 5: sworn at Yule 831, it fell due before a ship of his own could reach Dorestad; three summers, and a raid there keeps it
+- { id: dorestad, text: "Before three summers are out I will see Dorestad, the richest market of the Franks, and take something from it.", days: 1050, goal: { when: "raided.dorestad >= 1" } }
 - { id: two_ships, text: "By next Yule two ships will follow my steering-oar.", days: 360, goal: { when: "ships >= 2" } }
 # The yearly pool (content/scenes/world/winter.yaml, g_yule). Repeatable; the engine keeps them when the goal is met.
 # 330 days: they fall due before the next Yule, so the reckoning there can tell them.
