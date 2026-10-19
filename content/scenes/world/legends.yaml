@@ -1,0 +1,494 @@
+# The legends in person, and the fleets a man can join (docs/FRAME-WORLD.md §B). Each legend is met once, in his
+# own years and waters. The fleets follow the annals: the Liffey and the Boyne (AU 837), Lough Neagh and Armagh
+# (AU 839-840), Nantes on St John's Day (843).
+
+# ---- Horik, at Hedeby ----
+- id: lg_horik
+  kind: place
+  trigger: arrive
+  at: [hedeby]
+  once: true
+  weight: 12
+  requires: ["!service", "year <= 853", { any: ["fame.living >= 40", flag.ubbi_done] }]
+  art: yule_hall
+  title: The king in Hedeby
+  text: |
+    The toll-reeve doesn't take your silver this time. He takes your name, and goes away with it, and comes back with four spearmen who walk you up through the plank streets to a hall with a carved gable and a dragon on the ridge-beam, and a crowd outside it of men who have been waiting there since morning and look at you with hatred as you go straight in.
+
+    King Horik is older than you expected. Grey, heavy, with a face like a shut door and very pale eyes. He has a Frankish sword across his knees, in a scabbard with gold on it, and a Frankish envoy on the bench below him, sweating into his good wool.
+
+    "The Norwegian," Horik says. "I hear about you." He doesn't say what. "My hersirs tell me you are useful. The emperor's man here tells me you are a pirate." The envoy looks at the floor. "Which are you?"
+  choices:
+    - id: kneel
+      text: Kneel, and tell him your sword is for hire to a king.
+      effects: [ { lord: { id: horik, fav: 3 } }, { standing: { place: hedeby, n: 2 } } ]
+      result: |
+        "Both, then," says Horik, and almost smiles. The envoy writes something down. The king watches him do it and lets him. "Come back when you want to be a king's man," he says to you, "and not a king's hire. There's a difference. I'll tell you what it is then."
+    - id: gift
+      text: Give him the best thing in your sea-chest, and say nothing at all.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { lord: { id: horik, fav: 3 } }, { add: { honour: 1 } } ]
+      result: |
+        He turns it over in his hands, and then hands it to a steward without looking at it again. "A man who doesn't talk," he says. "In my hall. I'd forgotten what that looks like." The envoy laughs, too late, and alone.
+    - id: stand
+      text: Stay on your feet. Tell him you're a free man from Hordaland, which is neither.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          The hall goes quiet. Then Horik laughs, one bark, like a seal. "A free man," he says to the envoy. "Write that down. Tell your emperor the Norwegians are all free men, and see how much good it does him." He waves you away, but he's looking at you differently.
+        effects: [ { lord: { id: horik, fav: 1 } }, { add: { honour: 1 } } ]
+      failure:
+        text: |
+          "Neither," says Horik, "is what I'd call a man with one ship." The hall laughs. You're shown out the way you came in, past the men waiting at the door, who look at you now with something worse than hatred.
+        effects: [ { lord: { id: horik, fav: -1 } } ]
+
+# ---- Turgeis, in Ireland, if no fleet of his has found you first ----
+- id: lg_turgeis
+  kind: place
+  trigger: arrive
+  at: [dublin, linn_duachaill, conaille, bangor, rechru, man, glendalough]
+  once: true
+  weight: 12
+  requires: ["!service", "year >= 834", "year <= 844", "fame.living >= 30", "!seen.cw_837", "!seen.cw_839"]
+  art: muster
+  title: Turgeis
+  text: |
+    There are nine ships on the beach already when you come in, and a tent of red cloth above the tide-line with a standard in front of it: a raven, on white. Men in mail who don't bother to get up when they see your sail. They know whose beach it is.
+
+    Turgeis comes down to meet you himself. He's tall and fair and younger than his name, with a cloak pinned by a brooch the size of a child's hand, Irish work, gold and red enamel, that was on some abbot's chest not long ago.
+
+    "Hordaland," he says, before you've said a word. "I know the shields. I know you, too, a little." He looks at your ship as if he's pricing it. "I'm going to be king of every foreigner in Ireland. Then of the Irish. I need ships. Nobody ever has enough ships."
+    [break]
+    His men laugh at that. They've heard it before. They don't seem to think it's a joke.
+  choices:
+    - id: drink
+      text: Drink with him, and hear the rest of it.
+      effects: [ { lord: { id: turgeis, fav: 2 } }, { add: { skill.lore: 1 } } ]
+      result: |
+        You drink in the red tent until the fire's down to embers, and he tells you the whole of it: which kings hate which, which churches are richest, which loughs a ship can be dragged into. He's mad, you decide. He's also right about nearly everything. Those are not the same thing, and in Ireland they often travel together.
+    - id: oath
+      text: Put your hands between his, here on the beach. Ireland needs a king.
+      visible_if: "!oath"
+      effects: [ { lord: { id: turgeis, fav: 3, swear: first } } ]
+      result: |
+        He takes your oath standing, with the tide coming in round his boots, as if it was the most natural thing in the world, which to him it is. "Good," he says. "When I call, come. When I don't, raid whom you like, except mine." His men cheer. One of them spits.
+    - id: no
+      text: Tell him Ireland has enough kings already.
+      effects: [ { lord: { id: turgeis, fav: -2 } }, { add: { honour: 1 } } ]
+      result: |
+        "It does," Turgeis agrees, pleasantly. "That's why it needs one." He turns his back on you, which on his own beach is a kind of insult and a kind of compliment. You're gone with the morning tide. Nobody stops you. Nobody waves.
+
+# ---- Ragnarr, on the Frisian coast and the Frankish rivers, before Paris ----
+- id: lg_ragnar
+  kind: place
+  trigger: arrive
+  at: [walcheren, dorestad, ribe, hedeby, rouen]
+  once: true
+  weight: 12
+  requires: ["!service", "year >= 840", "year <= 844", "fame.living >= 40"]
+  art: muster
+  title: Ragnarr
+  text: |
+    You hear him before you see him: a laugh, from the far end of the beach, loud enough to turn heads on the ships. Then a big man in a fur cloak, wading out to your stem-post with a horn of ale in each hand, one of them held out to you.
+
+    "Ragnarr," he says, as if you ought to have known. You had. Half the beach is his men, and the other half is men who want to be. His breeches are leather, tarred black, and the men call him Loðbrók for them. He says his wife made them, against snakes. Nobody knows if he's joking. Nobody asks.
+    [break]
+    "I'm going up a river," Ragnarr tells you, when you're ashore and on your second horn. "Not this year. Soon. All the way up, to where the king keeps his treasure and his saints. I'm looking for men who don't mind a long row." He looks you over. "You look like you'd mind. Prove me wrong."
+
+    He points at a stone on the beach, a round grey boulder the size of a sheep. Half his crew are already grinning.
+  choices:
+    - id: stone
+      text: Lift his stone to your chest, in front of everyone.
+      check: { skill: weapons, attr: str, difficulty: 6 }
+      success:
+        text: |
+          It comes up, slowly, with every vein in your neck standing out, to your knees, to your belt, to your chest. You hold it there long enough for the beach to stop breathing, and then let it fall in the sand at Ragnarr's feet.
+
+          He looks at it. Then at you. Then he laughs again, and throws his arm round your neck. "I said you'd mind!" he roars. "I said! Nobody listens to me!" His men are paying each other in hacksilver up and down the beach.
+        effects: [ { set: flag.lg_ragnar_friend }, { legend: { id: ragnar, fame: -3 } }, { deed: { type: deed, text: "Lifted Ragnarr Loðbrók's stone on the beach, in front of his men", weight: 3, witnesses: 200 } } ]
+      failure:
+        text: |
+          It comes up to your knees and no further, and you feel something give in your side, with a sound only you can hear. You put it down. Ragnarr puts a hand on your shoulder, kindly. You'd rather he'd laughed. Then he lifts it himself, to his chest, one-handed nearly, and drops it, and laughs anyway.
+        effects: [ { legend: { id: ragnar, fame: 2 } }, { injury: cracked_ribs } ]
+    - id: river
+      text: Tell him what you know of the Seine, and the abbeys on it.
+      visible_if: "flag.sn_841_sworn || known.rouen"
+      effects: [ { set: flag.lg_ragnar_friend }, { add: { skill.lore: 1 } } ]
+      result: |
+        He listens like a man listening to a song he means to learn. He asks about the bends, the islands, the bridges, the depth at the ford below the city. When you've done, he gives you a gold ring off his finger without a word, and you understand that you've been hired, and for what, and that he hasn't decided when yet.
+    - id: drink
+      text: Drink his ale, and keep your back for your own oars.
+      result: |
+        "Sensible," says Ragnarr, disappointed, and moves off down the beach to find someone who isn't. You hear him laughing again, a little later, and then a splash, and then a great deal of cheering.
+
+# ---- Hastein, young, on Noirmoutier after Nantes ----
+- id: lg_hastein
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  weight: 12
+  requires: ["year >= 843", "year <= 850", "norse.noirmoutier"]
+  art: yule_hall
+  title: Hastein
+  text: |
+    The monks' island is a Norse town now: turf houses where the cloister was, cattle in the church, a market on the beach where Franks come in boats to buy back their own cows. The men who took Nantes are wintering here, and spending Nantes as fast as they can.
+
+    In the biggest house a young man is playing at dice with three older ones and winning. He's thin and dark and sharp-faced, with quick hands and eyes that go everywhere, and when you come in he's the only one who looks up.
+
+    "Hordaland," he says. "Sit. You're the first man in a month I haven't taken silver off." He pushes the cup across. "Hastein. You'll have heard of me." You hadn't. He can see that. He smiles as if that's the best news he's had all day. "You will."
+  choices:
+    - id: dice
+      text: Sit down, and throw against him.
+      check: { skill: cunning, attr: wit, difficulty: 7 }
+      success:
+        text: |
+          You win, three throws in five. The older men go quiet. Hastein looks at the dice, and then at you, and then laughs and pays up, every coin of it, without any argument at all, which frightens you more than any argument would have.
+
+          "South," he says, pushing the silver across. "There's a city in the Moors' country where the roofs are gold. We're going to look at it in the summer. Think about it." You think about it all the way back to your ship.
+        effects: [ { add: { silver: 48 } }, { set: flag.lg_hastein }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: |
+          He takes the first throw, and the second, and by the end of the evening he has a pound of your silver and your best cloak-pin, and you have the feeling, walking back to your ship, that he could have had the ship as well if he'd wanted it and was saving it for later.
+        effects: [ { add: { silver: -48 } }, { set: flag.lg_hastein } ]
+    - id: talk
+      text: Ask him what's south of the Basques.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.lg_hastein } ]
+      result: |
+        He tells you. Rivers, cities, a sea in the middle of the world with no ice on it and no tides, and kings who wear silk and keep lions. He's never been. He talks as if he has. "One day," he says, "I'll go through the gate at the end of the world, and come back with Rome." The older men laugh. Hastein doesn't.
+
+# ---- Rorik, holding Walcheren for the emperor ----
+- id: lg_rorik
+  kind: place
+  trigger: arrive
+  at: [walcheren, dorestad]
+  once: true
+  weight: 12
+  requires: ["!service", "year >= 841"]
+  art: muster
+  title: Rorik
+  text: |
+    There's a new hall on Walcheren, Danish-built, on a mound above the dunes, and Danish ships drawn up below it that don't look as if they're going anywhere. A Frankish banner flies from its gable beside a Danish one, which you've never seen before.
+
+    Rorik meets you on the beach with twenty men behind him. He's a careful-looking Dane of about thirty, with a Frankish cloak and a Frankish sword and a Danish face, and he looks at your ship the way a farmer looks at a fox.
+
+    "These islands are the emperor Lothar's," he says, "and the emperor has given them to me and my brother to keep, against other Danes. And Norwegians." He lets that sit. "So. Are you a guest, or a reason?"
+  choices:
+    - id: guest
+      text: A guest. Tell him you've no quarrel with any man who pays you.
+      effects: [ { lord: { id: rorik, fav: 2 } }, { standing: { place: walcheren, n: 2 } } ]
+      result: |
+        "Everybody pays somebody," Rorik says. "I'm paid to keep the river shut. You could be paid to help." He takes you up to the hall, and feeds your men, and asks a great many questions about where you've been and who you know. He remembers all the answers. You can see him doing it.
+    - id: lothar
+      text: Ask him what the emperor pays a Dane to fight Danes.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          He almost smiles. "More than the Danes pay," he says. "And the land stays mine when the emperor's dead and his sons are fighting over his bones. Think about that, Norwegian, while you're rowing about looking for monks." You do think about it. That was the idea.
+        effects: [ { lord: { id: rorik, fav: 1 } }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: |
+          "Enough," says Rorik, "to hang you on that dune, if I wanted." His men laugh. He doesn't. You leave on the next tide, and his ships follow you out to sea, all the way to the horizon, not quite close enough to fight.
+        effects: [ { lord: { id: rorik, fav: -2 } } ]
+
+# ---- the high king's envoy ----
+- id: lg_irish_envoy
+  kind: place
+  trigger: arrive
+  at: [conaille, bangor, armagh, glendalough, clonmacnoise, dublin, linn_duachaill]
+  once: true
+  weight: 10
+  requires: ["!service", "year >= 835", "fame.living >= 30"]
+  art: celtic_monastery
+  title: The king's poet
+  text: |
+    He comes down to the shore alone, with a harp-case on his back and a staff in his hand, and stands just above the tide-line where a spear would reach him, waiting to see whether you'll throw one. Nobody does. There's something about him.
+
+    He's a poet, it turns out, an ollam, a man of the old learning, and in Ireland a poet can walk through a war without a scratch, because nobody wants to be in his next poem. He speaks Norse, badly, with great dignity.
+    [break]
+    "I come from [if year >= 846]Máel Sechnaill[else]Niall Caille[/if], who is king at Tara," he says. "The king has no love for the foreigners. But the foreigners are many, and some of them are worse than others, and a king may pay one wolf to keep the others from his sheep. The king knows your name. He would know whether you are for hire."
+  choices:
+    - id: hire
+      text: Take the king's silver, and his peace.
+      effects: [ { add: { silver: 96 } }, { lord: { id: irish_king, fav: 3 } }, { standing: { people: gael, n: 1 } } ]
+      result: |
+        He counts it out on a flat stone: Irish silver, Frankish pennies, a cut-up chalice. "The king's peace," he says, "is on every church that is the king's. You will know which." He tells you. It's most of them. "When the king calls, you will come. When he does not, you will not raid his. This is how wolves are kept."
+    - id: price
+      text: Ask him what Turgeis pays his wolves.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          He looks at you with real interest for the first time. "More than the king," he says. "In silver. Less than the king, in what comes after." He lays a gold ring on the stone beside him and walks away up the beach, and doesn't look back. It takes you a while to work out what you've been paid for. Thinking, probably.
+        effects: [ { ring: { metal: gold } }, { lord: { id: irish_king, fav: 1 } } ]
+      failure:
+        text: |
+          "You will find out," he says, "when he is drowned." He walks back up the beach. Your men are already making up a poem about him, which is a mistake. He's making one up about them.
+        effects: [ { lord: { id: irish_king, fav: -1 } } ]
+    - id: no
+      text: Tell him no Northman takes an Irish king's silver.
+      result: |
+        "Many do," the poet says. "They just don't tell each other." He bows, a little, and goes.
+
+# ---- the fleets on the Liffey and the Boyne, 837 ----
+- id: cw_837
+  kind: place
+  trigger: arrive
+  at: [dublin, linn_duachaill, conaille, man, glendalough, rechru]
+  once: true
+  weight: 15
+  requires: ["year == 837", "month >= 4", "month <= 8", "!service", "ships >= 1"]
+  art: muster
+  title: Sixty ships on the Liffey
+  text: |
+    The sea off the Liffey mouth is full of sails. Sixty ships, the fishermen say, in the Liffey, and another sixty on the Boyne to the north, and the whole of the plains between them burning, field by field, as far inland as a man can ride in a day.
+
+    A ship comes out to meet you, with a gold ring on the arm of the man in the bow and a raven on white at her masthead.
+    [if lord.turgeis.met]
+
+    "Hordaland," the man calls across. "Turgeis remembers you. He says: there's room in the river."
+    [else]
+
+    "Whose are you?" the man calls across. "Turgeis's, or nobody's? Nobody's is a bad thing to be on this coast, this summer."
+    [/if]
+  choices:
+    - id: join
+      text: Bring your ships into the river, under the raven.
+      danger: true
+      effects:
+        - { set: flag.cw_liffey_sworn }
+        - { lord: { id: turgeis, fav: 1 } }
+        - { days: 6 }
+        - { host: { title: "The plain of the Liffey", foe: leinster_men, terrain: field, men: 40, wings: [ { name: "Turgeis's Norse", men: 120, quality: 1.3, foe_men: 80 }, { name: "The Boyne fleet", men: 80, foe_men: 60 } ], role: wing, win: cw_837_won, lose: cw_837_lost } }
+      result: You row up the Liffey under a sky black with other men's smoke. On the fourth day the king of Leinster comes to meet you at a ford, with every man he has.
+    - id: sell
+      text: Sell them food and ale, at a river's prices.
+      requires: ["provisions >= 200"]
+      effects: [ { add: { provisions: -150, silver: 60 } }, { lord: { id: turgeis, fav: 1 } } ]
+      result: The fleets are hungry, and have silver, and have burned every farm that might have fed them. You sell them your barley and your dried fish at three times what you paid, and they thank you for it.
+    - id: away
+      text: Stand out to sea. This is Turgeis's summer, not yours.
+      result: The raven ship watches you go all the way to the horizon. Somebody on her laughs, and the sound comes a long way over the water.
+
+- id: cw_837_won
+  kind: spine
+  art: bangor_field
+  title: The ford of the Liffey
+  text: |
+    The king of Leinster's men break at the ford, and the Liffey is full of them, and the fleets go up the plain behind them like fire up a thatch. For ten days there's nothing to do but take things: cattle, silver, cloth, people.
+
+    At the end of it Turgeis rides down the riverbank on a stolen Irish horse to see who's alive. He stops at your ships.
+    [if lord.turgeis.sworn]
+    "My man," he says to his captains, pointing at you. "Did I not say?"
+    [else]
+    "You came," he says. "Most men only say they'll come." He looks at you a while. "Kneel, and you'll have more summers like this one."
+    [/if]
+  choices:
+    - id: oath
+      text: Kneel to him, here on the riverbank.
+      visible_if: "!oath"
+      effects: [ { add: { loot: 220 } }, { captives: 6 }, { lord: { id: turgeis, fav: 2, swear: first } }, { deed: { type: battle_won, text: "Fought at the ford of the Liffey in Turgeis's fleets", weight: 4, witnesses: 400 } }, { standing: { people: gael, n: -2 } } ]
+      result: |
+        You kneel in the mud, and he puts his hand on your head as if he had been a king all his life. The captains watch. Some of them are pleased. Some of them are counting.
+    - id: secret
+      text: Kneel to him, and say nothing of the oath you've already sworn.
+      visible_if: "oath && oaths < 2 && !lord.turgeis.sworn"
+      danger: true
+      effects: [ { add: { loot: 220 } }, { captives: 6 }, { lord: { id: turgeis, fav: 2, swear: secret } }, { deed: { type: battle_won, text: "Fought at the ford of the Liffey in Turgeis's fleets", weight: 4, witnesses: 400 } }, { standing: { people: gael, n: -2 } } ]
+      result: |
+        You kneel in the mud, and say the words, and don't say the other words, the ones you said to {lord}. He puts his hand on your head. Somebody, somewhere, will tell somebody. They always do.
+    - id: share
+      text: Take your share, and keep your own road.
+      effects: [ { add: { loot: 220 } }, { captives: 6 }, { lord: { id: turgeis, fav: 1 } }, { deed: { type: battle_won, text: "Fought at the ford of the Liffey in Turgeis's fleets", weight: 4, witnesses: 400 } }, { standing: { people: gael, n: -2 } } ]
+      result: |
+        "Your own road," Turgeis says. "In Ireland, everybody's road ends at mine." He rides on. Your share is a good one. He didn't have to make it that good.
+
+- id: cw_837_lost
+  kind: spine
+  art: bangor_field
+  title: The ford holds
+  text: |
+    The Leinstermen hold the ford, and then come over it, and your stretch of the line goes back into the river. The fleets get their ships off. Not all of their men.
+  choices:
+    - id: go
+      text: Get your men back to the ships, and out to sea.
+      effects: [ { add: { crew.morale: -1 } }, { lord: { id: turgeis, fav: 1 } } ]
+      result: The fleets lose a fight and burn the plain anyway, the next week, ten miles further up. The Irish hold a ford. The Norse hold everything else. You hold your oars, and row.
+
+# ---- the fleet on Lough Neagh, and Armagh, 839-840 ----
+- id: cw_839
+  kind: place
+  trigger: arrive
+  at: [conaille, bangor, linn_duachaill, rechru, armagh]
+  once: true
+  weight: 15
+  requires: ["year >= 839", "year <= 840", "month >= 4", "month <= 9", "!service", "ships >= 1"]
+  art: muster
+  title: The fleet on the lough
+  text: |
+    They've done something nobody has done before. They've taken the ships up the Bann, against the current, rowing and hauling, and into Lough Neagh: a lake in the middle of the north of Ireland so big you can't see across it, with every church and king of the north round its shores and no way for them to get the ships out again unless the Norse want to go.
+
+    The fleet on the lough means to winter there. Then it means to go to Armagh, which is Patrick's church, and the richest in Ireland, and only a day's march from the lough's southern shore.
+    [if lord.turgeis.sworn]
+
+    Turgeis's man finds you on the beach. "He wants you," he says. "Armagh. He says you'll know why."
+    [elif lord.irish_king.fav >= 2]
+
+    And the king's poet finds you too, the same evening, with his harp on his back. "The king would pay," he says, "for that fleet to stay on its lake."
+    [/if]
+  choices:
+    - id: armagh
+      text: Take your ships up the Bann, and go to Armagh with the fleet.
+      danger: true
+      effects:
+        - { set: flag.cw_armagh_done }
+        - { days: 10 }
+        - { host: { title: "The ditch at Armagh", foe: airgialla_men, terrain: rampart, men: 40, wings: [ { name: "The lough fleet", men: 150, quality: 1.3, foe_men: 80 }, { name: "Turgeis's hird", men: 100, quality: 1.6, foe_men: 50 } ], role: wing, win: cw_839_won, lose: cw_839_lost } }
+      result: You haul your ships up the Bann with the rest of them, cursing every stone in it. A week later you're standing on the lough shore at dawn, looking south, at the smoke of Armagh's morning fires.
+    - id: king
+      text: Take the king's silver, and fight the fleet for him on the lough shore.
+      visible_if: "lord.irish_king.fav >= 2 && !lord.turgeis.sworn"
+      danger: true
+      effects:
+        - { lord: { id: irish_king, call: answer } }
+        - { host: { title: "The shore of Lough Neagh", foe: rival_crew, terrain: beach, men: 40, wings: [ { name: "The king's levy", men: 150, quality: 0.8, foe_men: 90 } ], role: wing, win: cw_839_irish, lose: cw_839_lost } }
+      result: The king's levy comes down to the lough shore at dawn with you in the middle of it, Northmen against Northmen, and the Irish on either side watching to see which of you will run.
+    - id: away
+      text: Leave them to it. Armagh has been burned before.
+      result: You put to sea the same day. Behind you, the north of Ireland waits for the fleet on the lake to make up its mind.
+
+- id: cw_839_won
+  kind: spine
+  art: iona_burning
+  title: Armagh
+  text: |
+    The ditch at Armagh is deep and the bank behind it is steep, and Patrick's people fight on it with spears and stones and the bells of the church ringing behind them the whole time. Then they don't. Then the fleet is inside the ditch, and among the houses, and in the churches, and the bells stop.
+
+    It's the richest place you have ever been. Gold on the altars. Books in jewelled covers. Silver in the shrine of Patrick himself, which the Irish say is death to touch.
+  choices:
+    - id: shrine
+      text: Take the shrine. Patrick isn't here to object.
+      effects: [ { add: { loot: 450, hamingja: -1 } }, { captives: 10 }, { raided: { place: armagh, burned: true, captives: true } }, { lord: { id: turgeis, fav: 2 } }, { deed: { type: raid, text: "Took Patrick's shrine at Armagh with the fleet on Lough Neagh", weight: 6, witnesses: 600 } } ]
+      result: |
+        It's heavier than it looks, and it's warm, from the candles, and the old priest kneeling by it doesn't move when you lift it. He just watches you. Your men won't touch it after. You carry it to the ships yourself, all the way to the lough.
+    - id: clergy
+      text: Leave the shrine. Take the clergy, for the ransom.
+      effects: [ { add: { loot: 300 } }, { captives: 14 }, { raided: { place: armagh, captives: true } }, { lord: { id: turgeis, fav: 1 } }, { deed: { type: raid, text: "Sacked Armagh with the fleet on Lough Neagh", weight: 5, witnesses: 600 } } ]
+      result: |
+        Priests are worth more alive than any book. The Irish will pay to have them back, a few at a time, all winter, in silver that comes down to the lough in carts. The shrine stays where it is. So does the old priest by it, who watches you go without a word.
+
+- id: cw_839_irish
+  kind: spine
+  art: bangor_field
+  title: Northmen on the shore
+  text: |
+    The fleet's men come off their ships onto the lough shore and find the king's levy waiting, and you in the middle of it, and it takes them a while to understand what they're seeing. By the time they do, their line is broken and they're back in the water.
+
+    The Irish cheer you. It's a strange sound to hear, aimed at you.
+  choices:
+    - id: pay
+      text: Take the king's silver, and the king's thanks.
+      effects: [ { add: { geld: 300 } }, { lord: { id: irish_king, fav: 2 } }, { lord: { id: turgeis, fav: -6 } }, { legend: { id: turgeis, fame: -10 } }, { standing: { people: gael, n: 3 } }, { deed: { type: battle_won, text: "Beat the fleet of Lough Neagh on the lough shore, for the king of Tara", weight: 5, witnesses: 500 } } ]
+      result: |
+        The poet counts it out, and writes a poem about you on the spot, which he sings that night at the king's fire. It's very flattering. Every Northman in Ireland will have heard it by spring, and none of them will ever forgive you for it.
+
+- id: cw_839_lost
+  kind: spine
+  art: bangor_field
+  title: Beaten at the lough
+  text: |
+    It goes wrong the way fights go wrong: all at once, and then slowly, and then you're in the water, pushing your ship off with your shoulder, with spears going into the lough round you like hail.
+  choices:
+    - id: go
+      text: Row for the Bann, and the sea.
+      effects: [ { add: { crew.morale: -2, crew.men: -3 } } ]
+      result: The current takes you down the Bann faster than you came up it. Behind you the lough is very quiet. You count the men in the ships, twice, and don't like the answer either time.
+
+# ---- Nantes, St John's Day, 843 ----
+- id: cw_843
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 10
+  requires: ["year == 843", "place == home_fjord", "phase == muster", "!service", "ships >= 1"]
+  art: muster
+  when: Spring, 843
+  title: The Vestfold arrow
+  text: |
+    The war-arrow comes up the coast from Vestfold, which has never sent you anything before: a ship of theirs, a fast one, with a man in the bow calling the names of every captain on the beach who has a ship worth taking south.
+
+    "The Loire," he tells the muster. "Nantes. A city on an island in the river, with a bishop and walls and a Breton count who hates the Franks so much he'll show us the road in. We go in on St John's Day, at midsummer, when the whole city is at mass with the gates open for the fair." He grins. "Norwegians, all of us. Not a Dane in the fleet. Let the Danes hear about it after."
+  choices:
+    - id: go
+      text: Send back your mark on the arrow. The Loire, at midsummer.
+      effects: [ { set: flag.cw_nantes_sworn }, { know: nantes }, { know: noirmoutier }, { add: { crew.morale: 1 } } ]
+      result: The man from Vestfold cuts your mark into the shaft himself, and grins again. "Sixty-seven ships," he says. "Sixty-eight now." Your muster doubles in a week.
+    - id: no
+      text: Let the Vestfold men have their saint's day.
+      result: The arrow goes south. You hear about Nantes at the end of the summer, like everyone else, and the men who didn't go with it don't talk about anything else all winter.
+
+- id: cw_nantes
+  kind: place
+  trigger: arrive
+  at: [nantes]
+  once: true
+  weight: 20
+  requires: ["year == 843", "month <= 7", flag.cw_nantes_sworn]
+  art: muster
+  title: St John's Day
+  text: |
+    The Vestfold fleet comes up the Loire in the night, on the flood, and lies in the reeds below the city until the bells begin. Then it goes in.
+
+    The gates are open, as the man said. The fair is up in the square outside the cathedral, with stalls and cattle and jugglers, and the whole city is inside the church, singing, with the doors open to the summer.
+    [break]
+    There are some guards on the gate. Not many. They see the ships come round the island and stand there with their mouths open, and then try to shut the gates, and can't, because the fair is in the way.
+  choices:
+    - id: gate
+      text: Take your men up from the river to the gate, at a run.
+      danger: true
+      effects:
+        - { days: 1 }
+        - { host: { title: "The gate at Nantes", foe: frankish_levy, terrain: field, men: 25, wings: [ { name: "The Vestfold crews", men: 160, quality: 1.2, foe_men: 50 } ], role: wing, win: cw_nantes_won, lose: cw_nantes_lost } }
+    - id: ships
+      text: Hold the river, and let the Vestfold men take the gate.
+      effects: [ { add: { honour: -1, loot: 150 } }, { captives: 4 } ]
+      result: The city falls without you, by noon. You come ashore at the end of it for the leavings. They're good leavings. The Vestfold men watch you take them.
+
+- id: cw_nantes_won
+  kind: spine
+  art: iona_burning
+  title: The bishop at the altar
+  text: |
+    The gate is yours, and the square, and the fair, and then the cathedral doors. The singing goes on inside for a breath longer than it should, as if they think the noise outside is part of the feast.
+
+    Bishop Gunhard is at the altar in his vestments, with the cup in his hands, and he doesn't stop. He goes on saying the words in Latin while the Vestfold men come up the nave, and the people in the church scream and push and climb on each other to get to the doors. He doesn't look up.
+  choices:
+    - id: leave
+      text: Leave the bishop to the Vestfold men. Take the church plate.
+      effects: [ { add: { loot: 380 } }, { captives: 8 }, { raided: { place: nantes, captives: true } }, { deed: { type: raid, text: "Took Nantes with the Vestfold fleet on St John's Day", weight: 6, witnesses: 800 } } ]
+      result: |
+        You don't watch what happens at the altar. You hear it. Afterwards, there's a great deal of silver plate, and you take your share of it, and nobody in your ship says anything about the bishop all the way down the Loire.
+    - id: ransom
+      text: Get to him first. A live bishop is worth his weight.
+      check: { skill: command, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          You get there first, with your sworn men round you and your shields up, and stand between him and the nave. The Vestfold men stop. They look at you. They look at him. One of them laughs, and spits, and goes to look for the plate instead.
+
+          Gunhard finishes the words. Then he puts the cup down, very carefully, and looks at you, and says something in Latin that might be a blessing and might not.
+        effects: [ { add: { loot: 250, honour: 1 } }, { captives: 6 }, { take_hostage: { kind: abbot, place: nantes, name: Gunhard, who: "Gunhard, bishop of Nantes", kin: "the church of Nantes", price: 900 } }, { deed: { type: raid, text: "Took Nantes on St John's Day, and the bishop alive from his own altar", weight: 7, witnesses: 800 } } ]
+      failure:
+        text: |
+          You don't get there first. When you reach the altar the Vestfold men are already there, and the bishop is lying on the steps with the cup beside him, and there's nothing to ransom. One of them hands you the cup. You take it. It seems to be all there is to do.
+        effects: [ { add: { loot: 300 } }, { captives: 6 }, { raided: { place: nantes } }, { deed: { type: raid, text: "Took Nantes with the Vestfold fleet on St John's Day", weight: 6, witnesses: 800 } } ]
+
+- id: cw_nantes_lost
+  kind: spine
+  art: bangor_field
+  title: The gate shuts
+  text: |
+    They get the gate shut after all, on your men, with you on the wrong side of it, and the fight in the gateway is short and bad and goes the Franks' way. By the time the Vestfold men come up behind you and break the gate again, you've lost men you'll miss.
+  choices:
+    - id: on
+      text: Go in with them anyway, for whatever's left.
+      effects: [ { add: { crew.morale: -1, loot: 120 } }, { captives: 3 } ]
+      result: The city falls by noon all the same. You get the leavings. You'll hear about the gate for years, from men who were behind you at it.

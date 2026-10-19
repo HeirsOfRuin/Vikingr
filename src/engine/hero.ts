@@ -15,6 +15,11 @@ export function effAttr(state: GameState, content: ContentBundle, a: Attr): numb
   return Math.max(1, v);
 }
 
+/** A check: a skill and an attribute against a difficulty, 5% to 95% (every scene check, and scouting). */
+export function checkP(state: GameState, content: ContentBundle, c: { skill: Skill; attr: Attr; difficulty: number }): number {
+  return Math.min(0.95, Math.max(0.05, 0.5 + 0.1 * (effAttr(state, content, c.attr) + state.hero.skills[c.skill] - c.difficulty)));
+}
+
 /** The body's decline (docs/FRAME-HARDSHIP.md): slow from 32, faster from 44. */
 export const AGEING = { from: 32, step: 8, fasterFrom: 44, fasterStep: 8 } as const;
 export function ageing(age: number): number {

@@ -1,0 +1,510 @@
+# Rule (docs/FRAME-WORLD.md §E): jarl or king of a place. The claim is shown in full ({claim_<seat>}); the thing,
+# silver, or the sword decide it. Which thing-choice shows depends on the margin (claim.<seat> = his claim less the
+# rival's): the further behind he is, the harder the speaking.
+
+# ---- Orkney: after Harek ----
+- id: ru_orkney
+  kind: place
+  trigger: arrive
+  at: [orkney]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.orkney", "!service"]
+  art: birsay
+  title: The high seat at Birsay
+  text: |
+    Harek is in his mound on the headland, with his ship and his sword and two of his horses, and the high seat at Birsay is empty, with his cloak still over the back of it.
+
+    The islands have come to the thing below the mound to choose. Every farmer from Unst to South Ronaldsay, and every captain with a ship on the beach.
+    [if flag.wife_ingibjorg]
+    Ingibjörg stands beside you, his daughter, with her chin up, and the farmers look from her to you and back.
+    [/if]
+    [break]
+    Sigurðr, Harek's sister's son, stands on the other side of the law-rock with his kin round him. He has been waiting for this seat since he could walk.
+
+    {claim_orkney}
+  choices:
+    - id: thing_strong
+      text: Stand up at the law-rock, and ask the islands for the seat.
+      visible_if: "claim.orkney >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "They shout your name before you've finished. Sigurðr's kin shout too, for a while, and then stop.", effects: [ { rule: orkney } ], next: ru_orkney_won }
+      failure: { text: "You say it badly, and Sigurðr says it well, and the islands are slow and careful people who don't like to be hurried. They choose him.", effects: [ { set: flag.ru_orkney_lost } ] }
+    - id: thing_even
+      text: Stand up at the law-rock, and ask the islands for the seat.
+      visible_if: "claim.orkney >= 0 && claim.orkney < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It's close. It goes on all afternoon. Then the old men at the front, who rowed with Harek, start to shout your name, and the young ones follow.", effects: [ { rule: orkney } ], next: ru_orkney_won }
+      failure: { text: "It's close, and then it isn't. The islands choose their own blood. Sigurðr sits in the high seat that night, and has the grace not to look at you.", effects: [ { set: flag.ru_orkney_lost } ] }
+    - id: thing_weak
+      text: Stand up at the law-rock anyway, and ask the islands for the seat.
+      visible_if: "claim.orkney < 0 && claim.orkney >= -40"
+      check: { skill: speech, attr: pre, difficulty: 8 }
+      success: { text: "Nobody expected it, least of all you. Something you say about Harek, about the Scots, about the sea, catches them. The shout goes up for you like a wave going up a beach.", effects: [ { rule: orkney } ], next: ru_orkney_won }
+      failure: { text: "They hear you out, politely, the way the islands hear out a stranger, and then choose Sigurðr, the way they were always going to.", effects: [ { set: flag.ru_orkney_lost } ] }
+    - id: silver
+      text: Buy the votes that matter, the night before.
+      visible_if: "claim.orkney >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: orkney } ]
+      next: ru_orkney_won
+      result: Ten pounds of silver goes round the farms in the dark, in cloth bags, to the men whose sons and neighbours will vote as they do. In the morning the thing shouts your name. Sigurðr knows exactly why.
+    - id: sword
+      text: Challenge Sigurðr to the holmgang, for the seat.
+      danger: true
+      effects: [ { fight: { foe: ru_sigurd, kind: holmgang, lethal: true, win: ru_orkney_sword, lose: ru_orkney_beaten } } ]
+      result: The thing goes quiet. Then the lawspeaker nods. It's been done before, in the old days. The cloak is pegged out on the shingle below the mound.
+    - id: wait
+      text: Let Sigurðr sit in it for now. There's time.
+      result: Sigurðr takes the seat for the year, with the islands' leave, as a steward. Next year the thing will sit again, if anyone asks it to.
+
+- id: ru_orkney_sword
+  kind: spine
+  art: holmgang
+  title: Sigurðr on the cloak
+  text: |
+    Sigurðr goes down on the cloak with his blood all over Harek's shingle, and the islands watch him go down, and then look at you.
+  choices:
+    - id: seat
+      text: Walk up to the high seat, and sit in it.
+      effects: [ { rule: orkney } ]
+      next: ru_orkney_won
+
+- id: ru_orkney_beaten
+  kind: spine
+  title: Beaten on the cloak
+  text: |
+    You go down on the cloak, and get up again, which is more than you expected, and Sigurðr stands over you and doesn't finish it. You'll carry that longer than the wound.
+  choices:
+    - id: go
+      text: Go back to your ships.
+      effects: [ { set: flag.ru_orkney_lost }, { add: { honour: -1 } } ]
+      result: The islands have their jarl. He's not you.
+
+- id: ru_orkney_won
+  kind: spine
+  art: birsay
+  title: Jarl in Orkney
+  text: |
+    You sit in Harek's seat, with his cloak behind you, and the islands come up one at a time to put their hands between yours: the farmers, the captains, and last of all Sigurðr, who does it quickly and doesn't meet your eye.
+
+    Jarl in Orkney. Forty ships, if you can keep them. The Scots to the south, and the sea everywhere else, and every man in the islands watching to see what kind of jarl you'll be.
+  choices:
+    - id: feast
+      text: Feast the islands for three nights, as Harek would have.
+      effects: [ { add: { silver: -96, crew.morale: 2 } } ]
+      result: It costs two pounds of silver and most of the islands' ale. Nobody remembers much of the third night. Everybody remembers that you paid for it.
+    - id: plain
+      text: Tell them you'll be a jarl at sea, not at the table.
+      effects: [ { add: { honour: 1 } } ]
+      result: The young men cheer that. The old ones look at each other. Harek said the same thing, at your age. He was at the table for forty years.
+
+# ---- Dublin ----
+- id: ru_dublin
+  kind: place
+  trigger: arrive
+  at: [dublin]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.dublin", "!service"]
+  title: The kingship of Dublin
+  text: |
+    [if year < 845]
+    Turgeis calls himself king of every foreigner in Ireland, and the fort at Dublin is full of men who would like someone else to be. They come to you at night, in ones and twos, and say so in low voices.
+
+    Nobody takes Ireland from Turgeis by talking. They all know that. That's why they're talking to you.
+    [else]
+    Turgeis is drowned, and the fort at Dublin has no king, and every captain in it wants to be one. The ditch has doubled, the halls have tripled, there's a mint by the gate striking pennies with nobody's head on them. It needs a king. It's been needing one for years.
+
+    {rival_dublin} has come in from the west with ships and men and a claim, and the captains are already taking sides.
+    [/if]
+    [break]
+    {claim_dublin}
+  choices:
+    - id: thing_strong
+      text: Call the captains to the great hall, and ask for the high seat.
+      visible_if: "year >= 845 && claim.dublin >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "They don't argue long. They've seen your ships.", effects: [ { rule: dublin } ], next: ru_dublin_won }
+      failure: { text: "They argue all night, and in the morning they choose {rival_dublin}, because he promised them more and you only promised them the truth.", effects: [ { set: flag.ru_dublin_lost } ] }
+    - id: thing_even
+      text: Call the captains to the great hall, and ask for the high seat.
+      visible_if: "year >= 845 && claim.dublin >= 0 && claim.dublin < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "Three nights of arguing, two fights, a man thrown in the Liffey. On the fourth morning they shout your name.", effects: [ { rule: dublin } ], next: ru_dublin_won }
+      failure: { text: "Three nights of arguing, and on the fourth they shout {rival_dublin}'s name. You'd counted the votes. Somebody counted them better.", effects: [ { set: flag.ru_dublin_lost } ] }
+    - id: thing_weak
+      text: Call the captains to the great hall anyway.
+      visible_if: "year >= 845 && claim.dublin < 0 && claim.dublin >= -40"
+      check: { skill: speech, attr: pre, difficulty: 8 }
+      success: { text: "Nobody expected it. You say the one thing none of them has said: that the Danes are coming, and only one of you has ever beaten Danes. The hall shouts your name.", effects: [ { rule: dublin } ], next: ru_dublin_won }
+      failure: { text: "They hear you out and laugh, not unkindly. {rival_dublin} takes the high seat. He offers you a place on his left. It's a good place. It's not the seat.", effects: [ { set: flag.ru_dublin_lost } ] }
+    - id: silver
+      text: Pay the captains who matter, the night before.
+      visible_if: "year >= 845 && claim.dublin >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: dublin } ]
+      next: ru_dublin_won
+      result: Ten pounds of silver, and a great deal of Frankish wine. In the morning the captains shout your name, and some of them even mean it.
+    - id: sword
+      text: Challenge {rival_dublin} to the holmgang, on the Liffey strand.
+      visible_if: "year >= 845"
+      danger: true
+      effects:
+        - if: flag.fr_jarl_eirik
+          then: [ { fight: { foe: ru_hakon, kind: holmgang, lethal: true, win: ru_dublin_sword, lose: ru_dublin_beaten } } ]
+          else:
+            - if: flag.fr_jarl_hakon
+              then: [ { fight: { foe: ru_eirik, kind: holmgang, lethal: true, win: ru_dublin_sword, lose: ru_dublin_beaten } } ]
+              else: [ { fight: { foe: ru_bardr, kind: holmgang, lethal: true, win: ru_dublin_sword, lose: ru_dublin_beaten } } ]
+      result: The cloak is pegged out on the strand below the fort, and the whole of Dublin comes down to watch, Norse and Irish both, and the slave-traders shut their pens for the afternoon.
+    - id: turgeis
+      text: Gather the captains who want him gone, and take Dublin from Turgeis's men.
+      visible_if: "year < 845"
+      danger: true
+      effects: [ { host: { title: "Turgeis's men in the fort", foe: rival_crew, terrain: rampart, men: 50, wings: [ { name: "The captains who came over", men: 90, quality: 1.1, foe_men: 80 } ], role: host, win: ru_dublin_turgeis, lose: ru_dublin_beaten } } ]
+      result: You do it at night, with the gate opened from inside by a captain who has been paid twice. Turgeis's men are in the halls. They don't stay there long.
+    - id: wait
+      text: Not yet.
+      result: You put to sea again. Dublin will still be there next year, and still without a king, probably. It's that kind of place.
+
+- id: ru_dublin_turgeis
+  kind: spine
+  art: iona_burning
+  title: The raven taken down
+  text: |
+    By dawn the raven on white is down from the fort's gate and yours is up in its place, and Turgeis's men who are still alive are in the ships going north, to tell him.
+
+    He'll come. He's Turgeis. But the captains in the fort have put their hands between yours, in the great hall, with the smoke still coming off the roof, and for now Dublin is yours.
+  choices:
+    - id: seat
+      text: Sit in the high seat, and wait for him.
+      effects: [ { rule: dublin }, { legend: { id: turgeis, fame: -15 } }, { lord: { id: turgeis, fav: -10 } } ]
+      next: ru_dublin_won
+
+- id: ru_dublin_sword
+  kind: spine
+  art: holmgang
+  title: The strand below the fort
+  text: |
+    {rival_dublin} lies on the cloak, and the tide is coming in round it, and Dublin, which has watched every kind of killing, is very quiet.
+  choices:
+    - id: seat
+      text: Walk up from the strand, into the great hall, and sit down.
+      effects: [ { rule: dublin } ]
+      next: ru_dublin_won
+
+- id: ru_dublin_beaten
+  kind: spine
+  title: Not this year
+  text: |
+    It doesn't go your way. You're alive, which is something. Dublin has seen men come for its high seat before. It will see more.
+  choices:
+    - id: go
+      text: Back to the ships.
+      effects: [ { set: flag.ru_dublin_lost }, { add: { honour: -1 } } ]
+      result: The fort has its king, or still has none. Either way, it isn't you.
+
+- id: ru_dublin_won
+  kind: spine
+  title: King in Dublin
+  text: |
+    King in Dublin. The fort, the mint, the slave-market, the ships in the pool, the Irish kings who will hate you and trade with you and marry their daughters to your captains, all at once.
+
+    The captains drink to you in the great hall. The Irish brothers-in-law drink to you too, more carefully. Out in the pool, a ship with a Danish sail comes in on the tide, looks at the fort, and goes out again without tying up.
+  choices:
+    - id: coin
+      text: Have the mint strike a penny with your name on it.
+      effects: [ { add: { silver: -24 } }, { deed: { type: deed, text: "Struck a penny with his own name at Dublin", weight: 3, witnesses: 500 } } ]
+      result: The moneyer cuts the die himself, in letters you can't read, and swears they say your name. Every slave sold in Ireland this year will be bought with it.
+    - id: ditch
+      text: Dig the ditch deeper. The Danes will come.
+      effects: [ { add: { crew.morale: -1 } }, { set: flag.ru_dublin_ditch } ]
+      result: Your men curse you all summer. In the winter, looking at the ditch, they stop.
+
+# ---- Hordaland: after the jarl ----
+- id: ru_home
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.home", "place == home_fjord", "phase == muster", "!service"]
+  art: yule_hall
+  title: The empty seat at home
+  text: |
+    {jarl} is dead. He went in the winter, coughing, in his own bed, which he would have hated. He's in the mound now, with his ship, and the district has come to the thing-field below it in the spring mud to choose who sits in his seat.
+
+    His son Eysteinn, twenty and furious in his father's mail, stands on one side of the law-rock. Half the district stands with him, because a jarl's son is the law. The other half is looking at you.
+    [break]
+    {claim_home}
+  choices:
+    - id: thing_strong
+      text: Step up to the law-rock, and ask the district for the seat.
+      visible_if: "claim.home >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "The district shouts your name. Eysteinn stands there with his mouth open. Then he goes red, and then white, and then walks off the field.", effects: [ { rule: home } ], next: ru_home_won }
+      failure: { text: "The district chooses the jarl's son, because that is what districts do. Eysteinn looks at you across the field as if he'll remember this. He will.", effects: [ { set: flag.ru_home_lost } ] }
+    - id: thing_even
+      text: Step up to the law-rock, and ask the district for the seat.
+      visible_if: "claim.home >= 0 && claim.home < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It's close. The lawspeaker counts twice. Then he says your name, and the district roars, and your father, somewhere in the crowd, sits down in the mud.", effects: [ { rule: home } ], next: ru_home_won }
+      failure: { text: "It's close, and the lawspeaker counts twice, and then says Eysteinn's name. You have more friends in the district than you thought. Not enough.", effects: [ { set: flag.ru_home_lost } ] }
+    - id: thing_weak
+      text: Step up to the law-rock anyway.
+      visible_if: "claim.home < 0 && claim.home >= -40"
+      check: { skill: speech, attr: pre, difficulty: 8 }
+      success: { text: "Nobody in the district thought a younger son could do it. You didn't either. The shout comes from the back of the field first, the farmers' sons who row for you, and then from everywhere.", effects: [ { rule: home } ], next: ru_home_won }
+      failure: { text: "They hear you out. Then they choose the jarl's son, as everyone knew they would.", effects: [ { set: flag.ru_home_lost } ] }
+    - id: silver
+      text: Buy the votes that matter, the night before.
+      visible_if: "claim.home >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: home } ]
+      next: ru_home_won
+      result: Ten pounds of silver goes up the valleys in the dark. In the morning the district shouts your name, and some of the men shouting it can't look at you.
+    - id: sword
+      text: Challenge Eysteinn to the holmgang.
+      danger: true
+      effects: [ { fight: { foe: ru_eysteinn, kind: holmgang, lethal: true, win: ru_home_sword, lose: ru_home_beaten } } ]
+      result: The district goes very quiet. Killing the jarl's son for the jarl's seat is a thing the sagas tell. Nobody has seen it done.
+    - id: back
+      text: Stand with Eysteinn. A jarl's son is the law.
+      effects: [ { set: flag.ru_home_lost }, { favour: 4 }, { add: { honour: 1 } } ]
+      result: You stand with him, and the district sees you do it, and he's jarl before noon. He thanks you, stiffly, in front of everyone. It's the start of something. You're not sure what.
+
+- id: ru_home_sword
+  kind: spine
+  art: holmgang
+  title: The jarl's son on the cloak
+  text: |
+    Eysteinn goes down on the cloak in his father's mail, and doesn't get up. His mother screams from the edge of the field. Then there's nothing but the wind.
+  choices:
+    - id: seat
+      text: Walk up the mound to the high seat.
+      effects: [ { rule: home }, { add: { honour: -1 } }, { standing: { place: karmoy, n: -2 } } ]
+      next: ru_home_won
+
+- id: ru_home_beaten
+  kind: spine
+  title: Beaten by the jarl's son
+  text: |
+    Eysteinn stands over you on the cloak with the whole district watching, and you see him decide not to kill you, and see that he's enjoying deciding it.
+  choices:
+    - id: go
+      text: Get up, and go home.
+      effects: [ { set: flag.ru_home_lost }, { add: { honour: -2 } } ]
+      result: The district has a jarl. You have a scar and a story nobody will let you forget.
+
+- id: ru_home_won
+  kind: spine
+  art: yule_hall
+  title: Jarl in Hordaland
+  text: |
+    You sit in the jarl's high seat, in the jarl's hall, where you came at sixteen to stand at the bottom table and be looked at. The district comes up one man at a time to put their hands between yours: the farmers, the captains, the old men who rowed with your grandfather, and your father, last, who does it without a word and grips your hands much too hard.
+
+    Jarl in Hordaland. A younger son. Your mother says nothing at all, for a whole evening, which nobody has ever seen before.
+  choices:
+    - id: feast
+      text: Feast the district, as the old jarl did.
+      effects: [ { add: { silver: -96, crew.morale: 2 } } ]
+      result: Three nights. The district eats everything you have and goes home happy. A jarl who feeds them is a jarl who will be followed.
+
+# ---- Walcheren: the emperor's count ----
+- id: ru_walcheren
+  kind: place
+  trigger: arrive
+  at: [walcheren]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.walcheren", "!service"]
+  title: The emperor's envoy
+  text: |
+    There's a Frankish envoy on Walcheren, with a priest, a scribe, and twelve horsemen who look as if they'd rather be anywhere else, and he's looking for a Northman.
+
+    The emperor Lothar wants the Frisian islands held against the Danes, and has learned, the hard way, that only a Northman can do it. Rorik holds them now. The emperor is not sure he wants Rorik to go on holding them. He is looking at other Northmen. He is looking at you.
+    [break]
+    {claim_walcheren}
+  choices:
+    - id: thing_strong
+      text: Make your case to the envoy.
+      visible_if: "claim.walcheren >= 20"
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success: { text: "The envoy listens, and nods, and has the scribe write it down. In the spring a letter comes with the emperor's seal. Walcheren is yours to hold, and Rorik is told so.", effects: [ { rule: walcheren }, { lord: { id: rorik, fav: -6 } } ], next: ru_walcheren_won }
+      failure: { text: "The envoy listens, and nods, and goes back to Rorik's hall for dinner. The letter that comes in the spring has Rorik's name in it.", effects: [ { set: flag.ru_walcheren_lost } ] }
+    - id: thing_even
+      text: Make your case to the envoy.
+      visible_if: "claim.walcheren >= 0 && claim.walcheren < 20"
+      check: { skill: speech, attr: wit, difficulty: 7 }
+      success: { text: "It takes a week of dinners and a great deal of the envoy's wine. Then the letter comes. Walcheren is yours, from the emperor, against all Danes, including the one who had it.", effects: [ { rule: walcheren }, { lord: { id: rorik, fav: -6 } } ], next: ru_walcheren_won }
+      failure: { text: "A week of dinners, and in the end the envoy goes home and tells the emperor that Rorik is the devil he knows.", effects: [ { set: flag.ru_walcheren_lost } ] }
+    - id: thing_weak
+      text: Make your case to the envoy anyway.
+      visible_if: "claim.walcheren < 0 && claim.walcheren >= -40"
+      check: { skill: speech, attr: wit, difficulty: 8 }
+      success: { text: "Something you say about the Danes, and about Rorik's brother, and about how many ships Rorik really has, makes the envoy go pale and send a rider south that same night.", effects: [ { rule: walcheren }, { lord: { id: rorik, fav: -6 } } ], next: ru_walcheren_won }
+      failure: { text: "The envoy is polite. Franks are always polite. Walcheren stays Rorik's.", effects: [ { set: flag.ru_walcheren_lost } ] }
+    - id: silver
+      text: Pay the envoy what the emperor doesn't.
+      visible_if: "claim.walcheren >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480 } }, { rule: walcheren }, { lord: { id: rorik, fav: -6 } } ]
+      next: ru_walcheren_won
+      result: Ten pounds of silver, in a box, with the scribe's share in a smaller box. The emperor's letter comes in the spring.
+    - id: sword
+      text: Take the islands from Rorik's men. Let the emperor confirm what's done.
+      danger: true
+      effects: [ { host: { title: "Rorik's men on the dunes", foe: danish_raiders, terrain: beach, men: 50, wings: [ { name: "Your other ships", men: 30, foe_men: 40 } ], role: host, win: ru_walcheren_sword, lose: ru_walcheren_beaten } } ]
+      result: You come over the dunes at dawn. Rorik's men are Danes, and fight like it.
+    - id: wait
+      text: Not yet.
+      result: The envoy goes home. He'll be back. The emperor's problem isn't going anywhere.
+
+- id: ru_walcheren_sword
+  kind: spine
+  art: iona_burning
+  title: Rorik's hall
+  text: |
+    Rorik gets away in a ship, with his brother and his gold, and his hall on the mound burns behind him. The envoy, who watched the whole thing from a dune, writes to the emperor that night. The emperor's letter confirms you in the spring. Emperors confirm what's done.
+  choices:
+    - id: seat
+      text: Raise your banner on the mound.
+      effects: [ { rule: walcheren }, { lord: { id: rorik, fav: -10 } }, { legend: { id: rorik, fame: -15 } } ]
+      next: ru_walcheren_won
+
+- id: ru_walcheren_beaten
+  kind: spine
+  title: Thrown off the dunes
+  text: |
+    Rorik's Danes throw you back off the dunes and into the sea, and the envoy, watching from his own dune, writes to the emperor that Rorik is the man.
+  choices:
+    - id: go
+      text: Back to the ships.
+      effects: [ { set: flag.ru_walcheren_lost }, { lord: { id: rorik, fav: -6 } } ]
+      result: Rorik doesn't chase you. He doesn't need to. He has the emperor's letter now, and the islands, and a story about you.
+
+- id: ru_walcheren_won
+  kind: spine
+  title: Count of Walcheren
+  text: |
+    A Northman holding the emperor's islands against Northmen. You have a Frankish title nobody at home can pronounce, a Frankish priest who reads your letters, and a river mouth full of Danes who would very much like to come up it.
+
+    The Frisians come to look at you. They've had Danish lords before. They want to know what kind you'll be.
+  choices:
+    - id: keep
+      text: |
+        Tell them: the kind that keeps the Danes out.
+      effects: [ { standing: { people: frisian, n: 2 } } ]
+      result: They don't believe you yet. They will, or they won't, by the end of the first summer.
+
+# ---- holding a seat ----
+- id: ru_challenge
+  kind: queued
+  requires: ["rule"]
+  title: A rival for the seat
+  text: |
+    {rival} has come for {seat_place}, with ships and men and kin, and the people there who never quite took to you are opening their doors to him.
+
+    A messenger finds you. You can be there in a fortnight, if the wind is kind.
+  choices:
+    - id: fight
+      text: Go, and throw him out.
+      danger: true
+      effects:
+        - { days: 14 }
+        - if: "rule == walcheren"
+          then: [ { host: { title: "The rival's men at the seat", foe: danish_raiders, terrain: beach, men: 45, wings: [ { name: "Your people there", men: 40, quality: 0.9, foe_men: 45 } ], role: host, win: ru_challenge_won, lose: ru_challenge_lost } } ]
+          else: [ { host: { title: "The rival's men at the seat", foe: rival_crew, terrain: field, men: 45, wings: [ { name: "Your people there", men: 40, quality: 0.9, foe_men: 45 } ], role: host, win: ru_challenge_won, lose: ru_challenge_lost } } ]
+    - id: pay
+      text: Pay him to go away.
+      requires: ["silver >= 144"]
+      effects: [ { add: { silver: -144, honour: -1 } } ]
+      result: He takes the silver and goes, laughing, and tells everyone what it cost you. Next time he'll want more.
+    - id: let
+      text: Let him have it.
+      effects: [ { lose_rule: true } ]
+      result: He takes the high seat. Your people there put their hands between his. You hear about it in a port, from a man who doesn't know who you are.
+
+- id: ru_challenge_won
+  kind: spine
+  art: bangor_field
+  title: The seat held
+  text: |
+    His men break, and he gets away in a ship with what's left of them, and your people at {seat_place} come out of their doors again and tell each other they always knew.
+  choices:
+    - id: ok
+      text: Hang his banner over your door.
+      effects: [ { deed: { type: battle_won, text: "Held his high seat against a rival", weight: 4, witnesses: 300 } } ]
+      result: The banner hangs in your hall. People look at it when they come in. That's what it's for.
+
+- id: ru_challenge_lost
+  kind: spine
+  title: The seat lost
+  text: |
+    It goes wrong, and you're back at your ships with fewer men, and {rival} sits in your high seat.
+  choices:
+    - id: go
+      text: Row away.
+      effects: [ { lose_rule: true }, { add: { crew.morale: -2 } } ]
+      result: A jarl without a seat is a man with ships, which is what you were before. It's not nothing. It isn't what it was.
+
+- id: ru_danes
+  kind: queued
+  requires: ["rule == dublin"]
+  title: The dark foreigners
+  text: |
+    The Danes come to Dublin in the summer of 851, as the Irish always said someone would: a fleet of them out of the east, black sails, more ships than the pool can hold, and they've come for the fort and everything in it. The Irish have a name for them already. The dark foreigners. They call you the fair ones.
+    [if flag.ru_dublin_ditch]
+
+    Your ditch is deep. Your men stopped cursing you about it a long time ago.
+    [/if]
+  choices:
+    - id: hold
+      text: Hold the ditch.
+      danger: true
+      effects:
+        - if: flag.ru_dublin_ditch
+          then: [ { host: { title: "The Danes at the ditch", foe: danish_raiders, terrain: rampart, men: 70, wings: [ { name: "The fort's crews", men: 120, quality: 1.1, foe_men: 100 } ], role: host, win: ru_danes_won, lose: ru_challenge_lost } } ]
+          else: [ { host: { title: "The Danes at the ditch", foe: danish_raiders, terrain: rampart, men: 90, wings: [ { name: "The fort's crews", men: 120, quality: 1.1, foe_men: 130 } ], role: host, win: ru_danes_won, lose: ru_challenge_lost } } ]
+
+- id: ru_danes_won
+  kind: spine
+  art: iona_burning
+  title: The Danes beaten
+  text: |
+    The Danes break on your ditch, and then on your bank, and go back to their ships with their dead, and sail. Every Irish king in the island hears about it within the week. So does every Danish one.
+  choices:
+    - id: ok
+      text: Count the dead, and the ships they left.
+      effects: [ { add: { loot: 400 } }, { deed: { type: battle_won, text: "Held Dublin against the dark foreigners", weight: 8, witnesses: 1000 } } ]
+      result: Eleven ships they left on the strand. Your men are already arguing about which ones they want.
+
+- id: ru_rorik
+  kind: queued
+  requires: ["rule == walcheren"]
+  title: Rorik comes back
+  text: |
+    Rorik has come back, as you always knew he would, with a fleet: thirty ships out of the east, and Danes in all of them, and the emperor too busy with his brothers to care which Northman holds his islands, so long as one does.
+
+    He sends a man to your hall under a green branch. "Rorik says the islands were his. He says he'll have them back, and Dorestad too. He says you can leave, now, with your ships, or stay, and he'll bury you on the dune."
+  choices:
+    - id: fight
+      text: Stay.
+      danger: true
+      effects: [ { host: { title: "Rorik's fleet on the dunes", foe: danish_raiders, terrain: beach, men: 80, wings: [ { name: "Your Frisians", men: 80, quality: 0.8, foe_men: 80 } ], role: host, win: ru_rorik_won, lose: ru_challenge_lost } } ]
+    - id: go
+      text: Take your ships, and go.
+      effects: [ { lose_rule: true }, { add: { honour: -1 } } ]
+      result: You go. Rorik takes the islands, and then Dorestad, and the emperor makes him lord of both, because emperors confirm what's done.
+
+- id: ru_rorik_won
+  kind: spine
+  art: iona_burning
+  title: Rorik on the dune
+  text: |
+    Rorik's Danes come over the dunes three times, and go back three times, and the fourth time they don't come. He gets away. He always gets away. But the islands are yours, and the emperor writes to say so.
+  choices:
+    - id: ok
+      text: Bury their dead on the dune, where he meant to bury you.
+      effects: [ { legend: { id: rorik, fame: -20 } }, { deed: { type: battle_won, text: "Threw Rorik's fleet off the dunes of Walcheren", weight: 8, witnesses: 800 } } ]
+      result: Rorik's fame takes it badly. Yours doesn't.

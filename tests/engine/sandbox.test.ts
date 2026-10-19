@@ -12,6 +12,8 @@ import { standing } from '../../src/engine/standing';
 import { Bot } from '../../tools/bot-lib';
 import { dateOf } from '../../src/engine/calendar';
 
+import { pastChronicle } from '../../src/engine/chronicle';
+
 const rng = () => new RngCursor(seedRng(1));
 /** A captain of his own ship in 833, at home, nothing pending. */
 const captain = (): GameState => {
@@ -23,6 +25,8 @@ const captain = (): GameState => {
   s.at = 'home_fjord';
   s.silver = 1000;
   s.flags._winter = 832;
+  // the world's past up to 833 is past: no news waiting (docs/FRAME-WORLD.md §B)
+  s.chron = pastChronicle(s, content);
   return s;
 };
 const choose = (s: GameState, id: string) => act(content, s, { t: 'choose', id });

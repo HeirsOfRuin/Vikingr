@@ -1,0 +1,280 @@
+# Lords (docs/FRAME-WORLD.md §C-D): the call, the grant, and the end of a man with two lords.
+# A call comes about one summer in three (src/engine/lords.ts sets flag.call_<lord> at the turn of the year).
+# Answering is +2 favour and earns a grant at favour 6; refusing, or never coming, is -3.
+
+- id: lo_call_harek
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 30
+  weight: 6
+  requires: [flag.call_harek, "place != sea", "!service", "month <= 7"]
+  art: birsay
+  title: Harek's call
+  text: |
+    A boat from Orkney finds you with a man in it you know from Birsay, wet through and pleased with himself for finding you.
+
+    "The jarl wants his men," he says. "The Scots have come over the Pentland Firth into Caithness, burning. Harek means to put them back over it. He says: bring your ships to Thurso, and your axes."
+  choices:
+    - id: answer
+      text: Go. Your ships at Thurso, and your axes.
+      danger: true
+      effects: [ { lord: { id: harek, call: answer } }, { set: flag.calling_harek }, { days: 14 }, { host: { title: "The Scots in Caithness", foe: pictish_host, terrain: field, men: 45, wings: [ { name: "Harek's hird", men: 80, quality: 1.4, foe_men: 60 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+    - id: refuse
+      text: Send the man back with your regrets.
+      effects: [ { lord: { id: harek, call: refuse } } ]
+      result: He goes back to Orkney with your regrets, which Harek will weigh, as he weighs everything, and find light.
+
+- id: lo_call_kolbeinn
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 30
+  weight: 6
+  requires: [flag.call_kolbeinn, "place != sea", "!service", "month <= 7"]
+  title: Kolbeinn's call
+  text: |
+    Kolbeinn's message comes in a Hebridean boat, in Norse and Gaelic both, because Kolbeinn's steward is careful about such things.
+
+    A sea-king out of Islay with five ships has been taking Kolbeinn's cattle off the islands round Skye all spring, and laughing about it in every hall from Mull to Lewis. Kolbeinn would like him to stop laughing.
+  choices:
+    - id: answer
+      text: Sail for Skye, and stop the laughing.
+      danger: true
+      effects: [ { lord: { id: kolbeinn, call: answer } }, { set: flag.calling_kolbeinn }, { days: 12 }, { host: { title: "The Islay ships off Skye", foe: rival_crew, terrain: beach, men: 40, wings: [ { name: "Kolbeinn's Hebrideans", men: 60, quality: 1, foe_men: 50 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+    - id: refuse
+      text: Tell him a few cattle are his own affair.
+      effects: [ { lord: { id: kolbeinn, call: refuse } } ]
+      result: Kolbeinn's steward writes your answer down in two languages. Neither of them makes it sound any better.
+
+- id: lo_call_horik
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 30
+  weight: 6
+  requires: [flag.call_horik, "place != sea", "!service", "month <= 7"]
+  title: The king's war-arrow
+  text: |
+    The arrow comes from Hedeby with one of Horik's hersirs, in a ship with a gilt vane, and he doesn't get out of it to deliver it. He doesn't need to.
+
+    The emperor's count on the Frisian border has been hanging Danish traders and taking their cargoes. King Horik means to teach him the price of hemp. Every man who holds his oath is to be at Hedeby in ten days.
+  choices:
+    - id: answer
+      text: Hedeby, in ten days.
+      danger: true
+      effects: [ { lord: { id: horik, call: answer } }, { set: flag.calling_horik }, { days: 16 }, { host: { title: "The count's men on the border", foe: frisian_levy, terrain: field, men: 40, wings: [ { name: "The king's hird", men: 120, quality: 1.5, foe_men: 80 }, { name: "The hersirs' ships", men: 80, foe_men: 60 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+    - id: refuse
+      text: Send back the arrow, unbroken.
+      effects: [ { lord: { id: horik, call: refuse } } ]
+      result: The hersir takes it back without a word. Kings have long memories. This one has written it down.
+
+- id: lo_call_turgeis
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 30
+  weight: 6
+  requires: [flag.call_turgeis, "place != sea", "!service", "month <= 7", "lord.turgeis.alive"]
+  title: Turgeis calls
+  text: |
+    The raven on white comes into the harbour on a fast ship, and the man in her bow shouts your name across the water before he's tied up.
+
+    "Turgeis wants every ship he's owed. The king of the Airgialla has burned one of our camps and hanged the men in it along his border. Turgeis is going to hang him back."
+  choices:
+    - id: answer
+      text: Go, and help hang a king.
+      danger: true
+      effects: [ { lord: { id: turgeis, call: answer } }, { set: flag.calling_turgeis }, { days: 14 }, { host: { title: "The Airgialla on their border", foe: airgialla_men, terrain: field, men: 40, wings: [ { name: "Turgeis's fleet", men: 140, quality: 1.3, foe_men: 90 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+    - id: refuse
+      text: Tell him you have your own summer to see to.
+      effects: [ { lord: { id: turgeis, call: refuse } } ]
+      result: The man laughs, as if he'd known you would say that, and as if it was going to cost you. Then he sails.
+
+- id: lo_call_irish
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 30
+  weight: 6
+  requires: [flag.call_irish_king, "place != sea", "!service", "month <= 7"]
+  art: celtic_monastery
+  title: The king calls his wolf
+  text: |
+    The poet comes again, with his harp on his back and the dust of half Ireland on his boots, and stands at the tide-line until you come to him.
+
+    "Foreigners have made a camp on the king's river, and raid his churches from it," he says. "Norse, like you. The king would have them gone. He pays the same for one dead Northman as for another, and he has not asked which kind you are."
+  choices:
+    - id: answer
+      text: Take your men up the king's river.
+      danger: true
+      effects: [ { lord: { id: irish_king, call: answer } }, { set: flag.calling_irish_king }, { days: 12 }, { host: { title: "The camp on the king's river", foe: rival_crew, terrain: rampart, men: 40, wings: [ { name: "The king's levy", men: 140, quality: 0.8, foe_men: 50 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+    - id: refuse
+      text: Tell him you don't kill Northmen for Irish silver.
+      effects: [ { lord: { id: irish_king, call: refuse } } ]
+      result: The poet nods slowly, as if he had expected better of you, or worse. He goes. You can hear him composing as he walks.
+
+- id: lo_call_rorik
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 30
+  weight: 6
+  requires: [flag.call_rorik, "place != sea", "!service", "month <= 7"]
+  title: Rorik's summons
+  text: |
+    Rorik's letter is written in Latin by a Frankish priest and read to you by a Danish one, which tells you everything about Rorik.
+
+    Danes have been trying the Rhine mouths again: three ships, then five, with men who say they are Horik's and probably are. Rorik is paid to keep the river shut. He would like you to help him earn it.
+  choices:
+    - id: answer
+      text: Bring your ships to Walcheren.
+      danger: true
+      effects: [ { lord: { id: rorik, call: answer } }, { set: flag.calling_rorik }, { days: 12 }, { host: { title: "Danes in the Rhine mouth", foe: danish_raiders, terrain: beach, men: 40, wings: [ { name: "Rorik's Danes", men: 70, quality: 1.3, foe_men: 60 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+    - id: refuse
+      text: Tell him you won't fight Danes for an emperor.
+      effects: [ { lord: { id: rorik, call: refuse } } ]
+      result: The Danish priest reads your answer back to you in Latin, to be sure he has it right. He has. Rorik will have it read to him twice.
+
+- id: lo_call_won
+  kind: spine
+  art: bangor_field
+  title: The lord's battle
+  text: |
+    [if flag.calling_harek]
+    The Scots break at the river, and Harek's hird goes through them like a scythe through barley, and the old jarl himself is in the front of it with an axe, bellowing. Afterwards he sits on a dead pony and drinks, and sends for you.
+    [elif flag.calling_kolbeinn]
+    The Islay ships are caught on a beach with the stolen cattle half aboard. The sea-king fights well, and dies on his own stem-post. Kolbeinn has his bard make a poem about it the same night, in Gaelic, with your name in it, badly pronounced.
+    [elif flag.calling_horik]
+    The count's men are farmers in borrowed mail, and the king's hird goes through them in the time it takes to say so. Horik doesn't come himself. His hersir counts the dead on both sides and says the king will be pleased, as if he was reporting the weather.
+    [elif flag.calling_turgeis]
+    The Airgialla stand at their border and are beaten there, and Turgeis hangs their king's brother from his own gate, and then rides along your line of men and stops at you.
+    [elif flag.calling_irish_king]
+    The camp on the river burns. The Northmen in it fight like Northmen, which is to say hard and to the end. The Irish cheer you afterwards, the strangest sound you know. The poet is already composing.
+    [else]
+    The Danes in the Rhine mouth are beaten on a sandbank at low water, and the tide comes in over the ones who didn't get back to their ships. Rorik writes to the emperor about it the same evening. You're in the letter, he tells you, in Latin.
+    [/if]
+  choices:
+    - id: share
+      text: Take your share, and your lord's thanks.
+      effects:
+        - { add: { loot: 160 } }
+        - { deed: { type: battle_won, text: "Fought in his lord's battle, at his call", weight: 3, witnesses: 200 } }
+        - { clear: flag.calling_harek }
+        - { clear: flag.calling_kolbeinn }
+        - { clear: flag.calling_horik }
+        - { clear: flag.calling_turgeis }
+        - { clear: flag.calling_irish_king }
+        - { clear: flag.calling_rorik }
+      result: Your lord's share is a good one, given in front of everyone. A man who comes when he's called is worth more than his ships, and every lord knows it.
+
+- id: lo_call_lost
+  kind: spine
+  title: A lost day
+  text: |
+    It goes badly. Your lord's line breaks somewhere you can't see, and then everywhere, and you get your men out of it, most of them, and back to the ships.
+  choices:
+    - id: back
+      text: Get home, and lick the wounds.
+      effects:
+        - { add: { crew.morale: -1 } }
+        - { clear: flag.calling_harek }
+        - { clear: flag.calling_kolbeinn }
+        - { clear: flag.calling_horik }
+        - { clear: flag.calling_turgeis }
+        - { clear: flag.calling_irish_king }
+        - { clear: flag.calling_rorik }
+      result: You came when you were called. You lost. Your lord will remember the first part longer than the second, if he's any kind of lord.
+
+# ---- land, granted ----
+- id: lo_grant_harek
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 8
+  requires: [lord.harek.sworn, "lord.harek.fav >= 6", flag.served_harek, "!holding.orkney", "place != sea"]
+  art: birsay
+  title: Land on Rousay
+  text: |
+    Harek's steward comes with a turf in a cloth: a square of Orkney grass, cut from a field on Rousay, across the sound from Birsay. A longhouse goes with it, and a boat-noust, and the men who work it, who were the last man's and are yours now.
+
+    "The jarl says," the steward recites, "that a man who comes when he is called should have somewhere to come from."
+  choices:
+    - id: take
+      text: Take the turf.
+      effects: [ { grant: harek }, { clear: flag.served_harek } ]
+      result: You hold land in Orkney now, from Harek, for as long as you are his man. You can winter there as at home, and call out its men in spring. You find yourself wondering what it looks like in the rain. It looks like Orkney in the rain.
+
+- id: lo_grant_kolbeinn
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 8
+  requires: [lord.kolbeinn.sworn, "lord.kolbeinn.fav >= 6", flag.served_kolbeinn, "!holding.skye", "place != sea"]
+  title: The third valley
+  text: |
+    Kolbeinn gives you the third valley after all: the one you fought for once, if you fought for it, or the one his sons quarrelled over, if you didn't. Black hills, a river full of salmon, a hall with a smoke-hole that doesn't draw.
+
+    "It was always going to be somebody's," he says. "Better yours than my sons'. They'd only fight over it."
+  choices:
+    - id: take
+      text: Take the valley.
+      effects: [ { grant: kolbeinn }, { clear: flag.served_kolbeinn } ]
+      result: You hold land on Skye now, from Kolbeinn. His sons come to look at you. They don't stay to eat.
+
+- id: lo_grant_horik
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 8
+  requires: [lord.horik.sworn, "lord.horik.fav >= 6", flag.served_horik, "!holding.ribe", "place != sea"]
+  title: The king's land at Ribe
+  text: |
+    The king's grant comes in writing, which you can't read, and with a hersir, who reads it for you: a farm on the marsh outside Ribe, with a landing on the river, and a share in the toll of the market there. "The king gives what he takes," the hersir says. "Mostly he takes."
+  choices:
+    - id: take
+      text: Take the king's land.
+      effects: [ { grant: horik }, { clear: flag.served_horik } ]
+      result: You hold land in Denmark now, from Horik. Every Dane in Ribe knows it by evening, and some of them are pleased.
+
+- id: lo_grant_turgeis
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 8
+  requires: [lord.turgeis.sworn, "lord.turgeis.fav >= 6", flag.served_turgeis, "!holding.linn_duachaill", "norse.linn_duachaill", "place != sea"]
+  title: Linn Duachaill
+  text: |
+    "The fort at Linn Duachaill," says Turgeis. "Below Conaille, on the river. It needs a man in it who can hold it. You hold it." It isn't a question. With Turgeis, it rarely is.
+  choices:
+    - id: take
+      text: Take the fort.
+      effects: [ { grant: turgeis }, { clear: flag.served_turgeis } ]
+      result: |
+        You hold land in Ireland now, from Turgeis: a ditch, a bank, a stockade, and a great many Irish neighbours who would like it back.
+
+- id: lo_grant_rorik
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 8
+  requires: [lord.rorik.sworn, "lord.rorik.fav >= 6", flag.served_rorik, "!holding.walcheren", "place != sea"]
+  title: Land on Walcheren
+  text: |
+    Rorik gives you a farm on the island, behind the dunes, with a dyke round it and a church nobody uses any more. "The emperor's land," he says, "which is mine, which is now yours. Try not to raid it."
+  choices:
+    - id: take
+      text: Take the farm behind the dunes.
+      effects: [ { grant: rorik }, { clear: flag.served_rorik } ]
+      result: You hold land in Frisia now, from Rorik, who holds it from the emperor, who holds it from God, Rorik says, with a perfectly straight face.
+
+# ---- two lords ----
+- id: lo_cast_out
+  kind: queued
+  title: Two lords
+  text: |
+    It comes out the way these things always come out: a man in one hall who was a guest in the other, a cup too many, a name said in the wrong place. By the end of the month every hall from here to the islands knows that you put your hands between {cast_by}'s, and told neither of them about the other.
+
+    The messengers come one after the other. They say the same thing in different words. You are no man of theirs. Their halls are shut to you, and their land is theirs again, and their men will remember your face.
+  choices:
+    - id: take
+      text: Hear them out, and say nothing.
+      result: There's nothing to say. Your own men don't look at you for a day or two. Then one of them makes a joke about it, a bad one, and the others laugh, and you laugh too, because they're still here, which is more than you can say for your lords.
+    - id: defend
+      text: Tell the messengers a lord who can't hold a man's oath deserves to lose it.
+      effects: [ { add: { honour: -1, crew.morale: 1 } } ]
+      result: The messengers carry that home as well, word for word. Your men like it. Nobody else does.

@@ -1,0 +1,66 @@
+# Lords a man can swear to (docs/FRAME-WORLD.md §C). One oath at a time: a second, kept secret, is found out in
+# the end, and then both lords cast him out. `seat`: where he can offer his oath in person (a lord without a
+# seat in the game is sworn to only in his scenes). `friends`: places his man must not raid. `grant`: the land
+# he gives a man who has served him well (§D). `dies`: the years between which he dies, fixed for each life.
+- id: jarl
+  name: the jarl
+  title: jarl in Hordaland
+  seat: home_fjord
+  from: 830
+  to: 900
+  friends: [karmoy]
+  desc: The jarl of your own district. Every free man in it owes his levy; his sworn man holds land from him.
+- id: harek
+  name: Harek
+  title: jarl in Orkney
+  seat: orkney
+  from: 830
+  to: 900
+  dies: [838, 846]
+  friends: [orkney, shetland, faroes]
+  grant: orkney
+  desc: An old sea-king at Birsay, who holds the islands with forty ships and a long memory. Exiles row for him; some of them stay.
+- id: kolbeinn
+  name: Kolbeinn
+  title: lord of Skíð
+  seat: skye
+  from: 830
+  to: 900
+  friends: [skye]
+  grant: skye
+  desc: Holds Skye and the sea-roads round it, and keeps a Gaelic bard and a Norse skald at the same table.
+- id: horik
+  name: King Horik
+  title: king of the Danes
+  seat: hedeby
+  from: 830
+  to: 853
+  friends: [hedeby, ribe]
+  grant: ribe
+  desc: King of the Danes since 827. Makes peace with the Franks and breaks it as it suits him, and takes a tenth of everything that comes into Hedeby.
+- id: turgeis
+  name: Turgeis
+  title: king of the foreigners in Ireland
+  seat: dublin
+  from: 832
+  to: 844
+  friends: [dublin, linn_duachaill]
+  grant: linn_duachaill
+  desc: A Norwegian who came to Ireland with a great fleet and means to be king of all the Norse in it, and then of the Irish.
+- id: irish_king
+  name: Niall Caille
+  title: king of Tara
+  from: 830
+  to: 900
+  names: [ { from: 846, name: Máel Sechnaill } ]
+  friends: [armagh, clonmacnoise, conaille, bangor, glendalough, cork, rechru, skellig]
+  desc: The high king in Ireland, of the northern Uí Néill until 846, then of Mide. Kings in Ireland hire Norse swords against other kings, and against other Norse.
+- id: rorik
+  name: Rorik
+  title: holds Walcheren for the emperor
+  seat: walcheren
+  from: 841
+  to: 873
+  friends: [walcheren, dorestad]
+  grant: walcheren
+  desc: A Dane, Harald Klak's kinsman, who holds the Frisian islands from the emperor Lothar, to keep other Danes out of them.

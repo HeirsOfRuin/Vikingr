@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { pastChronicle } from '../engine/chronicle';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from '../engine/state';
 import type { MapData } from '../engine/mapgrid';
@@ -30,7 +31,22 @@ const CHAPTERS: { scene: string; label: string; year: number; doy: number; at: s
   { scene: 'j_council', label: 'Spring 831, as captain of the Raven', year: 831, doy: 60, at: 'home_fjord', phase: 'muster', setup: captain },
   { scene: 'c_approach', label: 'Conaille, 831, as captain', year: 831, doy: 170, at: 'conaille', phase: 'sailing', setup: captain },
   { scene: 'l_approach', label: 'Lindisfarne, 831, as captain', year: 831, doy: 165, at: 'lindisfarne', phase: 'sailing', setup: captain },
+  // the world without him (docs/FRAME-WORLD.md): a seasoned captain with a name
+  { scene: 'cw_839', label: 'The fleet on Lough Neagh, 839', year: 839, doy: 160, at: 'conaille', phase: 'sailing', setup: veteran },
+  { scene: 'lg_ragnar', label: 'Ragnarr on a Frisian beach, 842', year: 842, doy: 150, at: 'walcheren', phase: 'sailing', setup: veteran },
+  { scene: 'lo_call_harek', label: "Harek's call, as his sworn man, 840", year: 840, doy: 120, at: 'orkney', phase: 'sailing', setup: (s) => { veteran(s); s.lords = { harek: { fav: 5, met: true } }; s.oath = { lord: 'harek', since: s.day - 400 }; s.flags.call_harek = 1; } },
+  { scene: 'ru_orkney', label: 'The high seat at Birsay, after Harek, 846', year: 846, doy: 150, at: 'orkney', phase: 'sailing', setup: (s) => { veteran(s); s.lords = { harek: { fav: 6, met: true } }; s.flags.wife_ingibjorg = 1; s.base.wife = 'Ingibjörg'; } },
 ];
+
+/** A captain of some years: two ships, sixty men, a name told in every port, and silver. */
+function veteran(s: GameState): void {
+  captain(s);
+  s.crew.men = 60;
+  s.silver = 600;
+  s.ships.push({ id: 'second', type: 'karvi', name: 'Sea-Wolf', hull: 90 });
+  for (let i = 0; i < 12; i++) s.deeds.push({ n: i + 1, type: 'deed', day: s.day, place: null, text: 'A deed of the years between', weight: 12, witnesses: 100, told: s.day, verse: false });
+  for (const p of ['dublin', 'orkney', 'walcheren', 'dorestad', 'hedeby', 'armagh', 'linn_duachaill']) if (!s.known.includes(p)) s.known.push(p);
+}
 
 /** A chapter in 831 as if he had taken the Raven at Bangor: his own ship, the bench-mates sworn, a name. */
 function captain(s: GameState): void {
@@ -66,7 +82,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
-          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into 830 or 831 part-way through. Not saved.</span></span></button>
+          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into a chapter part-way through. Not saved.</span></span></button>
         </div>
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
       </div>
@@ -168,6 +184,8 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
             s.phase = c.phase;
             if (!s.known.includes(c.at)) s.known.push(c.at);
             c.setup?.(s);
+            // the world's past up to the jump is past: no backlog of news (docs/FRAME-WORLD.md §B)
+            s.chron = pastChronicle(s, content);
             s.pending = { t: 'scene', id: scene };
             s.seen[scene] = s.day;
             setPreview(scene);

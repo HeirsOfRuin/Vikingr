@@ -4,6 +4,7 @@ import { alarmRegion } from './hardship';
 import type { ContentBundle, People } from '../content/schema';
 import type { GameState } from './state';
 import { journal } from './journal';
+import { standingFloor } from './lords';
 import { aliveMen, capacity, mouths, purse } from './crew';
 import { PROVISION_ORTUG_PER, SIGN_ON_GIFT } from './tuning';
 
@@ -43,7 +44,10 @@ export function baseStanding(content: ContentBundle, id: string): number {
 }
 
 export function standing(state: GameState, content: ContentBundle, id: string): number {
-  return state.places[id]?.standing ?? baseStanding(content, id);
+  const n = state.places[id]?.standing ?? baseStanding(content, id);
+  // his lord's ports never treat his man as worse than friendly (docs/FRAME-WORLD.md §C)
+  const floor = standingFloor(state, content, id);
+  return floor === null ? n : Math.max(n, floor);
 }
 
 export function tierAt(state: GameState, content: ContentBundle, id: string): Tier {

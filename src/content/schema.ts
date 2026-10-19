@@ -9,6 +9,7 @@ export const ORDERS = ['hold', 'push', 'missiles', 'wedge', 'give', 'flank'] as 
 export const TERRAINS = ['beach', 'field', 'ford', 'rampart', 'ship', 'woods'] as const;
 export const PHASES = ['muster', 'sailing', 'return', 'winter'] as const;
 export const PLACE_KINDS = ['home', 'hall', 'market', 'monastery', 'town', 'island', 'landmark'] as const;
+export type PlaceKind = (typeof PLACE_KINDS)[number];
 export const PEOPLES = ['norse', 'danish', 'swedish', 'gael', 'english', 'frisian', 'frankish', 'baltic', 'rus', 'pict', 'briton'] as const;
 export type People = (typeof PEOPLES)[number];
 export const TEMPERAMENTS = ['hot', 'steady', 'greedy', 'pious', 'ambitious', 'dour'] as const;
@@ -104,6 +105,12 @@ const baseEffect = z.union([
   // a Norse ship-fort (longphort) holds a place, or is lost (docs/FRAME-IRELAND-SEINE.md)
   z.object({ longphort: id }).strict(),
   z.object({ longphort_lost: id }).strict(),
+  // lords, land and rule (docs/FRAME-WORLD.md §C-E)
+  z.object({ lord: z.object({ id, fav: z.number().int().optional(), meet: z.boolean().optional(), swear: z.enum(['first', 'open', 'secret']).optional(), call: z.enum(['answer', 'refuse']).optional() }).strict() }).strict(),
+  z.object({ grant: id }).strict(),
+  z.object({ rule: z.enum(['orkney', 'dublin', 'home', 'walcheren']) }).strict(),
+  z.object({ lose_rule: z.literal(true) }).strict(),
+  z.object({ legend: z.object({ id, fame: z.number().int() }).strict() }).strict(),
   z.object({ hostage: z.enum(['ransom', 'ransom_high', 'surety', 'sell', 'free', 'dies', 'maybe_dies', 'escape', 'fetters', 'foster', 'marry', 'hand_over', 'keep_one', 'sell_party']) }).strict(),
 ]);
 /** An effect, or a conditional list of them: { if, then, else }. */
@@ -273,6 +280,47 @@ export const hostageNames = z.partialRecord(z.enum(PEOPLES), z.object({ m: z.arr
 export const rival = z.object({ id, name: z.string(), born: z.number().int(), died: z.number().int(), curve: z.array(z.tuple([z.number().int(), z.number()])).min(2), note: z.string() }).strict();
 export type Rival = z.infer<typeof rival>;
 
+/** The chronicle (docs/FRAME-WORLD.md §B): a dated event that changes the world whether or not he is there. */
+export const chronEvent = z.object({
+  id,
+  year: z.number().int(),
+  doy: z.number().int().min(1).max(365),
+  /** The legend it is told of, if any (a rival id). */
+  who: id.optional(),
+  /** How men name the doers: "Horik's Danes". */
+  by: z.string(),
+  /** Places it strikes: wealth kept, defence added, or held by the Norse from now on. */
+  places: z.array(id).optional(),
+  keep: z.number().min(0).max(1).optional(),
+  defence: z.number().optional(),
+  norse: z.boolean().optional(),
+  /** He was part of it: the chapter has done its work, and there is no news to hear. */
+  unless: condInput.optional(),
+  news: z.string(),
+}).strict();
+export type ChronEvent = z.infer<typeof chronEvent>;
+/** A legend who raids his own waters every summer while he lives, by the hero's own rules. */
+export const chronRaider = z.object({ id, who: id.optional(), by: z.string(), from: z.number().int(), to: z.number().int(), places: z.array(id).min(2), chance: z.number().min(0).max(1) }).strict();
+export type ChronRaider = z.infer<typeof chronRaider>;
+
+/** A lord a man can swear to (docs/FRAME-WORLD.md §C). */
+export const lordDef = z.object({
+  id,
+  name: z.string(),
+  /** Later holders of the same lordship: from this year, this name. */
+  names: z.array(z.object({ from: z.number().int(), name: z.string() }).strict()).optional(),
+  title: z.string(),
+  seat: id.optional(),
+  from: z.number().int(),
+  to: z.number().int(),
+  /** He dies in a year between these, fixed for each life. */
+  dies: z.tuple([z.number().int(), z.number().int()]).optional(),
+  friends: z.array(id),
+  grant: id.optional(),
+  desc: z.string(),
+}).strict();
+export type LordDef = z.infer<typeof lordDef>;
+
 export const injury = z.object({ id, name: z.string(), desc: z.string(), days: z.number().int().optional(), attrs: z.record(z.string(), z.number()).optional(), deed: z.boolean().optional() }).strict();
 export type Injury = z.infer<typeof injury>;
 
@@ -378,4 +426,6 @@ export interface ContentBundle {
   banter: BanterLine[];
   recruits: Record<string, RecruitOrigin>;
   hostages: { kinds: Record<string, HostageKind>; names: z.infer<typeof hostageNames> };
+  chronicle: { events: Record<string, ChronEvent>; raiders: Record<string, ChronRaider> };
+  lords: Record<string, LordDef>;
 }

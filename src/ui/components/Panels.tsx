@@ -9,7 +9,7 @@ import { effAttr, hpMax, age } from '../../engine/hero';
 import { ATTR_NAMES } from '../../engine/paths';
 import { capacity, mouths, aliveMen } from '../../engine/crew';
 import { legendTable, livingFame, lastingFame, deedFame } from '../../engine/fame';
-import { formatDate } from '../../engine/calendar';
+import { dateOf, formatDate } from '../../engine/calendar';
 import { formatSilver, capitalise, plural } from '../../engine/format';
 import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
@@ -24,6 +24,9 @@ import { baseActions } from '../../engine/index';
 import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
 import type { KitSlot } from '../../engine/state';
+import { lordAlive, lordFav, lordMen, lordName, secretChance, swornTo } from '../../engine/lords';
+import { holdingYield, LAND } from '../../engine/land';
+import { claimWords, rivalOf, RULE, SEAT_DEF, SEATS, seatOpen } from '../../engine/rule';
 
 const SLOT_NAMES: Record<KitSlot, string> = { weapon: 'In his hand', shield: 'On his arm', helmet: 'On his head', armour: 'On his back' };
 
@@ -249,6 +252,40 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
   );
 }
 
+/** Lords, land and rule (docs/FRAME-WORLD.md §C-E): whose man he is, what he holds, what he could rule. */
+function WorldCard({ content, state }: { content: ContentBundle; state: GameState }) {
+  const oath = state.oath;
+  const met = Object.values(content.lords).filter((l) => l.id !== 'jarl' && (state.lords?.[l.id]?.met || swornTo(state, l.id)));
+  const holds = state.holdings ?? [];
+  const open = SEATS.filter((s) => seatOpen(state, content, s));
+  return (
+    <div class="card">
+      <h3>Lords, land and rule</h3>
+      {oath ? (
+        <p class="small">You are {lordName(state, content, oath.lord)}'s man, since {formatDate(oath.since)}. He takes a tenth of every share-out{lordMen(state) ? `, and sends ${plural(lordMen(state), 'man', 'men')} to your muster` : ''}. His ports treat you as a friend. Raid his friends and he will give you back your oath.</p>
+      ) : <p class="small">You are no lord's man. A lord takes an oath at his own hall, once he knows you; he gives men, protection and land, and asks for his call answered and a tenth of what you take.</p>}
+      {state.oath2 ? <p class="small">And, in secret, {lordName(state, content, state.oath2.lord)}'s. If it comes out, you lose honour and both cast you out. The chance it comes out this year: about {Math.round(secretChance(state) * 10)} in 10, and more each year, and certain if both call you in one summer.</p> : null}
+      {met.length ? (
+        <dl class="kv">
+          {met.map((l) => {
+            const ls = state.lords?.[l.id];
+            const st = ls?.cast !== undefined ? 'cast you out' : !lordAlive(state, content, l.id) ? (dateOf(state.day).year < l.from ? 'not yet in the world' : 'dead') : swornTo(state, l.id) ? 'your lord' : favourWord(lordFav(state, l.id));
+            return [<dt key={`${l.id}t`}>{lordName(state, content, l.id)}</dt>, <dd key={`${l.id}d`}>{l.title}: {st}.</dd>];
+          })}
+        </dl>
+      ) : null}
+      {holds.length ? (
+        <dl class="kv">
+          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. Winter there as at home.</dd>])}
+        </dl>
+      ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
+      {state.rule ? <p class="small">You are {SEAT_DEF[state.rule.seat].title}, since {formatDate(state.rule.since)}: {formatSilver(RULE.tribute)} in tribute and {plural(RULE.men, 'man', 'men')} more at the muster every year. You were last seen there the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {rivalOf(state, content, state.rule.seat).name} takes it.</p>
+        : !open.length ? <p class="muted small">No seat is open to you. A seat opens when its lord dies or its rival falters, and only to a man with a great name and a tie to the place: a lord's favour, land there, kin by marriage.</p>
+        : open.map((s) => <p key={s} class="small">{SEAT_DEF[s].title.charAt(0).toUpperCase() + SEAT_DEF[s].title.slice(1)}: the seat is open, at {content.places[SEAT_DEF[s].place]!.name}. {claimWords(state, content, s)}</p>)}
+    </div>
+  );
+}
+
 export function SagaPanel({ content, state }: { content: ContentBundle; state: GameState }) {
   const table = legendTable(state, content);
   const deeds = [...state.deeds].reverse();
@@ -280,6 +317,7 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
           </dl>
         ) : <p class="muted small">You haven't met the other shipmasters of the north yet. They keep to their own landings.</p>}
       </div>
+      <WorldCard content={content} state={state} />
       <div class="card">
         <h3>The greatest living legends</h3>
         <table class="list">

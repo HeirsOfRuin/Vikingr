@@ -5,6 +5,7 @@ import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
 import { hold, holdRoom, SECONDHAND } from '../src/engine/fleet';
 import { buyPrice, sellPrice } from '../src/engine/trade';
 import { partner } from '../src/engine/allies';
+import { scoutedOdds } from '../src/engine/scout';
 import type { ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
 import { act, listActions, newGame, screenOf, type Action, type ActionOption } from '../src/engine/index';
@@ -15,7 +16,12 @@ import { mouths, aliveMen } from '../src/engine/crew';
 import { hpMax } from '../src/engine/hero';
 import { untoldCount } from '../src/engine/fame';
 import { armCost } from '../src/engine/items';
-import { LATE_SEASON_DOY } from '../src/engine/tuning';
+import { LATE_SEASON_DOY, WINTER_ABROAD_DOY } from '../src/engine/tuning';
+import { holdingAt } from '../src/engine/land';
+import { SEAT_DEF } from '../src/engine/rule';
+
+/** Switches for A/B measurement (tools/measure-scout.ts). */
+export const BOT_OPTS = { scout: true };
 
 export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
@@ -63,6 +69,8 @@ export class Bot {
   visited = new Set<string>(['home_fjord']);
   shopped = new Set<number>();
   traded = new Set<string>();
+  /** Places looked at and left alone this summer ("year:place"). */
+  passed = new Set<string>();
   bought = new Map<number, number>();
   constructor(public policy: Policy, public rng: RngCursor) {}
 
@@ -204,8 +212,32 @@ export class Bot {
     // at another man's oar the captain decides: follow him, and haul up when he does
     if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? fallback(opts);
     const raid = pick((a) => a.t === 'raid');
-    if (raid && this.policy !== 'homebody') return raid;
+    const year = dateOf(state.day).year;
+    if (raid && this.policy !== 'homebody' && !this.passed.has(`${year}:${at}`)) {
+      // the careful ones send men up to look first, and walk away from a fight they can't win (docs/FRAME-WORLD.md §A)
+      if (BOT_OPTS.scout && (this.policy === 'raider' || this.policy === 'coward')) {
+        const sc = pick((a) => a.t === 'scout');
+        if (sc) return sc;
+        const odds = scoutedOdds(state, content, at);
+        const ours = state.crew.men + aliveMen(state).length + (partner(state, content) ? 40 : 0);
+        const nerve = this.policy === 'raider' ? 1.2 : 0.8;
+        const expected = odds ? odds.p * odds.asleep + (1 - odds.p) * odds.awake : null;
+        // seen by the place's dogs: the raider goes in anyway, the coward goes home
+        if ((expected !== null && expected > ours * nerve) || (expected === null && this.policy === 'coward')) this.passed.add(`${year}:${at}`);
+        else return raid;
+      } else return raid;
+    }
     this.visited.add(at);
+    // lords and land (docs/FRAME-WORLD.md §C-D): the careful swear openly; the reckless take a second oath and a fort
+    if (this.policy !== 'homebody') {
+      const sw = pick((a) => a.t === 'swear' && a.how === (this.policy === 'reckless' ? 'secret' : 'first')) ?? pick((a) => a.t === 'swear' && a.how === 'first');
+      if (sw) return sw;
+    }
+    const ml = pick((a) => a.t === 'muster_land');
+    if (ml) return ml;
+    if (this.policy === 'raider' && state.silver > 700) { const b = pick((a) => a.t === 'buy_land'); if (b) return b; }
+    if (this.policy === 'reckless' || (this.policy === 'raider' && state.crew.men >= 55)) { const f = pick((a) => a.t === 'dig_fort'); if (f) return f; }
+    if (doy >= WINTER_ABROAD_DOY && (holdingAt(state, at) || (state.rule && SEAT_DEF[state.rule.seat].place === at))) { const w = pick((a) => a.t === 'winter_here'); if (w) return w; }
     // a sullen crew loses: mend it in port before the next fight (playtest 2026-10-15)
     if (state.crew.morale <= 4) { const al = pick((a) => a.t === 'ale'); if (al) return al; }
     // the old sailors at the fire: a round of ale for a rumour (FRAME-FOUNDATION §1), once a year a port
@@ -238,10 +270,12 @@ export class Bot {
     if (!goingHome) {
       // no single crew goes up against a town: big places only with a partner beside him
       const strength = state.crew.men + (partner(state, content) ? 40 : 0);
-      const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id) && content.places[id]!.raid!.defenders <= strength * 1.8);
+      const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id) && !this.passed.has(`${dateOf(state.day).year}:${id}`) && content.places[id]!.raid!.defenders <= strength * 1.8);
       targets.sort((a, b) => hops(state, content, at, a) - hops(state, content, at, b));
       target = targets[0] ?? state.known.find((id) => !this.visited.has(id) && content.places[id]?.active) ?? null;
     }
+    // a ruler abroad goes to be seen at his seat before the winter, every other year at least
+    if (goingHome && state.rule && SEAT_DEF[state.rule.seat].place !== 'home_fjord' && dateOf(state.day).year - state.rule.seen >= 1) target = SEAT_DEF[state.rule.seat].place;
     if (!target) target = 'home_fjord';
     if (target === at) return pick((a) => a.t === 'rest') ?? fallback(opts);
     const hop = nextHop(state, content, at, target);

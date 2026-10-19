@@ -4,6 +4,7 @@ import type { GameState } from './state';
 import { kitFromFlags } from './items';
 import { benchHeir } from './fights';
 import { newBase } from './base';
+import { pastChronicle } from './chronicle';
 
 export const SAVE_FORMAT = 'vikingr-save';
 export const SAVE_VERSION = 1;
@@ -58,6 +59,8 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
     const p = content.places[id]!;
     state.places[id] ??= { wealth: p.raid?.wealth ?? 0, defence: 1, raided: 0, lastRaided: null };
   }
+  // a save from before the chronicle: the world's past stays as he lived it, and the chronicle runs from today
+  if (!state.chron) state.chron = pastChronicle(state, content);
   if (save.contentHash !== content.hash) warnings.push('The game content has been updated since this save was made.');
   return { state, warnings };
 }

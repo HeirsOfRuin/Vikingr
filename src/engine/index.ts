@@ -13,7 +13,11 @@ import { HOSTAGE, hostageOp, kindsAt } from './hostages';
 import { open, trigger } from './director';
 import { BOUT_MOVES, boutAvailable, boutExchange, fightOutBout, MOVE_LABEL, moveDesc, type BoutMove } from './bout';
 import { available, deployStep, fightOutWall, ORDER_LABEL, orderDesc, wallRound, WALL_ORDERS, type WallOrder } from './wall';
-import { hpMax, learn, effAttr } from './hero';
+import { checkP, hpMax, learn, effAttr } from './hero';
+import { hearNews, newsWaiting, tickChronicle } from './chronicle';
+import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lords';
+import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding } from './land';
+import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
@@ -22,7 +26,7 @@ import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trad
 import { GUEST_DAYS, baseStanding, canHire, hireable, landingFoe, norseHeld, resupplyCost, RESUPPLY_DAYS, shiftStanding, standing, tierAt } from './standing';
 import { adaptivePolicy as duelInstinct, BEATS, canYield, fightOut, habitPolicy, MOVE_NAMES, resolveExchange } from './duel';
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, enemyForecast, fightOutBattle, INTENSITY, MATCHUP, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
-import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
+import { finishBattle, finishDuel, freshScout, startBattle, startRaid, surpriseChance } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
@@ -46,6 +50,13 @@ export type Action =
   | { t: 'sail'; to: string }
   | { t: 'voyage_on' }
   | { t: 'raid' }
+  | { t: 'scout' }
+  | { t: 'swear'; lord: string; how: 'first' | 'open' | 'secret' }
+  | { t: 'renounce'; lord: string }
+  | { t: 'buy_land' }
+  | { t: 'dig_fort' }
+  | { t: 'muster_land' }
+  | { t: 'reinforce' }
   | { t: 'forage' }
   | { t: 'resupply' }
   | { t: 'guest' }
@@ -532,7 +543,15 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       else if (at === 'orkney' && exiled(state) && !state.service) out.push(opt('Sail', { t: 'harek' }, "Go to Harek's hall, and ask for a bench", true, undefined, 'Another summer at his oar'));
       if (place.raid && !norseHeld(state, at)) {
         const done = state.seasonRaids.includes(at);
-        out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.'));
+        // what the scouts saw rides on the raid button while it holds (docs/FRAME-WORLD.md §A)
+        const odds = scoutedOdds(state, content, at);
+        const sc = freshScout(state, at);
+        const hint = odds ? `Scouted: about ${odds.asleep} if asleep, ${odds.awake} if awake; ${Math.round(odds.p * 10)} in 10 to catch them asleep` : sc && !sc.ok ? `They saw your scouts: ${Math.round(surpriseChance(state, content, at) * 10)} in 10 to catch them asleep` : undefined;
+        out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.', hint));
+        if (!done) {
+          const looked = scoutedThisYear(state, at);
+          out.push(opt('Here', { t: 'scout' }, 'Send men up to look', !looked, 'Your men have looked at it this summer already.', `A day; cunning and wits, ${checkWord(scoutChance(state, content, at))}. If they are seen, the place is warned`));
+        }
       }
       // what this port will do for him depends on what it thinks of him (DESIGN §11.6)
       const tier = tierAt(state, content, at);
@@ -565,6 +584,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         out.push(opt('Plunder', { t: 'divide', how: 'generous' }, 'Share it out with an open hand', true, undefined, 'Less for you; the men remember'));
       }
       if (tier !== 'hostile') out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
+      out.push(...lordOptions(state, content, at), ...landOptions(state, content, at));
       // rumours of far places, and expeditions to them (FRAME-FOUNDATION §1)
       if (tier !== 'hostile' && listenable(state, content, at)) out.push(opt('Here', { t: 'listen' }, 'Stand the old sailors a round, and listen', state.silver >= LISTEN_COST, `You need ${formatSilver(LISTEN_COST)} for the ale.`, `${formatSilver(LISTEN_COST)}; a day; rumours of far places`));
       if (state.ships.length) for (const r of expeditionRoads(state, content, at)) {
@@ -580,13 +600,59 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
   }
 }
 
+/** Lords (docs/FRAME-WORLD.md §C): his oath offered at a lord's own hall; an oath given back. */
+function lordOptions(state: GameState, content: ContentBundle, at: string): ActionOption[] {
+  if (state.service || state.voyage) return [];
+  const out: ActionOption[] = [];
+  for (const l of Object.values(content.lords)) {
+    if (l.seat !== at || !lordAlive(state, content, l.id)) continue;
+    const name = lordName(state, content, l.id);
+    const why = swearBlock(state, content, l.id);
+    if (swornTo(state, l.id)) continue;
+    const old = state.oath?.lord;
+    if (!old) out.push(opt('Lords', { t: 'swear', lord: l.id, how: 'first' }, `Offer ${name} your oath`, !why, why ?? undefined, `${l.title}. His call, his tenth, his friends left alone; his men, his protection, his land`));
+    else {
+      const oldName = lordName(state, content, old);
+      out.push(opt('Lords', { t: 'swear', lord: l.id, how: 'open' }, `Give ${oldName} back his oath, and swear to ${name}`, !why, why ?? undefined, `${oldName} will think the less of you, and take back any land he gave you`));
+      out.push(opt('Lords', { t: 'swear', lord: l.id, how: 'secret' }, `Swear to ${name} as well, and tell ${oldName} nothing`, !why, why ?? undefined, 'Two lords. If it comes out, you lose honour and both cast you out'));
+    }
+  }
+  // an oath can be given back at home, or at the lord's own hall
+  for (const o of [state.oath, state.oath2]) {
+    if (!o) continue;
+    const seat = content.lords[o.lord]!.seat;
+    if (at === seat || at === 'home_fjord') out.push(opt('Lords', { t: 'renounce', lord: o.lord }, `Send ${lordName(state, content, o.lord)} back his oath`, true, undefined, 'Openly: no oath broken, but he will think the less of you, and take back any land he gave'));
+  }
+  return out;
+}
+
+/** Land abroad (docs/FRAME-WORLD.md §D): buying it, digging a fort, calling out its men, holding it. */
+function landOptions(state: GameState, content: ContentBundle, at: string): ActionOption[] {
+  if (state.service || state.voyage || at === 'home_fjord') return [];
+  const out: ActionOption[] = [];
+  const h = holdingAt(state, at);
+  if (!h && canBuyHere(state, at)) { const why = buyBlock(state, content, at); out.push(opt('Land', { t: 'buy_land' }, 'Buy land here', !why, why ?? undefined, `${formatSilver(LAND.price)}. Winter here as at home; ${LAND.bought.men} men each spring; ${formatSilver(LAND.bought.yield)} a year`)); }
+  if (!h && content.places[at]!.raid && state.places[at]?.wonOn !== undefined && dateOf(state.places[at]!.wonOn!).year === dateOf(state.day).year) {
+    const why = fortBlock(state, content, at);
+    out.push(opt('Land', { t: 'dig_fort' }, 'Dig a ship-fort here, and hold it', !why, why ?? undefined, `Ten days; leave ${plural(garrisonFor(state), 'man', 'men')} to hold it. ${formatSilver(LAND.fort.yield)} a year, if they don't take it back`));
+  }
+  if (h && canMuster(state, at)) out.push(opt('Land', { t: 'muster_land' }, 'Call out your people here', true, undefined, `Up to ${plural(LAND[h.kind].men, 'man', 'men')}, and food`));
+  if (h?.kind === 'fort') out.push(opt('Land', { t: 'reinforce' }, 'Leave five more men to hold the fort', state.crew.men > 10, 'You can\'t spare them.', `${plural(h.garrison ?? 0, 'man', 'men')} hold it now. More men, less chance they take it back`));
+  return out;
+}
+
+/** A chance in the words the scene checks use. */
+function checkWord(p: number): string {
+  return p < 0.4 ? 'risky' : p <= 0.65 ? 'even' : 'favourable';
+}
+
 function checkBand(state: GameState, content: ContentBundle, c: { skill: Skill; attr: import('../content/schema').Attr; difficulty: number }): string {
   const p = checkChance(state, content, c);
-  return p < 0.4 ? 'Risky' : p <= 0.65 ? 'Even' : 'Favourable';
+  return upFirst(checkWord(p));
 }
 
 export function checkChance(state: GameState, content: ContentBundle, c: { skill: Skill; attr: import('../content/schema').Attr; difficulty: number }): number {
-  return Math.min(0.95, Math.max(0.05, 0.5 + 0.1 * (effAttr(state, content, c.attr) + state.hero.skills[c.skill] - c.difficulty)));
+  return checkP(state, content, c);
 }
 
 export function view(content: ContentBundle, state: GameState): View {
@@ -661,6 +727,35 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'raid':
       startRaid(state, content, rng, state.at!);
       break;
+    case 'scout':
+      report('Scouts', scoutPlace(state, content, rng, state.at!));
+      break;
+    case 'swear': {
+      const before = state.flags.oathbreaker ?? 0;
+      report('An oath', swear(state, content, action.lord, action.how));
+      if ((state.flags.oathbreaker ?? 0) > before) state.queue.push({ scene: 'lo_cast_out', day: state.day });
+      state.day += 1;
+      break;
+    }
+    case 'renounce':
+      report('An oath given back', renounce(state, content, action.lord));
+      break;
+    case 'buy_land':
+      report('Land', buyLand(state, content, state.at!));
+      break;
+    case 'dig_fort':
+      report('A ship-fort', digFort(state, content, state.at!));
+      break;
+    case 'muster_land':
+      report('Your people', musterHolding(state, content, state.at!));
+      break;
+    case 'reinforce': {
+      const h = holdingAt(state, state.at)!;
+      state.crew.men -= 5;
+      h.garrison = (h.garrison ?? 0) + 5;
+      report('The fort', [`Five men take their sea-chests off the ships and carry them up to the fort. ${plural(h.garrison, 'man', 'men')} hold it now.`]);
+      break;
+    }
     case 'resupply': {
       const rc = resupplyCost(state, content, state.at!)!;
       // the ship's stores are bought out of the heap, as any captain's would; then out of his own silver
@@ -760,7 +855,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'listen': {
       state.silver -= LISTEN_COST;
       state.day += 1;
-      report('Old sailors', listen(state, content, rng, state.at!));
+      report('Old sailors', [...listen(state, content, rng, state.at!), ...hearNews(state, true)]);
       break;
     }
     case 'expedition': {
@@ -947,6 +1042,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
 /** After any action: boasts fall due, the season turns if it must, and anything queued fires. */
 function settle(state: GameState, content: ContentBundle, rng: RngCursor): void {
   if (!state.hero.alive) return;
+  // the world goes on without him (docs/FRAME-WORLD.md §B)
+  tickChronicle(state, content);
   // days ashore abroad eat from the stores, the same as days at sea
   const hungry = eatAshore(state);
   if (hungry && !state.pending) state.pending = { t: 'report', title: 'Hungry', lines: [hungry] };
@@ -961,6 +1058,11 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
     if (b.state !== 'open' || b.due > state.day) continue;
     breakBoast(state, content, b);
     state.pending = { t: 'report', title: 'A boast unkept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'The year has turned, and it is not done. Men remember a boast longer than a deed.'] };
+    return;
+  }
+  // news that has come into this port ahead of him
+  if (newsWaiting(state, content)) {
+    state.pending = { t: 'report', title: 'News', lines: hearNews(state) };
     return;
   }
   const doy = dateOf(state.day).doy;

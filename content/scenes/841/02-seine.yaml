@@ -1,6 +1,6 @@
 # The Seine (docs/FRAME-IRELAND-SEINE.md). History: in May 841 a fleet under "Oscherus" (Ásgeir) came up the
 # Seine, sacked Rouen, burned Jumièges, took six pounds from Fontenelle to spare it, and sold back sixty-eight
-# captives to the monks of Saint-Denis for twenty-six pounds. At Easter 845 Ragnar ("Reginherus") came up the
+# captives to the monks of Saint-Denis for twenty-six pounds. At Easter 845 Ragnarr ("Reginherus") came up the
 # river with a hundred and twenty ships, beat half of King Charles's army, hanged a hundred and eleven prisoners
 # on an island in sight of the other half, sacked Paris, and was paid seven thousand pounds of silver to go.
 # A flux went through his fleet on the way home.
@@ -130,9 +130,9 @@
   requires: ["year >= 845", "year <= 846", "place == home_fjord", "phase == muster", "!service", "ships >= 1"]
   art: muster
   when: Spring, 845
-  title: Ragnar's war-arrow
+  title: Ragnarr's war-arrow
   text: |
-    The split arrow comes up the fjord in a Danish ship before the ice is well out of the inner fjord. Ragnar is going up the Seine, all the way, to Paris. A hundred and twenty ships. King Charles is fighting his brothers and the Bretons and his own lords, and Ragnar means to be in the river before any of them notice.
+    The split arrow comes up the fjord in a Danish ship before the ice is well out of the inner fjord. Ragnarr is going up the Seine, all the way, to Paris. A hundred and twenty ships. King Charles is fighting his brothers and the Bretons and his own lords, and Ragnarr means to be in the river before any of them notice.
 
     He's heard of you. The messenger makes sure you know that he has heard of a great many people, and that most of them are coming.
     [if seen.sn_rouen]
@@ -145,7 +145,7 @@
       effects: [ { set: flag.sn_845_sworn }, { know: rouen }, { know: paris }, { know: walcheren }, { add: { crew.morale: 2 } } ]
       result: The whole district hears about it by evening. Men come to your muster from two valleys over, wanting to go to Paris. Everybody wants to go to Paris.
     - id: no
-      text: Ragnar has enough ships. Let him go without yours.
+      text: Ragnarr has enough ships. Let him go without yours.
       result: The messenger shrugs, and goes on to the next fjord. All summer long, the news comes back up the coast a piece at a time, and every piece of it is bigger than the last.
 
 - id: sn_paris
@@ -158,25 +158,25 @@
   art: muster
   title: Paris
   text: |
-    Ragnar's fleet fills the river from bank to bank below the city: a hundred and twenty ships, more men than you have ever seen in one place. Ragnar himself is a big, plain, cheerful man who remembers your name, or pretends to.
+    Ragnarr's fleet fills the river from bank to bank below the city: a hundred and twenty ships, more men than you have ever seen in one place. Ragnarr himself is a big, plain, cheerful man who remembers your name, or pretends to.
 
-    King Charles has come with an army, and has made a mistake: he's split it, half on each bank, to guard both, with the river between them. Ragnar looks at the nearer half for a long while, and then at you, and then at his captains.
+    King Charles has come with an army, and has made a mistake: he's split it, half on each bank, to guard both, with the river between them. Ragnarr looks at the nearer half for a long while, and then at you, and then at his captains.
 
     "That one," he says.
   choices:
     - id: line
-      text: Take your place in Ragnar's line.
+      text: Take your place in Ragnarr's line.
       danger: true
       effects:
         - { set: flag.sn_845_sworn }
         - if: "fame.living >= 120"
-          then: [ { host: { title: "The king's army on the bank", foe: frankish_levy, terrain: field, men: 60, wings: [ { name: "Ragnar's Danes", men: 240, foe_men: 160 }, { name: "The Northmen of Vestfold", men: 140, foe_men: 100 } ], role: wing, reserve: { us: 60, them: 40 }, win: sn_paris_hanging, lose: sn_paris_lost } } ]
-          else: [ { host: { title: "The king's army on the bank", foe: frankish_levy, terrain: field, men: 40, wings: [ { name: "Ragnar's Danes", men: 240, foe_men: 160 }, { name: "The Northmen of Vestfold", men: 140, foe_men: 100 } ], role: man, reserve: { us: 60, them: 40 }, win: sn_paris_hanging, lose: sn_paris_lost } } ]
+          then: [ { host: { title: "The king's army on the bank", foe: frankish_levy, terrain: field, men: 60, wings: [ { name: "Ragnarr's Danes", men: 240, foe_men: 160 }, { name: "The Northmen of Vestfold", men: 140, foe_men: 100 } ], role: wing, reserve: { us: 60, them: 40 }, win: sn_paris_hanging, lose: sn_paris_lost } } ]
+          else: [ { host: { title: "The king's army on the bank", foe: frankish_levy, terrain: field, men: 40, wings: [ { name: "Ragnarr's Danes", men: 240, foe_men: 160 }, { name: "The Northmen of Vestfold", men: 140, foe_men: 100 } ], role: man, reserve: { us: 60, them: 40 }, win: sn_paris_hanging, lose: sn_paris_lost } } ]
       result: The horn goes. The fleet comes ashore on the near bank, and the Franks on the far bank stand and watch it happen, with the river between them and their king's other half.
     - id: ships
       text: Hold the ships with the ship-guard.
       effects: [ { set: flag.sn_845_sworn }, { add: { honour: -1, crew.morale: -1 } }, { queue: { scene: sn_danegeld, days: 20 } } ]
-      result: Somebody has to hold the ships. Ragnar thanks you for it, with a smile that says he will remember exactly who held the ships.
+      result: Somebody has to hold the ships. Ragnarr thanks you for it, with a smile that says he will remember exactly who held the ships.
 
 - id: sn_paris_hanging
   kind: spine
@@ -185,27 +185,27 @@
   text: |
     The king's near half breaks, and runs, and the fleet takes a hundred and eleven prisoners.
 
-    Ragnar has them taken out to an island in the river, in plain sight of the other half of the Frankish army on the far bank, and hanged, one at a time, from the trees and from ship's masts set up for the purpose, while the Franks watch. For Odin, Ragnar says. And so that King Charles knows exactly what kind of men are in his river.
+    Ragnarr has them taken out to an island in the river, in plain sight of the other half of the Frankish army on the far bank, and hanged, one at a time, from the trees and from ship's masts set up for the purpose, while the Franks watch. For Odin, Ragnarr says. And so that King Charles knows exactly what kind of men are in his river.
 
     It takes all afternoon. The Franks on the far bank don't move.
   choices:
     - id: ropes
-      text: Haul on the ropes with Ragnar's men. Odin is watching.
+      text: Haul on the ropes with Ragnarr's men. Odin is watching.
       effects: [ { add: { hamingja: 1, honour: -1 } }, { deed: { type: deed, text: "Hanged the king's men for Odin on the island below Paris", weight: 3, witnesses: 2000 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
       result: |
-        You haul. Your men haul with you. When it's done, the river is very quiet, and the Franks on the far bank are gone, back towards Paris, in no order at all. Ragnar was right. You hate that he was right.
+        You haul. Your men haul with you. When it's done, the river is very quiet, and the Franks on the far bank are gone, back towards Paris, in no order at all. Ragnarr was right. You hate that he was right.
     - id: watch
       text: Stand with your men, and watch, and say nothing.
       effects: [ { queue: { scene: sn_paris_sack, days: 1 } } ]
       result: You watch it all. So do your men. Some of them are grinning. Some of them are very carefully not looking at anything. At the end, one of the young ones is sick over the side, and nobody laughs at him.
     - id: speak
-      text: Tell Ragnar a hanged man pays no ransom.
+      text: Tell Ragnarr a hanged man pays no ransom.
       check: { skill: speech, attr: pre, difficulty: 7 }
       success:
-        text: Ragnar laughs, and thinks about it, and lets you have a dozen of them, the ones in good cloaks, to sell back. The rest he hangs anyway. You've saved twelve men and made Ragnar think you're a merchant. Both are worth something.
+        text: Ragnarr laughs, and thinks about it, and lets you have a dozen of them, the ones in good cloaks, to sell back. The rest he hangs anyway. You've saved twelve men and made Ragnarr think you're a merchant. Both are worth something.
         effects: [ { captives: 12 }, { add: { honour: 1 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
       failure:
-        text: Ragnar looks at you for a long moment. "Odin doesn't take silver," he says. His men laugh. The hanging goes on.
+        text: Ragnarr looks at you for a long moment. "Odin doesn't take silver," he says. His men laugh. The hanging goes on.
         effects: [ { add: { crew.morale: -1 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
 
 - id: sn_paris_lost
@@ -213,12 +213,12 @@
   art: muster
   title: The bank below Paris
   text: |
-    Your stretch of Ragnar's line goes back into the river, and you lose men in the water, and the Franks cheer. But the rest of the line holds, and then pushes, and by evening the king's near half is broken anyway, and Ragnar is hanging prisoners on an island, and the city is open.
+    Your stretch of Ragnarr's line goes back into the river, and you lose men in the water, and the Franks cheer. But the rest of the line holds, and then pushes, and by evening the king's near half is broken anyway, and Ragnarr is hanging prisoners on an island, and the city is open.
   choices:
     - id: on
       text: Follow the fleet up to the city.
       effects: [ { add: { crew.morale: -1 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
-      result: Ragnar doesn't mention your stretch of the line. His captains do, among themselves, where you can hear.
+      result: Ragnarr doesn't mention your stretch of the line. His captains do, among themselves, where you can hear.
 
 - id: sn_paris_sack
   kind: queued
@@ -231,11 +231,11 @@
   choices:
     - id: city
       text: Take your crews into the city, and strip it.
-      effects: [ { add: { loot: 400 } }, { captives: 6 }, { standing: { people: frankish, n: -3 } }, { deed: { type: raid, text: "Sacked Paris at Easter with Ragnar's fleet", weight: 6, witnesses: 2000 } }, { queue: { scene: sn_danegeld, days: 10 } } ]
+      effects: [ { add: { loot: 400 } }, { captives: 6 }, { standing: { people: frankish, n: -3 } }, { deed: { type: raid, text: "Sacked Paris at Easter with Ragnarr's fleet", weight: 6, witnesses: 2000 } }, { queue: { scene: sn_danegeld, days: 10 } } ]
       result: You find the cathedral's plate hidden under the floor of a priest's house, because the priest's servant shows you where for a share of it. You find wine, and cloth, and a great deal of lead from the church roofs, which is heavy and worth a fortune. Your ships go low in the water.
     - id: abbey
       text: Take your crews across to the abbey of Saint-Germain, where the monks left in a hurry.
-      effects: [ { add: { loot: 320 } }, { standing: { people: frankish, n: -2 } }, { deed: { type: raid, text: "Plundered Saint-Germain at Paris with Ragnar's fleet", weight: 5, witnesses: 2000 } }, { queue: { scene: sn_danegeld, days: 10 } } ]
+      effects: [ { add: { loot: 320 } }, { standing: { people: frankish, n: -2 } }, { deed: { type: raid, text: "Plundered Saint-Germain at Paris with Ragnarr's fleet", weight: 5, witnesses: 2000 } }, { queue: { scene: sn_danegeld, days: 10 } } ]
       result: The monks took the saint. They didn't take the barns, or the wine cellar, or the silver candlesticks they buried in the garden, which a dog finds for you. Your men drink the abbot's wine for three days.
 
 - id: sn_danegeld
@@ -245,7 +245,7 @@
   text: |
     King Charles doesn't fight again. He sends messengers instead, and then lords, and then more lords, and in the end he pays.
 
-    Seven thousand pounds of silver. It comes down to the river in carts, under guard, and is weighed out on the bank on scales the size of a door, for a whole day, while the fleet watches. Ragnar swears by his gods, in front of the king's men, that he'll never come back up the Seine. Everyone knows what that's worth.
+    Seven thousand pounds of silver. It comes down to the river in carts, under guard, and is weighed out on the bank on scales the size of a door, for a whole day, while the fleet watches. Ragnarr swears by his gods, in front of the king's men, that he'll never come back up the Seine. Everyone knows what that's worth.
 
     Then it's divided: by the ship, and then by the man.
   choices:
@@ -277,7 +277,7 @@
   text: |
     It starts on the way down the river: one man, then a dozen, then whole crews, doubled over at the rail, burning with fever and losing their insides. The flux. The Franks are saying it's the saint of Saint-Germain, taking his revenge. Your men are saying the same, more quietly.
 
-    Ragnar's own ship is quiet. They say he's sick too.
+    Ragnarr's own ship is quiet. They say he's sick too.
   choices:
     - id: shore
       text: Put ashore, burn the foul straw, and keep the sick apart from the well.
@@ -293,6 +293,6 @@
       effects: [ { add: { crew.men: -8, crew.morale: -2 } } ]
       result: You row on, and throw the dead over the side as they die, and by the time you're out of the river you've lost eight men and the rest are grey and shaking. The silver doesn't weigh any less.
     - id: blot
-      text: Sacrifice to Odin for the sick, with Frankish silver, as Ragnar did with Frankish men.
+      text: Sacrifice to Odin for the sick, with Frankish silver, as Ragnarr did with Frankish men.
       effects: [ { add: { hamingja: 1, silver: -48, crew.men: -6 } } ]
       result: It may help. You lose six men, which is fewer than some. The men believe it helped, which is nearly as good.

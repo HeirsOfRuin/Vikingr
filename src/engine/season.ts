@@ -19,6 +19,10 @@ import { journal } from './journal';
 import { trigger } from './director';
 import { BASE, FARM_PRICE, feastMult, hallActionsFor, HALL_PRICE, hallPrice, takeWinterYield } from './base';
 import { driftStanding } from './standing';
+import { hearNews } from './chronicle';
+import { atLordSeat, lordMen, lordName, lordsYear, lordTenth, secretYear } from './lords';
+import { holdingAt, holdingsYear } from './land';
+import { ruleYear, SEAT_DEF } from './rule';
 import {
   HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
 } from './tuning';
@@ -194,6 +198,9 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
   // a félag partner takes his men's part first (docs/FRAME-TRADE-ALLIES.md)
   const pc = partnerCut(state, content, pot, state.crew.men + aliveMen(state).length);
   if (pc.cut) { pot -= pc.cut; lines.push(pc.line!); }
+  // his lord's tenth (docs/FRAME-WORLD.md §C)
+  const lt = lordTenth(state, content, pot);
+  if (lt.cut) { pot -= lt.cut; lines.push(lt.line!); }
   if ((state.flags.owes_jarl || state.flags.jarl_men === dateOf(state.day).year) && pot > 0) {
     const cut = Math.round(pot * jarlCut(state, JARL_CUT));
     pot -= cut;
@@ -386,7 +393,13 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
 
 /** Wintering abroad: fewer choices, no feast at home. */
 export function winterHere(state: GameState, content?: ContentBundle, rng?: RngCursor): string[] {
-  startWinter(state, 2, content, rng);
+  // his own land abroad, or his lord's hall: a winter as at home (docs/FRAME-WORLD.md §C-D)
+  const own = holdingAt(state, state.at) ?? (state.rule && SEAT_DEF[state.rule.seat].place === state.at ? true : undefined);
+  const seat = content ? atLordSeat(state, content) : false;
+  startWinter(state, own || seat ? HALL_ACTIONS : 2, content, rng);
+  if (own && content && state.rule && SEAT_DEF[state.rule.seat].place === state.at) return [`You winter in your own high seat at ${content.places[state.at!]!.name}, and your people see you there, which is the point.`];
+  if (own && content) return [`You haul the ships up on your own shore at ${content.places[state.at!]!.name}, and winter under your own roof.`];
+  if (seat && content) return [`You haul the ships up below your lord's hall, and winter at ${lordName(state, content, state.oath!.lord)}'s fire, as his men do.`];
   return ['You haul the ships up and find a hall that will take you in for the winter, for a price in silver and good behaviour.'];
 }
 
@@ -422,6 +435,9 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   const hardLines = turnOfYear(state, content, rng, year, state.at !== 'home_fjord');
   // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
   hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng));
+  // lords, land and rule (docs/FRAME-WORLD.md §C-E): a dead lord, a secret oath come out, the holdings, the seat
+  const wintered = state.at === 'home_fjord' ? 'home_fjord' : state.at;
+  hardLines.push(...lordsYear(state, content, rng), ...secretYear(state, content, rng), ...holdingsYear(state, content, rng, wintered), ...ruleYear(state, content, rng, wintered));
   // history goes on without him: in 841 the Norse build ship-forts at Duibhlinn and Linn Duachaill and winter in Ireland
   if (year >= 841 && !state.flags._lp841) {
     state.flags._lp841 = 1;
@@ -453,6 +469,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   state.crew.morale = Math.round((state.crew.morale + 6) / 2);
   clampMorale(state);
   state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + favourMuster(state);
+  // his lord sends men to his muster
+  state.musterPool += lordMen(state);
   state.musterPool = Math.max(0, state.musterPool);
   const felag = endFelag(state, content);
   if (felag) lines.push(felag);
@@ -465,6 +483,9 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   state.seasonRaids = [];
   state.phase = state.at === 'home_fjord' ? 'muster' : 'sailing';
   lines.push(...chapterCard(state, content, year));
+  // whatever news never reached him in a port reaches him over the winter (docs/FRAME-WORLD.md §B)
+  const news = hearNews(state, true);
+  if (news.length) lines.push(`News over the winter: ${news.join(' ')}`);
   journal(state, `Spring of ${year}.`);
   // spring's scenes open after the chapter card has been read (settle() triggers phase_start)
   return lines;

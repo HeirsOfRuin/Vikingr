@@ -242,6 +242,12 @@ export interface PlaceState {
   listened?: number;
   /** A Norse ship-fort holds it now (docs/FRAME-IRELAND-SEINE.md): a market, men to hire, and not a place to raid. */
   norse?: boolean;
+  /** Somebody else stripped it (docs/FRAME-WORLD.md §B): who, and when. */
+  sacked?: { by: string; day: number };
+  /** The day he last won a raid here: a ship-fort can be dug only where he has won. */
+  wonOn?: number;
+  /** What his scouts saw (docs/FRAME-WORLD.md §A): the day, whether they got close unseen, the raid's roll they fixed, picked men. */
+  scout?: { day: number; ok: boolean; roll?: number; picked?: boolean };
   /** His own buying and selling here, pushing prices: lots (+ bought, - sold) as of a day (docs/FRAME-TRADE-ALLIES.md). */
   supply?: Record<string, { n: number; day: number }>;
 }
@@ -332,4 +338,18 @@ export interface GameState {
   /** Hostages held at home, and the one a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md). */
   hostages?: import('./hostages').Hostage[];
   hfocus?: string | null;
+  /** The world without him (docs/FRAME-WORLD.md §B): events past, and the news. */
+  chron?: import('./chronicle').ChronState;
+  /** Lords (docs/FRAME-WORLD.md §C): what each thinks of him, his oath, and a second one kept secret. */
+  lords?: Record<string, import('./lords').LordState>;
+  oath?: import('./lords').Oath;
+  oath2?: import('./lords').Oath;
+  /** Land abroad (docs/FRAME-WORLD.md §D). */
+  holdings?: import('./land').Holding[];
+  /** The seat he rules (docs/FRAME-WORLD.md §E). */
+  rule?: import('./rule').RuleState;
+  /** What the legends' fame has gained or lost by what happened to them, against their curves. */
+  legends?: Record<string, number>;
+  /** The lords who last cast him out, for the scene that says so. */
+  castBy?: string[];
 }

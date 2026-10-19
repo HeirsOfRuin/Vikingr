@@ -334,7 +334,41 @@ jumieges_scouted: { description: "Counted Jumièges's barns" }
 saint_denis_scouted: { description: "Walked the fair at Saint-Denis" }
 rouen_scouted: { description: "Found Rouen's open river gates" }
 sn_841_sworn: { description: "Went to the Seine with Ásgeir in 841" }
-sn_845_sworn: { description: "Answered Ragnar's war-arrow for the Seine in 845" }
+sn_845_sworn: { description: "Answered Ragnarr's war-arrow for the Seine in 845" }
 ir_841_sworn: { description: "Chose Ireland and the ship-fort in the spring of 841" }
 ir_fort_member: { description: "His ships are drawn up in the ship-fort at Duibhlinn" }
 ir_fort_lord: { description: "Holds the high seat of the ship-fort at Duibhlinn" }
+# The world without him (docs/FRAME-WORLD.md)
+cw_liffey_sworn: { description: "Sailed with Turgeis's fleets on the Liffey, 837" }
+cw_armagh_done: { description: "Went to Armagh with the fleet on Lough Neagh" }
+cw_nantes_sworn: { description: "Answered the Vestfold arrow for Nantes, 843" }
+lg_ragnar_friend: { description: "Ragnarr Loðbrók liked him, on a Frisian beach" }
+lg_hastein: { description: "Met Hastein at Noirmoutier" }
+oathbreaker: { description: "Times he has been found sworn to two lords" }
+call_harek: { description: "Harek calls for his men this summer" }
+call_kolbeinn: { description: "Kolbeinn calls for his men this summer" }
+call_horik: { description: "King Horik calls for his men this summer" }
+call_turgeis: { description: "Turgeis calls for his men this summer" }
+call_irish_king: { description: "The king of Tara calls for his wolf this summer" }
+call_rorik: { description: "Rorik calls for his men this summer" }
+calling_harek: { description: "Fighting at Harek's call" }
+calling_kolbeinn: { description: "Fighting at Kolbeinn's call" }
+calling_horik: { description: "Fighting at King Horik's call" }
+calling_turgeis: { description: "Fighting at Turgeis's call" }
+calling_irish_king: { description: "Fighting at the king of Tara's call" }
+calling_rorik: { description: "Fighting at Rorik's call" }
+served_harek: { description: "Answered Harek's call since his last grant" }
+served_kolbeinn: { description: "Answered Kolbeinn's call since his last grant" }
+served_horik: { description: "Answered King Horik's call since his last grant" }
+served_turgeis: { description: "Answered Turgeis's call since his last grant" }
+served_irish_king: { description: "Answered the king of Tara's call" }
+served_rorik: { description: "Answered Rorik's call since his last grant" }
+ru_orkney: { description: "Jarl in Orkney" }
+ru_dublin: { description: "King in Dublin" }
+ru_home: { description: "Jarl in Hordaland" }
+ru_walcheren: { description: "Count of Walcheren" }
+ru_orkney_lost: { description: "Lost the claim to Orkney, or the seat" }
+ru_dublin_lost: { description: "Lost the claim to Dublin, or the seat" }
+ru_home_lost: { description: "Lost the claim to the jarldom at home, or the seat" }
+ru_walcheren_lost: { description: "Lost the claim to Walcheren, or the seat" }
+ru_dublin_ditch: { description: "Dug Dublin's ditch deeper against the Danes" }

@@ -297,5 +297,18 @@
   choices:
     - id: take
       text: Take the turf, and kneel.
-      effects: [ { base: farm }, { favour: 1 }, { deed: { type: deed, text: "Was given land by the jarl", weight: 4, witnesses: 100 } } ]
+      # the land is held from him: taking it is his oath (docs/FRAME-WORLD.md §C)
+      visible_if: { any: ["!oath", "oath == jarl"] }
+      effects: [ { base: farm }, { favour: 1 }, { if: "!oath", then: [ { lord: { id: jarl, swear: first } } ] }, { deed: { type: deed, text: "Was given land by the jarl", weight: 4, witnesses: 100 } } ]
       result: You kneel, and he puts his hand on your head, the old way. The hall roars. Your father, down the benches, doesn't roar. He's too busy looking at the ceiling, very hard, for some reason.
+    - id: take_secret
+      text: Take the turf, and kneel, and say nothing of {lord}.
+      visible_if: "oath && oath != jarl && oaths < 2"
+      danger: true
+      effects: [ { base: farm }, { favour: 1 }, { lord: { id: jarl, swear: secret } }, { deed: { type: deed, text: "Was given land by the jarl", weight: 4, witnesses: 100 } } ]
+      result: You kneel, and he puts his hand on your head, the old way, and the hall roars. Nobody in it knows about the other hands you've knelt between. Not yet.
+    - id: decline
+      text: Tell him you're another lord's man, and can't hold land from two.
+      visible_if: "oath && oath != jarl"
+      effects: [ { add: { honour: 1 } }, { favour: -1 } ]
+      result: The hall goes quiet. The jarl looks at the turf in his own hands a long moment, and then gives it to somebody else, a man you've never liked, who kneels very fast.

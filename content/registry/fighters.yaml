@@ -178,3 +178,50 @@
   guile: 3
   unyielding: true
   desc: Grey to the roots, half his teeth gone, and eleven men dead on the cloak. Nobody has ever known what he would do next.
+# Claimants to a seat (docs/FRAME-WORLD.md §E)
+- id: ru_sigurd
+  name: Sigurðr Hareksnephew
+  attrs: { str: 4, agi: 3, end: 4, wit: 3, pre: 4 }
+  weapons: 6
+  shield: 5
+  armour: 2
+  weapon: 2
+  habits: { strike: 2, guard: 3, feint: 2 }
+  desc: Harek's sister's son. Broad, red, careful, and raised from a boy to think the high seat at Birsay was his.
+- id: ru_eysteinn
+  name: Eysteinn the Young
+  attrs: { str: 4, agi: 4, end: 3, wit: 3, pre: 4 }
+  weapons: 5
+  shield: 4
+  armour: 3
+  weapon: 2
+  habits: { strike: 3, guard: 2, feint: 2 }
+  desc: The jarl's son, twenty and furious, in his dead father's mail. He has his grandfather's name and not yet his grandfather's patience.
+- id: ru_hakon
+  name: Hákon Eysteinsson
+  attrs: { str: 4, agi: 3, end: 4, wit: 4, pre: 4 }
+  weapons: 7
+  shield: 5
+  armour: 3
+  weapon: 3
+  habits: { strike: 2, guard: 2, feint: 3 }
+  guile: 2
+  desc: The jarl's son who lost the thing in 834 and went to Ireland to find a jarldom of his own. He has been finding it ever since.
+- id: ru_eirik
+  name: Eiríkr Eysteinsson
+  attrs: { str: 5, agi: 2, end: 5, wit: 3, pre: 3 }
+  weapons: 7
+  shield: 6
+  armour: 3
+  weapon: 3
+  habits: { strike: 3, guard: 3, feint: 1 }
+  desc: The elder son, who lost his father's seat to his brother and took ship for Ireland in a rage that hasn't cooled. Heavy, slow, and very hard to move.
+- id: ru_bardr
+  name: Bárðr the Rogalander
+  attrs: { str: 5, agi: 3, end: 4, wit: 2, pre: 4 }
+  weapons: 6
+  shield: 4
+  armour: 2
+  weapon: 3
+  habits: { strike: 4, guard: 2, feint: 1 }
+  desc: The loud Rogalander with five ships who took the fort's high seat because he had five ships. He has seven now.

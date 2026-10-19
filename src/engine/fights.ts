@@ -2,6 +2,8 @@
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
 import { stow } from './fleet';
 import { coastMult } from './hardship';
+import { sackedBy } from './chronicle';
+import { raidedFriend } from './lords';
 import { partner, partnerInFight } from './allies';
 import { HOST, startHost } from './host';
 import type { BattleTerrain, ContentBundle, Foe, Resolve } from '../content/schema';
@@ -65,6 +67,7 @@ export function startDuel(state: GameState, content: ContentBundle, foeId: strin
 }
 
 /** A fight's own chance, from the save: the same fight on the same day opens the same way after a reload. */
+export function fightRngFor(state: GameState, tag: string): RngCursor { return fightRng(state, tag); }
 function fightRng(state: GameState, tag: string): RngCursor {
   let h = 2166136261;
   const key = `${tag}:${state.day}:${state.stats.battles}:${state.stats.duels}`;
@@ -101,8 +104,9 @@ export function veteranChance(state: GameState): number {
   return RENOWN.tiers.reduce((c, [at, p]) => (f >= at ? p : c), 0);
 }
 
-function veterans(state: GameState, foe: Foe, rng: RngCursor): Foe | null {
-  if (rng.float() >= veteranChance(state)) return null;
+function veterans(state: GameState, foe: Foe, rng: RngCursor, picked?: boolean): Foe | null {
+  const r = rng.float();
+  if (!(picked ?? r < veteranChance(state))) return null;
   const resolve = foe.resolve ?? (foe.quality < 1 ? 'levy' : foe.quality >= 2 ? 'hird' : 'warriors');
   return { ...foe, quality: Math.min(3, foe.quality + 1), guile: Math.min(3, (foe.guile ?? 0) + 1), resolve: STEADIER[resolve] };
 }
@@ -181,7 +185,7 @@ export function battleMorale(campMorale: number): number {
 export function startBattle(
   state: GameState,
   content: ContentBundle,
-  opts: { foe: string; men: number; terrain: BattleTerrain; context: BattleState['context']; place: string | null; win?: string; lose?: string; noAlly?: boolean },
+  opts: { foe: string; men: number; terrain: BattleTerrain; context: BattleState['context']; place: string | null; win?: string; lose?: string; noAlly?: boolean; /** Picked men or not, as the scouts saw. */ picked?: boolean },
 ): void {
   const foe = content.foes[opts.foe];
   if (!foe) throw new Error(`unknown foe ${opts.foe}`);
@@ -217,7 +221,7 @@ export function startBattle(
   };
   // renown: picked men, ready for him
   const rng = fightRng(state, `battle:${foe.id}`);
-  const vet = veterans(state, foe, rng);
+  const vet = veterans(state, foe, rng, opts.picked);
   if (vet) {
     b.them.quality = vet.quality;
     b.them.morale += 1;
@@ -340,6 +344,9 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     ps.raided += 1;
     ps.lastRaided = state.day;
     onRaided(state, content, b.place, { failed: !won });
+    if (won) ps.wonOn = state.day;
+    // under a lord's peace (docs/FRAME-WORLD.md §C)
+    lines.push(...raidedFriend(state, content, b.place));
     const left = stow(state, content, take);
     state.stats.plunder += take - left;
     if (left) lines.push(`The ships are full: ${formatSilver(left)} stays on the strand.`);
@@ -369,16 +376,42 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
 }
 
 export const SCOUTED_SURPRISE = 0.25;
+/** Scouting (docs/FRAME-WORLD.md §A): how long what the scouts saw holds; what a failed look costs. */
+export const SCOUT = { freshDays: 7, warned: 0.2, warnDefence: 0.25, lostMan: 0.25, asleep: 0.45 } as const;
 
-/** A raid on a place: the approach decides how many of the defenders are awake (Phase 1: one roll). */
+/** What his scouts saw at a place, if they looked within the last week. */
+export function freshScout(state: GameState, placeId: string): NonNullable<import('./state').PlaceState['scout']> | null {
+  const s = state.places[placeId]?.scout;
+  return s && state.day - s.day <= SCOUT.freshDays ? s : null;
+}
+
+/** The chance a raid catches them asleep: the dawn, his cunning and wits, and what the scouts saw (or let them see). */
+export function surpriseChance(state: GameState, content: ContentBundle, placeId: string): number {
+  const sc = freshScout(state, placeId);
+  // a place he has scouted (its arrival scene: the walls counted, the feast-day learned; or his own men, this week)
+  const scouted = state.flags[`${placeId}_scouted`] || sc?.ok ? SCOUTED_SURPRISE : 0;
+  const warned = sc && !sc.ok ? SCOUT.warned : 0;
+  return Math.min(0.95, Math.max(0.05, 0.3 + scouted - warned + 0.05 * state.hero.skills.cunning + 0.03 * effAttr(state, content, 'wit')));
+}
+
+/** The defenders a raid meets: the place's men, how warned it is, how alarmed its coast, whether they are asleep. */
+export function raidMen(state: GameState, content: ContentBundle, placeId: string, asleep: boolean, roll: number): number {
+  const p = content.places[placeId]!;
+  const ps = state.places[placeId]!;
+  return Math.max(3, Math.round(p.raid!.defenders * ps.defence * coastMult(state, content, placeId) * (asleep ? SCOUT.asleep : 1) * (0.85 + 0.3 * roll)));
+}
+
+/** A raid on a place: the approach decides how many of the defenders are awake. */
 export function startRaid(state: GameState, content: ContentBundle, rng: RngCursor, placeId: string): void {
   const p = content.places[placeId];
   const ps = state.places[placeId];
   if (!p?.raid || !ps) throw new Error(`${placeId} cannot be raided`);
-  // a place he has scouted (its arrival scene: the walls counted, the feast-day learned) is easier to catch asleep
-  const scouted = state.flags[`${placeId}_scouted`] ? SCOUTED_SURPRISE : 0;
-  const surprise = rng.float() < 0.3 + scouted + 0.05 * state.hero.skills.cunning + 0.03 * effAttr(state, content, 'wit');
-  const men = Math.max(3, Math.round(p.raid.defenders * ps.defence * coastMult(state, content, placeId) * (surprise ? 0.45 : 1) * (0.85 + 0.3 * rng.float())));
+  const sc = freshScout(state, placeId);
+  const surprise = rng.float() < surpriseChance(state, content, placeId);
+  // what the scouts counted is what he meets (one roll, shown and used)
+  const roll = sc?.ok && sc.roll !== undefined ? sc.roll : rng.float();
+  const men = raidMen(state, content, placeId, surprise, roll);
+  delete ps.scout;
   learn(state, 'cunning', 2);
   state.seasonRaids.push(placeId);
   // a big place, and a partner beside him: the raid is fought as a host, his men in the centre, the partner's on the flank
@@ -388,8 +421,12 @@ export function startRaid(state: GameState, content: ContentBundle, rng: RngCurs
     const flankMen = Math.round(men * 0.4);
     startHost(state, content, { title: `The assault on ${p.name}`, foe: p.raid.foe, terrain: p.raid.terrain, context: 'raid', place: placeId, foeMen: men - flankMen, wings: [{ name: `${content.captains[pid]!.name}'s men`, men: pf.men, foe_men: flankMen }] });
     if (pf.line && state.pending?.t === 'battle') state.pending.battle.log.push(pf.line);
-  } else startBattle(state, content, { foe: p.raid.foe, men, terrain: p.raid.terrain, context: 'raid', place: placeId });
-  if (state.pending?.t === 'battle') state.pending.battle.log.unshift(surprise ? 'You come in with the dawn and most of them are still asleep.' : 'They saw your sails. They are waiting.');
+  } else startBattle(state, content, { foe: p.raid.foe, men, terrain: p.raid.terrain, context: 'raid', place: placeId, picked: sc?.ok ? sc.picked : undefined });
+  if (state.pending?.t === 'battle') {
+    state.pending.battle.log.unshift(surprise ? 'You come in with the dawn and most of them are still asleep.' : 'They saw your sails. They are waiting.');
+    const by = sackedBy(state, content, placeId);
+    if (by) state.pending.battle.log.unshift(`${by} You can see where.`);
+  }
 }
 
 /** A name for the oarsman who takes a fallen sworn man's bench: one nobody aboard already answers to. */

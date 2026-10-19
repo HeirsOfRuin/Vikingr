@@ -189,6 +189,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     'ha_harvest', 'ha_fire',
     // hostages (src/engine/hostages.ts, plunder.ts): taken in a raid; a broken peace
     'hs_taken', 'hs_broken', 'hi_heir',
+    // lords and rule (docs/FRAME-WORLD.md): found with two lords; a rival for the seat; the legends' years
+    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik',
   ];
   while (queue.length) {
     const id = queue.pop()!;
@@ -209,7 +211,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   for (const id of Object.keys(content.scenes)) if (!reached.has(id)) errors.push(`scene ${id}: unreachable (no start, trigger or link leads to it)`);
 
   // flags (some are set by the engine, not by content: the end of exile, a broken promise at a wedding)
-  const ENGINE_FLAGS = ['outlaw_ended', 'ingibjorg_jilted'];
+  const ENGINE_FLAGS = ['outlaw_ended', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren',
+    ...['harek', 'kolbeinn', 'horik', 'turgeis', 'irish_king', 'rorik'].flatMap((l) => [`call_${l}`, `served_${l}`])];
   for (const f of Object.keys(content.flags)) {
     const bgSet = Object.values(content.backgrounds).some((b) => b.flags?.includes(f));
     if (!flagSet.has(f) && !bgSet && !ENGINE_FLAGS.includes(f)) warnings.push(`flag ${f}: declared but never set by content`);

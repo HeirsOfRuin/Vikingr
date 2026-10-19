@@ -1,0 +1,307 @@
+# The chronicle (docs/FRAME-WORLD.md §B): what happens in the world whether or not he is there.
+# Sources: the Annals of Ulster (AU), the Annals of St-Bertin (AB), the Anglo-Saxon Chronicle (ASC), Ibn
+# al-Qutiyya for Seville. Where the annals give no name and the later tradition does (Turgeis at Armagh, Hastein on
+# the Loire), the note says so. A sacked place keeps `keep` of its wealth and adds `defence`; it recovers at the
+# same rate as a place the hero sacked.
+events:
+  - id: c832_armagh
+    year: 832
+    doy: 200
+    who: turgeis
+    by: Turgeis's men
+    places: [armagh]
+    keep: 0.4
+    defence: 0.3
+    # AU 832: "The first plundering of Ard Macha by the heathens, three times in one month." Turgeis: the Cogad's tradition.
+    news: |
+      From Ireland: the Norse have plundered Armagh, the great church of the north, three times in a single month. The Irish say the man who did it is called Turgeis, and that he means to stay.
+
+  - id: c834_dorestad
+    year: 834
+    doy: 175
+    who: horik
+    by: Horik's Danes
+    places: [dorestad]
+    keep: 0.3
+    defence: 0.5
+    unless: flag.fr_dorestad_sworn
+    # AB 834: the Danes came to Frisia, to Dorestad, and destroyed it, killing some and taking others captive.
+    news: |
+      From Frisia: the Danes have sacked Dorestad. Thirty ships went up the Rhine at midsummer, King Horik's hersirs at the front of them, and they say it took three days to carry the plunder down to the river.
+
+  - id: c835_dorestad
+    year: 835
+    doy: 165
+    who: horik
+    by: The Danes
+    places: [dorestad, noirmoutier]
+    keep: 0.6
+    defence: 0.3
+    # AB 835: Dorestad attacked again; the monastery of St-Philibert on Noirmoutier raided.
+    news: |
+      The Danes went back to Dorestad, and burned what they had left standing the year before. Then some of them went on south, as far as the island of Noirmoutier at the mouth of the Loire, where the monks keep their saint, and burned that too.
+
+  - id: c835_sheppey
+    year: 835
+    doy: 140
+    by: Danish ships
+    places: [sheppey]
+    keep: 0.5
+    defence: 0.3
+    # ASC (under 832; the true year is 835): "Here heathen men ravaged Sheppey."
+    news: |
+      From England: Danish ships have ravaged Sheppey, at the mouth of the Thames. The English priests have written it down in their annals, which is how you know the English are frightened.
+
+  - id: c836_dorestad
+    year: 836
+    doy: 170
+    by: The Danes
+    places: [dorestad]
+    keep: 0.6
+    defence: 0.3
+    # AB 836: the Northmen again attacked Dorestad and Frisia, and burned Antwerp and Witla. ASC 836: King Ecgberht fought 35 ship crews at Carhampton, and the Danes held the field.
+    news: |
+      The Danes have been at Dorestad again, the third summer running, and burned Antwerp and Witla on the way. In England, King Ecgberht met the crews of thirty-five ships at Carhampton, and the Danes held the field.
+
+  - id: c837_walcheren
+    year: 837
+    doy: 160
+    by: The Danes
+    places: [walcheren, dorestad]
+    keep: 0.5
+    defence: 0.3
+    # AB 837: the Northmen fell on Walcheren, killed Count Eccihard and Hemming son of Halfdan, and took tribute from Dorestad.
+    news: |
+      The Danes fell on Walcheren and killed the emperor's count there, Eccihard, and a Dane called Hemming who had taken the emperor's silver to keep other Danes away. Then they went up to Dorestad and made it pay them to leave.
+
+  - id: c837_liffey
+    year: 837
+    doy: 150
+    who: turgeis
+    by: Turgeis's fleets
+    places: [dublin, glendalough]
+    keep: 0.6
+    defence: 0.3
+    unless: flag.cw_liffey_sworn
+    # AU 837: "A naval force of the Norsemen, sixty ships strong, was on the Bóinn, and another of sixty ships on the Life. These two forces plundered Mag Life and Mag Breg."
+    news: |
+      From Ireland: sixty Norse ships on the Boyne and sixty on the Liffey, all summer, and the plains of Brega and the Liffey plundered from end to end. The men who came back say Turgeis's word was law in both fleets.
+
+  - id: c838_storm
+    year: 838
+    doy: 230
+    who: horik
+    by: Horik's Danes
+    # AB 838: a fleet of Danish pirates making for Frisia was almost destroyed by a sudden storm at sea.
+    news: |
+      A Danish fleet going to Frisia was caught by a storm at sea, and most of it went down. King Horik has sent envoys to the emperor to say the dead men were pirates and nothing to do with him, and to ask for Frisia in the same breath.
+
+  - id: c839_neagh
+    year: 839
+    doy: 180
+    who: turgeis
+    by: The fleet on Lough Neagh
+    places: [bangor, conaille]
+    keep: 0.6
+    defence: 0.3
+    # AU 839: "A naval force of the foreigners on Loch nEchach, and they plundered the peoples and churches of the north of Ireland therefrom."
+    news: |
+      From Ireland: a Norse fleet has hauled its ships into Lough Neagh, the great lake in the middle of the north, and is raiding every church and kingdom round it. They mean to winter there. Nobody has done that before.
+
+  - id: c840_louis
+    year: 840
+    doy: 171
+    by: The Franks
+    # Louis the Pious died on 20 June 840; his sons fought over the empire, at Fontenoy in June 841.
+    news: |
+      The emperor Louis is dead. His three sons are already gathering armies against each other, and the Frankish rivers have nobody watching them but monks.
+
+  - id: c840_armagh
+    year: 840
+    doy: 300
+    who: turgeis
+    by: The fleet on Lough Neagh
+    places: [armagh]
+    keep: 0.4
+    defence: 0.3
+    unless: flag.cw_armagh_done
+    # AU 840: "Ard Macha was plundered by the heathens of Loch nEchach."
+    news: |
+      The fleet on Lough Neagh has come out of the lake and burned Armagh again, and carried off its clergy to sell. Turgeis has put a man of his own in the abbot's seat, the Irish say. They say it the way men say a thing they hope is not true.
+
+  - id: c841_rouen
+    year: 841
+    doy: 135
+    by: Oscherus's fleet
+    places: [rouen, jumieges]
+    keep: 0.5
+    defence: 0.3
+    unless: flag.sn_841_sworn
+    # AB 841: in May the Northmen under Oscherus came up the Seine, sacked Rouen and burned Jumièges; Fontenelle paid them to go.
+    news: |
+      From the Seine: a Danish fleet under a man the Franks call Oscherus went up the river in May, burned Rouen and the abbey at Jumièges, and sold the monks back to their brothers at Saint-Denis for twenty-six pounds of silver.
+
+  - id: c842_london
+    year: 842
+    doy: 160
+    by: Danish ships
+    places: [london]
+    keep: 0.6
+    defence: 0.3
+    # ASC 842: "Here there was great slaughter in London and in Quentovic and in Rochester." AB 842: Quentovic sacked at dawn.
+    news: |
+      A Danish fleet came into Quentovic at dawn and left nothing standing but the churches they were paid to spare. Then it crossed to England, and there was great slaughter at London and at Rochester.
+
+  - id: c843_nantes
+    year: 843
+    doy: 175
+    who: hastein
+    by: The Vestfold fleet
+    places: [nantes]
+    keep: 0.3
+    defence: 0.5
+    unless: flag.cw_nantes_sworn
+    # AB 843 and the Chronicle of Nantes: on St John's Day the Westfaldingi took Nantes and killed Bishop Gunhard in his church. Hastein at their head: later tradition.
+    news: |
+      From the Loire: a fleet from Vestfold, Norwegians, men from your own side of the sea, came into Nantes on St John's Day, while the whole city was at mass. They killed the bishop at his own altar. Men say a young captain called Hastein was among them.
+
+  - id: c843_noirmoutier
+    year: 843
+    doy: 280
+    who: hastein
+    by: The Vestfold fleet
+    places: [noirmoutier]
+    norse: true
+    # AB 843: the Northmen who took Nantes wintered on an island at the Loire's mouth, and built houses there as if they meant to stay.
+    news: |
+      The Vestfold fleet did not come home from the Loire. They've hauled their ships up on Noirmoutier, the monks' island at the river's mouth, built houses, and settled in for the winter. There is a Norse market there now, they say, where Franks come to buy back their own cattle.
+
+  - id: c844_seville
+    year: 844
+    doy: 280
+    by: The southern fleet
+    # Ibn al-Qutiyya and the Arab annalists: the Majus sacked Seville in 844; Abd al-Rahman's army beat them at Tablada and hanged the captives from the palm trees.
+    news: |
+      Ships from the Loire went south past the Basques, past the end of the Franks' country, to the land of the Moors. They took a city called Seville, and held it for six weeks, and then the Moors' king came down on them and hanged their men from the palm trees. The ones who came back are telling it on every beach in Frankia.
+
+  - id: c844_loughree
+    year: 844
+    doy: 190
+    who: turgeis
+    by: Turgeis's fleet on Lough Ree
+    places: [clonmacnoise]
+    keep: 0.4
+    defence: 0.4
+    # AU 844: a fleet of the foreigners on Loch Rí plundered Connacht and Mide, and burned Cluain moccu Nóis with its oratories.
+    news: |
+      Turgeis has put a fleet on Lough Ree, in the middle of Ireland, and burned Clonmacnoise with all its churches. They say his wife sat on the high altar there and gave oracles, which the Irish will never forgive.
+
+  - id: c845_hamburg
+    year: 845
+    doy: 100
+    who: horik
+    by: King Horik's fleet
+    # AB 845: Horik sent six hundred ships up the Elbe; Hamburg was burned, and Bishop Ansgar fled with the relics.
+    news: |
+      King Horik sent six hundred ships up the Elbe and burned Hamburg: the church, the bishop's books, the new town round it. The bishop, Ansgar, the one who went to Birka, got away with his relics and nothing else.
+
+  - id: c845_paris
+    year: 845
+    doy: 87
+    who: ragnar
+    by: Ragnarr's fleet
+    places: [paris, saint_denis]
+    keep: 0.4
+    defence: 0.5
+    unless: flag.sn_845_sworn
+    # AB 845: Reginherus came up the Seine with 120 ships and took Paris at Easter; Charles paid him 7,000 pounds to leave.
+    news: |
+      Ragnarr went up the Seine with a hundred and twenty ships and took Paris at Easter. King Charles paid him seven thousand pounds of silver to go away. Seven thousand. Men keep saying the number to each other, as if it might change.
+
+  - id: c845_turgeis
+    year: 845
+    doy: 160
+    who: turgeis
+    by: Máel Sechnaill
+    unless: seen.ir_845
+    # AU 845: "Turgéis was taken prisoner by Máel Sechnaill, and drowned in Loch Uair."
+    news: |
+      Turgeis is dead. Máel Sechnaill of Mide took him, and drowned him in Loch Uair with a stone round his neck. The Irish are singing about it in every hall from Ulster to Munster.
+
+  - id: c846_ragnar
+    year: 846
+    doy: 120
+    who: ragnar
+    by: The Franks
+    # The Translatio of St-Germain: the Northmen who took Paris were struck by a flux on the way home; the tale of Ragnarr's own death is the Franks'.
+    news: |
+      The Franks are saying that Ragnarr is dead: that the saint whose church he robbed at Paris sent a flux among his men, and that it took him too. The Danes say he is alive, and laughing about it, at Horik's court. Men say many things about Ragnarr.
+
+  - id: c848_bordeaux
+    year: 848
+    doy: 200
+    who: hastein
+    by: Ships from the Loire
+    # AB 848: the Northmen took Bordeaux and burned it.
+    news: |
+      Ships from the Loire have gone up the Garonne and taken Bordeaux, the Franks' great city in the south, and burned it. The name men put on it is Hastein's.
+
+  - id: c850_rorik
+    year: 850
+    doy: 150
+    who: rorik
+    by: Rorik's fleet
+    places: [dorestad]
+    norse: true
+    # AB 850: Rorik, with a fleet, took Dorestad, and Lothar, unable to drive him out, granted it to him to hold.
+    news: |
+      Rorik has taken Dorestad with a fleet, and the emperor Lothar, who couldn't drive him out, has made him its lord instead, to keep other Danes away. A Dane holds the Rhine for the Franks now. Nobody is quite sure whom that protects from whom.
+
+  - id: c851_dublin
+    year: 851
+    doy: 200
+    by: The Danes
+    places: [dublin]
+    keep: 0.5
+    defence: 0.3
+    unless: flag.ru_dublin
+    # AU 851: "The dark heathens came to Áth Cliath, made a great slaughter of the fair heathens, and plundered the naval encampment, both people and property."
+    news: |
+      Danes have come to Dublin: the dark foreigners, the Irish call them, to tell them from the fair ones already there. They broke into the ship-fort and made a great slaughter of the Norse, and carried off everything in it, the people too.
+
+# Legends at their work: one place a summer, seven times in ten or so, by the hero's own rules (wealth, defence, recovery).
+raiders:
+  - id: r_turgeis
+    who: turgeis
+    by: Turgeis's men
+    from: 832
+    to: 844
+    places: [armagh, clonmacnoise, glendalough, conaille, bangor, cork, linn_duachaill, rechru]
+    chance: 0.6
+  - id: r_danes_frisia
+    who: horik
+    by: Danish ships
+    from: 835
+    to: 849
+    places: [dorestad, walcheren, sheppey, london, gipeswic, hamwic]
+    chance: 0.6
+  - id: r_ragnar
+    who: ragnar
+    by: Ragnarr's ships
+    from: 840
+    to: 846
+    places: [rouen, jumieges, fontenelle, saint_denis, walcheren, nantes]
+    chance: 0.6
+  - id: r_hastein
+    who: hastein
+    by: Hastein's ships
+    from: 846
+    to: 870
+    places: [nantes, rouen, jumieges, fontenelle]
+    chance: 0.5
+  - id: r_northumbria
+    by: Danish ships
+    from: 838
+    to: 870
+    places: [lindisfarne, jarrow, whitby, york, whithorn]
+    chance: 0.35

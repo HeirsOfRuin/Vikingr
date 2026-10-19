@@ -71,6 +71,11 @@ export function loadContent(root = ROOT): S.ContentBundle {
     fates: byId(check(z.array(S.fateDef), read(reg('fates.yaml')), 'registry/fates.yaml'), 'fate'),
     banter: check(z.array(S.banterLine), read(reg('banter.yaml')), 'registry/banter.yaml'),
     recruits: byId(check(z.array(S.recruitOrigin), read(reg('recruits.yaml')), 'registry/recruits.yaml'), 'recruit origin'),
+    lords: byId(check(z.array(S.lordDef), read(reg('lords.yaml')), 'registry/lords.yaml'), 'lord'),
+    chronicle: (() => {
+      const c = check(z.object({ events: z.array(S.chronEvent), raiders: z.array(S.chronRaider) }).strict(), read(reg('chronicle.yaml')), 'registry/chronicle.yaml');
+      return { events: byId(c.events, 'chronicle event'), raiders: byId(c.raiders, 'chronicle raider') };
+    })(),
     hostages: (() => {
       const h = check(z.object({ kinds: z.array(S.hostageKind), names: S.hostageNames }).strict(), read(reg('hostages.yaml')), 'registry/hostages.yaml');
       return { kinds: byId(h.kinds, 'hostage kind'), names: h.names };

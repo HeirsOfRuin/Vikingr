@@ -10,6 +10,12 @@ import { standing } from './standing';
 import { captain } from './allies';
 import { hirdCount, hirdRoom } from './hird';
 import { hostageCount } from './hostages';
+import { lordAlive, lordFav, oaths, swornTo } from './lords';
+import { claimMargin, seatOpen, SEATS, type Seat } from './rule';
+import { holdingAt } from './land';
+import { legendFame } from './fame';
+
+const s_lords = (state: GameState, id: string) => state.lords?.[id];
 
 export type Value = number | string | boolean;
 
@@ -82,6 +88,11 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   prized: (s) => (s.flags._prize === dateOf(s.day).year ? 1 : 0),
   /** The year the current (or last) winter belongs to: winter 830 runs from November 830 to February 831. */
   winter: (s) => s.flags._winter ?? 0,
+  /** Lords, land and rule (docs/FRAME-WORLD.md §C-E): his lord ('' for none), how many oaths, land held, the seat he rules. */
+  oath: (s) => s.oath?.lord ?? '',
+  oaths: (s) => oaths(s),
+  holdings: (s) => (s.holdings ?? []).length,
+  rule: (s) => s.rule?.seat ?? '',
 };
 
 /** Paths that take a named value, and the names they take. */
@@ -93,6 +104,8 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'base') return ['father', 'farm', 'hall'];
   if (path === 'bound') return ['', ...Object.keys(content.places)];
   if (path === 'bound.people') return ['', ...PEOPLES];
+  if (path === 'oath') return ['', ...Object.keys(content.lords)];
+  if (path === 'rule') return ['', ...SEATS];
   return undefined;
 }
 
@@ -123,6 +136,20 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
       if (b === 'partner') return state.partner?.id === a && state.partner?.year === dateOf(state.day).year;
       return c.rel;
     }
+    case 'lord': {
+      const l = s_lords(state, a!);
+      if (b === 'fav') return lordFav(state, a!);
+      if (b === 'sworn') return swornTo(state, a!);
+      if (b === 'cast') return l?.cast !== undefined;
+      if (b === 'alive') return lordAlive(state, content, a!);
+      if (b === 'met') return !!l?.met;
+      if (b === 'answered') return l?.answered === dateOf(state.day).year;
+      return 0;
+    }
+    case 'claim': return claimMargin(state, content, a as Seat);
+    case 'seat': return seatOpen(state, content, a as Seat);
+    case 'holding': return !!holdingAt(state, a!);
+    case 'legend': { const r = content.rivals[a!]; return r ? legendFame(state, r, dateOf(state.day).year) : 0; }
     case 'boast': {
       const bt = state.boasts.find((x) => x.id === a);
       return !bt ? 0 : bt.state === 'open' ? 1 : bt.state === 'kept' ? 2 : 3;
@@ -161,6 +188,10 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'fate': return content.fates[a!] && !b ? null : `unknown fate "${a}" (declare it in content/registry/fates.yaml)`;
     case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
     case 'captain': return content.captains[a!] && ['rel', 'met', 'alive', 'partner'].includes(b!) ? null : `bad captain path "${path}"`;
+    case 'lord': return content.lords[a!] && ['fav', 'sworn', 'cast', 'alive', 'met', 'answered'].includes(b!) ? null : `bad lord path "${path}"`;
+    case 'claim': case 'seat': return (SEATS as string[]).includes(a!) && !b ? null : `unknown seat "${a}"`;
+    case 'holding': return content.places[a!] && !b ? null : `unknown place "${a}" for a holding`;
+    case 'legend': return content.rivals[a!] && !b ? null : `unknown legend "${a}"`;
     case 'boast': return content.boasts[a!] && !b ? null : `unknown boast "${a}" (declare it in content/registry/boasts.yaml)`;
   }
   return `unknown path "${path}"`;

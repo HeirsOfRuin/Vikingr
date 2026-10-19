@@ -5,6 +5,7 @@ import { FIGHT_DEEDS, NAMED_FAME } from './items';
 import type { ContentBundle, Rival } from '../content/schema';
 import type { Deed, GameState } from './state';
 import { dateOf } from './calendar';
+import { SEAT_DEF } from './rule';
 import { FAME_FADE_DAYS, FAME_FADE_PER_YEAR, VERSE_LASTING_MULT } from './tuning';
 
 /** What an old deed still carries each time it is told again. */
@@ -98,6 +99,12 @@ export function rivalFame(r: Rival, year: number): number {
   return c[c.length - 1]![1];
 }
 
+/** A legend's fame as men tell it: his curve, and what has happened to him since (docs/FRAME-WORLD.md §B). */
+export function legendFame(state: GameState, r: Rival, year: number): number {
+  const base = rivalFame(r, year);
+  return base > 0 ? Math.max(1, base + (state.legends?.[r.id] ?? 0)) : 0;
+}
+
 export interface LegendRow {
   id: string;
   name: string;
@@ -109,7 +116,7 @@ export interface LegendRow {
 export function legendTable(state: GameState, content: ContentBundle): LegendRow[] {
   const year = dateOf(state.day).year;
   const rows: LegendRow[] = Object.values(content.rivals)
-    .map((r) => ({ id: r.id, name: r.name, fame: Math.round(rivalFame(r, year)), hero: false }))
+    .map((r) => ({ id: r.id, name: r.name, fame: Math.round(legendFame(state, r, year)), hero: false }))
     .filter((r) => r.fame > 0);
   rows.push({ id: 'hero', name: heroName(state), fame: Math.round(livingFame(state)), hero: true });
   return rows.sort((a, b) => b.fame - a.fame || (a.hero ? 1 : -1));
@@ -120,5 +127,6 @@ export function fameRank(state: GameState, content: ContentBundle): number {
 }
 
 export function heroName(state: GameState): string {
-  return state.hero.nickname ? `${state.hero.name} ${state.hero.nickname}` : state.hero.name;
+  const n = state.hero.nickname ? `${state.hero.name} ${state.hero.nickname}` : state.hero.name;
+  return state.rule ? `${n}, ${SEAT_DEF[state.rule.seat].title}` : n;
 }

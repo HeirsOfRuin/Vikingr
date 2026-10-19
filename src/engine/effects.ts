@@ -24,6 +24,9 @@ import { giveItem, loseItem } from './items';
 import { BASE, BASE_LEVELS, keepCaptives } from './base';
 import { keepBoast, swearBoast } from './boasts';
 import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
+import { answerCall, lordState, shiftLordFav, swear } from './lords';
+import { grantLand } from './land';
+import { loseSeat, takeSeat } from './rule';
 
 function addTo(state: GameState, content: ContentBundle, path: string, n: number): void {
   switch (path) {
@@ -199,6 +202,23 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       startHost(state, content, { title: h.title, foe: h.foe, terrain: h.terrain, context: h.raid ? 'raid' : 'scene', place: h.raid ? state.at : null, foeMen: h.men, wings, role: h.role, reserve: h.reserve, win: h.win, lose: h.lose });
     } else if ('favour' in e) {
       shiftFavour(state, e.favour);
+    } else if ('lord' in e) {
+      const l = e.lord;
+      if (l.meet || l.swear || l.call || l.fav) lordState(state, l.id).met = true;
+      if (l.fav) shiftLordFav(state, l.id, l.fav);
+      const before = state.flags.oathbreaker ?? 0;
+      if (l.swear) swear(state, content, l.id, l.swear);
+      else if (l.call) answerCall(state, content, rng, l.id, l.call === 'answer');
+      // found out: the oath-breaker's scene follows whatever this one says
+      if ((state.flags.oathbreaker ?? 0) > before) state.queue.push({ scene: 'lo_cast_out', day: state.day });
+    } else if ('grant' in e) {
+      grantLand(state, content, e.grant);
+    } else if ('rule' in e) {
+      takeSeat(state, content, e.rule);
+    } else if ('lose_rule' in e) {
+      loseSeat(state, content, '');
+    } else if ('legend' in e) {
+      (state.legends ??= {})[e.legend.id] = (state.legends[e.legend.id] ?? 0) + e.legend.fame;
     } else if ('lose_cargo' in e) {
       // the heaviest goods go first
       for (let n = e.lose_cargo; n > 0 && state.cargo && Object.keys(state.cargo).length; n--) {
