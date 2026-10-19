@@ -105,14 +105,14 @@
 
     Ubbi knows it. He takes the fleet in through the channels at dawn on the flood, and puts you ashore below a terp with a church on top and a village round it and a road running inland along the dyke.
     [break]
-    The count's men are not all gone. Forty of them come down the dyke road at a run, with a priest on a mule behind them holding up a cross, and form a line across the road where it's too narrow for the Danes to go round.
+    The count's men are not all gone. Forty of them come down the dyke road at a run, with the village behind them and a priest on a mule holding up a cross, and form a line across the road and the fields beside it, where the ditches are too deep to go round.
 
     You are on Ubbi's left. The dyke road is in front of you.
   choices:
     - id: fight
       text: Lock shields and take the dyke road.
       danger: true
-      effects: [ { battle: { foe: frisian_levy, men: 36, terrain: field, win: hd_frisia_won, lose: hd_frisia_lost } } ]
+      effects: [ { host: { title: "The dyke road", foe: frisian_levy, terrain: field, men: 30, wings: [ { name: "Ubbi's Danes", men: 90, quality: 1.2, foe_men: 45 } ], role: wing, win: hd_frisia_won, lose: hd_frisia_lost } } ]
     - id: flank
       text: Take your men round through the mud, waist-deep, and come at them from the side.
       danger: true
@@ -123,7 +123,7 @@
         effects: [ { set: flag.hd_flanked } ]
       failure:
         text: The mud is deeper than it looked, and the tide faster. By the time you claw your way out of the ditch, half-drowned, Ubbi's line is already locked with them, and you go in tired.
-        effects: [ { battle: { foe: frisian_levy, men: 36, terrain: field, win: hd_frisia_won, lose: hd_frisia_lost } } ]
+        effects: [ { host: { title: "The dyke road", foe: frisian_levy, terrain: field, men: 30, wings: [ { name: "Ubbi's Danes", men: 90, quality: 1.2, foe_men: 45 } ], role: wing, win: hd_frisia_won, lose: hd_frisia_lost } } ]
 
 - id: hd_frisia_won
   kind: spine

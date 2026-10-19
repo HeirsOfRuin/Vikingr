@@ -234,7 +234,7 @@
   art: yule_hall
   title: The jarl's levy
   text: |
-    The war-arrow comes round the district in the first week of spring: a split arrow, passed from farm to farm, which means the jarl calls for ships.
+    The war-arrow comes round the district in the first week of spring: a split arrow, passed from farm to farm, which means the jarl calls for ships. Every hull in the district, his own and yours and the farmers' boats, to row together under his banner.
 
     Danish raiders have been on the outer coast since the ice went out: three ships, maybe four, burning farms on the islands and taking cattle and people. The jarl means to catch them before they take anything else, and he wants every ship in the district on his landing in three days.
     [if favour >= 4]
@@ -244,7 +244,8 @@
     - id: answer
       text: Answer the arrow. Your ships on his landing in three days.
       danger: true
-      effects: [ { days: 4 }, { battle: { foe: danish_raiders, men: 34, terrain: beach, win: g_levy_won, lose: g_levy_lost } } ]
+      # the levy fights as one line: the jarl's hird in the centre, the district's ships on the left, his on the right (playtest 5)
+      effects: [ { days: 4 }, { host: { title: "The jarl's levy on the island beach", foe: danish_raiders, terrain: beach, men: 34, wings: [ { name: "The jarl's hird", men: 60, quality: 1.5, foe_men: 45 }, { name: "The district's ships", men: 40, quality: 0.8, foe_men: 35 } ], role: wing, win: g_levy_won, lose: g_levy_lost } } ]
     - id: silver
       text: Send a pound and a half for the jarl's men, and keep your ships for your own summer.
       requires: ["silver >= 72"]
@@ -260,9 +261,9 @@
   art: iona_burning
   title: The Danes on the strand
   text: |
-    You catch them on an island beach with their ships drawn up and their cattle half-loaded, and the jarl's ships come round the headland behind them, and there's nowhere for them to go but into your shields.
+    You catch them on an island beach with their ships drawn up and their cattle half-loaded. The jarl's hird goes up the middle of the beach under his banner, the district's farmers on the left, and your ship's company on the right, and there's nowhere for the Danes to go but into the shields.
 
-    It's short. At the end of it the Danes' ships are the jarl's, and their plunder is back where it came from, mostly, and the jarl stands on the strand with a dead man's axe in his hand and looks for you.
+    At the end of it the Danes' ships are the jarl's, and their plunder is back where it came from, mostly, and the jarl stands on the strand with a dead man's axe in his hand and looks for you.
   choices:
     - id: share
       text: Take the share he gives you, in front of the levy.
@@ -273,7 +274,7 @@
   kind: spine
   title: The Danes get away
   text: |
-    The Danes are better than anyone thought, and readier. They break your part of the line and get their ships off the beach and away round the point, with most of their plunder and some of yours.
+    The Danes are better than anyone thought, and readier. They break the levy's line on the beach and get their ships off the sand and away round the point, with most of their plunder and some of yours.
 
     The jarl doesn't blame you. Not out loud.
   choices:

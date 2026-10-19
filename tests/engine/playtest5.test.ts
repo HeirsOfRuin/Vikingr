@@ -126,3 +126,16 @@ describe('playtest 5: food and shares, checked', () => {
     expect(lines.join(' ')).toMatch(/1.5 shares come/);
   });
 });
+
+import { open as openScene } from '../../src/engine/director';
+
+describe("playtest 5: the jarl's levy is fought with the jarl", () => {
+  it('opens as a host: the jarl\'s hird and the district\'s ships in the line beside his own men', () => {
+    let s = sandboxGame(10);
+    s.day = dayOf(834, 70); s.phase = 'muster'; s.at = 'home_fjord';
+    openScene(s, 'g_levy', content);
+    s = act(content, s, { t: 'choose', id: 'answer' });
+    const b = (s.pending as unknown as { battle: { host?: { wings: { name: string }[] } } }).battle;
+    expect(b.host?.wings.map((w) => w.name)).toEqual(["The jarl's hird", "The district's ships"]);
+  });
+});
