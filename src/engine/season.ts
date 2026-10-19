@@ -133,14 +133,16 @@ export function serviceShare(state: GameState, content: ContentBundle, rng?: Rng
   const pot = state.loot;
   const heads = state.crew.men + aliveMen(state).length + 1;
   const each = pot > 0 ? (pot * SERVICE_OARS_SHARE) / heads : 0; // a quarter to the ship and her captain, the rest to the oars
-  const mine = Math.round(each * svc.shares);
+  const myShares = svc.shares;
+  const mine = Math.round(each * myShares);
   state.silver += mine;
   earn(state, mine);
   state.loot = 0;
   // a summer's extra shares are for that summer; the prow-man keeps his share and a half
   svc.shares = state.flags.prow_man ? 1.5 : 1;
+  // the working shown, so a man can check it (playtest 5: "the shares should be double checked")
   lines.push(pot > 0
-    ? `${svc.captain} divides it on the strand in front of everyone: a quarter to the ship, the rest to the oars. Your ${svc.shares > 1 ? `${svc.shares} shares come` : 'share comes'} to ${formatSilver(mine)}.`
+    ? `${svc.captain} divides it on the strand in front of everyone. The heap comes to ${formatSilver(pot)}. A quarter, ${formatSilver(pot - Math.round(pot * SERVICE_OARS_SHARE))}, goes to the ship and to ${svc.captain}. The rest, ${formatSilver(Math.round(pot * SERVICE_OARS_SHARE))}, is shared among ${heads} oars: ${formatSilver(Math.round(each))} a share. Your ${myShares > 1 ? `${myShares} shares come` : 'share comes'} to ${formatSilver(mine)}.`
     : `${svc.captain} has nothing to divide but his thanks, and he is short of those too.`);
   journal(state, `Your share of the summer: ${formatSilver(mine)}.`);
   const { told, gained } = tellDeeds(state);
@@ -188,6 +190,7 @@ export function divideAbroad(state: GameState, content: ContentBundle, how: Shar
 /** The dividing itself: a félag partner's part, the jarl's cut, his own share, the shipmasters', the men's. */
 function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lines: string[], partial = false): void {
   let pot = state.loot;
+  if (pot > 0) lines.push(`The heap comes to ${formatSilver(pot)}.`);
   // a félag partner takes his men's part first (docs/FRAME-TRADE-ALLIES.md)
   const pc = partnerCut(state, content, pot, state.crew.men + aliveMen(state).length);
   if (pc.cut) { pot -= pc.cut; lines.push(pc.line!); }
@@ -221,7 +224,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
   }
   if (how === 'mean') state.honour = Math.max(-10, state.honour - 1);
   lines.push(pot > 0
-    ? `You keep ${formatSilver(keep)}. Each man takes about ${formatSilver(each)}.`
+    ? `Of the ${formatSilver(pot)} left, you keep ${formatSilver(keep)}, a ${how === 'generous' ? 'generous' : how === 'mean' ? 'mean' : 'fair'} captain's part (${Math.round(LEADER_SHARE[how] * 100)}%). The other ${plural(heads, 'man', 'men')} take about ${formatSilver(each)} each.`
     : 'There is nothing to share. The men go home with what they left with.');
   clampMorale(state);
   journal(state, `The share-out: you kept ${formatSilver(keep)}.`);
@@ -407,6 +410,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   const lines: string[] = [];
   const winterOf = state.flags._winter ?? dateOf(state.day).year - 1;
   state.day = Math.max(state.day, dayOf(winterOf + 1, MUSTER_DOY));
+  // the winter's food was the hall's: the ship's stores start eating again from today
+  state.fedTo = state.day;
   const year = dateOf(state.day).year;
   heal(state, content, 30, 1);
   if (strawDeathCheck(state, rng)) {

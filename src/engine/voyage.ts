@@ -194,17 +194,8 @@ export function runVoyage(state: GameState, content: ContentBundle, rng: RngCurs
     v.daysAtSea += 1;
     v.wind = rollWind(v.wind, rng);
     v.progress += WIND.progress[v.wind] * fleetSpeed(state, content);
-    const eat = mouths(state);
-    // at another man's oar, the captain feeds the ship: that is his part of the bargain
-    if (state.service) { /* his stores, not the hero's */ }
-    else if (state.provisions >= eat) state.provisions -= eat;
-    else {
-      state.provisions = 0;
-      state.stats.hungerDays += 1;
-      state.crew.morale -= HUNGER_MORALE_PER_DAY;
-      clampMorale(state);
-      if (v.daysAtSea % 3 === 1) lines.push('The food is gone. The men row on water and anger.');
-    }
+    if (eatDays(state, 1) && v.daysAtSea % 3 === 1) lines.push('The food is gone. The men row on water and anger.');
+    state.fedTo = state.day;
     learn(state, 'seamanship', 1);
     heal(state, content, 1, 0.25);
     if (rng.float() < stormChance(state, v.kind, v.wind)) {
@@ -254,3 +245,28 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   }
   trigger(state, content, rng, 'arrive');
 }
+
+/** The crew eats from the ship's stores: every day away from home, at sea or ashore, one derivation for both
+ *  (playtest 5: "the food tracking doesn't always seem consistent"). At another man's oar the captain feeds the ship;
+ *  at home the farm does; in winter quarters the hall does. Returns true if the men went hungry. */
+export function eatDays(state: GameState, days: number): boolean {
+  if (state.service || days <= 0) return false;
+  const need = mouths(state) * days;
+  if (state.provisions >= need) { state.provisions -= need; return false; }
+  const fedDays = Math.floor(state.provisions / Math.max(1, mouths(state)));
+  state.provisions = 0;
+  const hungry = days - fedDays;
+  state.stats.hungerDays += hungry;
+  state.crew.morale -= HUNGER_MORALE_PER_DAY * hungry;
+  clampMorale(state);
+  return true;
+}
+
+/** Days ashore abroad since the crew last ate: called after every action (index.ts settle). */
+export function eatAshore(state: GameState): string | null {
+  const from = state.fedTo ?? state.day;
+  state.fedTo = state.day;
+  if (state.voyage || state.at === 'home_fjord' || state.phase === 'winter' || !state.at) return null;
+  return eatDays(state, state.day - from) ? 'The food is gone. The men are eating what they can beg on the beach, and they blame you for it.' : null;
+}
+

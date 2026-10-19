@@ -49,6 +49,7 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
   state.rumoured ??= [];
   state.crew.gear ??= 0;
   state.stats.frontWins ??= 0;
+  state.fedTo ??= state.day;
   state.base ??= newBase();
   kitFromFlags(state, content, state.hero.background);
   // sworn men who fell before bench-heirs existed get one, so old scenes stop naming them

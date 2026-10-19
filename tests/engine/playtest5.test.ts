@@ -97,3 +97,32 @@ describe('playtest 5: the smaller reports', () => {
     expect(listActions(s, content).some((o) => o.action.t === 'winter_here')).toBe(false);
   });
 });
+
+import { act } from '../../src/engine/index';
+import { mouths } from '../../src/engine/crew';
+import { serviceShare, SERVICE_OARS_SHARE } from '../../src/engine/season';
+
+describe('playtest 5: food and shares, checked', () => {
+  it('every day abroad eats from the stores, at sea or ashore; at home the farm feeds them', () => {
+    let s = sandboxGame(7);
+    s.phase = 'sailing'; s.at = 'kaupang'; s.provisions = 500; s.fedTo = s.day;
+    const m = mouths(s);
+    s = act(content, s, { t: 'rest' });
+    expect(s.provisions).toBe(500 - 3 * m);
+    let h = sandboxGame(8);
+    h.phase = 'sailing'; h.at = 'home_fjord'; h.provisions = 500; h.fedTo = h.day;
+    h = act(content, h, { t: 'rest' });
+    expect(h.provisions).toBe(500);
+  });
+
+  it("the oarsman's share is three quarters of the heap over the oars, and the line shows the working", () => {
+    const s = sandboxGame(9);
+    s.service = { captain: 'Ásgeir', route: [], shares: 1.5 } as never;
+    s.loot = 960; s.captives = 0; s.silver = 0;
+    const heads = s.crew.men + s.men.filter((x) => x.alive).length + 1;
+    const lines = serviceShare(s, content);
+    expect(s.silver).toBe(Math.round(((960 * SERVICE_OARS_SHARE) / heads) * 1.5));
+    expect(lines.join(' ')).toMatch(/heap comes to/);
+    expect(lines.join(' ')).toMatch(/1.5 shares come/);
+  });
+});

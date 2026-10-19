@@ -26,7 +26,7 @@ import { finishBattle, finishDuel, startBattle, startRaid } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
-import { expeditionRoads, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
+import { eatAshore, expeditionRoads, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
   borrowShip, BUILD_TYPES, winterWork, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
@@ -830,7 +830,6 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       heal(state, content, 3, 0.8);
       // three quiet days ashore steady a shaken crew, though they won't lift a sullen one past ordinary
       if (state.crew.morale < BATTLE.restCap) state.crew.morale = Math.min(BATTLE.restCap, state.crew.morale + BATTLE.restMorale);
-      state.provisions = Math.max(0, state.provisions - mouths(state) * (state.at === 'home_fjord' ? 0 : 3));
       break;
     case 'end_season':
       // another man's ship comes home when he says; the captain keeps her out until the autumn
@@ -855,6 +854,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       const paid = state.silver >= 12;
       if (paid) state.silver -= 12;
       state.day += paid ? 12 : 30;
+      state.fedTo = state.day; // a passenger eats the trader's food
       if (exiled(state)) {
         state.at = 'orkney';
         report('Orkney', [paid ? 'A trader takes you west to Orkney for silver and a hand at the oars. It isn\'t home. It\'s the nearest thing you have.' : 'A trader takes you west to Orkney for nothing but your back at his oars. It isn\'t home. It\'s the nearest thing you have.']);
@@ -946,7 +946,11 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
 
 /** After any action: boasts fall due, the season turns if it must, and anything queued fires. */
 function settle(state: GameState, content: ContentBundle, rng: RngCursor): void {
-  if (!state.hero.alive || state.pending) return;
+  if (!state.hero.alive) return;
+  // days ashore abroad eat from the stores, the same as days at sea
+  const hungry = eatAshore(state);
+  if (hungry && !state.pending) state.pending = { t: 'report', title: 'Hungry', lines: [hungry] };
+  if (state.pending) return;
   for (const b of state.boasts) {
     if (!goalMet(state, content, b)) continue;
     keepBoast(state, content, b);

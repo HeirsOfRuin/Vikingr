@@ -290,6 +290,8 @@ export interface GameState {
   rings?: Record<import('./rings').Metal, number>;
   loot: number;
   provisions: number; // man-days
+  /** The day through which the crew has eaten (playtest 5: days ashore abroad were free, days at sea were not). */
+  fedTo?: number;
   ships: Ship[];
   /** gear: the men's arms, 0 spears and shields .. 3 mail for every man (FRAME-FOUNDATION §2). */
   crew: { men: number; quality: number; morale: number; gear: number };
