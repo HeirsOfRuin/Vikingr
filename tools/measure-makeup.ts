@@ -29,7 +29,12 @@ console.log(`${runs} lives × ${policies.join(', ')}, ${years} years\n`);
 for (const bg of Object.values(c.backgrounds).filter((b) => !only || b.id === only)) for (const set of bg.skill_sets) row(`${bg.id} / ${set.id}`, bg.id, { skillSet: set.id });
 if (noSpreads) process.exit(0);
 console.log('\nspreads (younger son, raised to the sword)');
-const spreads: Record<string, Record<Attr, number>> = {
+const only2 = process.argv.includes('--tough');
+const spreads: Record<string, Record<Attr, number>> = only2 ? {
+  'as born 3/2/2/2/2': { str: 3, agi: 2, end: 2, wit: 2, pre: 2 },
+  'tough 1/2/5/1/1 (a 5 costs 6)': { str: 1, agi: 2, end: 5, wit: 1, pre: 1 },
+  'tough 2/2/4/2/1': { str: 2, agi: 2, end: 4, wit: 2, pre: 1 },
+} : {
   'as born 3/2/2/2/2': { str: 3, agi: 2, end: 2, wit: 2, pre: 2 },
   'brute 5/2/2/1/1': { str: 5, agi: 2, end: 2, wit: 1, pre: 1 },
   'tough 2/2/5/1/1': { str: 2, agi: 2, end: 5, wit: 1, pre: 1 },

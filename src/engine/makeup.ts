@@ -4,7 +4,16 @@
 import type { Attr, Background, Skill } from '../content/schema';
 import { ATTRS, SKILLS } from '../content/schema';
 
-export const MAKEUP = { min: 1, max: 5, skillPoints: 7 } as const;
+export const MAKEUP = { min: 1, max: 5, skillPoints: 7, /** Points above this cost double: a 5 costs 6 (measured: endurance 5 kept 93% of raider lives alive against 73%). */ dear: 4 } as const;
+
+/** What a value costs from the pool. */
+export function attrCost(v: number): number {
+  return v + Math.max(0, v - MAKEUP.dear);
+}
+
+export function spent(attrs: Record<Attr, number>): number {
+  return ATTRS.reduce((a, k) => a + attrCost(attrs[k]), 0);
+}
 
 /** What each attribute does, in a line, from the rules that read it. */
 export const ATTR_WORDS: Record<Attr, { name: string; does: string }> = {
@@ -29,9 +38,9 @@ export function makeupError(start: Record<Attr, number>, attrs: Record<Attr, num
     const v = attrs[k];
     if (!Number.isInteger(v) || v < MAKEUP.min || v > MAKEUP.max) return `${ATTR_WORDS[k].name} must be ${MAKEUP.min} to ${MAKEUP.max}.`;
   }
-  const spent = ATTRS.reduce((a, k) => a + attrs[k], 0);
-  const pool = ATTRS.reduce((a, k) => a + start[k], 0);
-  return spent === pool ? null : `${spent} of ${pool} points spent.`;
+  const used = spent(attrs);
+  const pool = spent(start);
+  return used === pool ? null : `${used} of ${pool} points spent.`;
 }
 
 /** The skills of the chosen set (the first if none, or an unknown one). */

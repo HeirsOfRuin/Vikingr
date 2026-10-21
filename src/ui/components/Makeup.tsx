@@ -2,7 +2,7 @@
 import { useState } from 'preact/hooks';
 import type { Attr, Skill } from '../../content/schema';
 import { ATTRS } from '../../content/schema';
-import { ATTR_WORDS, MAKEUP } from '../../engine/makeup';
+import { ATTR_WORDS, attrCost, MAKEUP, spent } from '../../engine/makeup';
 
 export interface SkillSet { id: string; label: string; desc: string; skills: Partial<Record<Skill, number>> }
 
@@ -16,10 +16,10 @@ export function Makeup({ title, intro, start, sets, begin, onBegin, onBack }: {
   title: string; intro: string; start: Record<Attr, number>; sets: SkillSet[]; begin: string;
   onBegin: (attrs: Record<Attr, number>, set: string) => void; onBack?: () => void;
 }) {
-  const pool = ATTRS.reduce((a, k) => a + start[k], 0);
+  const pool = spent(start);
   const [attrs, setAttrs] = useState<Record<Attr, number>>({ ...start });
   const [set, setSet] = useState(sets[0]!.id);
-  const left = pool - ATTRS.reduce((a, k) => a + attrs[k], 0);
+  const left = pool - spent(attrs);
   const bump = (k: Attr, d: number) => setAttrs({ ...attrs, [k]: attrs[k] + d });
   const changed = ATTRS.some((k) => attrs[k] !== start[k]);
   return (
@@ -27,7 +27,7 @@ export function Makeup({ title, intro, start, sets, begin, onBegin, onBack }: {
       <h1>{title}</h1>
       <p>{intro}</p>
       <h3>What you were born with</h3>
-      <p class="small sans muted">{left === 0 ? `All ${pool} points spent.` : left > 0 ? `${left} of ${pool} points left to spend.` : `${-left} points too many.`} Each is {MAKEUP.min} to {MAKEUP.max}.</p>
+      <p class="small sans muted">{left === 0 ? `All ${pool} points spent.` : left > 0 ? `${left} of ${pool} points left to spend.` : `${-left} points too many.`} Each is {MAKEUP.min} to {MAKEUP.max}; a {MAKEUP.max} costs {attrCost(MAKEUP.max) - attrCost(MAKEUP.dear)} points.</p>
       <div class="makeup">
         {ATTRS.map((k) => (
           <div key={k} class="attr-row">
@@ -35,7 +35,7 @@ export function Makeup({ title, intro, start, sets, begin, onBegin, onBack }: {
             <div class="attr-ctl">
               <button class="step" aria-label={`Less ${ATTR_WORDS[k].name}`} disabled={attrs[k] <= MAKEUP.min} onClick={() => bump(k, -1)}>−</button>
               <span class="attr-val" id={`attr-${k}`}>{attrs[k]}</span>
-              <button class="step" aria-label={`More ${ATTR_WORDS[k].name}`} disabled={attrs[k] >= MAKEUP.max || left <= 0} onClick={() => bump(k, 1)}>+</button>
+              <button class="step" aria-label={`More ${ATTR_WORDS[k].name}`} disabled={attrs[k] >= MAKEUP.max || left < attrCost(attrs[k] + 1) - attrCost(attrs[k])} onClick={() => bump(k, 1)}>+</button>
             </div>
           </div>
         ))}
