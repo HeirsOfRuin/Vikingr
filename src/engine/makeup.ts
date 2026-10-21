@@ -4,7 +4,9 @@
 import type { Attr, Background, Skill } from '../content/schema';
 import { ATTRS, SKILLS } from '../content/schema';
 
-export const MAKEUP = { min: 1, max: 5, skillPoints: 7, /** Points above this cost double: a 5 costs 6 (measured: endurance 5 kept 93% of raider lives alive against 73%). */ dear: 4 } as const;
+/** max 4 (docs/FRAME-LINEAGE.md A, measured): endurance 5 kept 85-93% of raider lives alive at ten years against 70-73%
+ *  for the default spread, even at double cost for the fifth point; endurance 4 kept 70%. */
+export const MAKEUP = { min: 1, max: 4, skillPoints: 7, dear: 4 } as const;
 
 /** What a value costs from the pool. */
 export function attrCost(v: number): number {

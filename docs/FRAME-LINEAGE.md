@@ -106,7 +106,7 @@ Build order: A (small, fully independent), B, C (builds on B's family), D, E (ne
 
 ### A. Character creation
 - **Choose the era, the name and the beginning, then a second screen:**
-  - **What you were born with:** an 11-point pool across the five attributes, each 1–5, with + and − buttons. Each attribute has one line saying what it does in the rules.
+  - **What you were born with:** an 11-point pool across the five attributes, each 1–4 (not the framed 1–5; see the measurements), with + and − buttons. Each attribute has one line saying what it does in the rules.
   - **How you were raised:** three skill sets per beginning, 7 points each; the skills show under each one.
   - **Begin** stays greyed out until every point is spent. Left untouched, it is the beginning as before, so old saves and the bots are unchanged.
 - **Skill sets:**

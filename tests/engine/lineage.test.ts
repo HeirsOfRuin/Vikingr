@@ -21,7 +21,7 @@ describe('A. character creation', () => {
     }
   });
   it('a spread and a set are taken as chosen', () => {
-    const attrs = { str: 5, agi: 2, end: 1, wit: 1, pre: 1 };
+    const attrs = { str: 4, agi: 3, end: 2, wit: 1, pre: 1 };
     const s = newGame(content, { background: 'freedman', seed: 5, name: 'Hrafn', attrs, skillSet: 'trader' });
     expect(s.hero.attrs).toEqual(attrs);
     expect(s.hero.skills.trade).toBe(3);
@@ -34,10 +34,10 @@ describe('A. character creation', () => {
     expect(makeupError(bg.attrs, { str: 3, agi: 2, end: 2, wit: 2, pre: 2 })).toBeNull();
     expect(makeupError(bg.attrs, { str: 4, agi: 2, end: 2, wit: 2, pre: 2 })).toMatch(/12 of 11/);
     expect(makeupError(bg.attrs, { str: 6, agi: 1, end: 1, wit: 2, pre: 1 })).toMatch(/Strength/);
-    expect(makeupError(bg.attrs, { str: 5, agi: 3, end: 3, wit: 0, pre: 0 })).toMatch(/Wits/);
-    // a 5 costs 6: 5/2/2/1/1 is 12 points
-    expect(makeupError(bg.attrs, { str: 5, agi: 2, end: 2, wit: 1, pre: 1 })).toMatch(/12 of 11/);
-    expect(makeupError(bg.attrs, { str: 5, agi: 2, end: 1, wit: 1, pre: 1 })).toBeNull();
+    expect(makeupError(bg.attrs, { str: 4, agi: 4, end: 3, wit: 0, pre: 0 })).toMatch(/Wits/);
+    // 4 at most: a man is born strong, not a giant
+    expect(makeupError(bg.attrs, { str: 5, agi: 2, end: 1, wit: 1, pre: 1 })).toMatch(/Strength/);
+    expect(makeupError(bg.attrs, { str: 4, agi: 2, end: 2, wit: 2, pre: 1 })).toBeNull();
     expect(() => newGame(content, { background: 'outlaw', seed: 5, name: 'H', attrs: { str: 5, agi: 5, end: 5, wit: 5, pre: 5 } })).toThrow();
     for (const k of ATTRS) expect(bg.attrs[k]).toBeGreaterThanOrEqual(1);
   });
