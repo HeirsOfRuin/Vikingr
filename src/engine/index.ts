@@ -5,7 +5,7 @@ import type { ContentBundle, DuelMove, Order, Skill } from '../content/schema';
 import { DUEL_MOVES, SKILLS } from '../content/schema';
 import type { GameState, Pending, Position } from './state';
 import { RngCursor, seedRng } from './rng';
-import { dateOf, dayOf } from './calendar';
+import { dateOf, dayOf, formatDate } from './calendar';
 import { condPaths, test, unmetLabel } from './conditions';
 import type { CondInput } from '../content/schema';
 import { applyEffects } from './effects';
@@ -15,6 +15,8 @@ import { BOUT_MOVES, boutAvailable, boutExchange, fightOutBout, MOVE_LABEL, move
 import { available, deployStep, fightOutWall, ORDER_LABEL, orderDesc, wallRound, WALL_ORDERS, type WallOrder } from './wall';
 import { checkP, hpMax, learn, effAttr } from './hero';
 import { hearNews, newsWaiting, tickChronicle } from './chronicle';
+import { courseBlock, coursePath, courseTargets, sailCourse } from './course';
+import { AIM_LABEL, BOLD_LABEL, coastTargets, CRUISE, cruiseBlock, cruiseUntil, defaultOrders, endCruise, forecast, LEAD_LABEL, POSITION_WORDS, reckoningWords, runCruise, startCruise } from './cruise';
 import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lords';
 import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding } from './land';
 import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
@@ -51,6 +53,13 @@ export type Action =
   | { t: 'voyage_on' }
   | { t: 'raid' }
   | { t: 'scout' }
+  | { t: 'course'; to: string }
+  | { t: 'cruise_plan' }
+  | { t: 'cruise_set'; key: 'coast' | 'days' | 'aim' | 'bold' | 'lead' | 'then' | 'pos'; value: string }
+  | { t: 'cruise_go' }
+  | { t: 'cruise_cancel' }
+  | { t: 'cruise_on' }
+  | { t: 'cruise_end' }
   | { t: 'swear'; lord: string; how: 'first' | 'open' | 'secret' }
   | { t: 'renounce'; lord: string }
   | { t: 'buy_land' }
@@ -94,6 +103,7 @@ export type Action =
   | { t: 'wall_order'; order: WallOrder }
   | { t: 'wall_deploy'; what: 'sworn' | 'reserve' | 'pos'; value: string }
   | { t: 'duel_auto' }
+  | { t: 'fight_end' }
   | { t: 'yield' }
   | { t: 'order'; order: Order }
   | { t: 'position'; pos: Position }
@@ -122,7 +132,7 @@ export interface ActionOption {
   group: string;
 }
 
-export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
+export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'cruise' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
 
 export interface View {
   screen: Screen;
@@ -340,6 +350,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'duel': {
       const d = (p as { duel: import('./state').DuelState }).duel;
+      // the last blow lands, and he stands there and sees it before the aftermath (playtest 6)
+      if (d.over) return [opt('', { t: 'fight_end' }, 'Continue', true, undefined, d.over === 'won' || d.over === 'foe_yielded' ? 'He is down' : d.over === 'parted' ? 'It is over, and neither of you won it' : 'It is over')];
       // the second form (docs/FRAME-COMBAT-2.md, revision 2): a move says what it does and costs, not what it will do
       if (d.bout) {
         const out = BOUT_MOVES.map((m) => {
@@ -363,6 +375,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'battle': {
       const b = (p as { battle: import('./state').BattleState }).battle;
+      if (b.over) return [opt('', { t: 'fight_end' }, 'Continue', true, undefined, b.over === 'won' ? 'The field is yours' : b.over === 'lost' ? 'Back to the ships' : 'Both sides draw off')];
       // the second form (docs/FRAME-COMBAT-2.md): deploy, then answer what they show you, and see the numbers first
       if (b.wall) {
         const w = b.wall;
@@ -402,6 +415,26 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       for (const pos of ['front', 'wall', 'rear'] as Position[]) if (pos !== b.position && !b.heroDown) out.push(opt('Your place', { t: 'position', pos }, `Move to: ${POSITION_NAMES[pos]}`));
       out.push(...hostOptions(b));
       out.push(opt('Other', { t: 'battle_auto' }, 'Let the men handle it'));
+      return out;
+    }
+    case 'cruise': {
+      const o = state.cruisePlan!;
+      const mark = (on: boolean, label: string) => (on ? `✓ ${label}` : label);
+      const out: ActionOption[] = [];
+      for (const c of Object.values(content.coasts)) {
+        const t = coastTargets(state, content, c.id);
+        if (!t.length) continue;
+        out.push(opt('The coast', { t: 'cruise_set', key: 'coast', value: c.id }, mark(o.coast === c.id, c.name), true, undefined, `${t.map((id) => content.places[id]!.name).join(', ')}`));
+      }
+      for (const d of CRUISE.lengths) out.push(opt('How long', { t: 'cruise_set', key: 'days', value: String(d) }, mark(o.days === d, d ? `${d} days` : 'The rest of the summer'), true, undefined, d ? undefined : `Until about ${formatDate(cruiseUntil(state, 0))}`));
+      for (const a of ['silver', 'balance', 'captives'] as const) out.push(opt('What to take', { t: 'cruise_set', key: 'aim', value: a }, mark(o.aim === a, AIM_LABEL[a]), true, undefined, a === 'captives' ? 'Slower and louder; worth silver at the slave markets' : a === 'silver' ? 'Strip the houses' : undefined));
+      for (const b of ['careful', 'bold'] as const) out.push(opt('How bold', { t: 'cruise_set', key: 'bold', value: b }, mark(o.bold === b, BOLD_LABEL[b]), true, undefined, b === 'careful' ? `Scout every place; leave it alone if they would field more than ${CRUISE.nerve.careful} of them to each of yours. Leave before the countryside comes` : `Raid unless they would field ${CRUISE.nerve.bold} of them to each of yours. Stay longer at the plunder`));
+      for (const l of ['all', 'close', 'none'] as const) out.push(opt('Which fights you lead', { t: 'cruise_set', key: 'lead', value: l }, mark(o.lead === l, LEAD_LABEL[l]), true, undefined, l === 'all' ? 'You fight every raid yourself' : l === 'close' ? `You are called when they could field ${CRUISE.close} of them to each of yours, or more` : 'The men fight; you are where your place says you are'));
+      for (const pos of ['front', 'wall', 'rear'] as Position[]) out.push(opt('Where you stand when the men fight', { t: 'cruise_set', key: 'pos', value: pos }, mark(state.position === pos, POSITION_WORDS[pos]), true, undefined, pos === 'front' ? 'More fame; you bleed first' : pos === 'rear' ? 'Little danger; less fame, and the men notice' : undefined));
+      for (const th of ['home', 'stay'] as const) out.push(opt('Afterwards', { t: 'cruise_set', key: 'then', value: th }, mark(o.then === th, th === 'home' ? 'Sail home' : 'Stay on the coast'), true));
+      const block = cruiseBlock(state, content);
+      out.push(opt('', { t: 'cruise_go' }, 'Set out', !block, block ?? undefined, block ? undefined : reckoningWords(forecast(state, content, o))));
+      out.push(opt('', { t: 'cruise_cancel' }, 'Not now'));
       return out;
     }
     case 'voyage': return [opt('', { t: 'voyage_on' }, 'Sail on')];
@@ -532,6 +565,21 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         else out.push(opt('Season', { t: 'end_season' }, 'Haul up the ship for the winter'));
         return out;
       }
+      // a-viking along a coast on standing orders (docs/FRAME-PACING.md)
+      if (state.cruise) {
+        const c = state.cruise;
+        const left = Math.max(0, c.until - state.day);
+        out.push(opt('Sail', { t: 'cruise_on' }, `Carry on along ${content.coasts[c.orders.coast]?.name ?? 'the coast'}`, true, undefined, `${plural(left, 'day')} left of your orders; your men call you when they need you`));
+        out.push(opt('Sail', { t: 'cruise_end' }, 'Break off, and take stock', true, undefined, c.orders.then === 'home' ? 'Then the road home' : 'Stay where you are'));
+      } else if (state.ships.length && state.crew.men >= 6 && defaultOrders(state, content)) {
+        out.push(opt('Sail', { t: 'cruise_plan' }, 'Go a-viking along a coast', true, undefined, 'Give your orders; the men sail, scout and raid, and call you when they need you'));
+      }
+      // a course set and broken off: hold it (docs/FRAME-PACING.md)
+      if (state.course && state.ships.length && state.course !== at) {
+        const c = coursePath(state, content, at, state.course);
+        const why = c ? courseBlock(state, content, c.path[0]!) : null;
+        if (c) out.push(opt('Sail', { t: 'course', to: state.course }, `Hold your course for ${content.places[state.course]!.name}`, !why, why ?? undefined, `About ${c.days} days, ${c.path.length === 1 ? 'one leg' : `${c.path.length} legs`}; stops if anything happens`));
+      }
       if (state.ships.length) {
         for (const r of routes(state, content, at)) {
           const short = state.provisions < mouths(state) * r.days;
@@ -584,6 +632,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         out.push(opt('Plunder', { t: 'divide', how: 'generous' }, 'Share it out with an open hand', true, undefined, 'Less for you; the men remember'));
       }
       if (tier !== 'hostile') out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
+      for (const c of courseTargets(state, content)) {
+        const short = state.provisions < mouths(state) * c.days;
+        const why = courseBlock(state, content, coursePath(state, content, at, c.to)!.path[0]!);
+        out.push(opt('Course', { t: 'course', to: c.to }, `Set a course for ${content.places[c.to]!.name}`, !why, why ?? undefined, `About ${c.days} days, ${c.legs} legs${short ? '. Not enough food for the whole road' : ''}; stops if anything happens`));
+      }
       out.push(...lordOptions(state, content, at), ...landOptions(state, content, at));
       // rumours of far places, and expeditions to them (FRAME-FOUNDATION §1)
       if (tier !== 'hostile' && listenable(state, content, at)) out.push(opt('Here', { t: 'listen' }, 'Stand the old sailors a round, and listen', state.silver >= LISTEN_COST, `You need ${formatSilver(LISTEN_COST)} for the ale.`, `${formatSilver(LISTEN_COST)}; a day; rumours of far places`));
@@ -673,6 +726,12 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
     if (!state.pending && lines.length) state.pending = { t: 'report', title, lines, next, art: art?.key, laughter: art?.laughter };
   };
+  // the road and the coast: what happened before a scene broke in is told when the scene is done (playtest 6)
+  const reportAfter = (title: string, lines: string[]) => {
+    if (!lines.length) return;
+    if (!state.pending) report(title, lines, undefined, { key: 'open_sea' });
+    else state.after = { title, lines };
+  };
 
   switch (action.t) {
     case 'continue': {
@@ -709,15 +768,53 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       else if (next) open(state, next, content);
       break;
     }
+    case 'cruise_plan':
+      state.cruisePlan = defaultOrders(state, content)!;
+      state.pending = { t: 'cruise' };
+      break;
+    case 'cruise_set': {
+      const o = state.cruisePlan!;
+      if (action.key === 'days') o.days = Number(action.value);
+      else if (action.key === 'pos') state.position = action.value as Position;
+      else (o as unknown as Record<string, string>)[action.key] = action.value;
+      state.pending = { t: 'cruise' };
+      break;
+    }
+    case 'cruise_cancel':
+      state.pending = null;
+      delete state.cruisePlan;
+      break;
+    case 'cruise_go': {
+      const o = state.cruisePlan!;
+      state.pending = null;
+      delete state.cruisePlan;
+      startCruise(state, content, o);
+      reportAfter(content.coasts[o.coast]!.name, runCruise(state, content, rng));
+      break;
+    }
+    case 'cruise_on':
+      reportAfter(content.coasts[state.cruise!.orders.coast]!.name, runCruise(state, content, rng));
+      break;
+    case 'cruise_end':
+      reportAfter(content.coasts[state.cruise!.orders.coast]!.name, endCruise(state, content, rng, 'You break off and take stock.'));
+      break;
+    case 'course': {
+      state.course = action.to;
+      reportAfter('At sea', sailCourse(state, content, rng));
+      break;
+    }
     case 'sail':
     case 'follow':
     case 'voyage_on': {
-      if (action.t === 'sail') startVoyage(state, content, action.to);
+      if (action.t === 'sail') { delete state.course; startVoyage(state, content, action.to); }
       if (action.t === 'follow') startVoyage(state, content, state.service?.route[0] ?? serviceHome(state), true);
       const r = runVoyage(state, content, rng);
+      // a leg of a course, interrupted and finished: the course goes on unless something else has the stage
+      if (action.t === 'voyage_on' && r.arrived && state.course && !state.pending) r.lines.push(...sailCourse(state, content, rng));
+      if (action.t === 'voyage_on' && r.arrived && state.cruise && !state.pending) r.lines.push(...runCruise(state, content, rng));
       const talk = banter(state, content, rng, 'sea', 0.6);
       if (talk) r.lines.push(talk);
-      report('At sea', r.lines, undefined, { key: 'open_sea' });
+      reportAfter('At sea', r.lines);
       break;
     }
     case 'take_share': report('The share-out', serviceShare(state, content, rng)); break;
@@ -998,7 +1095,12 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       else if (action.t === 'duel_auto' && d.bout) fightOutBout(d, rng, true);
       else if (action.t === 'duel_auto') fightOut(d, duelInstinct, rng, true);
       else resolveExchange(d, action.move, habitPolicy(d, 'foe', rng), rng);
-      if (d.over) finishDuel(state, content, rng, d);
+      break;
+    }
+    case 'fight_end': {
+      const pd = state.pending;
+      if (pd?.t === 'duel' && pd.duel.over) finishDuel(state, content, rng, pd.duel);
+      else if (pd?.t === 'battle' && pd.battle.over) finishBattle(state, content, rng, pd.battle);
       break;
     }
     case 'wall_deploy':
@@ -1017,7 +1119,6 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       } else if (action.t === 'battle_auto') { if (b.host) fightOutHost(b, battleAuto, rng); else fightOutBattle(b, battleAuto, rng); }
       else if (b.host) hostRound(b, action.order, rng);
       else resolveRound(b, action.order, doctrinePolicy(b, 'them', rng), rng);
-      if (b.over) finishBattle(state, content, rng, b);
       break;
     }
     case 'reserve':
@@ -1058,6 +1159,12 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
     if (b.state !== 'open' || b.due > state.day) continue;
     breakBoast(state, content, b);
     state.pending = { t: 'report', title: 'A boast unkept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'The year has turned, and it is not done. Men remember a boast longer than a deed.'] };
+    return;
+  }
+  // what the road or the coast held, told after the scene that broke in on it
+  if (state.after) {
+    state.pending = { t: 'report', title: state.after.title, lines: state.after.lines, art: 'open_sea' };
+    delete state.after;
     return;
   }
   // news that has come into this port ahead of him

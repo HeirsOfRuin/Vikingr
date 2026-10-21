@@ -70,3 +70,73 @@ Measure with `measure:pace` before and after. The target: no year after 835 abov
 ## Decisions needed
 - Approve 1 + 2?
 - **Quiet years:** should the auto-played summer be allowed to kill the hero? Recommended: yes, as the same fights would. Otherwise it's a safe skip, and players would skip everything.
+
+---
+
+## Josh's answers (playtest 6)
+- **On options 1 and 2:** "1. Yes. 2. Yes, but I want to be careful it isn't just a tap to simulate the year and suddenly you're dead. There's no investment."
+- **The end of a fight:** "Battles and duels immediately switch to the after-battle screen (looting, etc.) once the winning blow is struck, and it can be disorienting."
+- **Region raiding:** "The ports feel few and too many at once. What if we looked at a region raiding mechanic where you could set to raiding a specific region/coastline under certain settings for a set amount of days, aiming for a certain ratio of loot and captives? Then visit specific ports afterwards."
+
+His region idea and option 2 are the same machinery, so they are built as one: **going a-viking along a coast on standing orders.** A quiet summer is a coast raid with "the rest of the summer" and "sail home afterwards".
+
+## Built
+
+**1. The end of a fight.** The last blow lands and the field stays on screen, with the outcome in a box at the top ("They break. The field is yours."). Continue goes on to the plunder or the report. The same applies to single combat.
+
+**2. Set a course.**
+- Tap any known port on the Map: "Set a course for X". It sails by the shortest known road, leg by leg, through the same voyage engine.
+- It stops for anything that happens: a scene, a fight, a storm. "Hold your course" then picks it up.
+- If there's not enough food for the next leg, the button is greyed out and says so.
+- Reports that a scene interrupted are now told after the scene. Before, a storm's losses could vanish behind a sea event.
+
+**3. A-viking along a coast.** The orders screen asks:
+- **the coast** (Ireland, the Hebrides and the north, the Irish Sea, Northumbria, the south of England, Frisia, Frankia and the Seine, the Baltic), with the places you know listed;
+- **how long:** 10, 20 or 30 days, or the rest of the summer;
+- **what to take:** silver, both, or captives;
+- **how bold:**
+  - careful scouts every place, leaves it alone above 0.9 of them to each of yours, and leaves before the countryside comes;
+  - bold attacks up to 1.5 of them to each of yours;
+- **which fights you lead:** every fight; the close ones (0.6 to each of yours, or more); or none;
+- **where you stand** when the men fight;
+- **afterwards:** sail home, or stay on the coast.
+
+**Answering "no investment":**
+- **The reckoning before you go.** The "Set out" button carries your men's reckoning: the same summer run 20 times on the same engine, with every fight left to the men. It reads, for example: "none of 20 summers like it killed a captain in your place. The rest brought home about 16 pounds and 9 captives, for 8 men lost." You decide with the risk in front of you.
+- **You choose which fights are yours.** "Every fight" means you fight each raid yourself: the cruise stops on the battle screen.
+- **It stops for you:**
+  - blood below 40%;
+  - a third of your men gone;
+  - full holds;
+  - no food;
+  - every scene, as always.
+- **Nothing is skipped silently.** Each day that mattered is in the report: "Dyflinn. Taken: 3 pounds 140 coins, 4 captives; 2 men lost." or "Armagh. About 53 of them against your 46. You leave it alone." Death, if it comes, comes in a fight whose odds were on the screen when you set out.
+
+## Measured (`npm run measure:pace`, 30 freedman raider lives, the same seeds; `--orders` goes a-viking on standing orders)
+
+| Year | Taps, the old way | Taps on orders | Sea legs, old way | Sea legs on orders |
+|---|---|---|---|---|
+| 836 | 312 | 202 | 21 | 6 |
+| 840 | 355 | 238 | 20 | 7 |
+| 845 | 379 | 275 | 34 | 7 |
+| 850 | 465 | 224 | 33 | 5 |
+| **835–850 in all** | **5,750** | **3,640** | | |
+
+- **37% fewer taps over 835–850**, with the same new scenes a year.
+- **Short of the estimate.** The frame expected about 1,500. The sailing went as planned (legs down by three quarters). What is left is not sailing. Per year after 836, on orders:
+  - 63 Continue taps on reports;
+  - 24 scene choices;
+  - 20 taps deploying the wall (3 a fight);
+  - 20 taps of the bot's own trading, which a player can skip.
+
+  A player who doesn't trade should see about 150–200 taps a year.
+- **Further cuts, if wanted:**
+  - "Deploy as last time": one tap instead of three, about 13 a year;
+  - folding a scene's result into the next screen instead of a separate report.
+
+  Both are small. Neither is built yet.
+- **Two loops found and fixed while measuring:**
+  - "Set a course" with too little food for the first leg did nothing, silently, and could be tapped forever;
+  - the bots fell back on buttons that pass no time.
+
+  Both buttons are now greyed out with the reason.

@@ -226,7 +226,7 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
         {(
           <>
             {tab === 'now' && <NowView content={content} map={map} state={state} onAct={onAct} />}
-            {tab === 'map' && <div class="screen"><h2>The known world</h2><MapView content={content} map={map} state={state} /></div>}
+            {tab === 'map' && <div class="screen"><h2>The known world</h2><MapView content={content} map={map} state={state} onAct={onAct} /></div>}
             {tab === 'hero' && <div class="screen"><HeroPanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'crew' && <div class="screen"><CrewPanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'home' && <div class="screen"><HomePanel content={content} state={state} onAct={onAct} /></div>}

@@ -1,11 +1,13 @@
 // Pacing (docs/FRAME-PACING.md): taps a year, scenes a year, new scenes a year, and taps per scene, 830-850.
 // 30 freedman raider lives. The drag shows as taps per new scene climbing year on year.
 import { loadContent } from './content-loader';
-import { Bot } from './bot-lib';
+import { Bot, BOT_OPTS } from './bot-lib';
 import { act, newGame, screenOf } from '../src/engine/index';
 import { RngCursor, seedRng } from '../src/engine/rng';
 import { dateOf } from '../src/engine/calendar';
 const c = loadContent();
+// --orders: the same lives, going a-viking on standing orders
+BOT_OPTS.cruise = process.argv.includes('--orders');
 const per: Record<number, { acts: number; scenes: number; unique: number; dated: number; lives: number; legs: number; choice: number }> = {};
 const isDated = (id: string) => /^(sp_|fr_|do_|ir_|sn_|cw_|lg_|ru_|j_|y_|c_|l_|k_|sk_|b_|i_)/.test(id) || /^(83\d|84\d)/.test(id);
 for (let i = 0; i < 30; i++) {

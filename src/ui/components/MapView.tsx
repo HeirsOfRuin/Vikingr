@@ -1,3 +1,5 @@
+import { listActions, type Action } from '../../engine/index';
+import { Actions } from './Actions';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ContentBundle } from '../../content/schema';
 import type { GameState } from '../../engine/state';
@@ -31,7 +33,7 @@ function fleetAt(state: GameState, content: ContentBundle): [number, number] {
   return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
 }
 
-export function MapView({ content, map, state, mini }: Props) {
+export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: (a: Action) => void }) {
   const box = useRef<HTMLDivElement>(null);
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 360, h: 300 });
@@ -147,6 +149,11 @@ export function MapView({ content, map, state, mini }: Props) {
               {pickedPlace.active && pickedPlace.kind !== 'home' && <p class="small sans"><span class={`pill standing-${tierAt(state, content, pickedPlace.id)}`}>{TIER_NAMES[tierAt(state, content, pickedPlace.id)]}</span> {TIER_HINTS[tierAt(state, content, pickedPlace.id)]}</p>}
               {!pickedPlace.active && <p class="muted small sans">Beyond your reach for now. (Later phases.)</p>}
               {visits(pickedPlace.id).length > 0 && <p class="muted small sans">You were here: {visits(pickedPlace.id).join(', ')}</p>}
+              {onAct && (() => {
+                // a course for this place, if one can be set from where he is (docs/FRAME-PACING.md)
+                const o = listActions(state, content).find((x) => (x.action.t === 'course' || x.action.t === 'sail') && (x.action as { to: string }).to === pickedPlace.id);
+                return o ? <Actions options={[{ ...o, group: '' }]} onAct={onAct} /> : null;
+              })()}
               </>)}
             </>
           ) : (

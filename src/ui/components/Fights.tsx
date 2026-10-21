@@ -39,7 +39,7 @@ function BoutView({ content, d, options, onAct }: { content: ContentBundle; d: D
         <Fighter s={d.foe} />
       </div>
       <div class="card sans small">
-        <div><b>{readLine(callName(d.foe.name), b.read, b.shown.map((m) => FOE_TELL[m]))}</b>{b.foeOff ? ' He is off balance.' : ''}</div>
+        {!d.over && <div><b>{readLine(callName(d.foe.name), b.read, b.shown.map((m) => FOE_TELL[m]))}</b>{b.foeOff ? ' He is off balance.' : ''}</div>}
         {b.foeNext && <div class="muted">You can read him further: after that, he means to {FOE_NEXT[b.foeNext]}.</div>}
         {b.heroOff && <div>You are off balance: your next blow lands soft, and his lands hard.</div>}
         {holm && <div class="muted">The cloak: you are {BOUT.edge - b.heroEdge} step{BOUT.edge - b.heroEdge === 1 ? '' : 's'} from the edge; he is {BOUT.edge - b.foeEdge}.</div>}
@@ -54,6 +54,11 @@ function BoutView({ content, d, options, onAct }: { content: ContentBundle; d: D
 }
 
 export function DuelView({ content, d, options, onAct }: { content: ContentBundle; d: DuelState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  if (d.over) return <div><Outcome text={DUEL_OUTCOME[d.over] ?? ''} /><DuelBody content={content} d={d} options={options} onAct={onAct} /></div>;
+  return <DuelBody content={content} d={d} options={options} onAct={onAct} />;
+}
+
+function DuelBody({ content, d, options, onAct }: { content: ContentBundle; d: DuelState; options: ActionOption[]; onAct: (a: Action) => void }) {
   if (d.bout) return <BoutView content={content} d={d} options={options} onAct={onAct} />;
   const fc = foeForecast(d);
   const foe = content.fighters[d.foeId];
@@ -114,7 +119,7 @@ function WallView({ content, b, options, onAct }: { content: ContentBundle; b: B
             <WallSide name={b.them.name} men={b.them.men} start={b.them.start} cohesion={b.them.morale} stamina={w.themStamina} them />
           </div>
           <div class="card sans small">
-            <div><b>{readLine('They', w.read, w.shown.map((x) => INTENT_TEXT[x].replace(/^they /, '')))}</b></div>
+            {!b.over && <div><b>{readLine('They', w.read, w.shown.map((x) => INTENT_TEXT[x].replace(/^they /, '')))}</b></div>}
             {b.position === 'rear' && !b.heroDown && w.read === 'sure' && w.guile <= 1 && <div class="muted">From behind the wall you can see what comes after: {INTENT_SHORT[w.next]}.</div>}
             {w.leader && <div>{w.leader.charAt(0).toUpperCase() + w.leader.slice(1)}: {w.leaderDown ? 'down' : 'standing'}. {w.resolve === 'levy' ? 'A levy: it breaks early, and runs if he falls.' : w.resolve === 'hird' ? 'His own sworn men: they will close round him.' : 'Fighting men: they hold until their spirit goes.'}</div>}
             <div>Round {b.round + 1} of {w.maxRounds}. Ground: {groundWord}.{w.reserveMen > 0 && !w.reserveIn ? ` Reserve: ${w.reserveMen} men, waiting.` : ''}</div>
@@ -180,7 +185,19 @@ function HostCard({ b }: { b: BattleState }) {
   );
 }
 
+/** The moment the fight ends: said plainly, on the field, before the aftermath (playtest 6). */
+function Outcome({ text }: { text: string }) {
+  return <div class="card outcome"><b>{text}</b></div>;
+}
+const BATTLE_OUTCOME: Record<string, string> = { won: 'They break. The field is yours.', lost: 'Your line breaks. It is over.', parted: 'Both lines draw off. Nobody holds the field.' };
+const DUEL_OUTCOME: Record<string, string> = { won: 'He goes down, and stays down.', foe_yielded: 'He yields.', lost: 'You go down.', yielded: 'You step off the cloak.', parted: 'It ends with neither of you beaten.', dead: 'You go down.' };
+
 export function BattleView({ content, b, options, onAct }: { content: ContentBundle; b: BattleState; options: ActionOption[]; onAct: (a: Action) => void }) {
+  if (b.over) return <div><Outcome text={BATTLE_OUTCOME[b.over] ?? ''} /><FightBody content={content} b={b} options={options} onAct={onAct} /></div>;
+  return <FightBody content={content} b={b} options={options} onAct={onAct} />;
+}
+
+function FightBody({ content, b, options, onAct }: { content: ContentBundle; b: BattleState; options: ActionOption[]; onAct: (a: Action) => void }) {
   if (b.wall) return <WallView content={content} b={b} options={options} onAct={onAct} />;
   const fc = enemyForecast(b);
   const likely = [...ORDERS].filter((o) => fc[o] > 0).sort((x, y) => fc[y] - fc[x]).slice(0, 2);

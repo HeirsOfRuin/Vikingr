@@ -21,13 +21,13 @@ import { holdingAt } from '../src/engine/land';
 import { SEAT_DEF } from '../src/engine/rule';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
-export const BOT_OPTS = { scout: true };
+export const BOT_OPTS = { scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false };
 
 export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
 
 // instant actions (the hoard, the wall, shops) are deliberate choices, never a fallback: they don't move time
-const INSTANT = ['shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint', 'make_ring', 'cut_ring'];
+const INSTANT = ['cruise_plan', 'course', 'shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint', 'make_ring', 'cut_ring'];
 const fallback = (opts: ActionOption[]) => (opts.find((o) => o.enabled && !INSTANT.includes(o.action.t)) ?? opts.find((o) => o.enabled)!).action;
 const find = (opts: ActionOption[], pred: (a: Action) => boolean) => opts.find((o) => o.enabled && pred(o.action));
 
@@ -71,6 +71,9 @@ export class Bot {
   traded = new Set<string>();
   /** Places looked at and left alone this summer ("year:place"). */
   passed = new Set<string>();
+  /** The day the orders could not be given (holds full, hurt, no food), and the day they last were. */
+  noPlan = -1;
+  planned = '';
   bought = new Map<number, number>();
   constructor(public policy: Policy, public rng: RngCursor) {}
 
@@ -100,13 +103,25 @@ export class Bot {
         return enabled[this.rng.int(enabled.length)]!.action;
       }
       case 'report': case 'voyage': return enabled[0]!.action;
+      case 'cruise': {
+        // orders: the coast the plan opens on (the one he knows most of), the rest of the summer, home after
+        const o = state.cruisePlan!;
+        if (o.lead !== 'none') return { t: 'cruise_set', key: 'lead', value: 'none' };
+        if (o.bold !== (this.policy === 'coward' ? 'careful' : 'bold') && this.policy !== 'raider') return { t: 'cruise_set', key: 'bold', value: this.policy === 'coward' ? 'careful' : 'bold' };
+        if (!pick((a) => a.t === 'cruise_go')) { this.noPlan = state.day; return { t: 'cruise_cancel' }; }
+        return { t: 'cruise_go' };
+      }
       case 'duel': {
+        const fe = pick((a) => a.t === 'fight_end');
+        if (fe) return fe;
         const y = pick((a) => a.t === 'yield');
         const d = state.pending!.t === 'duel' ? state.pending!.duel : null;
         if (y && this.policy !== 'reckless' && d && d.hero.hp < d.hero.hpMax * 0.35) return y;
         return pick((a) => a.t === 'duel_auto')!;
       }
       case 'battle': {
+        const fe = pick((a) => a.t === 'fight_end');
+        if (fe) return fe;
         const b = state.pending!.t === 'battle' ? state.pending!.battle : null;
         if (b?.wall?.phase === 'deploy') {
           const w = b.wall;
@@ -228,6 +243,12 @@ export class Bot {
       } else return raid;
     }
     this.visited.add(at);
+    // standing orders (docs/FRAME-PACING.md): carry on, or plan the summer
+    if (BOT_OPTS.cruise) {
+      const on = pick((a) => a.t === 'cruise_on');
+      if (on) return on;
+      if (doy < LATE_SEASON_DOY - 40 && this.noPlan !== state.day && this.planned !== `${state.day}`) { const plan = pick((a) => a.t === 'cruise_plan'); if (plan && this.policy !== 'homebody') { this.planned = `${state.day}`; return plan; } }
+    }
     // lords and land (docs/FRAME-WORLD.md §C-D): the careful swear openly; the reckless take a second oath and a fort
     if (this.policy !== 'homebody') {
       const sw = pick((a) => a.t === 'swear' && a.how === (this.policy === 'reckless' ? 'secret' : 'first')) ?? pick((a) => a.t === 'swear' && a.how === 'first');

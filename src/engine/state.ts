@@ -221,6 +221,7 @@ export type Pending =
   | { t: 'plunder'; plunder: PlunderState }
   | { t: 'shop'; shops: ('smith' | 'market' | 'shipwright')[] }
   | { t: 'trade' }
+  | { t: 'cruise' }
   | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string };
 
 export interface PlaceState {
@@ -352,4 +353,11 @@ export interface GameState {
   legends?: Record<string, number>;
   /** The lords who last cast him out, for the scene that says so. */
   castBy?: string[];
+  /** A course set for a far port (docs/FRAME-PACING.md): sailed leg by leg until something happens. */
+  course?: string;
+  /** A report held back while a scene had the stage: told when it is done. */
+  after?: { title: string; lines: string[] };
+  /** Raiding a coast on standing orders (docs/FRAME-PACING.md): the plan being drawn up, and the cruise under way. */
+  cruisePlan?: import('./cruise').CruiseOrders;
+  cruise?: import('./cruise').CruiseState;
 }

@@ -90,6 +90,7 @@ describe('hosts', () => {
     let s = captain();
     startHost(s, content, { title: 'T', foe: 'frisian_levy', terrain: 'field', context: 'scene', place: null, foeMen: 20, wings: [{ name: 'L', men: 200, foe_men: 200 }] });
     s = act(content, s, { t: 'battle_auto' });
+    s = act(content, s, { t: 'fight_end' });
     expect(s.crew.men).toBeGreaterThan(30 - 25);
   });
 });

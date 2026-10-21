@@ -321,6 +321,10 @@ export const lordDef = z.object({
 }).strict();
 export type LordDef = z.infer<typeof lordDef>;
 
+/** A coast to go a-viking along on standing orders (docs/FRAME-PACING.md). */
+export const coastDef = z.object({ id, name: z.string(), regions: z.array(z.string()).min(1), desc: z.string() }).strict();
+export type CoastDef = z.infer<typeof coastDef>;
+
 export const injury = z.object({ id, name: z.string(), desc: z.string(), days: z.number().int().optional(), attrs: z.record(z.string(), z.number()).optional(), deed: z.boolean().optional() }).strict();
 export type Injury = z.infer<typeof injury>;
 
@@ -428,4 +432,5 @@ export interface ContentBundle {
   hostages: { kinds: Record<string, HostageKind>; names: z.infer<typeof hostageNames> };
   chronicle: { events: Record<string, ChronEvent>; raiders: Record<string, ChronRaider> };
   lords: Record<string, LordDef>;
+  coasts: Record<string, CoastDef>;
 }

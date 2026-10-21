@@ -21,8 +21,8 @@ const clear = (s: GameState) => {
   for (;;) {
     const sc = screenOf(s);
     if (sc === 'scene' || sc === 'report') s = doFirst(s, () => true);
-    else if (sc === 'duel') s = doFirst(s, (a) => a.t === 'duel_auto' || a.t === 'yield');
-    else if (sc === 'battle') s = doFirst(s, (a) => a.t === 'battle_auto');
+    else if (sc === 'duel') s = doFirst(s, (a) => a.t === 'fight_end' || a.t === 'duel_auto' || a.t === 'yield');
+    else if (sc === 'battle') s = doFirst(s, (a) => a.t === 'fight_end' || a.t === 'battle_auto');
     else return s;
   }
 };
@@ -53,7 +53,7 @@ describe('engine', () => {
     const day = s.day;
     s = doFirst(s, (a) => a.t === 'sail' && a.to === 'shetland');
     s = clear(s);
-    while (screenOf(s) === 'voyage' || screenOf(s) === 'battle') s = clear(doFirst(s, (a) => a.t === 'voyage_on' || a.t === 'battle_auto'));
+    while (screenOf(s) === 'voyage' || screenOf(s) === 'battle') s = clear(doFirst(s, (a) => a.t === 'voyage_on' || a.t === 'fight_end' || a.t === 'battle_auto'));
     expect(s.day).toBeGreaterThan(day);
     if (s.hero.alive) expect(s.at).toBe('shetland');
   });

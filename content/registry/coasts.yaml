@@ -1,0 +1,10 @@
+# Coasts a captain can go a-viking along on standing orders (docs/FRAME-PACING.md): each is a few regions of the
+# map, and its raidable places are the ones he knows.
+- { id: ireland, name: "The coast of Ireland", regions: [Ireland, Ulster, Munster], desc: "Churches and kings' halls from Ulster to Munster." }
+- { id: scotland, name: "The Hebrides and the north", regions: [The Hebrides, Wester Ross, Pictland], desc: "Island monasteries and the Pictish shore." }
+- { id: irish_sea, name: "The Irish Sea", regions: [The Irish Sea, Galloway, Strathclyde], desc: "Man, Galloway and the Clyde." }
+- { id: northumbria, name: "Northumbria", regions: [Northumbria], desc: "The rich monasteries of the north-east, and York." }
+- { id: south_england, name: "The south of England", regions: [Kent, Mercia, East Anglia, Wessex], desc: "The Thames mouth and the market towns." }
+- { id: frisia, name: "Frisia", regions: [Frisia], desc: "The Rhine mouths and their markets." }
+- { id: frankia, name: "Frankia and the Seine", regions: [Frankia, The Seine], desc: "The Loire mouth and the abbeys of the Seine." }
+- { id: baltic, name: "The Baltic", regions: [The Baltic], desc: "The rich island of Gotland, and the eastern shore." }

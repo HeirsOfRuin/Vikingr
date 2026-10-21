@@ -103,6 +103,18 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
   }
   if (p?.t === 'duel') return <div class="screen"><DuelView content={content} d={p.duel} options={options} onAct={onAct} /></div>;
   if (p?.t === 'battle') return <div class="screen"><BattleView content={content} b={p.battle} options={options} onAct={onAct} /></div>;
+  if (p?.t === 'cruise') {
+    return (
+      <>
+        <Art content={content} state={state} art={{ key: 'open_sea' }} />
+        <div class="screen">
+          <h2>Orders for the coast</h2>
+          <p>You tell the men where, how long, what to take and how far to push it. They sail, scout and raid, and they come and find you whenever something needs you: a fight you said you would lead, a bad wound, heavy losses, a stranger on the beach.</p>
+          <Actions options={options} onAct={onAct} />
+        </div>
+      </>
+    );
+  }
   if (p?.t === 'trade') {
     const place = content.places[state.at!]!;
     const wants = place.trade!.dear.map((g) => content.goods[g]!.name.toLowerCase());
@@ -179,7 +191,8 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
       <div class={art ? 'screen art-led' : 'screen'}>
         {head}
         {(screen === 'place' || screen === 'voyage') && <MapView content={content} map={map} state={state} mini />}
-        <Actions options={options} onAct={onAct} />
+        <Actions options={options.filter((o) => o.group !== 'Course')} onAct={onAct} />
+        {options.some((o) => o.group === 'Course') && <p class="muted small sans">To sail further than one leg, tap a port on the Map and set a course for it.</p>}
       </div>
     </>
   );

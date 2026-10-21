@@ -44,6 +44,7 @@ describe('the Frisian Road', () => {
     expect(b.host!.wings.map((w) => w.name)).toEqual(["Ubbi's Danes", "Horik's hersirs"]);
     expect(b.context).toBe('raid');
     s = act(content, s, { t: 'battle_auto' });
+    s = act(content, s, { t: 'fight_end' });
     // won: the sack begins (plunder rounds against the alarm); lost or drawn: the report
     expect(['plunder', 'report']).toContain(s.pending?.t);
   });

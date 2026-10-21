@@ -27,7 +27,7 @@ describe('a sullen crew', () => {
     const start = s.pending as unknown as Pending;
     expect(start.t === 'battle' && start.battle.log.some((l) => /sullen/.test(l))).toBe(true);
     let g = 0;
-    while ((s.pending as Pending | null)?.t === 'battle' && g++ < 40) s = act(content, s, { t: 'battle_auto' });
+    while ((s.pending as Pending | null)?.t === 'battle' && g++ < 40) s = act(content, s, (s.pending as Pending & { battle: { over: unknown } }).battle.over ? { t: 'fight_end' } : { t: 'battle_auto' });
     expect(s.stats.battlesWon).toBeGreaterThan(0);
   });
 

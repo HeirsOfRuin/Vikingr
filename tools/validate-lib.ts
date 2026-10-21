@@ -246,6 +246,12 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   info.push(`${active.length} active places, ${Object.keys(content.places).length - active.length} on the map for later phases`);
 
   // backgrounds
+  // coasts (docs/FRAME-PACING.md): every region named is a region on the map, with somewhere to raid in it
+  const regions = new Set(Object.values(content.places).map((p) => p.region));
+  for (const c of Object.values(content.coasts)) for (const r of c.regions) {
+    if (!regions.has(r)) errors.push(`coast ${c.id}: no place is in region "${r}"`);
+    else if (!Object.values(content.places).some((p) => p.region === r && p.raid)) warnings.push(`coast ${c.id}: nothing to raid in "${r}"`);
+  }
   for (const b of Object.values(content.backgrounds)) {
     sceneRef(`background ${b.id}`, b.start_scene);
     if (!content.ships[b.ship]) errors.push(`background ${b.id}: unknown ship type "${b.ship}"`);
