@@ -10,6 +10,7 @@ const runs = Number(process.argv.find((a) => a.startsWith('--runs='))?.slice(7) 
 const years = Number(process.argv.find((a) => a.startsWith('--years='))?.slice(8) ?? 10);
 const policies: Policy[] = ['raider', 'coward'];
 const only = process.argv.find((a) => a.startsWith('--bg='))?.slice(5);
+const onlySet = process.argv.find((a) => a.startsWith('--set='))?.slice(6);
 const noSpreads = process.argv.includes('--no-spreads');
 function row(label: string, bg: string, make: { attrs?: Record<Attr, number>; skillSet?: string }) {
   const cells: string[] = [];
@@ -26,7 +27,7 @@ function row(label: string, bg: string, make: { attrs?: Record<Attr, number>; sk
   console.log(`${label.padEnd(34)} ${cells.join(' | ')}`);
 }
 console.log(`${runs} lives × ${policies.join(', ')}, ${years} years\n`);
-for (const bg of Object.values(c.backgrounds).filter((b) => !only || b.id === only)) for (const set of bg.skill_sets) row(`${bg.id} / ${set.id}`, bg.id, { skillSet: set.id });
+for (const bg of Object.values(c.backgrounds).filter((b) => !only || b.id === only)) for (const set of bg.skill_sets.filter((x) => !onlySet || x.id === onlySet)) row(`${bg.id} / ${set.id}`, bg.id, { skillSet: set.id });
 if (noSpreads) process.exit(0);
 console.log('\nspreads (younger son, raised to the sword)');
 const only2 = process.argv.includes('--tough');
