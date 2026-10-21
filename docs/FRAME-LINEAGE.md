@@ -212,7 +212,7 @@ Build order: A (small, fully independent), B, C (builds on B's family), D, E (ne
 | The Irish grandmother's grandson | Lore 3, speech 2, cunning 2 | Cunning 2, lore 1, speech 1, seamanship 1, weapons 1, craft 1 |
 
 - **Skill sets:** survival 63–78% (raider) and 73–93% (careful) across the nine sets. Fame is noisy at this sample size (12–34 for the other eight sets).
-- **The Irish grandmother's grandson** led every other freedman set. It was trimmed twice and still led (80% of raider lives alive and fame 46, against 63–72% and 30–34), so it was trimmed a third time. GRANDMOTHER_RESULT
+- **The Irish grandmother's grandson** led every other freedman set. It was trimmed twice and still led (80% of raider lives alive and fame 46, against 63–72% and 30–34), so it was trimmed a third time. After the third trim: 82% of raider lives alive and fame 42 (60 lives). Three trims to lore and speech did not move survival, so the edge is most likely cunning (scouting, surprise) plus sample noise. The trimming stops here and the edge is left as an open question for Josh.
 - **Spreads:**
   - **Endurance 5** (2/2/5/1/1) kept 93% of raider lives alive at ten years, against 73% for the default spread. With the fifth point costing double it was still 85% against 70%, even with strength, wits and presence at 1.
   - **Endurance 4** kept 70%.
