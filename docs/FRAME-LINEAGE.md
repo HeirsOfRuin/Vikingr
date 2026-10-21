@@ -202,3 +202,36 @@ Build order: A (small, fully independent), B, C (builds on B's family), D, E (ne
 - **Scenes:** first sight of land (it reads differently before 870, 870–873 and after 874), the land-taking, and the first winter (a craft and wits check).
 - **Settling in Iceland** gives a founder's deed of weight 12. It counts as a verse, so it lasts.
 - **The chronicle tells** of Garðarr (861), Flóki (868) and Ingólfr (874). The text and the notes say these are the Landnámabók's tradition, written some 250 years later.
+
+## Measured
+**A. Character creation** (`npm run measure:makeup`; raider and careful bots, 10 years, 40–60 lives a row):
+
+| Change | Before | After |
+|---|---|---|
+| Attribute cap | A 5 allowed (endurance 5 is the strong one) | 4 at most |
+| The Irish grandmother's grandson | Lore 3, speech 2, cunning 2 | Cunning 2, lore 1, speech 1, seamanship 1, weapons 1, craft 1 |
+
+- **Skill sets:** survival 63–78% (raider) and 73–93% (careful) across the nine sets. Fame is noisy at this sample size (12–34 for the other eight sets).
+- **The Irish grandmother's grandson** led every other freedman set. It was trimmed twice and still led (80% of raider lives alive and fame 46, against 63–72% and 30–34), so it was trimmed a third time. GRANDMOTHER_RESULT
+- **Spreads:**
+  - **Endurance 5** (2/2/5/1/1) kept 93% of raider lives alive at ten years, against 73% for the default spread. With the fifth point costing double it was still 85% against 70%, even with strength, wits and presence at 1.
+  - **Endurance 4** kept 70%.
+  - **Strength, wits and presence at 5** showed no survival edge; presence 5 lowered it.
+  - **The fix:** the cap is 4.
+
+**B and C. Family, the heir and settlement** (`npm run measure:lineage`; 30 raider lines from 830, up to 50 years; the bots take land and settle):
+- **Births:** 5.9 children per married life; 4.4 still alive when the father dies.
+- **Heirs:** 63% of deaths went on as an heir (22 of 35). The average skip was 3.4 years: most sons were grown when their fathers died.
+- **Lines:** 1.7 generations per line in 50 years; the median death year is 865.
+- **Settlement:** 4 lines settled abroad, none lost the home to an attack. The spring muster was 89 men settled against 67 at home in Hordaland. These are late-life, established men, so the two muster numbers aren't a like-for-like comparison.
+
+**D. Ragnarr's days** (`npm run measure:era`; 20 lives per beginning, 10 years, no errors):
+
+| Start | Raider alive | Raider fame | Raider plunder | Careful alive | Careful fame | Careful plunder |
+|---|---|---|---|---|---|---|
+| 830 | 60% | 143 | 21 lb | 85% | 117 | 22 lb |
+| 843 | 72% | 159 | 22 lb | 77% | 101 | 18 lb |
+
+Close enough that nothing was tuned. The 843 chapter plays through in bot lives for all three beginnings: Nantes, Noirmoutier, Hastein, the Hart and the debt.
+
+**E. Iceland:** not reached by the bots in these runs (no line settled there). That is expected: it opens in 860 and land-taking in 870, late in a first life or in an heir's. The tests cover the path: rumour, expedition, land-taking, settlement, the founder's deed and the trade date.
