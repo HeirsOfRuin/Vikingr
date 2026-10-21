@@ -19,6 +19,7 @@ import { HOSTAGE, peopleName, type Hostage } from './hostages';
 import { formatSilver } from './format';
 import { lordName } from './lords';
 import { claimWords, rivalOf, SEAT_DEF, type Seat } from './rule';
+import { fatherName, focusChild } from './family';
 
 function focusH(state: GameState): Hostage | undefined {
   return state.hostages?.find((h) => h.id === state.hfocus);
@@ -79,7 +80,12 @@ export function renderText(text: string, state: GameState, content: ContentBundl
     .replace(/\{captain\}/g, state.service?.captain ?? 'the captain')
     .replace(/\{ship\}/g, state.ships[0]?.name ?? 'the ship')
     .replace(/\{wife\}/g, state.base.wife ?? 'your wife')
-    .replace(/\{father\}/g, content.backgrounds[state.hero.background]?.father ?? 'your father')
+    .replace(/\{father\}/g, fatherName(state, content))
+    // family (docs/FRAME-LINEAGE.md B)
+    .replace(/\{child\}/g, () => focusChild(state)?.name ?? 'the child')
+    .replace(/\{home\}/g, () => content.places[state.homeAt ?? 'home_fjord']?.name ?? 'home')
+    .replace(/\{mother\}/g, () => state.family?.mother ?? 'your mother')
+    .replace(/\{forefather\}/g, () => { const l = state.family?.line ?? []; const a = l[l.length - 1]; return a ? (a.nickname ? `${a.name.split(' ')[0]} ${a.nickname}` : a.name.split(' ')[0]!) : 'your father'; })
     .replace(/\{ally\}/g, () => { const id = partner(state, content) ?? bestAlly(state, content); return id ? content.captains[id]!.name : 'a captain you know'; })
     .replace(/\{newship\}/g, state.ships[state.ships.length - 1]?.name ?? 'the new ship')
     .replace(/\{newmaster\}/g, () => { const s = hiredShip(state); return s ? s.master!.split(':')[1]! : 'the steersman'; })
@@ -115,6 +121,6 @@ export function checkText(text: string, content: ContentBundle): string[] {
   for (const m of text.matchAll(IF)) for (const b of branches(m[2]!, m[1]!)) if (b.cond) errs.push(...validateCond(b.cond.trim(), content));
   const stray = text.replace(IF, '').match(/\[(?:if|elif|else|\/if)[^\]]*\]/);
   if (stray) errs.push(`unbalanced ${stray[0]}`);
-  for (const m of text.matchAll(/\{([a-z_]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning', 'newship', 'newmaster', 'mastername', 'ally', 'father', 'cand', 'cand_desc', 'hostage', 'hostage_name', 'hostage_kin', 'hostage_people', 'hostage_price', 'hostage_high', 'hostage_sold', 'daughter', 'lord', 'lord2', 'jarl', 'cast_by', 'seat_title', 'seat_place', 'rival'].includes(m[1]!) && !/^(claim|rival)_(orkney|dublin|home|walcheren)$/.test(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
+  for (const m of text.matchAll(/\{([a-z_]+)\}/g)) if (!['name', 'fullname', 'nick', 'captain', 'ship', 'wife', 'reckoning', 'newship', 'newmaster', 'mastername', 'ally', 'father', 'child', 'mother', 'home', 'forefather', 'cand', 'cand_desc', 'hostage', 'hostage_name', 'hostage_kin', 'hostage_people', 'hostage_price', 'hostage_high', 'hostage_sold', 'daughter', 'lord', 'lord2', 'jarl', 'cast_by', 'seat_title', 'seat_place', 'rival'].includes(m[1]!) && !/^(claim|rival)_(orkney|dublin|home|walcheren)$/.test(m[1]!)) errs.push(`unknown text token {${m[1]}}`);
   return errs;
 }

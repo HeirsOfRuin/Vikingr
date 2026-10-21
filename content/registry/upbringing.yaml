@@ -1,0 +1,33 @@
+# How an heir was raised (docs/FRAME-LINEAGE.md B): the skill sets offered when he goes on as his father's son.
+# Two are always offered; the third is the first that fits what the boy's years were: at his father's oar,
+# fostered in a lord's hall, fostered aboard a captain's ship, or none of these. 7 points each.
+- id: farm
+  when: always
+  label: Raised on the farm
+  desc: His mother kept the place, and he kept it with her. He knows a bargain, a boat and a byre, and he can hold his own at a Thing.
+  skills: { craft: 2, trade: 2, speech: 1, seamanship: 1, weapons: 1 }
+- id: sword
+  when: always
+  label: Raised by his father's old men
+  desc: The men who came home with his father's ships taught him what they knew, which was the shield-wall.
+  skills: { weapons: 3, shield: 2, seamanship: 1, command: 1 }
+- id: oar
+  when: sailed
+  label: At his father's oar
+  desc: He rowed with his father from fourteen. He has seen a beach taken, and a man die, and he knows how a ship is run.
+  skills: { weapons: 2, seamanship: 2, command: 2, shield: 1 }
+- id: hall
+  when: fostered_lord
+  label: Fostered in a lord's hall
+  desc: He grew up at a high table that was not his father's. He knows the great families, the old poems, and how a lord is spoken to.
+  skills: { speech: 2, lore: 2, command: 1, weapons: 1, shield: 1 }
+- id: ship
+  when: fostered_captain
+  label: Fostered aboard a captain's ship
+  desc: He grew up on another man's benches, among another man's crew. He can steer by the stars and fight from a deck.
+  skills: { seamanship: 3, weapons: 2, command: 1, shield: 1 }
+- id: stories
+  when: plain
+  label: Raised on the old men's stories
+  desc: He sat by the fire and listened. He knows the coasts he has never seen, and the names of the men who rule them, and when a story is a lie.
+  skills: { lore: 2, speech: 2, cunning: 2, weapons: 1 }

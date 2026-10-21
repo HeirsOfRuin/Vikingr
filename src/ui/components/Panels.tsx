@@ -3,7 +3,9 @@ import { goalProgress } from '../../engine/boasts';
 import { freeSworn, hold, MASTER_SHARES, masterOf } from '../../engine/fleet';
 import { captain, favour, favourMuster, favourWord, partner, relWord } from '../../engine/allies';
 import { SKILLS, ATTRS } from '../../content/schema';
-import type { GameState, Position } from '../../engine/state';
+import type { Child, GameState, Position } from '../../engine/state';
+import { useState } from 'preact/hooks';
+import { childAge, FAMILY, hostName } from '../../engine/family';
 import type { Action } from '../../engine/index';
 import { effAttr, hpMax, age } from '../../engine/hero';
 import { ATTR_NAMES } from '../../engine/paths';
@@ -231,9 +233,10 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
     <div>
       <h2>{def.name}</h2>
       <p class="muted">{def.desc}</p>
+      {state.homeAt && state.homeAt !== 'home_fjord' && <p class="small">You settled at {content.places[state.homeAt]!.name}, with your household and your men's families. You muster there, winter there and share out there. Hordaland's own doings, the jarl's levy and the district's feasts, stay in Hordaland.</p>}
       <div class="card">
         <dl class="kv">
-          <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : state.flags.betrothed ? 'Betrothed; the wedding is at the winter nights.' : 'No wife yet.'}{state.flags.child_son ? ` A son${state.flags.child_daughter ? ' and a daughter' : ''}.` : ''}</dd>
+          <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : state.flags.betrothed ? 'Betrothed; the wedding is at the winter nights.' : 'No wife yet.'}{state.family?.mother ? ` Your mother, ${state.family.mother}, lives with you.` : ''}</dd>
           <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> — captives you keep instead of selling</span>}</dd>
           <dt>Each winter</dt><dd>{formatSilver(winterYield(state)) || 'nothing'}{b.wife ? <span class="muted"> (a quarter more, for her running of it)</span> : null}</dd>
           <dt>Arm-rings</dt><dd>{ringWords(state) === 'none' ? <span class="muted">None. The smith can make a silver one; gold comes from plunder, or from a lord's hand.</span> : ringWords(state)}</dd>
@@ -243,11 +246,37 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
         </dl>
         <p class="muted small">{next}</p>
       </div>
+      <FamilyCard content={content} state={state} onAct={onAct} />
       <div class="card">
         <h3>On the wall</h3>
         {b.trophies.length ? <p>{b.trophies.map((id) => content.items[id]?.name).join('; ')}.</p> : <p class="empty">Nothing yet. Keepsakes worth showing can be hung here, and feasts in your own hall go better under them.</p>}
       </div>
       {acts.length > 0 ? <Actions options={acts} onAct={onAct} /> : <p class="muted small sans">You are away from home. The hoard and the wall wait for you.</p>}
+    </div>
+  );
+}
+
+/** The children of the house (docs/FRAME-LINEAGE.md B): names, ages, where each one is. */
+function FamilyCard({ content, state, onAct }: { content: ContentBundle; state: GameState; onAct: (a: Action) => void }) {
+  const [renaming, setRenaming] = useState<string | null>(null);
+  const [name, setName] = useState('');
+  const kids = state.family?.children.filter((c) => !c.hero) ?? [];
+  const own = kids.filter((c) => c.father === state.hero.name);
+  const sibs = kids.filter((c) => c.father !== state.hero.name && c.alive);
+  const where = (c: Child) => !c.alive ? `died ${c.died}` : c.wed ? `married into ${hostName(state, content, c.wed)}'s house` : c.foster ? `fostered with ${hostName(state, content, c.foster.with)}` : c.man ? 'at the oar beside you' : 'at home';
+  const row = (c: Child) => (
+    <li key={c.id}>
+      <b>{c.name}</b>, {c.sex === 'm' ? 'son' : 'daughter'}{c.alive ? `, ${childAge(state, c)}` : ''}: {where(c)}.
+      {c.alive && renaming !== c.id && <button class="linkish" onClick={() => { setRenaming(c.id); setName(c.name); }}>Rename</button>}
+      {renaming === c.id && <span class="rename"><input type="text" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} /><button class="step" onClick={() => { try { onAct({ t: 'rename_child', child: c.id, name }); } catch { /* the name is refused: keep the old */ } setRenaming(null); }}>✓</button></span>}
+    </li>
+  );
+  return (
+    <div class="card">
+      <h3>Family</h3>
+      {own.length ? <ul class="family">{own.map(row)}</ul> : <p class="empty">{state.base.wife ? 'No children yet. A winter at home with your wife, and perhaps.' : 'No children. A wife first, and winters at home.'}</p>}
+      {sibs.length > 0 && <><p class="muted small">Your brothers and sisters:</p><ul class="family">{sibs.map(row)}</ul></>}
+      <p class="muted small">A son of {FAMILY.fosterFrom} to {FAMILY.fosterTo - 1} can be fostered with a lord or captain who thinks well of you; a son of {FAMILY.sailAt} can sail with you; a daughter of {FAMILY.wedAt} can be married into an ally's house. When you die, a son can go on as you.</p>
     </div>
   );
 }
@@ -276,7 +305,7 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
       ) : null}
       {holds.length ? (
         <dl class="kv">
-          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. Winter there as at home.</dd>])}
+          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
         </dl>
       ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
       {state.rule ? <p class="small">You are {SEAT_DEF[state.rule.seat].title}, since {formatDate(state.rule.since)}: {formatSilver(RULE.tribute)} in tribute and {plural(RULE.men, 'man', 'men')} more at the muster every year. You were last seen there the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {rivalOf(state, content, state.rule.seat).name} takes it.</p>
@@ -293,6 +322,12 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
     <div>
       <h2>The saga so far</h2>
       <p class="muted">Fame {Math.round(livingFame(state))}. Lasting fame {lastingFame(state)}. A deed counts only once it has been told: at a feast, by a skald, or by the men who saw it.</p>
+      {(state.family?.line.length ?? 0) > 0 && (
+        <div class="card">
+          <h3>Your fathers</h3>
+          {state.family!.line.map((a, i) => <p key={i} class="small">{a.name}{a.nickname ? `, called ${a.nickname}` : ''} ({a.born}–{a.died}). Fame {a.fame}, from {plural(a.deeds, 'deed')}. {a.text}</p>)}
+        </div>
+      )}
       <div class="card">
         <h3>Your name in the ports</h3>
         <p class="muted small">What each place you know thinks of you. A raid is remembered at the place, and heard of by its kin nearby; a sacked church is heard of further, because the Church writes letters. Fair trade and kept faith mend it, slowly; so does time.</p>

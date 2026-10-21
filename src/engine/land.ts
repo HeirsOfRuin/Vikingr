@@ -13,8 +13,9 @@ import { addRecruits, capacity, aliveMen, mouths } from './crew';
 import { earn } from './hardship';
 import { addDeed } from './fame';
 import { lordName } from './lords';
+import { loseHome } from './settle';
 
-export type HoldingKind = 'grant' | 'bought' | 'fort';
+export type HoldingKind = 'grant' | 'bought' | 'fort' | 'claimed';
 export interface Holding {
   place: string;
   kind: HoldingKind;
@@ -31,6 +32,8 @@ export const LAND = {
   grant: { yield: 24, men: 4 },
   bought: { yield: 18, men: 2 },
   fort: { yield: 40, men: 3 },
+  /** Land taken in an empty country (docs/FRAME-LINEAGE.md E): poor at first, nobody's but his. */
+  claimed: { yield: 12, men: 2 },
   price: 288,
   /** To dig a fort: men with him, a name, and the garrison he leaves (at least this, or a third of his men). */
   fortMen: 40,
@@ -85,6 +88,22 @@ export function grantLand(state: GameState, content: ContentBundle, lord: string
   journal(state, `Was given land at ${content.places[place]!.name} by ${lordName(state, content, lord)}.`);
   addDeed(state, content, { type: 'deed', text: `Was given land at ${content.places[place]!.name} by ${lordName(state, content, lord)}`, weight: 4, witnesses: 100 });
   return place;
+}
+
+/** A landnám (docs/FRAME-LINEAGE.md E): land nobody holds, in a country being settled. Why not, or null. */
+export function claimBlock(state: GameState, content: ContentBundle, place: string): string | null {
+  const from = content.places[place]?.landnam;
+  if (from === undefined) return 'There is no land to take here.';
+  if (dateOf(state.day).year < from) return `Nobody has settled here yet; men say it will be taken from ${from} or so.`;
+  if (holdingAt(state, place)) return 'You hold land here already.';
+  if (state.service) return 'Not while you row in another man\'s ship.';
+  return null;
+}
+
+export function claimLand(state: GameState, content: ContentBundle, place: string): void {
+  (state.holdings ??= []).push({ place, kind: 'claimed', since: state.day });
+  journal(state, `Took land at ${content.places[place]!.name}.`);
+  addDeed(state, content, { type: 'deed', text: `Took land in ${content.places[place]!.region}, at ${content.places[place]!.name}`, weight: 6, witnesses: state.crew.men });
 }
 
 /** Why he can't dig a ship-fort here, or null. */
@@ -143,7 +162,11 @@ export function holdingsYear(state: GameState, content: ContentBundle, rng: RngC
       const D = content.places[h.place]!.raid?.defenders ?? 20;
       const G = h.garrison ?? 0;
       const p = LAND.retake * D / (D + LAND.walls * G);
-      if (wintered !== h.place && rng.float() < p) {
+      // home, and he wintered in it: they come, and he is there to fight for it (docs/FRAME-LINEAGE.md C)
+      if (wintered === h.place && state.homeAt === h.place) {
+        if (rng.float() < p) state.queue.push({ scene: 'st_fort_attack', day: state.day });
+      } else if (wintered !== h.place && rng.float() < p) {
+        if (state.homeAt === h.place) { lines.push(...loseHome(state, content)); continue; }
         state.holdings = state.holdings!.filter((x) => x !== h);
         state.places[h.place]!.norse = false;
         state.places[h.place]!.standing = Math.min(state.places[h.place]!.standing ?? 0, -6);

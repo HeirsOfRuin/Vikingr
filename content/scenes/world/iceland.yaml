@@ -1,0 +1,69 @@
+# Iceland (docs/FRAME-LINEAGE.md E): first sight of land, the land-taking, the first winter. The dates follow the
+# Landnámabók tradition (written some two hundred and fifty years later): Naddoddr and Garðarr in the 860s, Flóki's
+# hard winter, Ingólfr's high-seat pillars at Reykjarvík in 874.
+- id: is_landfall
+  kind: place
+  trigger: arrive
+  at: [island]
+  once: true
+  weight: 30
+  art: open_sea
+  title: Land in the west
+  text: |
+    On the sixth morning the men in the bow start shouting before you can see anything, and then you can: a white line above the grey, too high and too still to be cloud. Ice on mountains. By noon there are black cliffs under it, and surf, and birds.
+
+    [if year < 870]Nobody lives here. The old men said so, and the old men were right. There is smoke coming out of the ground in a valley to the south, and no house under it.[elif year < 874]There are a few ships drawn up on the shingle, and a few turf houses going up behind them: men from Norway who got here first, and do not look pleased to see more.[else]There is a farm at the head of the bay, at the place they call Reykjarvík for the smoke: Ingólfr's, the first man who stayed. There are other farms now, and a market on the beach where they sell walrus ivory and white falcons and wool.[/if]
+    [break]
+    The grass behind the shore comes up to your knees. One of the men walks up into it, and kneels, and puts his hands in the earth, and says nothing until the wind turns.
+  choices:
+    - id: walk
+      text: Walk up into the land.
+      effects: [ { add: { hamingja: 1 } }, { deed: { type: deed, text: "Sailed to Iceland, at the edge of the world", weight: 4 } } ]
+      result: You walk until the sea is out of sight behind you, and there is still more land, and nobody on it. You have never seen land that belonged to nobody. You didn't know there was any left.
+
+- id: is_landnam
+  kind: queued
+  art: home_fjord
+  title: The land-taking
+  text: |
+    The custom is old and simple, and the men who are already here keep it: a man may take as much land as he can carry fire round in a day, between sunrise and sunset, lighting a fire at every corner so the next fire can be seen from it.
+
+    [if base == hall]There is the other custom too, for a man who had a high seat in Norway: throw its carved pillars overboard off the coast, and settle where the sea brings them ashore. The gods choose the land, then, and nobody can argue with the gods.[/if]
+  choices:
+    - id: fire
+      text: Carry fire round the bounds, from sunrise to sunset.
+      check: { skill: seamanship, attr: end, difficulty: 6 }
+      success:
+        text: You run the last mile with the torch guttering and your lungs on fire, and light the last beacon as the sun goes into the sea. It is a great deal of land. The men cheer from the shore.
+        effects: [ { claim_land: true }, { add: { hamingja: 1 } } ]
+      failure:
+        text: The sun is down before you get round, and you light the last fire in the dark, a little short of where you meant to. It is still more land than your father ever had.
+        effects: [ { claim_land: true } ]
+    - id: pillars
+      text: Throw your high-seat pillars overboard, and settle where they come ashore.
+      visible_if: "base == hall"
+      effects: [ { claim_land: true }, { add: { hamingja: 2 } } ]
+      result: The pillars drift for three days, and come ashore in a bay with a good beach and a stream, and grass behind it to the hills. Nobody can say the land was badly chosen. The gods chose it.
+
+- id: is_first_winter
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: [settled, "home == island || home == breidafjordr"]
+  art: yule_hall
+  title: The first winter
+  text: |
+    The first winter is the hard one. Flóki lost all his cattle in his, because he spent the summer fishing and made no hay, and went home and called the place Ísland and cursed it.
+
+    You made hay. The cattle live. The dark comes down for months, and the wind never stops, and the ice comes into the fjord, and in the long nights the women tell stories about the farms in Norway, and then stop, because it doesn't help.
+  choices:
+    - id: through
+      text: Keep the fires in and the people fed, and get through it.
+      check: { skill: craft, attr: wit, difficulty: 6 }
+      success:
+        text: In the spring every soul who came is still alive, and the cows are thin but standing, and the first lambs are born in the snow. Men will say of you, in the book of the land-takings, that you came out with your household and lived.
+        effects: [ { add: { crew.morale: 2 } } ]
+      failure:
+        text: The cold takes two of the old people and a third of the cattle. In the spring you bury them on the hill above the farm, looking at the sea. That is how land becomes yours, here as anywhere.
+        effects: [ { add: { thralls: -1, crew.morale: -1 } } ]

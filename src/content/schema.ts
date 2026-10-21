@@ -100,6 +100,14 @@ const baseEffect = z.union([
   // the hird grows: the scene's candidate swears on a ring, or signs on at an oar
   z.object({ swear_cand: z.enum(['silver', 'gold']) }).strict(),
   z.object({ cand_crew: z.literal(true) }).strict(),
+  /** Names the child a family scene is about: "father" (for his grandfather), "own" (a fresh name), or a name. */
+  z.object({ name_child: z.string() }).strict(),
+  /** The people of the shore come for the fort that is home: the fight, at their full strength (docs/FRAME-LINEAGE.md C). */
+  z.object({ home_defence: z.object({ win: id, lose: id }).strict() }).strict(),
+  /** The settlement is lost; the household goes back to Hordaland. */
+  z.object({ lose_home: z.literal(true) }).strict(),
+  /** A landnám: the land where he stands becomes his (docs/FRAME-LINEAGE.md E). */
+  z.object({ claim_land: z.literal(true) }).strict(),
   // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
   z.object({ take_hostage: z.object({ kind: id, captain: id.optional(), place: id.optional(), name: z.string().optional(), who: z.string().optional(), kin: z.string().optional(), price: z.number().int().min(1).optional() }).strict() }).strict(),
   // a Norse ship-fort (longphort) holds a place, or is lost (docs/FRAME-IRELAND-SEINE.md)
@@ -204,6 +212,12 @@ export const place = z.object({
   trade: z.object({ cheap: z.array(id), dear: z.array(id) }).strict().optional(),
   art: id.optional(),
   raid: z.object({ wealth: z.number().int(), defenders: z.number().int(), foe: id, terrain: z.enum(TERRAINS) }).strict().optional(),
+  /** Not heard of, nor sailed to, before this year (Iceland: docs/FRAME-LINEAGE.md E). */
+  from: z.number().int().optional(),
+  /** Its people trade from this year; before it there is nobody to trade with. */
+  trade_from: z.number().int().optional(),
+  /** Land can be taken here, free, from this year: a landnám. */
+  landnam: z.number().int().optional(),
 }).strict();
 export type Place = z.infer<typeof place>;
 
@@ -338,8 +352,10 @@ export const background = z.object({
   patronymic: z.string(),
   /** His father's name, for the {father} token. */
   father: z.string(),
+  /** The default spread, and the point-buy pool (its total). */
   attrs,
-  skills,
+  /** Three ways he was raised, 7 skill points each; the first is the default. */
+  skill_sets: z.array(z.object({ id, label: z.string(), desc: z.string(), skills }).strict()).length(3),
   honour: z.number().int(),
   silver: z.number().int(),
   flags: z.array(z.string()).optional(),
@@ -353,6 +369,10 @@ export const background = z.object({
   kit: z.array(id).optional(),
 }).strict();
 export type Background = z.infer<typeof background>;
+
+/** How an heir was raised (docs/FRAME-LINEAGE.md B). */
+export const upbringingDef = z.object({ id, when: z.enum(['always', 'sailed', 'fostered_lord', 'fostered_captain', 'plain']), label: z.string(), desc: z.string(), skills }).strict();
+export type UpbringingDef = z.infer<typeof upbringingDef>;
 
 export const flagDef = z.object({ description: z.string() }).strict();
 
@@ -420,6 +440,8 @@ export interface ContentBundle {
   flags: Record<string, { description: string }>;
   backgrounds: Record<string, Background>;
   scenes: Record<string, Scene>;
+  /** Scene ids by chapter folder (830, 831, 833, 841, world, ...). */
+  chapters: Record<string, string[]>;
   names: string[];
   art: Record<string, ArtEntry>;
   boasts: Record<string, BoastDef>;
@@ -433,4 +455,5 @@ export interface ContentBundle {
   chronicle: { events: Record<string, ChronEvent>; raiders: Record<string, ChronRaider> };
   lords: Record<string, LordDef>;
   coasts: Record<string, CoastDef>;
+  upbringing: Record<string, UpbringingDef>;
 }

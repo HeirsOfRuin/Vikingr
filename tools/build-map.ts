@@ -118,10 +118,21 @@ const MOUNTAINS: Pt[][] = [
   [[6.0, 45.0], [14.0, 45.6], [14.2, 47.3], [10.0, 47.6], [7.0, 46.8], [6.0, 46.3]],
   // Massif Central
   [[2.3, 45.0], [4.3, 45.0], [3.6, 45.9], [2.6, 45.9]],
+  // the Icelandic highlands
+  [[-21.8, 64.2], [-18.0, 64.0], [-15.2, 64.4], [-15.0, 65.2], [-17.5, 65.4], [-20.5, 65.3], [-22.2, 64.9]],
   // Carpathians
   [[19.0, 49.6], [22.5, 49.4], [24.6, 48.1], [26.2, 47.1], [26.1, 45.4], [22.4, 45.0], [23.6, 47.4], [19.5, 49.1]],
 ];
+// Iceland's great glaciers: Vatnajökull, Langjökull, Hofsjökull, Mýrdalsjökull
+const ICE: Pt[][] = [
+  [[-18.3, 64.15], [-16.7, 64.0], [-15.4, 64.3], [-15.6, 64.7], [-16.9, 64.75], [-18.2, 64.6]],
+  [[-20.6, 64.5], [-19.9, 64.45], [-19.8, 64.8], [-20.5, 64.85]],
+  [[-19.2, 64.65], [-18.5, 64.65], [-18.5, 64.9], [-19.2, 64.9]],
+  [[-19.4, 63.55], [-18.8, 63.55], [-18.8, 63.75], [-19.4, 63.75]],
+];
 const MOOR: Pt[][] = [
+  // Iceland: heath and bog, birch scrub in the valleys
+  [[-24.8, 63.2], [-13.0, 63.2], [-13.0, 66.8], [-24.8, 66.8]],
   // Scotland outside the Highlands, the Northern Isles, Faroes
   [[-8.0, 55.0], [-1.6, 55.6], [-1.5, 61.0], [-8.5, 62.5]],
   // the Pennines and the north of England
@@ -158,6 +169,9 @@ const MARSH: Pt[][] = [
   [[-0.6, 52.3], [0.5, 52.3], [0.5, 53.0], [-0.4, 53.0]],
 ];
 
+// Islands smaller than a tile, that the story needs on dry land: the tile under each is land
+const SMALL_ISLES: Record<string, Pt> = { Iona: [-6.41, 56.33], Noirmoutier: [-2.25, 47.0], Lindisfarne: [-1.8, 55.68], Rathlin: [-6.25, 55.29], Skellig: [-10.54, 51.77] };
+
 // Rivers Natural Earth lacks at this scale, traced from the modern course.
 const EXTRA_RIVERS: Record<string, Pt[]> = {
   Volkhov: [[31.28, 58.52], [31.6, 58.9], [32.0, 59.4], [32.3, 59.9], [32.33, 60.12]],
@@ -173,6 +187,7 @@ const LAKE_SKIP = /Reservoir|Csatorna|IJsselmeer/;
 
 async function main() {
   const land = rasterise((await load(FILES.land)).flatMap(ringsOf));
+  for (const [lon, lat] of Object.values(SMALL_ISLES)) { const [tx, ty] = lonLatToTile(lon, lat); land[Math.floor(ty) * cols + Math.floor(tx)] = 1; }
   const lakeFeatures = (await load(FILES.lakes)).filter((f) => !LAKE_SKIP.test(String(f.properties.name ?? '')));
   const lakes = rasterise(lakeFeatures.flatMap(ringsOf));
 
@@ -202,6 +217,7 @@ async function main() {
       let t: Terrain;
       if (!land[i]) t = dist[i]! <= 2 ? 'shallows' : dist[i]! <= 9 ? 'sea' : 'deep';
       else if (lakes[i]) t = 'lake';
+      else if (ICE.some((z) => inPoly([lon, lat], z))) t = 'ice';
       else if (MOUNTAINS.some((z) => inPoly(p, z))) t = noise(x + 900, y, 4) > (lat > 61 ? 0.7 : 0.8) ? 'ice' : 'mountain';
       else if (MARSH.some((z) => inPoly(p, z))) t = 'marsh';
       else if (MOOR.some((z) => inPoly(p, z))) t = noise(x, y, 4) > 0.8 ? 'forest' : 'moor';

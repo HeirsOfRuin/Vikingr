@@ -1,0 +1,42 @@
+# Settlement (docs/FRAME-LINEAGE.md C): the winter they come for the fort that is home.
+- id: st_fort_attack
+  kind: queued
+  title: They come for the fort
+  text: |
+    They come in the dark of the winter, as you knew they would: a war-band out of the hills with torches, and the whole countryside behind it, every man who lost a cow or a son to you since you dug the ditch.
+
+    This time the women are behind the stockade, and the children, and the old men with the seed-corn. There is nowhere to row away to. The ships are hauled up and the sea is iron.
+  choices:
+    - id: fight
+      text: Man the stockade.
+      effects: [ { home_defence: { win: st_fort_held, lose: st_fort_lost } } ]
+    - id: ships
+      text: Get the families into the ships, and give them the fort.
+      effects: [ { lose_home: true }, { add: { honour: -1, crew.morale: -2 } } ]
+      result: You drag the ships down over the frozen shingle and get them out into the black water, with every soul aboard and the stockade burning behind you. Nobody drowns. Nobody says much, either.
+
+- id: st_fort_held
+  kind: queued
+  title: The fort holds
+  text: |
+    By morning the ditch is full of them, and they have gone back into the hills with their dead on hurdles. The women come out of the hall and walk along the stockade, looking.
+
+    Nobody on this shore will doubt again whose land this is. Not for a winter or two.
+  choices:
+    - id: on
+      text: Bury your dead inside the wall.
+      effects: [ { add: { crew.morale: 1 } }, { deed: { type: deed, text: "Held the fort that was his home against the whole countryside", weight: 6 } } ]
+      result: You bury them inside the stockade, where the families can see them, so the land has your dead in it as well as theirs. That is how land becomes yours.
+
+- id: st_fort_lost
+  kind: queued
+  title: The fort falls
+  text: |
+    They come over the ditch on brushwood bundles and through the stockade with axes, and it is a fight in the dark among the houses, among the women and the children, which is the worst kind there is.
+
+    Somehow your men hold the gate to the shore long enough.
+  choices:
+    - id: away
+      text: Get them into the ships.
+      effects: [ { lose_home: true } ]
+      result: You get them into the ships, most of them, and out onto the black water, and you watch the hall burn from the sea. In the spring you will go back to Hordaland, and your kin will take you in, and you will start again.

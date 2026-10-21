@@ -22,6 +22,47 @@ export interface Hero {
   wounds: Wound[];
   nickname: string | null;
   alive: boolean;
+  /** An heir's father's given name, for {father} and the patronymic (docs/FRAME-LINEAGE.md B). */
+  father?: string;
+}
+
+/** A child of the house (docs/FRAME-LINEAGE.md B). */
+export interface Child {
+  id: string;
+  name: string;
+  sex: 'm' | 'f';
+  /** The year of the spring after the winter he was born in: his age is counted from it. */
+  born: number;
+  alive: boolean;
+  died?: number;
+  /** The hero whose child this is (his full name then). */
+  father: string;
+  mother?: string;
+  /** In fosterage now: "lord:<id>" or "cap:<id>", and since when. */
+  foster?: { with: string; since: number };
+  /** Fostered, and come home: with whom. */
+  fostered?: string;
+  /** At the oar: his sworn-man id. */
+  man?: string;
+  /** Sailed at his father's side, before he was the heir. */
+  sailed?: boolean;
+  /** Married into this house. */
+  wed?: string;
+  /** He is the hero now. */
+  hero?: boolean;
+}
+
+/** A father whose saga went on as his son's. */
+export interface Ancestor {
+  name: string;
+  nickname: string | null;
+  born: number;
+  died: number;
+  cause: Death['cause'];
+  afterlife: Death['afterlife'];
+  fame: number;
+  deeds: number;
+  text: string;
 }
 
 export interface Ship {
@@ -222,7 +263,9 @@ export type Pending =
   | { t: 'shop'; shops: ('smith' | 'market' | 'shipwright')[] }
   | { t: 'trade' }
   | { t: 'cruise' }
-  | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string };
+  /** The heir's spread and upbringing (docs/FRAME-LINEAGE.md B). */
+  | { t: 'heir' }
+  | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string; then?: 'heir' };
 
 export interface PlaceState {
   wealth: number;
@@ -360,4 +403,8 @@ export interface GameState {
   /** Raiding a coast on standing orders (docs/FRAME-PACING.md): the plan being drawn up, and the cruise under way. */
   cruisePlan?: import('./cruise').CruiseOrders;
   cruise?: import('./cruise').CruiseState;
+  /** Children, and the line of fathers (docs/FRAME-LINEAGE.md B). */
+  family?: import('./family').FamilyState;
+  /** Where home is, once he has settled abroad (docs/FRAME-LINEAGE.md C). Absent: Hordaland. */
+  homeAt?: string;
 }

@@ -74,17 +74,14 @@
 
 # ---- the household ----
 - id: g_w_son
-  kind: phase
-  trigger: hall
-  chance: 0.3
+  kind: queued
   once: true
-  requires: ["winter >= 832", "place == home_fjord", married]
   art: home_fjord
   title: A son
   text: |
     {wife} has her pains in the dark of the year, in the middle of a snowstorm, with the women of the district packed into the house and every man sent out into the byre to stay out of the way.
 
-    You sit in the byre with the cows and your father and a jug, for a night and most of a day. Then the door opens, and the midwife holds something up in the lamplight, red and furious and shouting.
+    [if heir]You sit in the byre with the cows and a jug, and your father's old men, for a night and most of a day.[else]You sit in the byre with the cows and your father and a jug, for a night and most of a day.[/if] Then the door opens, and the midwife holds something up in the lamplight, red and furious and shouting.
 
     A son. Alive, and loud, and his mother alive too.
     [break]
@@ -92,34 +89,31 @@
   choices:
     - id: father
       text: Name him for your father.
-      effects: [ { set: flag.child_son }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him, and named for his grandfather", weight: 1 } } ]
-      result: You pick him up, and say your father's name over him, and sprinkle him with water from the bowl. Your father goes out of the house for a while, and comes back with his eyes red, and blames the smoke.
+      effects: [ { name_child: father }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him, and named for his grandfather", weight: 1 } } ]
+      result: "[if heir]You pick him up, and say your father's name over him, and sprinkle him with water from the bowl. In the morning you walk up to the mound and tell him.[else]You pick him up, and say your father's name over him, and sprinkle him with water from the bowl. Your father goes out of the house for a while, and comes back with his eyes red, and blames the smoke.[/if]"
     - id: ormr
       text: Name him Ormr, for the old man who taught you the sword.
-      effects: [ { set: flag.child_son }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him, and named Ormr", weight: 1 } } ]
+      effects: [ { name_child: Ormr }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him, and named Ormr", weight: 1 } } ]
       result: You pick him up and say the name over him. It suits him already. He has the old man's way of looking at you as if you'd just said something stupid.
     - id: own
       text: Give him a name of his own. Let him make it mean something.
-      effects: [ { set: flag.child_son }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him", weight: 1 } } ]
-      result: You pick him up and give him a new name, one nobody in either family has had. {wife} approves. "He'll have enough of your name," she says, "without having to wear it too."
+      effects: [ { name_child: own }, { add: { hamingja: 1 } }, { deed: { type: deed, text: "A son born to him", weight: 1 } } ]
+      result: You pick him up and name him {child}, a name nobody in either family has had. {wife} approves. "He'll have enough of your name," she says, "without having to wear it too."
 
 - id: g_w_daughter
-  kind: phase
-  trigger: hall
-  chance: 0.25
+  kind: queued
   once: true
-  requires: ["winter >= 833", "place == home_fjord", married, flag.child_son]
   art: home_fjord
   title: A daughter
   text: |
     This time it's quick, and quiet, and in the middle of an ordinary afternoon. You come in from the boatshed with tar on your hands, and {wife} is sitting up by the fire with a daughter already at the breast, and the midwife on her way home.
 
-    "You took your time," {wife} says.
+    "You took your time," {wife} says. "I've named her {child}. You can argue if you like."
   choices:
     - id: hold
       text: Wash your hands, and hold her.
-      effects: [ { set: flag.child_daughter }, { add: { hamingja: 1 } } ]
-      result: She's very small, and she grips your finger with a strength that surprises you, and doesn't let go. Your son, from the doorway, looks at her with deep suspicion.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: "She's very small, and she grips your finger with a strength that surprises you, and doesn't let go. [if children >= 2]Her brother, from the doorway, looks at her with deep suspicion.[/if]"
 
 - id: g_w_wife_word
   kind: phase

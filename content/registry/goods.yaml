@@ -11,3 +11,4 @@
 - { id: wine, name: Frankish wine, lot: "a cask of wine", price: 24, bulk: 40 }
 - { id: glass, name: Rhenish glass, lot: "a crate of glass", price: 24, bulk: 12 }
 - { id: grain, name: Grain, lot: "a sack of grain", price: 8, bulk: 50 }
+- { id: falcons, name: Gyrfalcons, lot: "a pair of white falcons, hooded", price: 60, bulk: 4 }

@@ -73,12 +73,12 @@ export function takeWinterYield(state: GameState): string | null {
 
 /** How much better his deeds are told at a feast in his own hall. */
 export function feastMult(state: GameState): number {
-  if (state.base.level === 'father' || state.at !== 'home_fjord') return 1;
+  if (state.base.level === 'father' || state.at !== (state.homeAt ?? 'home_fjord')) return 1;
   return (state.base.level === 'hall' ? 1 + HALL_FEAST : 1) * (1 + Math.min(TROPHY_FEAST_MAX, TROPHY_FEAST * state.base.trophies.length));
 }
 
 export function hallActionsFor(state: GameState, base: number): number {
-  return base + (state.base.level === 'hall' && state.at === 'home_fjord' ? 1 : 0);
+  return base + (state.base.level === 'hall' && state.at === (state.homeAt ?? 'home_fjord') ? 1 : 0);
 }
 
 /** A hall that burned is raised again on its old stones, at half the price (docs/FRAME-HARDSHIP.md). */

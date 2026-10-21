@@ -437,7 +437,7 @@
   chance: 0.35
   cooldown_days: 200
   weight: 10
-  requires: ["background == outlaw", "year >= 831", "!flag.o_onund_done", "!flag.o_peace", "place != home_fjord", "place != orkney"]
+  requires: ["background == outlaw", "!flag.era843", "year >= 831", "!flag.o_onund_done", "!flag.o_peace", "place != home_fjord", "place != orkney"]
   art: open_sea
   title: Hrapp's youngest
   text: |
@@ -553,7 +553,7 @@
   trigger: phase_start
   cooldown_days: 300
   # in spring, at the start of the sailing season: never at the start of a winter abroad (playtest 5: he came home on 1 November)
-  requires: ["background == outlaw", flag.outlawed, "!flag.outlaw_ended", "place != home_fjord", "month <= 5", "phase != winter", { any: ["year >= 833", "year >= 832 && flag.o_two_winters"] }]
+  requires: ["background == outlaw", "!flag.era843", flag.outlawed, "!flag.outlaw_ended", "place != home_fjord", "month <= 5", "phase != winter", { any: ["year >= 833", "year >= 832 && flag.o_two_winters"] }]
   art: open_sea
   title: Three winters
   text: |

@@ -5,6 +5,7 @@ import { validateCond, condPaths } from '../src/engine/conditions';
 import { checkAddPath, checkPath } from '../src/engine/paths';
 import { checkText } from '../src/engine/text';
 import { lonLatToTile, terrainAt, WATER, type MapData } from '../src/engine/mapgrid';
+import { MAKEUP } from '../src/engine/makeup';
 
 export interface Report {
   errors: string[];
@@ -190,7 +191,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     // hostages (src/engine/hostages.ts, plunder.ts): taken in a raid; a broken peace
     'hs_taken', 'hs_broken', 'hi_heir',
     // lords and rule (docs/FRAME-WORLD.md): found with two lords; a rival for the seat; the legends' years
-    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik',
+    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'is_landnam',
   ];
   while (queue.length) {
     const id = queue.pop()!;
@@ -211,7 +212,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   for (const id of Object.keys(content.scenes)) if (!reached.has(id)) errors.push(`scene ${id}: unreachable (no start, trigger or link leads to it)`);
 
   // flags (some are set by the engine, not by content: the end of exile, a broken promise at a wedding)
-  const ENGINE_FLAGS = ['outlaw_ended', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren',
+  const ENGINE_FLAGS = ['outlaw_ended', 'child_son', 'child_daughter', 'era843', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren',
     ...['harek', 'kolbeinn', 'horik', 'turgeis', 'irish_king', 'rorik'].flatMap((l) => [`call_${l}`, `served_${l}`])];
   for (const f of Object.keys(content.flags)) {
     const bgSet = Object.values(content.backgrounds).some((b) => b.flags?.includes(f));
@@ -259,8 +260,12 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     for (const f of b.flags ?? []) if (!content.flags[f]) errors.push(`background ${b.id}: undeclared flag "${f}"`);
     const total = Object.values(b.attrs).reduce((a, v) => a + v, 0);
     if (total !== 11) errors.push(`background ${b.id}: attributes total ${total}, expected 11`);
-    const sk = Object.values(b.skills).reduce((a: number, v) => a + (v ?? 0), 0);
-    if (sk !== 7) errors.push(`background ${b.id}: skills total ${sk}, expected 7`);
+    if (Object.values(b.attrs).some((v) => v < MAKEUP.min || v > MAKEUP.max)) errors.push(`background ${b.id}: an attribute outside ${MAKEUP.min}-${MAKEUP.max}`);
+    if (new Set(b.skill_sets.map((s) => s.id)).size !== b.skill_sets.length) errors.push(`background ${b.id}: two skill sets share an id`);
+    for (const set of b.skill_sets) {
+      const sk = Object.values(set.skills).reduce((a: number, v) => a + (v ?? 0), 0);
+      if (sk !== MAKEUP.skillPoints) errors.push(`background ${b.id} skill set ${set.id}: skills total ${sk}, expected ${MAKEUP.skillPoints}`);
+    }
   }
 
   // art

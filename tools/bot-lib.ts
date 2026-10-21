@@ -6,7 +6,7 @@ import { hold, holdRoom, SECONDHAND } from '../src/engine/fleet';
 import { buyPrice, sellPrice } from '../src/engine/trade';
 import { partner } from '../src/engine/allies';
 import { scoutedOdds } from '../src/engine/scout';
-import type { ContentBundle } from '../src/content/schema';
+import type { Attr, ContentBundle } from '../src/content/schema';
 import type { GameState, Position } from '../src/engine/state';
 import { act, listActions, newGame, screenOf, type Action, type ActionOption } from '../src/engine/index';
 import { RngCursor, seedRng } from '../src/engine/rng';
@@ -21,7 +21,7 @@ import { holdingAt } from '../src/engine/land';
 import { SEAT_DEF } from '../src/engine/rule';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
-export const BOT_OPTS = { scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false };
+export const BOT_OPTS = { scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false, /** Take land and settle on it (docs/FRAME-LINEAGE.md C, E): off in the check, on in measure:lineage. */ settle: false };
 
 export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
@@ -249,6 +249,13 @@ export class Bot {
       if (on) return on;
       if (doy < LATE_SEASON_DOY - 40 && this.noPlan !== state.day && this.planned !== `${state.day}`) { const plan = pick((a) => a.t === 'cruise_plan'); if (plan && this.policy !== 'homebody') { this.planned = `${state.day}`; return plan; } }
     }
+    // land in a new country, and a household brought to land he holds (docs/FRAME-LINEAGE.md C, E)
+    if (BOT_OPTS.settle && this.policy !== 'random') {
+      const claim = pick((a) => a.t === 'claim_land');
+      if (claim) return claim;
+      const st = pick((a) => a.t === 'settle');
+      if (st && (state.base.wife || this.policy === 'homebody')) return st;
+    }
     // lords and land (docs/FRAME-WORLD.md §C-D): the careful swear openly; the reckless take a second oath and a fort
     if (this.policy !== 'homebody') {
       const sw = pick((a) => a.t === 'swear' && a.how === (this.policy === 'reckless' ? 'secret' : 'first')) ?? pick((a) => a.t === 'swear' && a.how === 'first');
@@ -316,8 +323,8 @@ export interface RunResult {
 }
 
 /** Plays one life (or `years` of it). Errors on dead ends and softlocks instead of hanging. */
-export function playLife(content: ContentBundle, policy: Policy, seed: number, years: number, background = 'younger_son', until?: (s: GameState) => boolean): RunResult {
-  let state = newGame(content, { background, seed, name: 'Bot' });
+export function playLife(content: ContentBundle, policy: Policy, seed: number, years: number, background = 'younger_son', until?: (s: GameState) => boolean, make?: { attrs?: Record<Attr, number>; skillSet?: string; era?: 830 | 843 }): RunResult {
+  let state = newGame(content, { background, seed, name: 'Bot', ...make });
   const bot = new Bot(policy, new RngCursor(seedRng(seed ^ 0x5bd1e995)));
   const startYear = dateOf(state.day).year;
   let steps = 0;

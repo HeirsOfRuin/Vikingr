@@ -27,7 +27,11 @@
     "measure:scout": "tsx tools/measure-scout.ts",
     "measure:world": "tsx tools/measure-world.ts",
     "measure:pace": "tsx tools/measure-pace.ts",
+    "measure:makeup": "tsx tools/measure-makeup.ts",
+    "measure:lineage": "tsx tools/measure-lineage.ts",
+    "measure:era": "tsx tools/measure-era.ts",
     "smoke": "tsx tools/smoke.ts",
+    "smoke:843": "tsx tools/smoke-843.ts",
     "check": "npm run typecheck && npm test && npm run validate && npm run lint:style && npm run bot -- --runs 100 --years 10",
     "build:artifact": "npm run content && tsc --noEmit && VITE_ARTIFACT=1 vite build && tsx tools/build-artifact.ts",
     "art": "tsx tools/art.ts"

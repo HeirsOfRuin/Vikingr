@@ -23,9 +23,11 @@ import { hearNews } from './chronicle';
 import { atLordSeat, lordMen, lordName, lordsYear, lordTenth, secretYear } from './lords';
 import { holdingAt, holdingsYear } from './land';
 import { ruleYear, SEAT_DEF } from './rule';
+import { familyYear, winterBirth } from './family';
 import {
   HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
 } from './tuning';
+import { atHome, settledAbroad, settledMuster, SETTLE } from './settle';
 
 export const JARL_CUT = 0.25;
 export const PROVISION_DAYS = 40;
@@ -384,7 +386,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
   if (state.hallLeft <= 0) {
     const card = yearEnd(state, content, rng);
     // the spring card replaces the hall report, unless something else (a death, a scene) has the stage
-    if (!state.pending && state.hero.alive) state.pending = { t: 'report', title: `Spring, ${dateOf(state.day).year}`, lines: [...lines, ...card], art: state.at === 'home_fjord' ? 'home_fjord' : undefined };
+    if (!state.pending && state.hero.alive) state.pending = { t: 'report', title: `Spring, ${dateOf(state.day).year}`, lines: [...lines, ...card], art: atHome(state) ? 'home_fjord' : undefined };
     return [];
   }
   trigger(state, content, rng, 'hall');
@@ -413,7 +415,9 @@ export function startWinter(state: GameState, actions: number, content?: Content
   // the harvest is in, or isn't; and a long dark winter of fires in a wooden house (docs/FRAME-HARDSHIP.md)
   if (content && rng && !state.service) {
     rollHarvest(state, content, rng, state.flags._winter);
-    if (state.at === 'home_fjord') rollFire(state, content, rng);
+    if (atHome(state)) rollFire(state, content, rng);
+    // a winter under his own roof with his wife (docs/FRAME-LINEAGE.md B)
+    if (atHome(state)) winterBirth(state, content, rng, state.flags._winter);
   }
 }
 
@@ -432,11 +436,11 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
     return lines;
   }
   // the winter's sickness and the winter's bills, and what the district thinks of him (docs/FRAME-HARDSHIP.md)
-  const hardLines = turnOfYear(state, content, rng, year, state.at !== 'home_fjord');
+  const hardLines = turnOfYear(state, content, rng, year, !atHome(state));
   // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
-  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng));
+  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng));
   // lords, land and rule (docs/FRAME-WORLD.md §C-E): a dead lord, a secret oath come out, the holdings, the seat
-  const wintered = state.at === 'home_fjord' ? 'home_fjord' : state.at;
+  const wintered = state.at;
   hardLines.push(...lordsYear(state, content, rng), ...secretYear(state, content, rng), ...holdingsYear(state, content, rng, wintered), ...ruleYear(state, content, rng, wintered));
   // history goes on without him: in 841 the Norse build ship-forts at Duibhlinn and Linn Duachaill and winter in Ireland
   if (year >= 841 && !state.flags._lp841) {
@@ -447,6 +451,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // a sworn man fell last year: the oarsman who took his bench may ask to take his oath as well
   if (!state.service && hirdRoom(state) > 0 && state.men.some((m) => !m.alive && m.sworn && m.diedOn !== null && dateOf(m.diedOn).year >= year - 1)) state.queue.push({ scene: 'hi_heir', day: state.day });
   for (const m of aliveMen(state)) addLoyalty(m, m.loyalty > 6 ? -1 : m.loyalty < 4 ? 1 : 0);
+  // settled abroad, their wives are here: none of them goes home, because home is here (docs/FRAME-LINEAGE.md C)
+  if (settledAbroad(state)) for (const m of aliveMen(state)) if (m.sworn) m.loyalty = Math.max(m.loyalty, SETTLE.loyaltyFloor);
   for (const [id, ps] of Object.entries(state.places)) {
     const base = content.places[id]?.raid?.wealth ?? 0;
     ps.wealth = Math.min(base, Math.round(ps.wealth + base * 0.15));
@@ -466,9 +472,9 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   }
   // at another man's oar: the captain fills his empty benches from the muster, as every captain does
   if (state.service) state.crew.men = Math.max(state.crew.men, SERVICE_CREW);
-  state.crew.morale = Math.round((state.crew.morale + 6) / 2);
+  state.crew.morale = Math.round((state.crew.morale + (settledAbroad(state) ? 7 : 6)) / 2);
   clampMorale(state);
-  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + favourMuster(state);
+  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + (settledAbroad(state) ? settledMuster(state) : favourMuster(state));
   // his lord sends men to his muster
   state.musterPool += lordMen(state);
   state.musterPool = Math.max(0, state.musterPool);
@@ -481,7 +487,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   if (y) lines.push(y);
   lines.push(...hardLines);
   state.seasonRaids = [];
-  state.phase = state.at === 'home_fjord' ? 'muster' : 'sailing';
+  state.phase = atHome(state) ? 'muster' : 'sailing';
   lines.push(...chapterCard(state, content, year));
   // whatever news never reached him in a port reaches him over the winter (docs/FRAME-WORLD.md §B)
   const news = hearNews(state, true);

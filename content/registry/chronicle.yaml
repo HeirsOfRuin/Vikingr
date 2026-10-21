@@ -269,6 +269,239 @@ events:
     news: |
       Danes have come to Dublin: the dark foreigners, the Irish call them, to tell them from the fair ones already there. They broke into the ship-fort and made a great slaughter of the Norse, and carried off everything in it, the people too.
 
+  # ---- after 851: what a son hears by the fire (docs/FRAME-LINEAGE.md B) ----
+  - id: c851_london
+    year: 851
+    doy: 150
+    by: The Danes
+    places: [london]
+    keep: 0.4
+    defence: 0.3
+    # ASC 851: 350 ships came into the mouth of the Thames, stormed Canterbury and London; the heathens stayed the winter on Thanet for the first time.
+    news: |
+      From England: three hundred and fifty Danish ships came into the Thames, and stormed Canterbury and London both. Then they stayed the winter on Thanet, which no fleet has done before. The English call it the first winter.
+
+  - id: c852_carlingford
+    year: 852
+    doy: 200
+    by: The Danes
+    # AU 852: the battle at Snám Aignech (Carlingford Lough) between the dark and the fair foreigners, three days and three nights.
+    news: |
+      From Ireland: the Danes and the Norse fought for three days and three nights in Carlingford Lough, ship against ship, and the Danes won. The Irish watched from the shore, and prayed for both sides to lose.
+
+  - id: c853_olaf
+    year: 853
+    doy: 160
+    who: olaf
+    by: Olaf
+    # AU 853: "Amlaíb, son of the king of Laithlind, came to Ireland, and the foreigners of Ireland submitted to him."
+    news: |
+      Olaf, a king's son from Lochlann, has come to Dublin with a fleet, and every Norseman in Ireland has given him his hand. There is one king of the foreigners in Ireland now, and he means to stay.
+
+  - id: c854_horik
+    year: 854
+    doy: 120
+    who: horik
+    by: Guthrum's men
+    # AB 854: King Horik killed in a civil war with his nephew Guthrum; nearly all the royal kin died with him.
+    news: |
+      King Horik of the Danes is dead, killed in a war with his own nephew, and so many of the royal kin with him that there is hardly a king's son left in Denmark. The Danes are fighting over what is left.
+
+  - id: c857_paris
+    year: 857
+    doy: 10
+    by: The Seine Danes
+    places: [paris, saint_denis]
+    keep: 0.4
+    defence: 0.3
+    # AB 856-857: the Danes on the Seine sacked Paris at Christmas and burned its churches; St-Denis was ransomed.
+    news: |
+      From Frankia: the Danes on the Seine took Paris again at midwinter, and burned its churches, and the king did nothing. They say they don't even bother to take the ships out of the river any more.
+
+  - id: c858_bjorn
+    year: 858
+    doy: 180
+    who: bjorn
+    by: Björn
+    # AB 858: Björn ("Berno"), a leader of the Seine Danes, came to King Charles at Verberie and gave himself into his hands.
+    news: |
+      Björn, the one men call Ragnarr's son, has gone to the Frankish king and put his hands between the king's, and promised to hold the Seine for him. Nobody believes either of them.
+
+  - id: c859_voyage
+    year: 859
+    doy: 140
+    who: hastein
+    by: Hastein and Björn
+    # AB 859; Ibn Idhari: sixty-two ships from the Loire sailed past Spain and into the Middle Sea.
+    news: |
+      Sixty-two ships have gone out of the Loire under Hastein and Björn, south past Spain, and through the strait into the Middle Sea, where no Norseman has ever been. Men say they mean to take Rome.
+
+  - id: c860_winchester
+    year: 860
+    doy: 200
+    by: A great ship-army
+    places: [hamwic]
+    keep: 0.5
+    defence: 0.3
+    # ASC 860: a great ship-army came and stormed Winchester.
+    news: |
+      From England: a great ship-army has stormed Winchester, the West Saxons' royal town, and burned it. The English met them on the way back to the ships and killed a good many, which the English are telling everyone.
+
+  - id: c860_luna
+    year: 860
+    doy: 230
+    who: hastein
+    by: Hastein
+    # Dudo of St-Quentin (a century later) tells that Hastein took Luna thinking it was Rome. A good story, and Dudo's.
+    news: |
+      From the south, by a long road: Hastein has taken a great walled town in Italy by a trick, playing dead in a coffin and leaping out at his own funeral. He thought it was Rome. It wasn't. Men are telling it in every hall, and laughing.
+
+  - id: c860_miklagardr
+    year: 860
+    doy: 170
+    by: The Rus
+    # The Byzantine sources: on 18 June 860 a Rus fleet of two hundred ships fell on the suburbs of Constantinople.
+    news: |
+      From the east road: two hundred ships of the Rus, Swedes from the river lands, have sailed down to Miklagarðr, the great city of the Greeks, and burned everything outside its walls. The walls held.
+
+  - id: c862_return
+    year: 862
+    doy: 150
+    who: bjorn
+    by: Björn's fleet
+    # AB 862 and the Spanish sources: the fleet came home to the Loire with about twenty ships of the sixty-two.
+    news: |
+      Björn and Hastein's fleet is home in the Loire, after three summers. About twenty ships came back of the sixty-two, so heavy with silver and black men from Africa that they sat low in the water.
+
+  - id: c861_gardarr
+    year: 861
+    doy: 250
+    by: Garðarr
+    # Landnámabók: Naddoddr, blown off course from the Faroes, found a snowy land and called it Snæland; Garðarr Svavarsson sailed round it and wintered at Húsavík. The dates are tradition.
+    news: |
+      Out of the Faroes: a Swede called Garðarr has sailed right round a great land in the west, beyond the Faroes, and found it an island, and wintered on it. Another man, blown there before him, called it Snæland for the snow. Garðarr calls it after himself.
+
+  - id: c868_floki
+    year: 868
+    doy: 260
+    by: Flóki
+    # Landnámabók: Flóki Vilgerðarson found the land with ravens, wintered in Vatnsfjörður, lost his cattle, and named it Ísland for the drift-ice. The date is tradition.
+    news: |
+      Flóki of Rogaland has been to Garðarr's island, finding the way with three ravens. He made no hay, his cattle died, and he came home cursing it and calling it Ísland, the land of ice. His men say it drips butter from every blade of grass. Men are listening to his men.
+
+  - id: c874_ingolfr
+    year: 874
+    doy: 200
+    by: Ingólfr
+    # Landnámabók: Ingólfr Arnarson threw his high-seat pillars overboard and settled where they came ashore, at Reykjarvík; 874 is the traditional date.
+    news: |
+      Ingólfr Arnarson has gone out to Ísland with his household to stay. He threw his high-seat pillars overboard off the coast, and they came ashore at a bay full of smoke from the ground, and that is where he has built his farm. Others are going after him every summer now.
+
+  - id: c862_rurik
+    year: 862
+    doy: 150
+    who: rurik
+    by: Rurik
+    # The Russian Primary Chronicle (written two centuries later): the Slavs called Rurik and his brothers to rule them, 862.
+    news: |
+      From the east road: the Slavs of the lake country have asked a Swede called Rurik to come and rule them, because they can't stop fighting each other. He has built a fort at Hólmgarðr, on the river, and the silver road from the east runs past his door.
+
+  - id: c865_army
+    year: 865
+    doy: 280
+    who: ivar
+    by: The great army
+    places: [gipeswic]
+    keep: 0.5
+    defence: 0.2
+    # ASC 865 (866): a great heathen army came to England and took winter quarters among the East Angles, who made peace and gave them horses.
+    news: |
+      A great army has gone to England: not a raid, an army, more ships than anyone can count, under Ivar and his brothers, the sons of Ragnarr, men say. They have wintered among the East Angles, who gave them horses to be rid of them.
+
+  - id: c867_york
+    year: 867
+    doy: 80
+    who: ivar
+    by: The great army
+    places: [york]
+    norse: true
+    # ASC 867: the army took York; the two Northumbrian kings, Osberht and Ælla, were killed there on 21 March.
+    news: |
+      The great army has taken York. The two kings of Northumbria made peace with each other long enough to attack it together, and both died in the streets. York is a Danish town now, Jórvík, and the army winters in it.
+
+  - id: c869_edmund
+    year: 869
+    doy: 324
+    who: ivar
+    by: The great army
+    # ASC 870 (869): the army killed King Edmund of the East Angles and took the land. The English already call him a saint.
+    news: |
+      The army has killed Edmund, king of the East Angles, and taken his kingdom. The English say he was shot full of arrows for not giving up his God, and are calling him a saint. There are three English kingdoms left.
+
+  - id: c870_alt_clut
+    year: 870
+    doy: 200
+    who: olaf
+    by: Olaf and Ivar
+    places: [alt_clut]
+    keep: 0.2
+    defence: 0.5
+    # AU 870: the siege of Dumbarton (Ail Cluaithe) by Amlaíb and Ímar; it was taken after four months, when the well failed.
+    news: |
+      Olaf and Ivar have taken Dumbarton, the Britons' rock on the Clyde, after a siege of four months. The well inside ran dry. They took two hundred ships of captives back to Dublin.
+
+  - id: c871_alfred
+    year: 871
+    doy: 120
+    by: The great army
+    # ASC 871: the year of nine battles in Wessex; King Æthelred died after Easter and his brother Alfred became king.
+    news: |
+      The army has fought the West Saxons nine times in one year. Their king is dead, and his young brother Alfred has bought the army off with silver. Wessex is the last English kingdom standing.
+
+  - id: c872_hafrsfjord
+    year: 872
+    doy: 200
+    who: harald
+    by: Harald
+    # Haraldskvæði and the kings' sagas; the traditional date is 872 and nobody is sure of it.
+    news: |
+      Harald of Vestfold has beaten the kings of the west at Hafrsfjord, just down the coast from here, and calls himself king of all Norway. Men who won't kneel to him are packing their ships for the islands, and for the new land in the west.
+
+  - id: c873_ivar
+    year: 873
+    doy: 60
+    who: ivar
+    by: Ivar
+    # AU 873: "Ímar, king of the Northmen of all Ireland and Britain, ended his life."
+    news: |
+      Ivar is dead in Dublin: king of the Norsemen of all Ireland and Britain, the Irish annals call him. He died in his bed, of a sickness, which nobody expected of him.
+
+  - id: c874_repton
+    year: 874
+    doy: 300
+    who: halfdan
+    by: The great army
+    # ASC 874: the army wintered at Repton and drove King Burgred of Mercia over the sea.
+    news: |
+      The army wintered at Repton in Mercia, and drove the Mercian king over the sea to Rome. Mercia has a Danish puppet now. Half the army has gone north with Halfdan to share out the land, and the other half south with Guthrum after Wessex.
+
+  - id: c876_plough
+    year: 876
+    doy: 150
+    who: halfdan
+    by: Halfdan's men
+    # ASC 876: Halfdan shared out the land of the Northumbrians, and they were ploughing and providing for themselves.
+    news: |
+      Halfdan has shared out the land of Northumbria among his men, and they are ploughing it. The great army is becoming farmers. There is land in England for any Norseman who can hold a sword and a plough.
+
+  - id: c878_edington
+    year: 878
+    doy: 130
+    by: King Alfred
+    # ASC 878: Guthrum surprised Alfred at Chippenham at midwinter; Alfred came out of the marshes at Athelney and beat him at Edington; Guthrum was baptized.
+    news: |
+      Guthrum caught Alfred at midwinter and drove him into the marshes. In the spring Alfred came out of them with an army and beat Guthrum at Edington, and Guthrum has taken baptism, with Alfred standing godfather. Wessex stands.
+
 # Legends at their work: one place a summer, seven times in ten or so, by the hero's own rules (wealth, defence, recovery).
 raiders:
   - id: r_turgeis
@@ -305,3 +538,24 @@ raiders:
     to: 870
     places: [lindisfarne, jarrow, whitby, york, whithorn]
     chance: 0.35
+  # ---- after 851 (docs/FRAME-LINEAGE.md B) ----
+  - id: r_seine_danes
+    who: bjorn
+    by: The Seine Danes
+    from: 852
+    to: 862
+    places: [rouen, jumieges, fontenelle, saint_denis, paris]
+    chance: 0.6
+  - id: r_olaf
+    who: olaf
+    by: Olaf's men
+    from: 853
+    to: 872
+    places: [armagh, clonmacnoise, glendalough, conaille, bangor, cork, rechru]
+    chance: 0.5
+  - id: r_great_army
+    by: The great army
+    from: 865
+    to: 878
+    places: [york, lindisfarne, jarrow, whitby, gipeswic, london, hamwic, sheppey]
+    chance: 0.7

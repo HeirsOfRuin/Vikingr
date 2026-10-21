@@ -15,7 +15,8 @@ export const LISTEN_COST = 2;
 
 /** Far places this port's sailors could still tell him of. */
 function untold(state: GameState, content: ContentBundle, at: string): string[] {
-  return (content.places[at]?.rumours ?? []).filter((id) => !state.known.includes(id) && !state.rumoured.includes(id));
+  const year = dateOf(state.day).year;
+  return (content.places[at]?.rumours ?? []).filter((id) => !state.known.includes(id) && !state.rumoured.includes(id) && (content.places[id]?.from ?? 0) <= year);
 }
 
 /** Halls, markets and towns have old sailors; once a year per port, while they still have something to tell. */

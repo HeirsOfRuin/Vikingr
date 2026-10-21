@@ -1,3 +1,6 @@
+import { focusChild, heirSets } from '../../engine/family';
+import { HEIR_ATTRS } from '../../engine/makeup';
+import { Makeup } from './Makeup';
 import { goodsRoom } from '../../engine/trade';
 import { epitaph } from '../../engine/saga';
 import { useEffect, useState } from 'preact/hooks';
@@ -85,8 +88,14 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
         <h2>{a.title}</h2>
         <p>{a.text}</p>
         {epitaph(state, content).map((l, i, all) => i === all.length - 1 ? <div key={i} class="card sans small">{l} The deeds are in the Saga tab.</div> : <p key={i}>{l}</p>)}
+        {options.length > 0 && <><h2>His sons</h2><p>The saga can go on as his son's: the same world, what is left of the farm, his father's name, his father's feuds.</p><Actions options={options} onAct={onAct} /></>}
       </div>
     );
+  }
+  if (p?.t === 'heir') {
+    const c = focusChild(state)!;
+    const sets = heirSets(state, content, c);
+    return <Makeup title={state.hero.name} intro={`Son of ${state.hero.father}, sixteen this spring. Spread what you were born with, and say how you were raised.`} start={HEIR_ATTRS} sets={sets} begin="Stand at his mound" onBegin={(attrs, set) => onAct({ t: 'heir_make', attrs, set })} />;
   }
   if (p?.t === 'scene') return <SceneView content={content} state={state} scene={content.scenes[p.id]!} onAct={onAct} />;
   if (p?.t === 'report') {
@@ -179,7 +188,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
               const t = tierAt(state, content, place.id);
               return <p class="small sans"><span class={`pill standing-${t}`}>{TIER_NAMES[t]}</span> {TIER_HINTS[t]}</p>;
             })()}
-            <p class="muted small sans">{capitalise(seasonName(state.day))}. {svc ? `You row in ${svc.captain}'s ship. The men are ${moraleWord(state.crew.morale)}.` : `Food for ${food} days. The crew is ${moraleWord(state.crew.morale)}.`} {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === 'home_fjord' && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
+            <p class="muted small sans">{capitalise(seasonName(state.day))}. {svc ? `You row in ${svc.captain}'s ship. The men are ${moraleWord(state.crew.morale)}.` : `Food for ${food} days. The crew is ${moraleWord(state.crew.morale)}.`} {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === (state.homeAt ?? 'home_fjord') && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
           </>
         );
     }

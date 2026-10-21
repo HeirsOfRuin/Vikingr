@@ -48,7 +48,14 @@ export function loadContent(root = ROOT): S.ContentBundle {
   const reg = (f: string) => join(root, 'registry', f);
   const world = check(z.object({ places: z.array(S.place), legs: z.array(S.leg) }).strict(), read(join(root, 'places', 'places.yaml')), 'places/places.yaml');
   const scenes: S.Scene[] = [];
-  for (const f of walk(join(root, 'scenes'))) scenes.push(...check(z.array(S.scene), read(f), relative(root, f)));
+  const chapters: Record<string, string[]> = {};
+  for (const f of walk(join(root, 'scenes'))) {
+    const got = check(z.array(S.scene), read(f), relative(root, f));
+    scenes.push(...got);
+    // the folder is the chapter: an era that starts later counts the earlier chapters as past (docs/FRAME-LINEAGE.md D)
+    const ch = relative(join(root, 'scenes'), f).split(/[\\/]/)[0]!;
+    (chapters[ch] ??= []).push(...got.map((s) => s.id));
+  }
   const bundle: Omit<S.ContentBundle, 'hash'> = {
     places: byId(world.places, 'place'),
     legs: world.legs,
@@ -62,6 +69,7 @@ export function loadContent(root = ROOT): S.ContentBundle {
     flags: check(z.record(z.string(), S.flagDef), read(reg('flags.yaml')), 'registry/flags.yaml'),
     backgrounds: byId(check(z.array(S.background), read(join(root, 'backgrounds.yaml')), 'backgrounds.yaml'), 'background'),
     scenes: byId(scenes, 'scene'),
+    chapters,
     names: check(z.array(z.string()), read(reg('names.yaml')), 'registry/names.yaml'),
     art: byId(check(z.array(S.artEntry), read(reg('art.yaml')), 'registry/art.yaml'), 'art'),
     captains: byId(check(z.array(S.captainDef), read(reg('captains.yaml')), 'registry/captains.yaml'), 'captain'),
@@ -71,6 +79,7 @@ export function loadContent(root = ROOT): S.ContentBundle {
     fates: byId(check(z.array(S.fateDef), read(reg('fates.yaml')), 'registry/fates.yaml'), 'fate'),
     banter: check(z.array(S.banterLine), read(reg('banter.yaml')), 'registry/banter.yaml'),
     recruits: byId(check(z.array(S.recruitOrigin), read(reg('recruits.yaml')), 'registry/recruits.yaml'), 'recruit origin'),
+    upbringing: byId(check(z.array(S.upbringingDef), read(reg('upbringing.yaml')), 'registry/upbringing.yaml'), 'upbringing'),
     coasts: byId(check(z.array(S.coastDef), read(reg('coasts.yaml')), 'registry/coasts.yaml'), 'coast'),
     lords: byId(check(z.array(S.lordDef), read(reg('lords.yaml')), 'registry/lords.yaml'), 'lord'),
     chronicle: (() => {

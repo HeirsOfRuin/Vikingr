@@ -231,8 +231,8 @@ export function endCruise(state: GameState, content: ContentBundle, rng: RngCurs
   if (why === 'dead' || !state.hero.alive) return [];
   const lines = [why, ...c.log.slice(-14)];
   lines.push(`In all: ${formatSilver(Math.max(0, state.loot - c.lootAtStart))} on the heap${state.captives > c.captivesAtStart ? `, ${plural(state.captives - c.captivesAtStart, 'captive')}` : ''}; ${plural(Math.max(0, c.menAtStart - state.crew.men), 'man', 'men')} fewer at the oars than when you set out.`);
-  if (c.orders.then === 'home' && state.at !== 'home_fjord' && !state.pending) {
-    state.course = 'home_fjord';
+  if (c.orders.then === 'home' && state.at !== (state.homeAt ?? 'home_fjord') && !state.pending) {
+    state.course = state.homeAt ?? 'home_fjord';
     const home = sailCourse(state, content, rng);
     if (sim && pendingT(state) === 'scene') state.pending = null;
     lines.push(...home.filter((l) => !/^Landfall at/.test(l)).slice(-4));

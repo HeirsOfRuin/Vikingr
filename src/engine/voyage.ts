@@ -74,7 +74,7 @@ export function expeditionRoads(state: GameState, content: ContentBundle, from: 
   return content.legs
     .filter((l) => l.expedition && (l.a === from || l.b === from))
     .map((leg) => ({ leg, to: leg.a === from ? leg.b : leg.a }))
-    .filter((r) => content.places[r.to]?.active && state.rumoured.includes(r.to) && !state.known.includes(r.to))
+    .filter((r) => content.places[r.to]?.active && state.rumoured.includes(r.to) && !state.known.includes(r.to) && (content.places[r.to]!.from ?? 0) <= dateOf(state.day).year)
     .map((r) => ({ ...r, days: Math.round((r.leg.days / (speed * AVG_PROGRESS)) * 10) / 10 }));
 }
 
@@ -266,7 +266,7 @@ export function eatDays(state: GameState, days: number): boolean {
 export function eatAshore(state: GameState): string | null {
   const from = state.fedTo ?? state.day;
   state.fedTo = state.day;
-  if (state.voyage || state.at === 'home_fjord' || state.phase === 'winter' || !state.at) return null;
+  if (state.voyage || state.at === (state.homeAt ?? 'home_fjord') || state.phase === 'winter' || !state.at) return null;
   return eatDays(state, state.day - from) ? 'The food is gone. The men are eating what they can beg on the beach, and they blame you for it.' : null;
 }
 

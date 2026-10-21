@@ -1,7 +1,7 @@
 // Engine facade. Three calls: newGame, view, act. Pure: act clones the state,
 // works on the copy, and returns it. The UI, the bot and the tests all use this.
 import { cutRing, makeRing, METALS, RING, ringsOf, ringWords, type Metal } from './rings';
-import type { ContentBundle, DuelMove, Order, Skill } from '../content/schema';
+import type { Attr, ContentBundle, DuelMove, Order, Skill } from '../content/schema';
 import { DUEL_MOVES, SKILLS } from '../content/schema';
 import type { GameState, Pending, Position } from './state';
 import { RngCursor, seedRng } from './rng';
@@ -14,11 +14,13 @@ import { open, trigger } from './director';
 import { BOUT_MOVES, boutAvailable, boutExchange, fightOutBout, MOVE_LABEL, moveDesc, type BoutMove } from './bout';
 import { available, deployStep, fightOutWall, ORDER_LABEL, orderDesc, wallRound, WALL_ORDERS, type WallOrder } from './wall';
 import { checkP, hpMax, learn, effAttr } from './hero';
+import { makeupError, skillsOf } from './makeup';
+import { childAge, FAMILY, familyActions, foster, goOnAs, heirs, makeHeir, renameChild, takeSon, wedDaughter } from './family';
 import { hearNews, newsWaiting, tickChronicle } from './chronicle';
 import { courseBlock, coursePath, courseTargets, sailCourse } from './course';
 import { AIM_LABEL, BOLD_LABEL, coastTargets, CRUISE, cruiseBlock, cruiseUntil, defaultOrders, endCruise, forecast, LEAD_LABEL, POSITION_WORDS, reckoningWords, runCruise, startCruise } from './cruise';
 import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lords';
-import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding } from './land';
+import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding, claimBlock } from './land';
 import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
@@ -45,6 +47,8 @@ import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
 import { BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
+import { startIn843 } from './era';
+import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -60,9 +64,18 @@ export type Action =
   | { t: 'cruise_cancel' }
   | { t: 'cruise_on' }
   | { t: 'cruise_end' }
+  // family and the heir (docs/FRAME-LINEAGE.md B)
+  | { t: 'foster'; child: string; with: string }
+  | { t: 'take_son'; child: string }
+  | { t: 'wed_daughter'; child: string; to: string }
+  | { t: 'rename_child'; child: string; name: string }
+  | { t: 'heir'; child: string }
+  | { t: 'heir_make'; attrs: Record<Attr, number>; set: string }
   | { t: 'swear'; lord: string; how: 'first' | 'open' | 'secret' }
   | { t: 'renounce'; lord: string }
   | { t: 'buy_land' }
+  | { t: 'settle' }
+  | { t: 'claim_land' }
   | { t: 'dig_fort' }
   | { t: 'muster_land' }
   | { t: 'reinforce' }
@@ -132,7 +145,7 @@ export interface ActionOption {
   group: string;
 }
 
-export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'cruise' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
+export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'cruise' | 'heir' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
 
 export interface View {
   screen: Screen;
@@ -145,12 +158,19 @@ export interface NewGameOptions {
   background: string;
   seed: number;
   name: string;
+  /** Point-buy spread (docs/FRAME-LINEAGE.md A); the beginning's own if left out. */
+  attrs?: Record<Attr, number>;
+  /** Which way he was raised: a skill set id; the first if left out. */
+  skillSet?: string;
+  /** Horik's days (830, the default) or Ragnarr's days (843) (docs/FRAME-LINEAGE.md D). */
+  era?: 830 | 843;
 }
 
 export function newGame(content: ContentBundle, opts: NewGameOptions): GameState {
   const bg = content.backgrounds[opts.background];
   if (!bg) throw new Error(`unknown background ${opts.background}`);
-  const skills = Object.fromEntries(SKILLS.map((s) => [s, bg.skills[s] ?? 0])) as Record<Skill, number>;
+  if (opts.attrs) { const e = makeupError(bg.attrs, opts.attrs); if (e) throw new Error(e); }
+  const skills = skillsOf(bg, opts.skillSet);
   const xp = Object.fromEntries(SKILLS.map((s) => [s, 0])) as Record<Skill, number>;
   const state: GameState = {
     v: 1,
@@ -163,7 +183,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
       name: `${opts.name.trim() || 'Hrafn'} ${bg.patronymic}`,
       background: bg.id,
       born: BIRTH_YEAR,
-      attrs: { ...bg.attrs },
+      attrs: { ...(opts.attrs ?? bg.attrs) },
       skills,
       xp,
       hp: 0,
@@ -217,7 +237,8 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
   state.musterPool = 4 + 2 * effAttr(state, content, 'pre');
   // the first season's food comes from the farm and the jarl
   state.provisions = mouths(state) * 20;
-  open(state, bg.start_scene, content);
+  if (opts.era === 843) startIn843(state, content, bg.id);
+  else open(state, bg.start_scene, content);
   return state;
 }
 
@@ -250,7 +271,7 @@ export function screenOf(state: GameState): Screen {
   const p = state.pending;
   if (p) return p.t;
   if (state.voyage) return 'voyage';
-  if (state.phase === 'muster' && state.at === 'home_fjord') return 'muster';
+  if (state.phase === 'muster' && atHome(state)) return 'muster';
   if (state.phase === 'return') return 'return';
   if (state.phase === 'winter') return 'hall';
   return 'place';
@@ -287,7 +308,7 @@ function tradeOption(state: GameState, content: ContentBundle): ActionOption[] {
 
 /** At home: the hoard, the wall (FRAME-FOUNDATION §4). Instant; shown on the Home tab and the home screens. */
 export function baseActions(state: GameState, content: ContentBundle): ActionOption[] {
-  if (state.at !== 'home_fjord' || state.voyage) return [];
+  if (!atHome(state) || state.voyage) return [];
   const out: ActionOption[] = [];
   // bury a pound, half, or all but a pound; dig up a pound, or the lot
   const LB = ORTUG_PER_POUND;
@@ -304,6 +325,7 @@ export function baseActions(state: GameState, content: ContentBundle): ActionOpt
   out.push(opt('Arm-rings', { t: 'make_ring' }, 'Have the smith make a silver arm-ring', state.silver >= RING.silver.make, `You need ${formatSilver(RING.silver.make)}.`, `${formatSilver(RING.silver.make)}; you hold ${ringWords(state)}`));
   for (const m of METALS) if (ringsOf(state)[m] > 0) out.push(opt('Arm-rings', { t: 'cut_ring', metal: m }, `Cut a ${m} arm-ring into hacksilver`, true, undefined, formatSilver(RING[m].weight)));
   for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall`));
+  if (!state.service) out.push(...familyActions(state, content, opt));
   return out;
 }
 
@@ -337,7 +359,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
   const screen = screenOf(state);
   const p = state.pending;
   switch (screen) {
-    case 'death': return [];
+    // go on as his son (docs/FRAME-LINEAGE.md B)
+    case 'death': return heirs(state).map((c) => opt('', { t: 'heir', child: c.id }, `Go on as ${c.name}, his ${c.father === state.hero.name ? 'son' : 'brother'}`, true, undefined, `${childAge(state, c)} winters old${childAge(state, c) < FAMILY.heirAt ? `; the years pass until he is ${FAMILY.heirAt}` : ''}`));
+    case 'heir': return [];
     case 'report': return [opt('', { t: 'continue' }, 'Continue')];
     case 'scene': {
       const scene = content.scenes[(p as { id: string }).id]!;
@@ -459,7 +483,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'hall': {
       const out: ActionOption[] = [];
-      const home = state.at === 'home_fjord';
+      const home = atHome(state);
       const fc = feastCost(state);
       const lord = !state.service; // an oarsman eats at his father's table and does not hold feasts
       if (home) out.push(...shopOption(state, content), ...baseActions(state, content));
@@ -585,11 +609,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const short = state.provisions < mouths(state) * r.days;
           out.push(opt('Sail', { t: 'sail', to: r.to }, `Sail to ${content.places[r.to]!.name}`, true, undefined, `About ${r.days} days, ${r.leg.kind === 'open' ? 'open sea' : r.leg.kind}${short ? '. Not enough food' : ''}`));
         }
-      } else if (at !== 'home_fjord' && !exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage home on a trader' : 'Work your passage home on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
+      } else if (at !== homeOf(state) && !exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage home on a trader' : 'Work your passage home on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
       // an outlaw castaway can't go home: a trader takes him west, to the one hall that will have him
       else if (at !== 'orkney' && exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage to Orkney on a trader' : 'Work your passage to Orkney on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
       else if (at === 'orkney' && exiled(state) && !state.service) out.push(opt('Sail', { t: 'harek' }, "Go to Harek's hall, and ask for a bench", true, undefined, 'Another summer at his oar'));
-      if (place.raid && !norseHeld(state, at)) {
+      if (place.raid && !norseHeld(state, at) && at !== homeOf(state)) {
         const done = state.seasonRaids.includes(at);
         // what the scouts saw rides on the raid button while it holds (docs/FRAME-WORLD.md §A)
         const odds = scoutedOdds(state, content, at);
@@ -603,7 +627,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       }
       // what this port will do for him depends on what it thinks of him (DESIGN §11.6)
       const tier = tierAt(state, content, at);
-      if (at !== 'home_fjord') {
+      if (at !== homeOf(state)) {
         if (tier === 'hostile') {
           const lf = landingFoe(content, at);
           out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them`));
@@ -644,7 +668,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         const why = expeditionBlock(state, content);
         out.push(opt('Sail', { t: 'expedition', to: r.to }, `Mount an expedition to ${content.places[r.to]!.name}`, !why, why ?? undefined, `Uncharted water: about ${r.days} days, maybe more`));
       }
-      if (at === 'home_fjord') {
+      if (at === homeOf(state)) {
         out.push(...homeActions(state, content));
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
       } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, `Winter at ${place.name}`, tier !== 'hostile' && tier !== 'unfriendly', 'Nobody here will give you a roof.'));
@@ -684,12 +708,14 @@ function landOptions(state: GameState, content: ContentBundle, at: string): Acti
   if (state.service || state.voyage || at === 'home_fjord') return [];
   const out: ActionOption[] = [];
   const h = holdingAt(state, at);
+  if (!h && content.places[at]!.landnam !== undefined) { const why = claimBlock(state, content, at); out.push(opt('Land', { t: 'claim_land' }, 'Take land here: carry fire round its bounds', !why, why ?? undefined, `Free, and nobody's but yours: ${formatSilver(LAND.claimed.yield)} a year at first, ${plural(LAND.claimed.men, 'man', 'men')} each spring. Then bring your family, and settle it`)); }
   if (!h && canBuyHere(state, at)) { const why = buyBlock(state, content, at); out.push(opt('Land', { t: 'buy_land' }, 'Buy land here', !why, why ?? undefined, `${formatSilver(LAND.price)}. Winter here as at home; ${LAND.bought.men} men each spring; ${formatSilver(LAND.bought.yield)} a year`)); }
   if (!h && content.places[at]!.raid && state.places[at]?.wonOn !== undefined && dateOf(state.places[at]!.wonOn!).year === dateOf(state.day).year) {
     const why = fortBlock(state, content, at);
     out.push(opt('Land', { t: 'dig_fort' }, 'Dig a ship-fort here, and hold it', !why, why ?? undefined, `Ten days; leave ${plural(garrisonFor(state), 'man', 'men')} to hold it. ${formatSilver(LAND.fort.yield)} a year, if they don't take it back`));
   }
   if (h && canMuster(state, at)) out.push(opt('Land', { t: 'muster_land' }, 'Call out your people here', true, undefined, `Up to ${plural(LAND[h.kind].men, 'man', 'men')}, and food`));
+  if (h && homeOf(state) !== at) { const why = settleBlock(state, content); out.push(opt('Land', { t: 'settle' }, 'Bring your family and your men\'s families, and settle here', !why, why ?? undefined, settleHint(state, content))); }
   if (h?.kind === 'fort') out.push(opt('Land', { t: 'reinforce' }, 'Leave five more men to hold the fort', state.crew.men > 10, 'You can\'t spare them.', `${plural(h.garrison ?? 0, 'man', 'men')} hold it now. More men, less chance they take it back`));
   return out;
 }
@@ -720,7 +746,7 @@ function sameAction(a: Action, b: Action): boolean {
 
 export function act(content: ContentBundle, input: GameState, action: Action): GameState {
   const allowed = listActions(input, content).find((o) => sameAction(o.action, action));
-  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && action.t !== 'give_item' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
+  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && action.t !== 'give_item' && action.t !== 'rename_child' && action.t !== 'heir_make' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
   const state = structuredClone(input);
   const rng = new RngCursor(state.rng);
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
@@ -736,9 +762,25 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
   switch (action.t) {
     case 'continue': {
       const next = state.pending?.t === 'report' ? state.pending.next : undefined;
-      state.pending = null;
+      const then = state.pending?.t === 'report' ? state.pending.then : undefined;
+      state.pending = then === 'heir' ? { t: 'heir' } : null;
       delete state.shopNote;
       if (next) open(state, next, content);
+      break;
+    }
+    case 'claim_land': open(state, 'is_landnam', content); break;
+    case 'settle': report('Home', settleHere(state, content)); break;
+    case 'foster': report('Fostering', foster(state, content, action.child, action.with)); break;
+    case 'take_son': report('Your son', takeSon(state, content, action.child)); break;
+    case 'wed_daughter': report('A wedding', wedDaughter(state, content, action.child, action.to)); break;
+    case 'rename_child': { const e = renameChild(state, action.child, action.name); if (e) throw new ActionError(e); break; }
+    case 'heir': goOnAs(state, content, rng, action.child); break;
+    case 'heir_make': {
+      if (state.pending?.t !== 'heir') throw new ActionError('not available now: heir_make');
+      const e = makeHeir(state, content, action.attrs, action.set);
+      if (e) throw new ActionError(e);
+      state.pending = null;
+      open(state, 'fa_mound', content);
       break;
     }
     case 'choose': {
@@ -1052,7 +1094,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
         report('Orkney', [paid ? 'A trader takes you west to Orkney for silver and a hand at the oars. It isn\'t home. It\'s the nearest thing you have.' : 'A trader takes you west to Orkney for nothing but your back at his oars. It isn\'t home. It\'s the nearest thing you have.']);
         break;
       }
-      state.at = 'home_fjord';
+      state.at = homeOf(state);
       report('Home', [paid ? 'A trader takes you home for silver and a hand at the oars.' : 'A trader takes you home for nothing but your back at his oars, by the longest way round, with a stop at every market between.']);
       break;
     }
@@ -1173,6 +1215,6 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
     return;
   }
   const doy = dateOf(state.day).doy;
-  if (state.phase === 'sailing' && state.at === (state.service ? serviceHome(state) : 'home_fjord') && !state.voyage && doy >= FORCE_RETURN_DOY) state.phase = 'return';
+  if (state.phase === 'sailing' && state.at === (state.service ? serviceHome(state) : homeOf(state)) && !state.voyage && doy >= FORCE_RETURN_DOY) state.phase = 'return';
   trigger(state, content, rng, 'phase_start');
 }

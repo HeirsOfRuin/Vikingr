@@ -27,6 +27,11 @@ import { onRaided, shiftPeople, shiftStanding, spread } from './standing';
 import { answerCall, lordState, shiftLordFav, swear } from './lords';
 import { grantLand } from './land';
 import { loseSeat, takeSeat } from './rule';
+import { nameChild } from './family';
+import { loseHome } from './settle';
+import { claimBlock, claimLand } from './land';
+/** They come back for a home fort in force: its people, and their neighbours. */
+const HOME_ATTACK = 1.4;
 
 function addTo(state: GameState, content: ContentBundle, path: string, n: number): void {
   switch (path) {
@@ -154,6 +159,13 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       }
     } else if ('swear_cand' in e) swearCandidate(state, content, e.swear_cand);
     else if ('cand_crew' in e) candidateToCrew(state);
+    else if ('name_child' in e) nameChild(state, content, rng, e.name_child);
+    else if ('home_defence' in e) {
+      const at = state.homeAt ?? state.at;
+      const p = at ? content.places[at] : undefined;
+      if (p?.raid) startBattle(state, content, { foe: p.raid.foe, men: Math.round(p.raid.defenders * HOME_ATTACK), terrain: 'rampart', context: 'scene', place: at!, win: e.home_defence.win, lose: e.home_defence.lose });
+    } else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }
+    else if ('lose_home' in e) state.after = { title: 'The settlement', lines: loseHome(state, content) };
     else if ('take_hostage' in e) {
       const t = e.take_hostage;
       const h = makeHostage(state, content, rng, t.kind, t.place ?? state.at ?? state.voyage?.to ?? 'home_fjord', t.captain);

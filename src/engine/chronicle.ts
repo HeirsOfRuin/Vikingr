@@ -27,7 +27,8 @@ export const CHRON = {
 export interface ChronState {
   /** Events and legend-summers already past ("c834_dorestad", "r_turgeis:836"). */
   done: string[];
-  news: { day: number; text: string; heard?: boolean }[];
+  /** big: a dated event from the annals, not a legend's summer raid. */
+  news: { day: number; text: string; heard?: boolean; big?: boolean }[];
 }
 
 function chron(state: GameState): ChronState {
@@ -80,7 +81,7 @@ export function tickChronicle(state: GameState, content: ContentBundle): void {
       if (ev.norse) { const ps = state.places[id]; if (ps) { ps.norse = true; ps.standing = Math.max(ps.standing ?? 0, 2); } }
       else sack(state, id, ev.keep ?? 1, ev.defence ?? 0, ev.by, day);
     }
-    c.news.push({ day, text: ev.news.trim() });
+    c.news.push({ day, text: ev.news.trim(), big: true });
   }
   const year = dateOf(state.day).year;
   for (const r of Object.values(content.chronicle.raiders)) {

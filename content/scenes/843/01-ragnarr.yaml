@@ -1,0 +1,197 @@
+# Ragnarr's days (docs/FRAME-LINEAGE.md D): a life begun in the spring of 843. The world has moved on: Dorestad
+# stripped, ship-forts at Dublin and Linn Duachaill, Turgeis at his height, Rouen burned in 841.
+# He starts at another man's oar, as in 830: the Vestfold arrow for Nantes, a winter on Noirmoutier
+# with the young Hastein, and in 844 a ship of his own. Paris in 845 and Turgeis's fall are the existing chapters.
+- id: e43_boyhood
+  kind: spine
+  art: home_fjord
+  when: 830 to 843
+  title: Thirteen winters of news
+  text: |
+    You were seven when Horik's Danes stripped Dorestad, and fourteen when the Norse built their ship-forts in Ireland and the Danes burned Rouen on the Seine. You know all of it the way a boy knows things: by the fire, from men who were there, or said they were.
+    [break]
+    What did you do with those years, while the world was being taken by other men?
+  choices:
+    - id: fire
+      text: Sat by the fire, and listened, and remembered everything.
+      effects: [ { add: { skill.lore: 1, skill.speech: 1 } } ]
+      result: You know the name of every king from Dublin to Hedeby, and who his father was, and who he killed to get there. Most men your age don't. Most men your age think that doesn't matter.
+      next: e43_arrow
+    - id: boats
+      text: Went out with the fishing boats every summer, as soon as anyone would take you.
+      effects: [ { add: { skill.seamanship: 1, skill.cunning: 1 } } ]
+      result: You know the skerries in fog and the tide-race off the point, and which of the old men lie about the weather. You learned the second thing first.
+      next: e43_arrow
+    - id: yard
+      text: Hung about the weapon-practice in the jarl's yard until they let you join in.
+      effects: [ { add: { skill.weapons: 1, skill.shield: 1 } } ]
+      result: They let you join in to teach you a lesson, the first time. The second time they let you join in because you'd learned it.
+      next: e43_arrow
+
+- id: e43_arrow
+  kind: spine
+  art: muster
+  when: Spring, 843
+  title: The Vestfold arrow
+  text: |
+    [if background == outlaw]You killed a man at the spring horse-fight, and the Thing put you out of Hordaland for three winters. You are on the beach at Kormt, outside the district's law, with your sea-chest and your father's old spear, waiting for a ship that will take a man with blood on him.[else]You are sixteen, and you have grown up on the stories: Dorestad stripped to the walls, the ship-forts in Ireland, the Danes coming down the Seine from Rouen so heavy with the Franks' silver that they had to be bailed in a calm.[/if]
+
+    The war-arrow comes up the coast from Vestfold that spring: a fast ship, with a man in the bow calling for captains. Not a Dane in the fleet, he says. Norwegians, all of them, sixty ships for the Loire and a city on an island in the river, with a bishop and a fair and a Breton count who will show them the road in.
+
+    One of the captains who takes the arrow is Ölvir, from Askøy, a careful man with a karvi called the Hart and two empty benches.
+    [break]
+    "Sixteen," Ölvir says, looking you over the way a man looks over a horse he isn't sure he wants. [if background == outlaw]"And outlawed. Well, the Franks won't ask." [elif background == freedman]"Leysingr's boy. Your father built my steering-oar. Can you bail?" [else]"Hall's second son. Your brother's got the farm, then." [/if]He spits. "A bench and a share. We sail at the end of the spring. Don't make me sorry."
+  choices:
+    - id: bench
+      text: Take the bench.
+      effects:
+        - { join_ship: { captain: Ölvir, ship_name: the Hart, type: karvi, crew: 30, home: noirmoutier, route: [noirmoutier, nantes] } }
+        - { set: flag.cw_nantes_sworn }
+        - { know: noirmoutier }
+        - { know: nantes }
+        - { days: 75 }
+      result: |
+        The fleet gathers off Vestfold at the start of the summer, sixty-seven ships, and goes south down the long coast of the Franks with the wind behind it. You row, and bail, and learn the names of the men on the benches either side of you, and keep your mouth shut, which Ölvir notices.
+    - id: prow
+      text: Ask for the bench nearest the prow, where the fighting is.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          Ölvir looks at you a while longer. "The prow," he says. "At sixteen." Then he laughs. "All right. If you're still alive at the end of the summer, you'll have earned the share and a half."
+        effects:
+          - { join_ship: { captain: Ölvir, ship_name: the Hart, type: karvi, crew: 30, home: noirmoutier, route: [noirmoutier, nantes] } }
+          - { shares: 1.5 }
+          - { set: flag.prow_man }
+          - { set: flag.cw_nantes_sworn }
+          - { know: noirmoutier }
+          - { know: nantes }
+          - { days: 75 }
+      failure:
+        text: |
+          "The prow is for men I've seen fight," Ölvir says. "You'll row where I put you." He puts you amidships, by the bailer. The fleet sails at the start of the summer.
+        effects:
+          - { join_ship: { captain: Ölvir, ship_name: the Hart, type: karvi, crew: 30, home: noirmoutier, route: [noirmoutier, nantes] } }
+          - { set: flag.cw_nantes_sworn }
+          - { know: noirmoutier }
+          - { know: nantes }
+          - { days: 75 }
+
+- id: e43_island
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 20
+  requires: [flag.era843, "place == noirmoutier", "winter == 843"]
+  art: yule_hall
+  title: The monks' island
+  text: |
+    The fleet does not go home. It hauls up on Noirmoutier, Saint Philibert's island at the mouth of the Loire, where the monks have long since packed their saint and gone, and builds turf houses in the cloister, and keeps its cattle in the church.
+
+    Nantes is being spent as fast as it can be. There is dice in every house, and Frankish wine in every cup, and a market on the beach where Franks come over in boats to buy back their own cows. The salt-pans glitter in the low sun. Nobody has ever wintered this far south.
+  choices:
+    - id: salt
+      text: Work the salt-pans with the Franks who stayed, for silver.
+      effects: [ { add: { silver: 36, skill.trade: 1 } } ]
+      result: |
+        The Franks who stayed are poor men who would rather work for Northmen than starve for a count. They show you how the pans are flooded and dried and raked, and they cheat you a little, and you let them, and by Yule you know what salt is worth in every port on the coast.
+    - id: river
+      text: Spend the winter on the river with the Breton guides, learning the channels.
+      effects: [ { add: { skill.seamanship: 1 } }, { know: rouen } ]
+      result: |
+        The Bretons hate the Franks more than they fear you, and for a cup of wine they'll tell you anything: where the sandbars are at low water, which monasteries have walls, and that there is another river to the north, the Seine, that goes all the way to Paris.
+    - id: hastein
+      text: Sit with the young captains in the biggest house, and listen.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        The talk is of the south: Spain, and the Moors, and a city whose roofs are gold. A thin, dark young man called Hastein does most of it, and wins most of the dice, and looks at you once as if he were adding you up. You have a feeling he got the right answer.
+
+- id: e43_844
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: [flag.era843, "year == 844", "place == noirmoutier", service]
+  art: muster
+  when: Spring, 844
+  title: A ship of your own
+  text: |
+    In the spring the fleet comes apart. Half of it is going south, past the Basques, to the Moors' country, to look at the city with the golden roofs. The other half is going home rich.
+
+    Ölvir is going home. "I've done what I came for," he says, "and so has the Hart. She's old. I'll have a new one built at Askøy with what Nantes paid me." He looks at you sideways. "Unless somebody wants her. She'd do for a young man, for a summer or two, on this side of the sea."
+    [break]
+    "Six pounds," he says. "Or your word on it, and the silver at Noirmoutier this time next year. A man who breaks his word to me doesn't sail these waters long."
+  choices:
+    - id: buy
+      text: "Count out the Nantes silver: three pounds now, and your word for the rest."
+      requires: ["silver >= 72"]
+      effects:
+        - { add: { silver: -72 } }
+        - { ship: { type: karvi, name: the Hart, crew: 14 } }
+        - { set: flag.e43_debt }
+        - { queue: { scene: e43_debt, days: 330 } }
+        - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
+        - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
+        - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
+        - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
+        - { deed: { type: deed, text: "Took the Hart for his own at seventeen, on the Loire", weight: 3, witnesses: 200 } }
+      result: |
+        Ölvir weighs it twice, as a careful man does, and then takes your hand on the rest. "Next spring," he says. "Here." The men who are staying on this side of the sea look at you, and then at each other, and fourteen of them carry their sea-chests across to the Hart.
+
+        You are seventeen. She's yours, or most of her is. The south is open, and so is the Seine, and so is the whole Frankish coast.
+    - id: word
+      text: Give him your word for all of it.
+      effects:
+        - { ship: { type: karvi, name: the Hart, crew: 12 } }
+        - { set: flag.e43_debt }
+        - { set: flag.e43_all_owed }
+        - { queue: { scene: e43_debt, days: 330 } }
+        - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
+        - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
+        - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
+        - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
+      result: |
+        "All of it," Ölvir says. "Six pounds, here, next spring." He takes your hand and holds it a moment longer than he needs to. "I liked your father." Twelve men carry their chests across to the Hart. They are the ones nobody else wanted. They will do.
+
+        You are seventeen, and she's yours, and so is the debt.
+
+- id: e43_debt
+  kind: queued
+  title: Ölvir's silver
+  text: |
+    [if place == noirmoutier]Ölvir's new ship comes round the point at Noirmoutier in the spring, as he said it would, and Ölvir comes up the beach to find you.[else]Word comes from Ölvir, by a ship from the Loire: he was at Noirmoutier, as he said he would be, and you were not. He will come and find you. He knows where Hordaland is.[/if]
+
+    [if flag.e43_all_owed]"Six pounds," he says.[else]"Three pounds," he says. "The rest of her."[/if]
+  choices:
+    - id: pay
+      text: Pay him.
+      requires: [{ any: [{ all: ["!flag.e43_all_owed", "silver >= 72"] }, "silver >= 144"] }]
+      effects:
+        - { if: flag.e43_all_owed, then: [ { add: { silver: -144 } } ], else: [ { add: { silver: -72 } } ] }
+        - { clear: flag.e43_debt }
+        - { add: { honour: 1 } }
+      result: |
+        He counts it, twice, and puts it away, and then he grins, which you have never seen him do. "I told them on Askøy you'd pay," he says. "Nobody believed me." He buys the ale.
+    - id: owe
+      text: Ask him for another year.
+      effects: [ { add: { honour: -2 } }, { clear: flag.e43_debt }, { favour: -1 } ]
+      result: |
+        He gives it to you, because he is a careful man and a dead debtor pays nothing. But he tells the story on every beach between the Loire and Askøy: the boy he sold the Hart to, who couldn't pay. Men in Hordaland will hear it before you get there.
+
+- id: e43_outlaw_home
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: [flag.era843, "background == outlaw", flag.outlawed, "!flag.outlaw_ended", "year >= 846", "month <= 5", "phase != winter"]
+  art: home_fjord
+  when: Spring, 846
+  title: Three winters
+  text: |
+    Three winters. The Thing's sentence is served. You could go home now, if home will have you: walk up the beach at Hordaland in daylight, and sit at your father's fire, and dare anyone to say a word.
+
+    Some of them will. The dead man's kin have long memories. But the law is the law, and it says you have paid.
+  choices:
+    - id: home
+      text: Go home to Hordaland.
+      effects: [ { exile_end: true } ]
+      result: You come home over the last of the winter, in time for the muster. Your mother cries. Your father pours the ale, and says nothing, which from him is a speech.

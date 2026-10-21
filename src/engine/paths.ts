@@ -14,6 +14,7 @@ import { lordAlive, lordFav, oaths, swornTo } from './lords';
 import { claimMargin, seatOpen, SEATS, type Seat } from './rule';
 import { holdingAt } from './land';
 import { legendFame } from './fame';
+import { focusChild, ownChildren } from './family';
 
 const s_lords = (state: GameState, id: string) => state.lords?.[id];
 
@@ -50,6 +51,17 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   base: (s) => s.base.level,
   thralls: (s) => s.base.thralls,
   married: (s) => (s.base.wife ? 1 : 0),
+  // family (docs/FRAME-LINEAGE.md B): the child a family scene is about, and the house
+  'child.son': (s) => (focusChild(s)?.sex === 'm' ? 1 : 0),
+  'child.age': (s) => { const c = focusChild(s); return c ? dateOf(s.day).year - c.born : 0; },
+  'child.first': (s) => { const c = focusChild(s); return c && ownChildren(s).filter((x) => x.sex === c.sex)[0] === c ? 1 : 0; },
+  children: (s) => ownChildren(s).filter((c) => c.alive).length,
+  heir: (s) => (s.hero.father ? 1 : 0),
+  /** Settled abroad (docs/FRAME-LINEAGE.md C), and where home is. */
+  settled: (s) => (s.homeAt && s.homeAt !== 'home_fjord' ? 1 : 0),
+  home: (s) => s.homeAt ?? 'home_fjord',
+  'heir.fostered': (s) => { const c = s.family?.children.find((x) => x.hero); return c?.fostered ? 1 : 0; },
+  'heir.sailed': (s) => { const c = s.family?.children.find((x) => x.hero); return c?.sailed ? 1 : 0; },
   'masters.sworn': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('man:') && s.men.some((m) => m.alive && `man:${m.id}` === x.master)).length,
   favour: (s) => s.favour ?? 0,
   allies: (s, c) => Object.keys(c.captains).filter((id) => { const x = captain(s, c, id); return x.met && x.alive && x.rel >= 3; }).length,
@@ -103,6 +115,7 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'background') return Object.keys(content.backgrounds);
   if (path === 'base') return ['father', 'farm', 'hall'];
   if (path === 'bound') return ['', ...Object.keys(content.places)];
+  if (path === 'home') return Object.keys(content.places);
   if (path === 'bound.people') return ['', ...PEOPLES];
   if (path === 'oath') return ['', ...Object.keys(content.lords)];
   if (path === 'rule') return ['', ...SEATS];

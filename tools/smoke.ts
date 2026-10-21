@@ -51,6 +51,13 @@ try {
   await snap('title');
   await click(page, 'Begin a new life');
   await snap('new-game');
+  await click(page, /^Next/);
+  // the point-buy (docs/FRAME-LINEAGE.md A): one point from presence into strength, and the steering-oar
+  await page.getByRole('button', { name: 'Less Presence' }).click();
+  if (!(await page.getByRole('button', { name: /^Begin/ }).isDisabled())) errors.push('makeup: Begin enabled with a point unspent');
+  await page.getByRole('button', { name: 'More Strength' }).click();
+  await click(page, /Raised to the steering-oar/);
+  await snap('makeup');
   await click(page, /^Begin$/);
   const seen = new Set<string>();
   let rounds = 0;

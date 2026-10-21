@@ -40,7 +40,7 @@ export function texts(c: ContentBundle): { where: string; text: string }[] {
     }
   }
   for (const p of Object.values(c.places)) add(`place ${p.id}`, p.desc);
-  for (const b of Object.values(c.backgrounds)) add(`background ${b.id}`, b.desc);
+  for (const b of Object.values(c.backgrounds)) { add(`background ${b.id}`, b.desc); for (const k of b.skill_sets) add(`background ${b.id} ${k.id}`, k.desc); }
   for (const i of Object.values(c.injuries)) add(`injury ${i.id}`, i.desc);
   for (const m of Object.values(c.men)) add(`man ${m.id}`, m.desc);
   for (const f of Object.values(c.fighters)) add(`fighter ${f.id}`, f.desc);

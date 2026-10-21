@@ -3,12 +3,13 @@
 // Shared by the map generator (tools/build-map.ts), the engine and the UI.
 
 export const MAP_GRID = {
-  lonMin: -16,
+  // west to Iceland (docs/FRAME-LINEAGE.md E); the tile size is the old map's
+  lonMin: -25,
   lonMax: 34,
   latMin: 45,
-  latMax: 66.5,
-  cols: 468,
-  rows: 360,
+  latMax: 67,
+  cols: 552,
+  rows: 368,
 } as const;
 
 /** Terrain codes, in storage order. The index is what map.json stores: append only. */

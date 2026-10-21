@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { pastChronicle } from '../engine/chronicle';
-import type { ContentBundle } from '../content/schema';
+import type { Attr, ContentBundle } from '../content/schema';
 import type { GameState } from '../engine/state';
 import type { MapData } from '../engine/mapgrid';
 import { act, newGame, screenOf, type Action } from '../engine/index';
@@ -14,6 +14,7 @@ import { NowView } from './components/NowView';
 import { MapView } from './components/MapView';
 import { HeroPanel, CrewPanel, SagaPanel, HomePanel } from './components/Panels';
 import { Knot, PixelIcon } from './components/Ornament';
+import { Makeup } from './components/Makeup';
 import { SceneArt } from './scene/SceneArt';
 
 type Tab = 'now' | 'map' | 'hero' | 'crew' | 'home' | 'saga';
@@ -68,9 +69,10 @@ function shortDate(day: number): string {
   return `${d.dom} ${MONTHS[d.month]!.slice(0, 3)} ${d.year}`;
 }
 
-function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onNew: (bg: string, name: string) => void; onPreview: (scene: string, name: string) => void }) {
-  const [step, setStep] = useState<'title' | 'new' | 'preview'>(start);
+function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843) => void; onPreview: (scene: string, name: string) => void }) {
+  const [step, setStep] = useState<'title' | 'new' | 'make' | 'preview'>(start);
   const [bg, setBg] = useState('younger_son');
+  const [era, setEra] = useState<830 | 843>(830);
   const [name, setName] = useState(NAMES[Math.floor(Math.random() * NAMES.length)]!);
   if (step === 'title') {
     return (
@@ -104,11 +106,20 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
       </main>
     );
   }
+  if (step === 'make') {
+    const b = content.backgrounds[bg]!;
+    return <Makeup key={bg} title={b.label} intro={`${name.trim() || 'Hrafn'} ${b.patronymic}. Spread what you were born with, and choose how you were raised. Left as it is, it is the ${b.label.replace(/^The /, '')} as he has always begun.`} start={b.attrs} sets={b.skill_sets} begin="Begin" onBegin={(a, set) => onNew(bg, name, a, set, era)} onBack={() => setStep('new')} />;
+  }
   return (
     <main class="screen">
-      <h1>Spring, 830</h1>
-      <p>You are sixteen. You grew up on the stories: ships that came home low in the water, old men at the hearth with one hand and an arm-ring. Who are you?</p>
-      <h3>Name</h3>
+      <h1>Spring, {era}</h1>
+      <p>You are sixteen. {era === 830 ? 'You grew up on the stories: ships that came home low in the water, old men at the hearth with one hand and an arm-ring.' : 'You grew up on the news: Dorestad stripped, the ship-forts in Ireland, Rouen burned on the Seine.'} Who are you?</p>
+      <h3>Your days</h3>
+      <div class="bgs">
+        <button class={`choice bg${era === 830 ? ' on' : ''}`} onClick={() => setEra(830)}><span class="txt">Horik's days, 830<span class="hint">The first great raids. The written story from your boyhood: Orkney, Iona, Bangor, Dorestad.</span></span></button>
+        <button class={`choice bg${era === 843 ? ' on' : ''}`} onClick={() => setEra(843)}><span class="txt">Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.</span></span></button>
+      </div>
+      <h3 style={{ marginTop: 18 }}>Name</h3>
       <input type="text" id="new-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
       <h3 style={{ marginTop: 18 }}>Born as</h3>
       <div class="bgs">
@@ -119,7 +130,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
         ))}
       </div>
       <div class="choices">
-        <button class="choice primary" onClick={() => onNew(bg, name)}><span class="txt">Begin</span></button>
+        <button class="choice primary" onClick={() => setStep('make')}><span class="txt">Next<span class="hint">What you were born with, and how you were raised</span></span></button>
         <button class="choice" onClick={() => setStep('title')}><span class="txt">Back</span></button>
       </div>
     </main>
@@ -175,7 +186,7 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
           hasSave={hasSave}
           start={titleStep}
           onContinue={() => { const l = loadGame(content); if (l) setState(l.state); }}
-          onNew={(bg, name) => { setPreview(null); setState(newGame(content, { background: bg, seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name })); setTab('now'); }}
+          onNew={(bg, name, attrs, skillSet, era) => { setPreview(null); setState(newGame(content, { background: bg, seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name, attrs, skillSet, era })); setTab('now'); }}
           onPreview={(scene, name) => {
             const c = CHAPTERS.find((x) => x.scene === scene)!;
             const s = newGame(content, { background: 'younger_son', seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name });

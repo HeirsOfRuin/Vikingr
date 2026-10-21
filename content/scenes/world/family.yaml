@@ -1,0 +1,62 @@
+# Family life and the heir (docs/FRAME-LINEAGE.md B). Queued by the engine (src/engine/family.ts): a birth after
+# the first son and the first daughter, a child's death, and the heir at his father's mound.
+- id: fa_birth
+  kind: queued
+  art: home_fjord
+  title: "[if child.son]Another son[else]Another daughter[/if]"
+  text: |
+    [if child.son]{wife}'s time comes in the middle of the winter, and the women of the district come with it. The men are put out into the byre. Before morning the midwife opens the door and holds up a boy, red and shouting.[else]{wife}'s time comes in the middle of the winter. It is quicker than the last, and quieter, and by the evening there is a girl at the breast and the women are eating your bread.[/if]
+
+    The house is louder than it was. [if children >= 3]There are enough children in it now that the dogs have given up and moved into the byre.[else]The older child stands in the doorway and looks at the new one as if it were a debt.[/if]
+  choices:
+    - id: keep
+      text: "Let {wife} name [if child.son]him[else]her[/if]: she has a name ready, {child}."
+      result: "{child}, then. [if child.son]He[else]She[/if] doesn't seem to mind."
+    - id: father
+      visible_if: child.son
+      text: Name him for your father.
+      effects: [ { name_child: father } ]
+      result: "You pick him up and give him your father's name: {child}. [if heir]It is a name men still say in this district, which is something to grow into.[else]Your father pretends not to be pleased, badly.[/if]"
+
+- id: fa_child_dies
+  kind: queued
+  art: home_fjord
+  title: A small grave
+  text: |
+    It is a fever, in the worst of the winter, the kind that goes through the farms every few years and takes the old and the very young. [if child.age <= 2]{child} was too small to fight it.[else]{child} fought it for six days.[/if]
+
+    {wife} washes the body herself, and will not let anyone help. The ground is too hard to dig, so the men break it with fire, and you bury [if child.son]him[else]her[/if] by the wall of the yard, where the house can see.
+
+    Every family on the fjord has graves like this one. That is no comfort, and nobody says it is.
+  choices:
+    - id: knife
+      text: "Put something of yours in the grave: [if child.son]your old boy's knife[else]a string of your best beads[/if]."
+      effects: [ { add: { hamingja: -1 } } ]
+      result: "You put it in [if child.son]his[else]her[/if] hands, and close them over it. Some of your luck goes into the ground with it. You don't begrudge it."
+    - id: work
+      text: Go back to the work. There is always the work.
+      result: You go out to the boatshed and plane a strake until it is perfect, and then another. {wife} doesn't speak to you for three days. Then she does.
+
+- id: fa_mound
+  kind: queued
+  art: home_fjord
+  title: His father's mound
+  text: |
+    In the spring of your sixteenth year you walk up to your father's mound on the headland above the fjord, as he walked up to his own father's. The turf has grown over it. The sheep graze on it.
+
+    [if heir.sailed]You stood beside him on the benches, and you saw him at his work, and you know what men say about him is mostly true.[elif heir.fostered]You were in another man's hall when he died, and you know him mostly by what men say. What they say is a great deal.[else]You were a boy when he died, and you know him mostly by what the old men say by the fire, and what {mother} doesn't.[/if] Men called him {forefather}. For years yet, they will call you his son.
+
+    Down at the shore the muster is gathering. Some of them have come to see what you are.
+  choices:
+    - id: vow
+      text: Swear on the mound to be more than his son.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: You say it out loud, to the turf and the sheep and whatever is under them. It is a thing that ought to be said out loud. Then you go down to the shore.
+    - id: men
+      text: Go down and talk to the men who sailed with him.
+      effects: [ { add: { muster: 4 } } ]
+      result: They tell you about him, which takes the rest of the day, and some of them stay for the ale and sign on before they leave. A man with a father like yours starts with something, if he knows how to use it.
+    - id: plain
+      text: Say nothing. He would have gone to the boatshed.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: You go to the boatshed, and look at the ship, and start on what needs doing. The old men see you at it, and nod to each other.

@@ -372,3 +372,7 @@ ru_dublin_lost: { description: "Lost the claim to Dublin, or the seat" }
 ru_home_lost: { description: "Lost the claim to the jarldom at home, or the seat" }
 ru_walcheren_lost: { description: "Lost the claim to Walcheren, or the seat" }
 ru_dublin_ditch: { description: "Dug Dublin's ditch deeper against the Danes" }
+# Ragnarr's days (docs/FRAME-LINEAGE.md D)
+era843: { description: "A life begun in the spring of 843" }
+e43_debt: { description: "Owes Ölvir for the Hart" }
+e43_all_owed: { description: "Owes Ölvir all six pounds for the Hart" }

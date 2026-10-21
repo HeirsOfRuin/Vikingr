@@ -39,6 +39,7 @@ export function tradesHere(state: GameState, content: ContentBundle, at = state.
   const p = content.places[at];
   if (!p?.trade) return false;
   if (p.kind === 'home') return true;
+  if (p.trade_from && dateOf(state.day).year < p.trade_from) return false;
   const t = tierAt(state, content, at);
   return t !== 'hostile' && t !== 'unfriendly';
 }
