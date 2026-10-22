@@ -2,6 +2,7 @@
 - id: f_landfall
   kind: place
   trigger: arrive
+  requires: ["!service"]
   at: [faroes]
   once: true
   title: The sheep islands

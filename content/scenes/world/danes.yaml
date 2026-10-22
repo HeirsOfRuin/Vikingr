@@ -19,15 +19,17 @@
   choices:
     - id: pay
       text: Pay the king's toll, and give him your name.
+      visible_if: "!service"
       effects: [ { add: { silver: -12 } }, { standing: { place: hedeby, n: 2 } } ]
       result: He writes it on the wax, and your ship, and the number of your men. Then he wipes it smooth again, smiling, because the king has a long memory and doesn't need wax. You're welcome in Hedeby, he says, for as long as you pay.
     - id: ubbi
       text: Tell him you're here for Ubbi.
-      visible_if: "flag.ubbi_sworn || flag.ubbi_offer"
+      visible_if: { all: ["!service", { any: [flag.ubbi_sworn, flag.ubbi_offer] }] }
       effects: [ { standing: { place: hedeby, n: 2 } } ]
       result: His face changes. "Ubbi's men don't pay toll," he says, "until they've been to Frisia. After that they pay double." He waves you through.
     - id: argue
       text: Tell him a free man's ship pays no Dane for leave to tie up.
+      visible_if: "!service"
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
         text: He looks at you a long moment, and then laughs, and writes something on the wax that makes the spearmen laugh too. "Tie up," he says. "The king likes a man with a mouth. He likes to see what happens to them."
@@ -35,6 +37,17 @@
       failure:
         text: The spearmen step forward. You pay, in the end, and a little more for the trouble, and the whole water-gate watches you do it.
         effects: [ { add: { silver: -24 } }, { standing: { place: hedeby, n: -1 } } ]
+    # at the oar: {captain} pays; the town is yours to walk
+    - id: mint
+      text: Leave {captain} to pay the toll, and go and watch the man at the mint.
+      visible_if: service
+      effects: [ { add: { skill.trade: 1 } } ]
+      result: He strikes a coin every time his hammer comes down, a ship on one side and a stag on the other, and weighs every tenth one. He tells you, without being asked, what silver is worth in Hedeby, and in Birka, and in Dorestad, and why. By the time {captain} finds you, you know more about money than he does.
+    - id: streets
+      text: Walk the plank streets with the men from your bench, and look at everything.
+      visible_if: service
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: Swedes with furs, Frisians with wine, a Saxon selling millstones, a Wend selling something in a jar that the man next to you buys and regrets. You come back to the ship at dark with less silver and a great deal to talk about.
 
 - id: hd_ubbi
   kind: place

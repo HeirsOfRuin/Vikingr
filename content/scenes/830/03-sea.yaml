@@ -145,11 +145,13 @@
   choices:
     - id: rail
       text: Take your shield to the rail.
+      oar: true
       danger: true
       effects: [ { battle: { foe: rival_crew, men: 26, terrain: ship } } ]
       result: The two ships come together with a crash that throws men off their feet, and then there are grappling hooks, and then there is nothing but the rail and the man on the other side of it.
     - id: sail
       text: Help get more sail on her. Outrun them.
+      oar: true
       danger: true
       check: { skill: seamanship, attr: wit, difficulty: 5 }
       success:

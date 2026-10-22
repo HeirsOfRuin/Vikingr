@@ -83,12 +83,25 @@
   choices:
     - id: hire
       text: Give him the steering-oar.
+      visible_if: "!service"
       requires: ["silver >= 6"]
       effects: [ { add: { silver: -6, skill.seamanship: 1 } }, { progress: 1 } ]
       result: He takes you through channels you'd never have dared, singing, and drinks a cask of your ale doing it, and leaves you a day ahead of where you'd have been and a good deal wiser about the Danish islands.
     - id: no
       text: Thank him, and put him back in his boat.
+      visible_if: "!service"
       result: He goes without complaint. He'll be in some other ship's stern by noon, singing.
+    # at the oar: {captain} gives him the steering-oar, and you sit nearest it
+    - id: learn
+      text: "{captain} takes him on. Sit by the steering-oar, and keep his cup full, and listen."
+      visible_if: service
+      effects: [ { add: { skill.seamanship: 1 } }, { progress: 1 } ]
+      result: He takes you through channels you'd never have dared, singing, and between the songs he tells you every bank and rock and channel from here to Jutland, because you keep his cup full and nobody else listens. You remember most of it.
+    - id: oar
+      text: Leave him to {captain}, and keep rowing.
+      visible_if: service
+      effects: [ { progress: 1 } ]
+      result: The old man takes the ship through the islands, singing, and drinks a cask of {captain}'s ale doing it. You row.
 
 # ---- the Irish Sea ----
 - id: rg_turgeis
@@ -106,10 +119,12 @@
   choices:
     - id: watch
       text: Lie off and watch them go by.
+      visible_if: "!service"
       effects: [ { add: { skill.lore: 1 } }, { set: flag.rg_saw_turgeis } ]
       result: It takes them half the afternoon to go by. Sixty ships, Hallvard says, counting on his fingers. Eighty. Somebody else says a hundred. You'll be telling it at Yule, and it'll be two hundred by then.
     - id: hail
       text: Close and hail them, and find out what they want with Ireland.
+      visible_if: "!service"
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
@@ -118,6 +133,12 @@
       failure:
         text: Three ships drop back out of the line toward you, with shields along their rails, and you decide very quickly that you didn't want to know after all.
         effects: [ { add: { crew.morale: -1 } } ]
+    # at the oar: {captain} lies off to watch; you count
+    - id: count
+      text: "{captain} lies off to let them pass. Count the ships, and mark the men in them."
+      visible_if: service
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.rg_saw_turgeis } ]
+      result: It takes them half the afternoon to go by. You count sixty-two, and the men on the benches argue about it till dark. {captain} asks you for the number at the evening meal, and then repeats it at every port as his own.
 
 - id: rg_pilgrims
   kind: pool
@@ -134,15 +155,35 @@
   choices:
     - id: rob
       text: There's nothing to rob. Leave them.
+      visible_if: "!service"
       result: You leave them to God and the sea. Some of your men watch them out of sight. One of them, an Islesman with an Irish mother, crosses himself, and then looks round quickly to see if anybody saw.
     - id: food
       text: Throw them a cask of water and some dried fish.
+      visible_if: "!service"
       effects: [ { add: { provisions: -10, hamingja: 1 } } ]
       result: They bless you, all six of them, solemnly, with their hands raised, and then go on rowing into nothing. Whatever their god is, he's had his eye on you now.
     - id: take
       text: Take them aboard. Monks sell.
+      visible_if: "!service"
       effects: [ { captives: 6 }, { add: { honour: -1 } } ]
       result: They come aboard without a fight. They go on singing in the bilge all the way to market, and nobody can make them stop.
+    # at the oar: {captain} is already measuring them for the slave-market
+    - id: speak
+      text: "Tell {captain} the old men say it's bad luck to take a holy man off the sea."
+      visible_if: service
+      check: { skill: lore, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          {captain} hesitates. Half the benches are nodding, and sailors are sailors. In the end he has them thrown a cask of water and some dried fish instead, and they bless the ship, all six of them, with their hands raised, and row on into nothing. The men look at you differently for the rest of the voyage, some of them better and some of them worse.
+        effects: [ { add: { hamingja: 1 } } ]
+      failure:
+        text: |
+          "Bad luck for them," {captain} says, and takes them aboard. They go on singing in the bilge all the way to market. Every time they start, the man on the next bench looks at you.
+    - id: let
+      text: Keep your mouth shut. Monks sell, and you'll have your share.
+      visible_if: service
+      effects: [ { add: { honour: -1 } } ]
+      result: They come aboard without a fight. At the next market {captain} sells them, and your share is a few coins of silver. They sang all the way there.
 
 # ---- the new waters (docs/FRAME-PLACES-2.md) ----
 - id: rg_stad

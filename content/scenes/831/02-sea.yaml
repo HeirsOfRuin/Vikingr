@@ -166,6 +166,7 @@
   choices:
     - id: take
       text: Run them down and take them aboard. Three men are three men's price.
+      oar: true
       effects: [ { captives: 3 }, { set: flag.se_curragh_taken }, { add: { man.hallvard.loyalty: -1 } } ]
       result: |
         It isn't a chase. The curragh is light and the men in it are tired, and the Raven's bow is on them before the sun has moved a hand's breadth. They don't fight. One of them is crying.

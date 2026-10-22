@@ -22,6 +22,7 @@
   choices:
     - id: night
       text: Land in the dark down the coast, and come at the fort across the plain at dawn.
+      oar: true
       danger: true
       check: { skill: cunning, attr: wit, difficulty: 5 }
       success:
@@ -41,6 +42,7 @@
           - { battle: { foe: conaille_men, men: 24, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
     - id: trade
       text: Go in openly, as traders, with an interpreter. Kings like Frankish wine.
+      oar: true
       visible_if: "flag.colman_kept || flag.k_news || flag.se_ubbi || flag.irish"
       danger: true
       check: { skill: speech, attr: pre, difficulty: 5 }
@@ -73,6 +75,7 @@
           - { battle: { foe: conaille_men, men: 26, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
     - id: straight
       text: Straight up from the beach. Let him see you coming.
+      oar: true
       danger: true
       effects:
         - { battle: { foe: conaille_men, men: 22, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }

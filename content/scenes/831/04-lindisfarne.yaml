@@ -22,6 +22,7 @@
   choices:
     - id: high
       text: Go in on the flood tide, when the sands are covered and the mainland can't come.
+      oar: true
       check: { skill: seamanship, attr: wit, difficulty: 5 }
       success:
         text: |
@@ -41,6 +42,7 @@
       danger: true
     - id: dawn
       text: Straight in at the harbour beach, now, before the beacon is lit.
+      oar: true
       danger: true
       effects:
         - { battle: { foe: northumbrian_levy, men: 15, terrain: beach, win: l_church, lose: l_beaten, parted: l_beaten } }

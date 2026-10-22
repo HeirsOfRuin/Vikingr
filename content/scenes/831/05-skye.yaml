@@ -18,6 +18,7 @@
   choices:
     - id: fight
       text: Take his silver and settle the matter of the third valley.
+      oar: true
       danger: true
       effects:
         - { set: flag.sk_valley }

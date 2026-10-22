@@ -166,7 +166,20 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
       ids.add(c.id);
       choice(s, c);
     }
-    if (s.choices.every((c) => c.requires !== undefined || c.visible_if !== undefined)) warnings.push(`scene ${s.id}: every choice has a requirement or a visibility condition; it can dead-end`);
+    // a choice open to anyone, or to the captain, or to the oarsman: a scene split between the two needs one of each
+    const free = (side: 'service' | '!service' | null) => s.choices.some((c) => c.requires === undefined && (c.visible_if === undefined || (side !== null && c.visible_if === side)));
+    if (!free(null) && !(free('service') && free('!service'))) warnings.push(`scene ${s.id}: every choice has a requirement or a visibility condition; it can dead-end`);
+    // at the oar you choose what you do, not what the ship does (docs/FRAME-FLEET-843.md §1): a scene that can fire in
+    // another man's ship may not offer an unmarked choice that fights, loads or steers the ship
+    const reqText = JSON.stringify(s.requires ?? []);
+    const canOar = ['pool', 'place', 'phase'].includes(s.kind) && !/!service|ships >= /.test(reqText) && !/placeholder_start|expedition/.test(reqText);
+    if (canOar) {
+      for (const c of s.choices) {
+        if (c.oar || c.visible_if === 'service' || JSON.stringify(c.visible_if ?? '').includes('!service')) continue;
+        const eff = JSON.stringify([c.effects, c.success?.effects, c.failure?.effects]);
+        if (/"battle"|"host"|"captives"|"loot"|"provisions"|"crew\.men"|"progress"/.test(eff)) errors.push(`scene ${s.id} choice ${c.id}: a ship's decision open to an oarsman; mark it visible_if: "!service" and give the oar its own choice`);
+      }
+    }
   }
   if (placeholders) info.push(`${placeholders} placeholder scenes (Phase 2 replaces them)`);
 

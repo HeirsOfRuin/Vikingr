@@ -72,12 +72,13 @@
   choices:
     - id: jetties
       text: Take your place in the line, on the jetties, beside the Danes.
+      visible_if: "!service"
       danger: true
       effects:
         - { if: flag.fr_dorestad_ways, then: [ { host: { title: "The jetties at Dorestad", foe: frisian_levy, terrain: field, men: 30, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 50 }, { name: "Horik's hersirs", men: 70, foe_men: 45 } ], role: wing, reserve: { us: 0, them: 15 }, raid: true, win: do_after, lose: do_beaten } } ], else: [ { host: { title: "The jetties at Dorestad", foe: frisian_levy, terrain: field, men: 40, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 60 }, { name: "Horik's hersirs", men: 70, foe_men: 50 } ], role: wing, reserve: { us: 0, them: 40 }, raid: true, win: do_after, lose: do_beaten } } ] }
     - id: ford
       text: Take your men over the ford Hessel drew, and come at the count's men from behind.
-      visible_if: flag.fr_dorestad_ways
+      visible_if: { all: ["!service", flag.fr_dorestad_ways] }
       danger: true
       check: { skill: cunning, attr: wit, difficulty: 5 }
       success:
@@ -93,11 +94,25 @@
           - { host: { title: "The ford at Dorestad", foe: frisian_levy, terrain: ford, men: 40, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 60 }, { name: "Horik's hersirs", men: 70, foe_men: 50 } ], role: wing, reserve: { us: 0, them: 40 }, raid: true, win: do_after, lose: do_beaten } }
     - id: ships
       text: Hold your ships in the river, and go in when the line's broken.
+      visible_if: "!service"
       effects: [ { add: { honour: -1 } }, { ally: { id: ubbi, rel: -2 } }, { add: { loot: 200 } }, { set: flag.fr_dorestad_done } ]
       result: |
         You watch from the river while the Danes go in. It's over by noon. When you come ashore there's still plenty lying about, and you take your share of it.
 
         Ubbi sees you come ashore. He doesn't say anything. He doesn't have to.
+    # at the oar: {captain}'s crew goes up the jetties with the Danes; you go with them, or you mind the ship
+    - id: crew
+      text: Go up the jetties in {captain}'s crew, beside the Danes.
+      visible_if: service
+      danger: true
+      effects:
+        - { host: { title: "The jetties at Dorestad", foe: frisian_levy, terrain: field, men: 40, raid: true, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 60 }, { name: "Horik's hersirs", men: 70, foe_men: 50 } ], role: man, reserve: { us: 0, them: 40 }, win: do_after, lose: do_beaten } }
+    - id: guard
+      text: Take the ship-guard, when {captain} asks who'll stay in the river.
+      visible_if: service
+      effects: [ { add: { loot: 60 } }, { set: flag.fr_dorestad_done } ]
+      result: |
+        You sit in the ship in the brown river with five other men and watch the Danes go in, and the smoke go up over the warehouses, and the boats start coming back down to the river loaded to the gunwales. The ship-guard gets its share. It's a small one. You hear about the jetties all the way home, from men who were on them.
 
 - id: do_after
   kind: spine
@@ -181,14 +196,28 @@
   choices:
     - id: trade
       text: Tie up at a jetty and trade, as if nothing had happened.
+      visible_if: "!service"
       effects: [ { standing: { place: dorestad, n: 1 } } ]
       result: They trade with you, because they have to. The prices are very good, because they have to be. Nobody looks you in the eye.
     - id: pick
       text: Pick over what the Danes left.
+      visible_if: "!service"
       effects: [ { add: { loot: 120, honour: -1 } }, { standing: { place: dorestad, n: -2 } } ]
       result: The Danes left more than you'd have thought. A burned warehouse with its cellar full of wine; a church with its altar silver hidden under the floor, badly. The townspeople watch you take it, and say nothing, because there's nothing left to say.
 
 # ---- winter 834: the death of Jarl Eystein ----
+    # at the oar: {captain} trades at a jetty; the burned town is yours to walk
+    - id: walk
+      text: Walk the burned street while {captain} trades, and look.
+      visible_if: service
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: A mile of jetties, half of them burned to the waterline, and a long street of black shells, and people in it trying to sell you things as if nothing had happened. An old Frisian woman tells you, without being asked, exactly what the Danes took from her, item by item, in a flat voice. You listen to all of it. It seems the least you can do.
+    - id: scavenge
+      text: Help yourself to what the Danes left, while nobody's watching.
+      visible_if: service
+      effects: [ { add: { silver: 24, honour: -1 } }, { standing: { place: dorestad, n: -1 } } ]
+      result: A cellar the Danes missed, under a burned warehouse, with a bag of coin hidden in the wall. The townspeople see you come out of it. They say nothing, because there's nothing left to say.
+
 - id: fr_eystein
   kind: phase
   trigger: hall

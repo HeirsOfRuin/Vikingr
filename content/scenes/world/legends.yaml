@@ -444,14 +444,30 @@
   choices:
     - id: gate
       text: Take your men up from the river to the gate, at a run.
+      visible_if: "!service"
       danger: true
       effects:
         - { days: 1 }
         - { host: { title: "The gate at Nantes", foe: frankish_levy, terrain: field, men: 25, wings: [ { name: "The Vestfold crews", men: 160, quality: 1.2, foe_men: 50 } ], role: wing, win: cw_nantes_won, lose: cw_nantes_lost } }
     - id: ships
       text: Hold the river, and let the Vestfold men take the gate.
+      visible_if: "!service"
       effects: [ { add: { honour: -1, loot: 150 } }, { captives: 4 } ]
       result: The city falls without you, by noon. You come ashore at the end of it for the leavings. They're good leavings. The Vestfold men watch you take them.
+    # at the oar: {captain} takes his crew up to the gate; you go with them, or you're left with the ship
+    - id: run
+      text: Go up from the river with {captain}'s crew, at a run, for the gate.
+      visible_if: service
+      danger: true
+      effects:
+        - { days: 1 }
+        - { host: { title: "The gate at Nantes", foe: frankish_levy, terrain: field, men: 25, wings: [ { name: "The Vestfold crews", men: 160, quality: 1.2, foe_men: 50 } ], role: man, win: cw_nantes_won, lose: cw_nantes_lost } }
+    - id: guard
+      text: Take the ship-guard, when {captain} asks who'll stay with the boats.
+      visible_if: service
+      effects: [ { add: { loot: 60 } } ]
+      result: |
+        You sit in the reeds with five other men and the boats, and listen to the bells stop, and then the screaming start, and the smoke go up over the walls. By noon it's over. The men come back down to the river carrying things, and the ship-guard gets its share, which is a small one, and the stories, which you have to listen to all the way down the Loire.
 
 - id: cw_nantes_won
   kind: spine
@@ -472,7 +488,7 @@
       check: { skill: command, attr: pre, difficulty: 6 }
       success:
         text: |
-          You get there first, with your sworn men round you and your shields up, and stand between him and the nave. The Vestfold men stop. They look at you. They look at him. One of them laughs, and spits, and goes to look for the plate instead.
+          You get there first, [if service]with the men from your bench[else]with your sworn men[/if] round you and your shields up, and stand between him and the nave. The Vestfold men stop. They look at you. They look at him. One of them laughs, and spits, and goes to look for the plate instead.
 
           Gunhard finishes the words. Then he puts the cup down, very carefully, and looks at you, and says something in Latin that might be a blessing and might not.
         effects: [ { add: { loot: 250, honour: 1 } }, { captives: 6 }, { take_hostage: { kind: abbot, place: nantes, name: Gunhard, who: "Gunhard, bishop of Nantes", kin: "the church of Nantes", price: 900 } }, { deed: { type: raid, text: "Took Nantes on St John's Day, and the bishop alive from his own altar", weight: 7, witnesses: 800 } } ]

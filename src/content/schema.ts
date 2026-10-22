@@ -132,6 +132,8 @@ export const choice = z.object({
   text: z.string(),
   requires: condInput.optional(),
   visible_if: condInput.optional(),
+  /** Open at the oar on purpose: a man's own act (going over the side), or advice the captain takes (docs/FRAME-FLEET-843.md). */
+  oar: z.boolean().optional(),
   effects: z.array(effect).optional(),
   check: check.optional(),
   success: outcome.optional(),

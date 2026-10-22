@@ -16,6 +16,7 @@
   choices:
     - id: bail
       text: Get down in the bilge and bail.
+      oar: true
       check: { skill: seamanship, attr: end, difficulty: 4 }
       success:
         text: |

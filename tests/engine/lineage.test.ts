@@ -374,3 +374,27 @@ describe("D. Ragnarr's days: playtest 7", () => {
     expect(t.service?.captain).toBe('Ölvir');
   });
 });
+
+import { open as openScene } from '../../src/engine/director';
+
+describe('playtest 7: the oarsman', () => {
+  it('at sea in another man\'s ship, a closing longship offers where you stand, not whether the ship fights', () => {
+    const s = newGame(content, { background: 'younger_son', seed: 12, name: 'Ari' });
+    s.pending = null;
+    s.day = dayOf(844, 150);
+    openScene(s, 'g_sea_rivals', content);
+    const ids = listActions(s, content).map((o) => (o.action as { id?: string }).id);
+    expect(s.service).toBeTruthy();
+    expect(ids).toEqual(expect.arrayContaining(['rail', 'bench', 'count']));
+    expect(ids).not.toContain('fight');
+    expect(ids).not.toContain('run');
+  });
+  it('a captain still gets the captain\'s choices', () => {
+    const s = sandboxGame(13);
+    s.day = dayOf(844, 150);
+    openScene(s, 'g_sea_rivals', content);
+    const ids = listActions(s, content).map((o) => (o.action as { id?: string }).id);
+    expect(ids).toEqual(expect.arrayContaining(['fight', 'run']));
+    expect(ids).not.toContain('rail');
+  });
+});
