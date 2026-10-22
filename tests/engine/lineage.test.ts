@@ -361,3 +361,16 @@ describe('E. Iceland', () => {
     expect(listActions(s, content).some((o) => o.action.t === 'trade')).toBe(true);
   });
 });
+
+describe("D. Ragnarr's days: playtest 7", () => {
+  it('the ship-for-sale scene does not fire on the day he takes a bench in Ölvir\'s ship', () => {
+    let t = newGame(content, { background: 'freedman', seed: 9, name: 'Ari', era: 843 });
+    t = act(content, t, { t: 'continue' });
+    t = act(content, t, { t: 'choose', id: 'boats' });
+    t = act(content, t, { t: 'continue' });
+    t = act(content, t, { t: 'choose', id: 'bench' });
+    for (let i = 0; i < 6 && t.pending; i++) t = act(content, t, listActions(t, content)[0]!.action);
+    expect(t.seen.g_spring_ship).toBeUndefined();
+    expect(t.service?.captain).toBe('Ölvir');
+  });
+});

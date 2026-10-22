@@ -4,7 +4,7 @@
   kind: phase
   trigger: phase_start
   cooldown_days: 300
-  requires: ["year >= 833", "place == home_fjord", "phase == muster", service]
+  requires: ["year >= 833", "place == home_fjord", "phase == muster", service, { any: ["!flag.era843", "year >= 845"] }]
   weight: 3
   art: muster
   title: A ship for sale
