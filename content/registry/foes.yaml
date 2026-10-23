@@ -160,3 +160,20 @@
   leader: "a lord of Cashel"
   doctrine: { missiles: 3, give: 2, flank: 2 }
   desc: A Munster king's men from the Lee valley. Javelins and fast feet, and a king at Cashel who means to be king of all Ireland.
+# The southern fleet, 844 (docs/FRAME-FLEET-843.md §3)
+- id: asturian_levy
+  name: King Ramiro's men
+  quality: 1
+  resolve: warriors
+  guile: 1
+  leader: "the king's count"
+  doctrine: { hold: 3, push: 1, flank: 1, missiles: 2 }
+  desc: "The Christian king of Asturias's levy: hill men with spears and slings, who have spent a hundred years holding a mountain kingdom against the Moors, and don't intend to lose it to anyone from the sea."
+- id: moorish_host
+  name: The emir's army
+  quality: 3
+  resolve: hird
+  guile: 2
+  leader: "the emir's general"
+  doctrine: { hold: 1, push: 2, flank: 3, missiles: 2 }
+  desc: "Abd al-Rahman's army out of Córdoba: horsemen in mail on fast horses, archers, and a general who has read about war and fought it. They have never seen Northmen before, and they learn quickly."

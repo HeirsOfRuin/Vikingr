@@ -1,0 +1,249 @@
+# The Loire years, 843-848 (docs/FRAME-FLEET-843.md §3). Part 1, 843: the Vestfold fleet gathers, Count Lambert
+# shows it the road, the night in the reeds below Nantes, the share-out of a city among sixty-seven crews, and the
+# winter on the monks' island. Sources: the Annals of St-Bertin (843), the Chronicle of Nantes (eleventh century,
+# for Lambert and the St John's Day attack), Ermentarius of Noirmoutier on the monks' flight.
+
+- id: e43_gathering
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: [flag.era843, "year == 843", service, "fleet.id == vestfold"]
+  art: muster
+  when: Summer, 843
+  title: The gathering
+  text: |
+    The fleet gathers in the lee of the Vestfold islands, off Skiringssal, where the Vestfold kings have their hall and their market: sixty-seven ships by the last count, and still more coming in from the west on every tide. You have never seen so many ships in one place. Nobody on the Hart has, except Ölvir, and he isn't saying.
+
+    At night the fires run along the shore for a mile, and the noise of them carries across the water: songs from Agder, songs from Rogaland, songs from Hordaland that you know the words to, and men shouting the names of their ships at each other as if the names were a challenge.
+    [break]
+    On the third night a young man from a Vestfold ship comes and sits at the Hart's fire without being asked: tall, fair, loud, with a new sword he keeps touching and a laugh you can hear across the beach. His name is Hrói. He's sixteen, too. He wants to know everything about everyone, and he tells you everything about himself before you've asked.
+  choices:
+    - id: hroi
+      text: Sit up with Hrói, and swap stories till the fire's out.
+      effects: [ { set: flag.e43_hroi }, { add: { crew.morale: 1 } } ]
+      result: |
+        He talks till the fire's embers, about his father's ship and his uncle's farm and the girl at Skiringssal who said she'd wait, and you talk more than you meant to. By morning you are friends, the way men are friends who are going to the same fight. He goes back to his ship at dawn, shouting your name across the water so the whole fleet hears it.
+    - id: ships
+      text: Walk the beach, and look at every ship in the fleet.
+      effects: [ { add: { skill.seamanship: 1 } } ]
+      result: |
+        A whole day, from one end of the beach to the other: Vestfold karvis with carved stems, Rogaland ships with new sails, an old Hordaland snekkja with a prow-beast older than your grandfather. The steersmen tell you what they're proud of and what they're afraid of in their ships, and by evening you know more about ships than you did in the boatyard.
+    - id: old
+      text: Find the old men who've been south before, and ask them about the Franks.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        Two of them have been up the Seine, and one says he was at Dorestad. They tell you about Frankish horsemen, and walled cities, and churches with roofs of lead and altars of gold, and which of it is true you'll find out. The one who was at Dorestad tells you to keep your shield up and your mouth shut, which you'd heard.
+
+- id: e43_lambert
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  weight: 30
+  requires: [flag.cw_nantes_sworn, "year == 843", "!seen.cw_nantes"]
+  art: muster
+  title: The count who wanted his city back
+  text: |
+    The fleet comes in to the monks' island at the mouth of the Loire, and there's a man waiting on the beach who isn't a monk: a Frank in a good cloak, with six horsemen, and a face like a man who hasn't slept for a year. He is Lambert, he says. He was promised the county of Nantes, and the king gave it to someone else, and he has come to show the Northmen the road to it.
+
+    "The river is shallow below the city, and the channels move," he says, through a Breton who speaks Norse. "I'll give you a pilot. On St John's Day the whole city is at mass and the fair is in the square. The gates will be open." He smiles, which doesn't suit him. "Take what you like. Leave the city to me."
+    [break]
+    [if service]Ölvir comes back from the council at dark, and sits down at the fire, and says, "Well. Now we know why the Franks lose."[else]The captains go to the council, and you with them.[/if]
+  choices:
+    - id: listen
+      text: Find Lambert's Breton, and get the road to the gate out of him.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: |
+          The Breton likes wine and hates Franks, and by the bottom of the jar you know the road from the river to the gate, and which side of the square the cathedral is, and that the count's men sleep in a hall by the north wall. You tell [if service]Ölvir[else]your men[/if]. It's worth more than a sword.
+        effects: [ { set: flag.e43_gate_known }, { add: { skill.lore: 1 } } ]
+      failure:
+        text: The Breton drinks your wine and tells you nothing that Lambert didn't. Then he tells you a long story about a saint and a whale, and goes to sleep.
+    - id: doubt
+      text: "Say what everyone's thinking: a man who sells his own city will sell us too."
+      check: { skill: cunning, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          [if service]You say it at the fire, and it goes from fire to fire, and by morning the captains have it.[else]You say it at the council.[/if] The leaders make Lambert give hostages: two of his horsemen, who sail with the fleet and are told what happens to them if the gate is shut. Lambert gives them without arguing, which is answer enough.
+        effects: [ { set: flag.e43_lambert_hostages }, { add: { honour: 1 } } ]
+      failure:
+        text: The men around the fire laugh at you. "Of course he'll sell us," says one. "He's a Frank. That's why we'll be quick." It's not much of an answer, but it's the one the fleet goes with.
+    - id: sleep
+      text: Sleep. Tomorrow you go up the river.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: You sleep on the sand under the monks' empty church, and dream of nothing, which the old men say is the best dream to have before a fight.
+
+- id: e43_reeds
+  kind: pool
+  trigger: sea
+  chance: 1
+  once: true
+  weight: 50
+  requires: [flag.cw_nantes_sworn, "year == 843", "bound == nantes", "!seen.cw_nantes"]
+  art: open_sea
+  title: The reeds
+  text: |
+    The fleet goes up the Loire on the flood in the dark, with Lambert's pilot in the leading ship and the rest following by the sound of oars, and lies up in the reeds below the city before dawn. Nobody speaks. Nobody lights a fire. You can hear the city waking up across the water: a dog, a cart, a woman calling, and then, as it gets light, the bells.
+
+    [if flag.e43_hroi]Hrói's ship is tied up next to yours in the reeds. He catches your eye across the water, grins, and touches his new sword.[/if] [if service]Ölvir goes along the benches with a skin of ale, a mouthful each, and says the same thing to every man: "Stay with the ship's men. Don't get greedy in the church. Come back."[else]Your men are watching you to see how you are.[/if]
+  choices:
+    - id: thor
+      text: Touch your hammer, and ask Thor for a strong arm.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: The man on the next bench sees you do it, and does it too, and then the whole bench. The bells stop. Somebody in the bow says, "Now."
+    - id: edge
+      text: Put an edge on your sword, quietly, one more time.
+      effects: [ { add: { skill.weapons: 1 } } ]
+      result: The stone goes along the blade, and along, and along, and your hands stop shaking. The bells stop. Somebody in the bow says, "Now."
+    - id: watch
+      text: Watch the city, and fix the gate in your mind.
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: You find the gate in the grey light, and the road to it from the river, and the square beyond it where the stalls of the fair are going up. When you go in, you'll know where you're going. The bells stop. Somebody in the bow says, "Now."
+
+- id: e43_shareout
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  weight: 30
+  requires: [flag.cw_nantes_sworn, seen.cw_nantes, "year == 843"]
+  art: muster
+  title: A city among sixty-seven crews
+  text: |
+    Back on the monks' island, the fleet divides Nantes. It takes four days. Everything is carried up the beach and laid out on sailcloth: plate from the cathedral, coin from the merchants' chests, cloth and wine and salt and glass, and the captives in a long line behind it, roped together at the neck.
+
+    The leaders take a tenth for the gods and the leaders. Then every ship takes a share by its oars, and every ship divides its share by its men. There's shouting on every part of the beach, all four days: who carried what, who went in first, who hid in the church while the others fought.
+    [break]
+    [if service]Ölvir's share is laid out on the Hart's sailcloth, and the men stand round it while he divides it, and watch his hands.[else]Your share is laid out on your own sailcloth, and your men stand round it, and watch you.[/if]
+  choices:
+    - id: claim
+      text: Stand up and claim the prow-man's share and a half, for the gate.
+      visible_if: service
+      requires: [flag.prow_man]
+      effects: [ { add: { silver: 60 } }, { ring: { metal: silver, n: 1 } } ]
+      result: Nobody argues. They saw you at the gate. Ölvir weighs it out, a share and a half, with a silver ring on top that he says is from him and not from the Hart. It's the most silver you've ever held in your hand.
+    - id: take
+      text: Take your share, and say nothing.
+      visible_if: service
+      effects: [ { add: { silver: 40 } } ]
+      result: An oarsman's share of a city. It's more silver than your father ever saw at once, and less than the man in front of you got, and you'll never be sure why.
+    - id: dead
+      text: Put part of your share aside for the kin of the dead men from your bench.
+      visible_if: service
+      effects: [ { add: { silver: 20, honour: 1, crew.morale: 1 } } ]
+      result: You put it aside in front of everybody, and two other men do the same, and then the whole bench. Ölvir says nothing, and puts in a ring of his own. When you come home, the dead men's mothers will have something more than a story.
+    - id: fair
+      text: Divide it fairly, by oars and by deeds, in front of everybody.
+      visible_if: "!service"
+      effects: [ { add: { crew.morale: 2 } } ]
+      result: It takes all afternoon, and you weigh every share twice, and at the end of it there's nobody standing on your sailcloth with a face like a grievance. The ships on either side are still shouting.
+    - id: council
+      text: Argue at the leaders' tenth for a bigger share for the ships that held the gate.
+      visible_if: "!service"
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: "[if fleet.voice >= 2]You have ships and a name, and the leaders listen. The gate crews get a tenth more, from the leaders' tenth, and every man in them knows who got it for them.[else]You argue it well, and the leaders listen, and give the gate crews a ring each, which is something.[/if]"
+        effects: [ { add: { loot: 80 } }, { deed: { type: deed, text: "Won the gate crews a better share of Nantes", weight: 2, witnesses: 300 } } ]
+      failure:
+        text: The leaders listen, and thank you, and give you nothing. The other captains give you a wide berth for a week.
+
+- id: e43_captives
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 25
+  requires: [flag.cw_nantes_sworn, "place == noirmoutier", "winter == 843"]
+  art: yule_hall
+  title: The captives
+  text: |
+    The captives from Nantes are kept in the monks' church through the winter, two hundred of them, waiting to be ransomed or sold in the spring. A priest from the city comes over every week in a boat with a list, and buys back whoever his silver will stretch to, and the fleet's traders buy the rest.
+
+    One evening a girl from the church comes to you at the water's edge, where you're mending a net: fourteen, perhaps, in a merchant's daughter's dress gone to rags. She doesn't speak Norse. She points at the priest's boat, drawn up on the shingle with nobody watching it, and at the mainland, and at you.
+  choices:
+    - id: help
+      text: Look the other way while she takes the boat.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: You go on mending the net, very carefully, with your back to the shingle. When you turn round the boat is gone, and so is the girl, and nobody ever asks you about it. The priest has to beg a lift home. You think about her sometimes, getting to the mainland. You hope she did.
+        effects: [ { add: { hamingja: 1 } } ]
+      failure:
+        text: She's halfway to the boat when a man from the guard sees her, and shouts, and she's dragged back up the beach. The guard looks at you a long time. He doesn't say anything to the leaders. He doesn't need to; you'll be watched now.
+        effects: [ { add: { honour: -1 } } ]
+    - id: call
+      text: Call the guard. She's somebody's silver.
+      effects: [ { add: { silver: 6, honour: -1 } } ]
+      result: The guard drags her back to the church, and the leaders give you a reward of a few coins for your watchfulness. She's sold to the Verdun trader in the spring. You never learn her name.
+    - id: shake
+      text: Shake your head. If you let her go, they'll hang you for it.
+      result: She stands there a moment longer, and then goes back up to the church, slowly. In the spring her father's silver comes over in the priest's boat, enough for her and two more. You see her go, and she doesn't look at you.
+
+- id: e43_killing
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 20
+  requires: [flag.cw_nantes_sworn, "place == noirmoutier", "winter == 843"]
+  art: yule_hall
+  title: A killing on the island
+  text: |
+    In the dark of the winter a man from [if service]the Hart[else]your ship[/if] kills a Vestfolder in a quarrel over a woman captive: one blow with an axe, in front of a fire, with a dozen men watching. The leaders call a thing on the beach in the morning, as if this were Norway. The dead man's shipmates want blood, or silver; the killer's want him to have done it in fair fight.
+
+    You were at the fire. You saw it. The killer was the one who struck first, and the dead man had a knife out, but only after.
+  choices:
+    - id: truth
+      text: Say what you saw, plainly, all of it.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: You tell it straight, both halves of it. The thing listens, and judges a man-price, which the killer's ship pays, and the Vestfolders take it, and nobody else dies. Men on both sides come to you afterwards, separately, and say that was well done.
+        effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Spoke the truth at the fleet's thing, against his own ship's man", weight: 2, witnesses: 200 } } ]
+      failure:
+        text: You tell it straight, and the killer's shipmates shout you down, and the Vestfolders shout them down, and it nearly comes to a fight on the beach. In the end the leaders judge a man-price anyway. Your own shipmates don't speak to you for a week.
+        effects: [ { add: { crew.morale: -1, honour: 1 } } ]
+    - id: ship
+      text: Say the dead man drew first. He's your shipmate.
+      check: { skill: cunning, attr: pre, difficulty: 6 }
+      success:
+        text: Two other men from your ship say the same. The thing judges it a fair fight, and the Vestfolders go back to their fires with murder in their faces. Your shipmate thanks you that night. You find you don't want his thanks.
+        effects: [ { add: { honour: -1, crew.morale: 1 } } ]
+      failure:
+        text: A Vestfolder who was at the fire calls you a liar to your face in front of the thing, and the leaders believe him. Your shipmate pays a double man-price, and you pay a fine for lying at a thing, and the whole beach knows it.
+        effects: [ { add: { honour: -2, silver: -24 } } ]
+    - id: silent
+      text: Say you didn't see. It's not your quarrel.
+      result: You say you saw nothing. Neither did most of the others. The thing judges a man-price, and it's paid, and the winter goes on. The dead man's friends look at you every time you pass their fire.
+
+- id: e43_wine
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 15
+  requires: [flag.cw_nantes_sworn, "place == noirmoutier", "winter == 843"]
+  art: yule_hall
+  title: The monks' cellar
+  text: |
+    Some men from a Rogaland ship, digging for the monks' treasure under the church floor, find the monks' wine instead: a cellar of it, cask on cask, laid down by Saint Philibert's brothers against hard times. By dark the whole fleet knows, and by midnight the whole fleet is drunk. [if flag.e43_hroi]Hrói comes to find you with a cask on his shoulder, singing.[/if]
+
+    Somebody has lit a fire in the cloister. Somebody else has lit one in the church.
+  choices:
+    - id: drink
+      text: Drink with the fleet. It's the dark of the year, and you're alive.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: You remember the first part of it. In the morning the church roof has fallen in, and three men are dead in the ashes, and the fleet is very quiet. You have a cask of the monks' wine under your bench that you don't remember carrying.
+    - id: fire
+      text: Put the church fire out before it takes the roof.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: You get a line of men passing sea-water from the shore, cursing you the whole time, and the fire's out before the roof goes. In the morning the leaders come and look at the church, still standing, with the fleet's winter stores under its roof, and then at you. The fleet would have gone hungry by spring without it.
+        effects: [ { deed: { type: deed, text: "Saved the fleet's winter stores from the fire on Noirmoutier", weight: 3, witnesses: 400 } } ]
+      failure:
+        text: Nobody will put down a cup to carry a bucket. The roof comes in at dawn, with the winter stores under it. It's a hungry spring.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: hide
+      text: Get two casks back to your ship before they're all gone.
+      check: { skill: cunning, attr: agi, difficulty: 4 }
+      success:
+        text: Two casks, rolled down the beach in the dark and stowed under the benches. They'll fetch a pound of silver at any market on the coast, or keep your bench happy until spring.
+        effects: [ { add: { silver: 24 } } ]
+      failure:
+        text: You drop the first cask on the shingle and it bursts. The men who were watching laugh until they fall over. That's the most you get out of it.

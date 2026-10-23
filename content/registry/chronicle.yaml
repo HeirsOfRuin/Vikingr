@@ -242,6 +242,10 @@ events:
     doy: 200
     who: hastein
     by: Ships from the Loire
+    places: [bordeaux]
+    keep: 0.3
+    defence: 0.5
+    unless: flag.bx_taken
     # AB 848: the Northmen took Bordeaux and burned it.
     news: |
       Ships from the Loire have gone up the Garonne and taken Bordeaux, the Franks' great city in the south, and burned it. The name men put on it is Hastein's.

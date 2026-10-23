@@ -438,7 +438,7 @@
   text: |
     The Vestfold fleet comes up the Loire in the night, on the flood, and lies in the reeds below the city until the bells begin. Then it goes in.
 
-    The gates are open, as the man said. The fair is up in the square outside the cathedral, with stalls and cattle and jugglers, and the whole city is inside the church, singing, with the doors open to the summer.
+    [if flag.e43_gate_known]You know the road from the river to the gate, and the square beyond it, from Lambert's Breton. You could walk it blind.[/if] The gates are open, as the man said. The fair is up in the square outside the cathedral, with stalls and cattle and jugglers, and the whole city is inside the church, singing, with the doors open to the summer.
     [break]
     There are some guards on the gate. Not many. They see the ships come round the island and stand there with their mouths open, and then try to shut the gates, and can't, because the fair is in the way.
   choices:

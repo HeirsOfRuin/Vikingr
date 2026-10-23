@@ -1,0 +1,356 @@
+# The Loire years, part 3 (docs/FRAME-FLEET-843.md §3): 845-848. Ragnarr's arrow reaches the Loire; Hrói's father
+# comes asking; Count Lambert's war with the Franks; a house on the monks' island; and Hastein's fleet for Bordeaux,
+# 847-848. Sources: the Annals of St-Bertin (845 Paris; 847 the siege of Bordeaux; 848 Charles the Bald's victory on
+# the Dordogne, and Bordeaux taken at night, its duke William captured), the Chronicle of Nantes for Lambert.
+
+- id: e43_paris_arrow
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year == 845", "month <= 3", "!service", "ships >= 1", "!flag.sn_845_sworn", "place == noirmoutier || place == nantes || place == bordeaux || place == walcheren"]
+  art: muster
+  when: Spring, 845
+  title: Ragnarr's arrow
+  text: |
+    A Danish ship comes into the Loire before the ice is off the northern fjords, with a man in the bow calling for captains: Ragnarr is gathering ships at the Seine mouth for the spring. A hundred and twenty, he says, and more coming. Up the Seine, past Rouen, past everything, to Paris, where the Franks' king keeps his treasure and his saints.
+
+    [if flag.sf_went]He looks at your ship, and at the strange coin on your belt, and the silk under your mail, and grins. "You were at Ishbiliya," he says. "Ragnarr will want to hear about it. Ragnarr wants to hear about everything."[else]He looks at your ship and your men, and grins. "Ragnarr wants every man who can hold an oar. He says the Franks are fighting each other, and the king has no army, and Paris has more gold in its churches than Rome."[/if]
+  choices:
+    - id: go
+      text: Take the arrow. Paris, with Ragnarr.
+      effects: [ { set: flag.sn_845_sworn }, { fleet: seine845 }, { know: rouen }, { know: paris }, { know: walcheren }, { add: { crew.morale: 2 } } ]
+      result: You send him back with your mark cut into the shaft. Two weeks later you're at the Seine mouth with a hundred and twenty ships around you, more than went to Nantes, more than went to Ishbiliya, and Ragnarr's dragon at the head of them.
+    - id: no
+      text: Let Ragnarr have Paris. You've a coast of your own.
+      result: The Danish ship goes north again. You hear about Paris all summer, from every ship that comes into the Loire, and the story gets bigger every time, and the share you didn't take gets bigger with it.
+
+- id: e43_hroi_father
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  weight: 25
+  requires: [flag.sf_hroi_dead, "year >= 845"]
+  art: muster
+  title: Hrói's father
+  text: |
+    An old man comes into the Loire on a Vestfold trader in the spring and walks along the beach on the monks' island asking for Hrói's ship. It's the first thing anybody tells him: there is no Hrói's ship. Then they send him to you.
+
+    He is tall, and fair, and laughs like his son did, even now, from habit. He wants to know how it was.
+  choices:
+    - id: truth
+      text: Tell him how it was. The plain, the river, the palm trees.
+      effects: [ { add: { honour: 1 } }, { ring: { metal: silver, n: 1 } } ]
+      result: |
+        You tell him. He listens to all of it with his hands on his knees, and when you've finished he sits for a while, and then gets up, and thanks you, and goes back to the trader. He leaves you something in your hand when he shakes it: his son's ring, from the last time his son was home.
+    - id: kind
+      text: Tell him his son died at the front of the wall, with his sword in his hand.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: You tell him Hrói died well, in the front of the wall, with the gold-hilted sword in his hand and his face to the enemy. You don't know if it's true. Nobody does. The old man's face changes, and he holds your hand with both of his. "Good," he says. "Good." That's all he wanted.
+    - id: ring
+      text: Give him the silk cloak Hrói left on your ship.
+      effects: [ { add: { honour: 1, hamingja: 1 } } ]
+      result: You found it in your ship after the river, where Hrói must have thrown it. You give it to his father. He holds it against his face for a moment, and then folds it very carefully, and takes it home to Vestfold.
+
+- id: e43_lambert_war
+  kind: place
+  trigger: arrive
+  at: [nantes, noirmoutier]
+  once: true
+  weight: 20
+  requires: [flag.cw_nantes_sworn, "year >= 846", "year <= 848", "!service", "ships >= 1"]
+  art: muster
+  title: Lambert's war
+  text: |
+    Count Lambert sends for you. He has his county now, and he has lost it again, and he is at war with the Frankish king, and with half the counts of the west, and he is living in a Breton hall with a borrowed army and no money. [if flag.e43_lambert_hostages]The two horsemen he gave as hostages before Nantes are with him. One of them nods to you as if you were old friends.[/if]
+
+    "The Franks have a count at Nantes again," he says, "who is not me. He has two hundred men and a river bridge. I'll pay a pound of silver for every ship that comes up the river with me, and what's in the count's hall besides. You know the road." He smiles his bad smile. "I showed it to you."
+  choices:
+    - id: go
+      text: Go up the river with Lambert's Bretons.
+      danger: true
+      effects: [ { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
+    - id: price
+      text: Ask for two pounds a ship, and the bridge-toll for a year.
+      danger: true
+      check: { skill: trade, attr: pre, difficulty: 6 }
+      success:
+        text: Lambert looks at you a long time. "You've learned," he says, and agrees. You go up the river at the head of his Bretons with a better bargain than any captain in the Loire.
+        effects: [ { add: { silver: 48 } }, { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
+      failure:
+        text: "\"I'll find someone cheaper,\" Lambert says. He does. The other captain comes back down the river in a month with a ship full of the count's furniture."
+    - id: no
+      text: Tell him a man who sells his own city once will sell it again.
+      effects: [ { standing: { place: nantes, n: 1 } } ]
+      result: He laughs, which you've never seen him do, and doesn't argue. A year later, men say, he sold it again.
+
+- id: e43_lambert_won
+  kind: spine
+  art: bangor_field
+  title: The count's bridge
+  text: |
+    The Frankish count's men hold the bridge for a morning, and then the Bretons get round them by the ford, and it's over. Lambert rides into Nantes for the second time in three years, over the same bridge, behind the same Northmen, and this time the people in the square cheer him, because they've learned to cheer whoever's riding in.
+
+    He pays. He is good for that, at least.
+  choices:
+    - id: take
+      text: Take the silver, and the count's hall.
+      effects: [ { add: { loot: 240 } }, { standing: { place: nantes, n: 3 } }, { deed: { type: battle_won, text: "Took the bridge at Nantes for Count Lambert", weight: 4, witnesses: 400 } } ]
+      result: A pound for the ship, and the count's hall stripped to the walls, and Lambert's thanks, which are worth exactly what you think they are.
+
+- id: e43_island_house
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 15
+  requires: ["year >= 845", "place == noirmoutier", "!service", "norse.noirmoutier", "!holding.noirmoutier"]
+  art: home_fjord
+  title: A house on the island
+  text: |
+    The monks are never coming back to Noirmoutier. Everybody knows it now. The Northmen who winter here have stopped living in the cloister and started building houses of their own: turf and driftwood, with byres and boat-sheds and salt-pans, and Frankish women keeping them, some of them wives.
+
+    An old Vestfolder who came with the fleet in 843 is going home to die, and selling his house: a longhouse at the north end of the island, a boat-shed, a strip of salt-pans, and a field of beans. Six pounds, he says. The price of a winter camp that's yours.
+  choices:
+    - id: buy
+      text: Buy it. A man needs a place on this coast.
+      requires: ["silver >= 288"]
+      effects: [ { buy_land: true } ]
+      result: You weigh out the silver and he gives you the key, which is a wooden peg, and a long account of which cow kicks. The house is yours, and the salt-pans, and the beans. You could winter here as at home. You could bring a household here.
+    - id: later
+      text: Not yet. The sea is still yours.
+      result: He sells it to a Danish captain a week later. There will be other houses. The island is filling up.
+
+- id: e43_bordeaux_arrow
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year >= 847", "year <= 848", "!service", "ships >= 1", "place == noirmoutier || place == nantes", "!flag.bx_sworn"]
+  art: muster
+  when: Spring, 847
+  title: Hastein's fleet
+  text: |
+    Hastein is a leader now. The thin dark young man who won at dice on the monks' island in 843 has forty ships behind him and a name on every beach from the Loire to Dublin, and he has decided what the Loire Northmen will do this year: go south to the Garonne, and take Bordeaux, which shut its gates on the southern fleet and has been sitting behind its Roman walls ever since, getting richer.
+
+    [if flag.sf_went]"You've been up the Garonne," Hastein says when he sees you. "You know the city. I want you with me."[else]"You'll come," Hastein says. It isn't a question. With Hastein it never is.[/if]
+    [if flag.e43_hroi_back]Hrói is going, one-eyed, with a bigger ship and a better-painted dragon. He has been telling everyone for a week that you'll come.[/if]
+  choices:
+    - id: go
+      text: Go with Hastein.
+      effects: [ { set: flag.bx_sworn }, { fleet: loire847 }, { know: bordeaux }, { add: { crew.morale: 1 } } ]
+      result: You put your mark on his list. Forty ships go south out of the Loire on the first good wind, with Hastein's at the head, and the whole coast watching them go.
+    - id: no
+      text: Not this year. Bordeaux's walls have stood five hundred years.
+      result: Hastein shrugs, and goes without you. He always does.
+
+- id: bx_dordogne
+  kind: pool
+  trigger: sea
+  chance: 1
+  once: true
+  weight: 50
+  requires: [flag.bx_sworn, "bound == bordeaux", "!service"]
+  art: open_sea
+  title: The Dordogne
+  text: |
+    Where the Garonne meets the Dordogne, the fleet splits: Hastein with most of the ships up the Garonne for the city, and nine ships up the Dordogne to forage, under a Danish captain who thinks he knows the country. That night a fishing boat comes down the river with a man in it, shouting. King Charles of the Franks is on the Dordogne with an army. He has the nine ships.
+  choices:
+    - id: help
+      text: Take your ship up the Dordogne after them, in the dark.
+      danger: true
+      effects: [ { battle: { foe: frankish_levy, men: 28, terrain: ship, win: bx_dordogne_won } } ]
+    - id: hastein
+      text: Keep with Hastein. Nine ships are nine ships; the city is the city.
+      result: You keep with Hastein. The nine ships don't come back. The Franks hang their crews along the Dordogne, men say, and Charles writes to the Pope about it.
+
+- id: bx_dordogne_won
+  kind: spine
+  art: bangor_field
+  title: Nine ships
+  text: |
+    You come on the king's men in the dark at the river bank, where they're dragging the Danes' ships ashore, and they don't expect anybody, and they run. You get three of the nine ships off, and their crews out of the Franks' ropes. The rest are burning.
+  choices:
+    - id: on
+      text: Back down to the Garonne, and Hastein.
+      effects: [ { add: { honour: 1 } }, { deed: { type: battle_won, text: "Took three ships back from King Charles on the Dordogne", weight: 5, witnesses: 400 } } ]
+      result: The Danish crews you cut loose are yours for the rest of the summer. Their captain, the one who thought he knew the country, kisses your hands in front of the fleet, which is embarrassing for everybody.
+
+- id: bx_walls
+  kind: place
+  trigger: arrive
+  at: [bordeaux]
+  once: true
+  weight: 30
+  requires: [flag.bx_sworn]
+  art: muster
+  title: The Roman walls
+  text: |
+    Bordeaux's walls are Roman, square-built and high, with towers, and the duke of Gascony, William, behind them with his household and every man in the city who can hold a spear. The fleet sits down outside them in the vineyards, and waits. And waits. Through the summer, and the autumn, and the winter, living off the country, while the city lives off its granaries and watches.
+
+    In the spring, a man comes out of the city at night, through a postern by the river, and asks for Hastein. He has a grievance against the duke, and the key to the postern, and a price.
+    [break]
+    "Tonight," Hastein says. "Who goes through the postern first?"
+  choices:
+    - id: first
+      text: You do.
+      visible_if: "!service"
+      danger: true
+      effects: [ { days_foraged: 200 }, { position: front }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 40, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 50 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
+    - id: second
+      text: Let Hastein's own men go first. Follow them in.
+      visible_if: "!service"
+      danger: true
+      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
+    - id: crew
+      text: Go through the postern with your captain's crew.
+      visible_if: service
+      danger: true
+      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: man, win: bx_taken, lose: bx_repulsed } } ]
+
+- id: bx_taken
+  kind: spine
+  art: iona_burning
+  title: Bordeaux at night
+  text: |
+    Through the postern in the dark, and up a lane between dark houses, and into the square before the duke's hall before anyone in the city is awake to stop you. Then the city wakes up, and it's fighting in the streets by torchlight until dawn, and at dawn it's over. Bordeaux, that shut its gates on the southern fleet, that has stood five hundred years.
+
+    In the duke's hall, Duke William of Gascony stands at the end of his own table with his sword in his hand and six men round him, and looks at the door.
+  choices:
+    - id: duke
+      text: Take the duke alive. He's worth his weight.
+      check: { skill: command, attr: pre, difficulty: 6 }
+      success:
+        text: You get between Hastein's men and the duke's six, and tell the duke in bad Frankish that he can die or be ransomed, and he looks at you a long moment and puts his sword on the table. His people will pay for him. It will take them a year.
+        effects: [ { set: flag.bx_taken }, { add: { loot: 400 } }, { take_hostage: { kind: abbot, place: bordeaux, name: William, who: "William, duke of Gascony", kin: "the people of Gascony", price: 1400 } }, { deed: { type: raid, text: "Took Bordeaux with Hastein, and the duke of Gascony alive in his own hall", weight: 8, witnesses: 1000 } } ]
+      failure:
+        text: Hastein's men get there first. The duke goes down at the end of his table, and his six with him, and Hastein takes his sword for his own. Your share of the city is still the richest you've had.
+        effects: [ { set: flag.bx_taken }, { add: { loot: 400 } }, { deed: { type: raid, text: "Took Bordeaux with Hastein's fleet, at night", weight: 6, witnesses: 1000 } } ]
+    - id: plunder
+      text: Leave the duke to Hastein. Find the cathedral treasury.
+      effects: [ { set: flag.bx_taken }, { add: { loot: 520, honour: -1 } }, { deed: { type: raid, text: "Took Bordeaux with Hastein's fleet, at night", weight: 6, witnesses: 1000 } } ]
+      result: The bishop has hidden it badly, under the altar, in three chests. You carry them down to the river yourself. Bordeaux burns behind you, most of it, the way cities do when you take them at night.
+
+- id: bx_repulsed
+  kind: spine
+  art: bangor_field
+  title: The postern
+  text: |
+    The man with the key was the duke's man after all, or changed his mind, or was caught. The postern opens on a lane full of the duke's household with torches and spears, and the men at the front of the column die in it.
+
+    The fleet sits outside the walls another month, and then goes home. Next year, Hastein says. The city isn't going anywhere.
+  choices:
+    - id: on
+      text: Back to the Loire.
+      effects: [ { add: { crew.men: -6, crew.morale: -2 } }, { fleet_end: true } ]
+
+# ---- 844, for a man with a ship of his own on the Loire (the summer the southern fleet was away) ----
+- id: e43_first_crew
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 25
+  requires: [seen.e43_844, "year == 844", "!service", "ships >= 1"]
+  art: muster
+  title: Your own crew
+  text: |
+    The night after Ölvir sails for home, the men of the Hart sit round the fire on the beach and look at you. They've rowed for Ölvir, some of them for years. Now they're waiting to hear how it's going to be.
+
+    [if man.ketill.sworn]Ketill sits a little apart, as if it were none of his business, and listens hardest of all.[/if] The oldest of them, a Sogn man called Bjarni with no front teeth, says it for everyone: "Shares, captain. How are the shares?"
+  choices:
+    - id: equal
+      text: Every man an equal share, and the ship's share for the ship.
+      effects: [ { add: { crew.morale: 2 } } ]
+      result: They like that. Bjarni says Ölvir gave the prow a share and a half, and you say the prow can earn its half at the next gate, and they laugh, and that's settled. By morning it's all along the beach that the Hart's new captain shares like an old one.
+    - id: deeds
+      text: Shares by deeds. The men who go first get more.
+      effects: [ { add: { crew.morale: 1 } }, { position: front } ]
+      result: The young ones like it, and the old ones don't, and Bjarni says nothing at all for a long while. Then he says he'll be going first, then, and grins with no teeth. You'll have to go first yourself, from now on. They'll be watching.
+    - id: steer
+      text: Before shares, a steersman. Ask Bjarni to take the steering-oar.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: Bjarni looks at you a long time, and then at the fire, and nods. "Ölvir never asked me," he says. He steers the Hart for you that summer, and she's never sailed better, and the men take the shares you name without a word.
+        effects: [ { add: { crew.morale: 1, skill.seamanship: 1 } } ]
+      failure:
+        text: Bjarni says he's too old, and means he doesn't know you yet. You steer her yourself. The shares can wait.
+
+- id: e43_monks
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  weight: 15
+  requires: ["year >= 844", "year <= 847", "!service", "norse.noirmoutier"]
+  art: celtic_monastery
+  title: The monks come back
+  text: |
+    A boat comes over from the mainland under a white cloth, with three monks in it, and an old abbot in the stern who climbs out on the beach of his own island and kneels down and kisses the sand. Then he gets up and asks, very politely, for his books.
+
+    Saint Philibert's monks took their saint's bones away from Noirmoutier years ago, inland, to a safer church; they left the books, because books are heavy. The Northmen have been using the books for kindling all winter, and some of them have ended up in your ship, because the bindings have silver on them.
+  choices:
+    - id: sell
+      text: Sell him back the books you have, at a fair price.
+      effects: [ { add: { silver: 36 } }, { standing: { place: noirmoutier, n: 1 } } ]
+      result: He pays in good silver, and checks every page, and weeps over one of them where the kindling-tearing has started. When he goes, he blesses you, which is more than you expected, and you find you don't mind it.
+    - id: give
+      text: Give them to him. They're no use to you, and he came a long way.
+      effects: [ { add: { honour: 1, hamingja: 1 } } ]
+      result: He doesn't understand at first. Then he does, and he takes your hands, and says something in Latin that one of the monks puts into broken Norse for you. "He says that God sees." Maybe. The Northmen on the beach think you're mad. The abbot tells the story in every church in Frankia.
+    - id: strip
+      text: Strip the silver off the bindings, and give him what's left.
+      effects: [ { add: { silver: 24, honour: -1 } } ]
+      result: He takes the books without the silver, and looks at you the whole time you're doing it. He doesn't say anything. Neither do the monks. You're glad when the boat goes.
+
+- id: e43_salt_fair
+  kind: place
+  trigger: arrive
+  at: [noirmoutier, nantes]
+  once: true
+  weight: 15
+  requires: ["year >= 844", "year <= 848", "!service", "ships >= 1", "month >= 6", "month <= 9"]
+  art: muster
+  title: The salt fair
+  text: |
+    In the high summer the salt is raked up from the pans round the bay south of the Loire, and the traders come for it from all over Frankia: barges up the Loire, carts from Poitou, ships from England and Frisia. There's a fair on the shore at the head of the bay. Every one of the traders knows the Northmen are on the island two miles away. They've come anyway. Salt is worth it.
+  choices:
+    - id: tribute
+      text: Row over with your men, and tell the fair what it'll pay for a quiet summer.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: The fair's reeve meets you on the shore and pays without arguing, in salt and silver. It's been done before. It'll be done again next year. Nobody's hurt, and the fair goes on, and the salt goes all over Frankia with a little less silver behind it.
+        effects: [ { add: { loot: 120 } }, { standing: { place: nantes, n: -1 } } ]
+      failure:
+        text: The reeve has hired a Breton crew to keep the fair, and they meet you on the shore with spears. You row back to the island with nothing, which is better than the alternative.
+    - id: trade
+      text: Buy salt at the fair price, to sell where it's dear.
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: Salt by the cart-load, at the fair price, which is a third of what it fetches in Dublin or Kaupang. The traders don't like selling to a Northman, but they like silver better.
+        effects: [ { add: { loot: 60, skill.trade: 1 } } ]
+      failure:
+        text: The traders put their prices up when they see your shield on your back. You buy anyway, and make a little.
+        effects: [ { add: { loot: 20 } } ]
+    - id: leave
+      text: Leave the fair alone.
+      result: You watch the barges go up and down the bay all summer, loaded with salt, and do nothing about it. The other captains think you're a fool. The fair's reeve, if he knew, would think you were a saint.
+
+- id: e43_survivors
+  kind: place
+  trigger: arrive
+  at: [noirmoutier, nantes]
+  once: true
+  weight: 30
+  requires: ["!flag.sf_went", seen.e43_south, "year >= 845", "year <= 846"]
+  art: yule_hall
+  title: The ships from the south
+  text: |
+    You hear it before you see it: the southern fleet came back to the monks' island over the winter. Twenty ships, of the fifty-odd that went. The men who came up the beach were thin and brown and quiet, and dressed in silk and Moorish cloth, and they had more silver than the whole island has seen, and they didn't want to talk about it. Then, after the ale, they did: the lighthouse, the white city, the six weeks, the horsemen on the plain of Tablada, and the palm trees by the river.
+    [break]
+    [if flag.e43_hroi]Hrói is on the beach. He's lost an eye, and half his crew, and the silk cloak, and he sees you come ashore and starts to laugh, and can't stop, and then sits down on the sand and cries.[/if]
+  choices:
+    - id: listen
+      text: Sit up with them, and hear it all.
+      effects: [ { add: { skill.lore: 1 } }, { if: flag.e43_hroi, then: [ { set: flag.e43_hroi_back } ] } ]
+      result: |
+        You hear all of it, that spring, from every one of them, and it changes every time they tell it, except the palm trees. You know more about the Moors' country now than any man in Norway who hasn't been there. Some nights, after, you're glad you didn't go. Some nights you're not.

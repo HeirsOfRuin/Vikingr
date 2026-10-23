@@ -6,5 +6,5 @@
 - { id: northumbria, name: "Northumbria", regions: [Northumbria], desc: "The rich monasteries of the north-east, and York." }
 - { id: south_england, name: "The south of England", regions: [Kent, Mercia, East Anglia, Wessex], desc: "The Thames mouth and the market towns." }
 - { id: frisia, name: "Frisia", regions: [Frisia], desc: "The Rhine mouths and their markets." }
-- { id: frankia, name: "Frankia and the Seine", regions: [Frankia, The Seine], desc: "The Loire mouth and the abbeys of the Seine." }
+- { id: frankia, name: "Frankia and the Seine", regions: [Frankia, The Seine, Aquitaine], desc: "The Loire mouth, the abbeys of the Seine, and the Garonne." }
 - { id: baltic, name: "The Baltic", regions: [The Baltic], desc: "The rich island of Gotland, and the eastern shore." }

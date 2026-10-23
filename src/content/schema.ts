@@ -47,6 +47,8 @@ const baseEffect = z.union([
   z.object({ know: id }).strict(),
   z.object({ journal: z.string() }).strict(),
   z.object({ days: z.number().int().min(0) }).strict(),
+  /** Days that pass while the fleet lives off the land (beyond the map, in docs/FRAME-FLEET-843.md §3): no stores eaten. */
+  z.object({ days_foraged: z.number().int().min(0) }).strict(),
   z.object({ nickname: z.string() }).strict(),
   z.object({ boast: id }).strict(),
   z.object({ keep_boast: id }).strict(),
@@ -110,6 +112,8 @@ const baseEffect = z.union([
   z.object({ claim_land: z.literal(true) }).strict(),
   /** He sails with a great fleet now, or leaves it (docs/FRAME-FLEET-843.md §2). */
   z.object({ fleet: id }).strict(),
+  /** He buys land where he stands, as the Land action does, if he can (docs/FRAME-FLEET-843.md §3). */
+  z.object({ buy_land: z.literal(true) }).strict(),
   z.object({ fleet_end: z.literal(true) }).strict(),
   // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
   z.object({ take_hostage: z.object({ kind: id, captain: id.optional(), place: id.optional(), name: z.string().optional(), who: z.string().optional(), kin: z.string().optional(), price: z.number().int().min(1).optional() }).strict() }).strict(),

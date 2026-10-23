@@ -1,0 +1,244 @@
+# The Loire years, part 2 (docs/FRAME-FLEET-843.md §3): the southern fleet, 844. Up the Garonne to Toulouse, beaten
+# off the Asturian coast by King Ramiro, Lisbon, Seville taken and held, and the emir's army at Tablada. Beyond the
+# edge of the map, the voyage is told scene by scene, and the fleet lives off the land as it goes. Sources: the Annals
+# of St-Bertin (844, the Garonne), the Asturian chronicles (Ramiro I at A Coruña), Ibn al-Qutiyya and Ibn Idhari (Lisbon,
+# Seville, Tablada, the hangings, and the captives exchanged for clothes and food). The dates are the annals'.
+
+- id: e43_south
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year == 844", "place == noirmoutier", "!service", "ships >= 1", "month <= 6"]
+  art: muster
+  when: Spring, 844
+  title: The southern fleet
+  text: |
+    The captains who mean to go south hold their council on the beach at Noirmoutier, round a fire of the monks' pews. Fifty ships, or near it. Past the Garonne, past the Basques, along a coast nobody in the fleet has seen, to the Moors' country, where the rivers are wide and the cities are old and nobody has ever seen a Northman.
+
+    Nobody knows the way. Nobody knows what the Moors fight like. A Breton pilot says there's a city called Ishbiliya, up a river, that is richer than Paris. The captains look at each other, and at the fire, and then at you.
+    [break]
+    [if flag.e43_hroi]Hrói is going. Of course Hrói is going. He has a ship of his own now, a little karvi bought with Nantes silver, and he's already painted a dragon on her prow, badly.[/if]
+  choices:
+    - id: south
+      text: Go south with them. Nobody has done it. Somebody will.
+      danger: true
+      effects: [ { fleet: southern }, { set: flag.sf_went } ]
+      next: sf_garonne
+    - id: coast
+      text: Stay on this coast. The Loire and the Franks are rich enough for anyone.
+      result: |
+        You stay. The southern fleet goes out past the island on a fair wind, fifty sails on a blue sea, [if flag.e43_hroi]Hrói's badly painted dragon among them, and he waves his sword at you from the stern until he's out of sight, [/if]and the Loire is quieter without them. The Frankish coast is yours for the summer, and the monks' island your winter camp.
+    - id: home
+      text: Go home to Hordaland, with what you have.
+      result: You'll go north with the half of the fleet that's going home rich, when you're ready. The other half goes south, to the edge of the world. You'll hear about it.
+
+- id: sf_garonne
+  kind: spine
+  art: iona_burning
+  when: Summer, 844
+  title: Up the Garonne
+  text: |
+    The fleet goes south down the coast and into a river wider than any in Norway: the Garonne, brown and slow, with vineyards down to the water and a walled city, Bordeaux, that shuts its gates when it sees you and stays shut. The leaders leave it. There's a whole country up the river.
+
+    The fleet goes up the Garonne for a month, living off the land: villages, farms, churches, a monastery whose monks are waiting on the bank with their treasure in carts, as if they'd done this before. They have. At the end of the month there's a city on the river, a big one, with red walls: Toulouse.
+  choices:
+    - id: farms
+      text: Keep to the river country. Toulouse's walls are too high.
+      effects: [ { days_foraged: 40 }, { add: { loot: 160 } } ]
+      result: A month of river farms and churches, and the ships low in the water with wine and cloth and silver. Toulouse watches you from its walls, and you watch it back, and in the end the fleet goes back down the river and out to sea.
+      next: sf_asturias
+    - id: walls
+      text: Go up to the walls of Toulouse with the bold ones, and see if anything gives.
+      danger: true
+      check: { skill: command, attr: wit, difficulty: 6 }
+      success:
+        text: Nothing gives at the walls. But the suburbs outside them give, and the abbey by the river gives, and you come back down to the ships with a gold cross on your shoulder that two men can barely carry. The fleet talks about it all the way to the sea.
+        effects: [ { days_foraged: 40 }, { add: { loot: 300 } }, { deed: { type: raid, text: "Went up the Garonne to the walls of Toulouse with the southern fleet", weight: 4, witnesses: 500 } } ]
+      failure:
+        text: The walls are manned, and the men on them have crossbows. You lose men in the suburbs for nothing, and come back down the river with less than the ones who stayed with the farms.
+        effects: [ { days_foraged: 40 }, { add: { loot: 80, crew.men: -4, crew.morale: -1 } } ]
+      next: sf_asturias
+
+- id: sf_asturias
+  kind: spine
+  art: open_sea
+  when: August, 844
+  title: The lighthouse
+  text: |
+    South and west round the Basques' coast, and along a green country of mountains that come down to the sea, the fleet raises a tower on a headland: a lighthouse, the Breton says, built by the Romans, the tallest thing any of you has ever seen made by men. Below it, a bay, and a town, and cattle on the hills.
+
+    The fleet goes in to forage. The Christian king of this country, Ramiro, has been watching you come for three days from his hills. He is waiting on the beach with his whole levy.
+  choices:
+    - id: land
+      text: Land with the fleet, and fight for the beach.
+      danger: true
+      effects: [ { battle: { foe: asturian_levy, men: 34, terrain: beach, win: sf_asturias_won, lose: sf_asturias_lost } } ]
+    - id: ships
+      text: Keep your men in the ships. This is a fight for cattle, not silver.
+      effects: [ { add: { honour: -1 } } ]
+      result: You lie off and watch. Ramiro's men come down the beach with torches and burn the ships that grounded, and the fleet pulls off with seventy fewer men than it had in the morning. The leaders say the Hart was slow to land. You say nothing.
+      next: sf_lisbon
+
+- id: sf_asturias_won
+  kind: spine
+  art: bangor_field
+  title: The beach below the tower
+  text: |
+    You hold the beach, and Ramiro's men go back up into their hills. But along the bay the fleet's luck has been worse: the Asturians got among the grounded ships with fire, and a dozen of them are burning, and their crews with them.
+
+    The leaders don't wait to bury anybody. The fleet goes south that night, shorter by a dozen ships, with the lighthouse burning behind it.
+  choices:
+    - id: on
+      text: South.
+      effects: [ { days_foraged: 15 }, { add: { provisions: 60 } }, { deed: { type: battle_won, text: "Held the beach below the Roman tower against King Ramiro", weight: 3, witnesses: 300 } } ]
+      next: sf_lisbon
+
+- id: sf_asturias_lost
+  kind: spine
+  art: bangor_field
+  title: Fire on the water
+  text: |
+    Ramiro's men drive you back into the sea. You get the Hart off the beach with half your men hanging over the side, and lie off in the bay and watch the Asturians fire the ships that were too slow, and the men in them.
+
+    The fleet goes south that night, a dozen ships short, and nobody sings.
+  choices:
+    - id: on
+      text: South.
+      effects: [ { days_foraged: 15 }, { add: { crew.morale: -1 } } ]
+      next: sf_lisbon
+
+- id: sf_lisbon
+  kind: spine
+  art: open_sea
+  when: August, 844
+  title: Al-Ushbuna
+  text: |
+    Further south the country changes: brown hills, olive trees, white walls, and a city at the mouth of a great river, with a citadel on a hill. Al-Ushbuna, the Breton says, the first city of the Moors. Its people come out to fight you on the shore, and are beaten, and go back in, and shut the gates, and send riders south to their emir.
+
+    The fleet stays thirteen days, fighting in the hills round the city by day and drinking the Moors' wine at night, which surprises everybody, because the Breton says they aren't supposed to have any.
+  choices:
+    - id: raid
+      text: Raid the country round the city while the riders are gone.
+      effects: [ { days_foraged: 14 }, { add: { loot: 140 } }, { captives: 4 } ]
+      result: Thirteen days of farms and villas, and captives who speak a language nobody in the fleet has heard, and coin with writing on it instead of kings. Then the leaders say south again. There's a bigger city up a bigger river.
+      next: sf_seville
+    - id: trade
+      text: Talk to the merchants who come out to the ships under a white cloth.
+      check: { skill: trade, attr: wit, difficulty: 5 }
+      success:
+        text: They have silver, and silk, and a thing in a glass jar that smells of every flower at once, and they want swords and furs and captives. You trade for thirteen days and come away with things no one in Norway has ever seen, and a merchant's word that the emir's army is two weeks behind his riders. You remember that.
+        effects: [ { days_foraged: 14 }, { add: { loot: 120 } }, { set: flag.sf_warned } ]
+      failure:
+        text: They want too much for too little, and you don't know what anything's worth here. You come away with a jar of the flower-smell and a feeling you've been robbed politely.
+        effects: [ { days_foraged: 14 }, { add: { loot: 30 } } ]
+      next: sf_seville
+
+- id: sf_seville
+  kind: spine
+  art: iona_burning
+  when: Autumn, 844
+  title: Ishbiliya
+  text: |
+    Up a river even wider than the Garonne, between marshes full of birds no one has a name for, to a city with walls the Romans built and the Moors made higher: Ishbiliya. The city doesn't know what you are. Its walls are in bad repair. It falls in a morning.
+
+    The fleet holds it for six weeks. Six weeks in a city of palms and fountains and towers, with the Moors' merchants hiding their silver and the Moors' holy men praying in their great house, and the fleet taking what it wants. Men go mad with it. [if flag.e43_hroi]Hrói has a silk cloak, and a sword with gold on the hilt, and a captive girl who won't look at him.[/if]
+    [break]
+    It is too long. Everyone knows it's too long. The leaders can't agree to go.
+  choices:
+    - id: plunder
+      text: Plunder the city with the rest. You came for this.
+      effects: [ { days_foraged: 40 }, { add: { loot: 420, honour: -1 } }, { captives: 6 } ]
+      result: Six weeks of it, and your ship so full of silver and silk and captives that she wallows. You have never been so rich. You have never wanted so badly to leave.
+      next: sf_tablada
+    - id: watch
+      text: Take your men out to the hills to the east, and watch for the emir.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: On the fifth day you see the dust. Horsemen, thousands of them, coming down from the north-east, three days out. You ride back on a stolen horse and tell the leaders, and some of them believe you, and get their ships ready, and the rest go on plundering.
+        effects: [ { days_foraged: 40 }, { add: { loot: 240 } }, { set: flag.sf_warned } ]
+      failure:
+        text: You watch the hills for a month and see nothing but goats. Then you come back to the city to find the fleet has plundered it clean without you.
+        effects: [ { days_foraged: 40 }, { add: { loot: 120 } } ]
+      next: sf_tablada
+    - id: leave
+      text: Get your ship down the river and out to sea now, with what you have.
+      effects: [ { days_foraged: 20 }, { add: { loot: 200, honour: -1 } }, { set: flag.sf_left_early } ]
+      result: You go at night, with your oars muffled, past the fleet's guard-ships, which call after you, and out into the marshes, and to the sea. Behind you the fleet goes on plundering Ishbiliya. You'll hear what happened to it.
+      next: sf_home
+
+- id: sf_tablada
+  kind: spine
+  art: bangor_field
+  when: November, 844
+  title: Tablada
+  text: |
+    The emir's army comes in the second week of November: horsemen out of Córdoba in mail coats, with lances and bows, more of them than the fleet has men, and catapults that throw fire at the ships in the river. They catch the fleet's foragers on the plain of Tablada outside the city, in the open, on foot.
+
+    [if flag.sf_warned]You knew they were coming. Your men are in their mail, and your ship is ready in the river, and the men on either side of you are the ones who listened.[else]Nobody believed they would come. They have.[/if]
+  choices:
+    - id: hold
+      text: Form the wall on the plain, and hold them while the ships get away.
+      danger: true
+      effects:
+        - { if: flag.sf_warned, then: [ { host: { title: "The plain of Tablada", foe: moorish_host, terrain: field, men: 60, wings: [ { name: "The fleet's crews", men: 240, quality: 0.9, foe_men: 300 } ], role: wing, win: sf_tablada_held, lose: sf_tablada_broken } } ], else: [ { host: { title: "The plain of Tablada", foe: moorish_host, terrain: field, men: 80, wings: [ { name: "The fleet's crews", men: 200, quality: 0.8, foe_men: 360 } ], role: wing, win: sf_tablada_held, lose: sf_tablada_broken } } ] }
+    - id: run
+      text: Run for the ships, now, before the horsemen close.
+      danger: true
+      check: { skill: command, attr: agi, difficulty: 6 }
+      success:
+        text: You get your men to the river at a run with the horsemen on your heels, and off the bank, and out into the stream, where the catapults are throwing fire and the water is full of men from other ships, swimming. You pull out the ones you can.
+        effects: [ { add: { crew.men: -4, crew.morale: -2, honour: -1 } } ]
+        next: sf_home
+      failure:
+        text: The horsemen are faster than any man. They catch you on the open ground between the plain and the river.
+        effects: [ { battle: { foe: moorish_host, men: 50, terrain: field, win: sf_tablada_held, lose: sf_tablada_broken } } ]
+
+- id: sf_tablada_held
+  kind: spine
+  art: bangor_field
+  title: The wall on the plain
+  text: |
+    The wall holds long enough. The horsemen ride at it, and wheel away, and ride at it again, and shoot their arrows over it, and it holds, and behind it the ships get off the bank and out into the river. Then you go back to the river yourselves, step by step, with the wall still up, and the last men wade out to the ships with arrows in their shields.
+
+    Behind you, on the plain, the emir's men are hanging the captives they took from the palm trees by the river. There are a great many of them.
+    [if flag.e43_hroi]Hrói comes down the river in his little karvi with half his men gone and his silk cloak torn, and looks across at you, and doesn't wave.[/if]
+  choices:
+    - id: on
+      text: Down the river, and away.
+      effects: [ { add: { crew.men: -5, crew.morale: -1 } }, { deed: { type: battle_won, text: "Held the wall on the plain of Tablada while the fleet got away", weight: 8, witnesses: 2000 } } ]
+      next: sf_home
+
+- id: sf_tablada_broken
+  kind: spine
+  art: bangor_field
+  title: The palm trees
+  text: |
+    The wall breaks. The horsemen are through it and among you, and it is every man for the river. You get there. A great many don't. Thirty ships burn in the river from the catapults' fire, and the emir's men take a thousand prisoners on the plain.
+
+    The next morning the fleet, what's left of it, lies at the river's mouth, and the men look back up the river and can see them: the palm trees along the bank, and what is hanging from them.
+    [if flag.e43_hroi]Hrói's little karvi isn't at the river's mouth. Nobody saw it come down. You look for the badly painted dragon all morning.[/if]
+  choices:
+    - id: on
+      text: Bury nobody. Go.
+      effects: [ { add: { crew.men: -10, crew.morale: -3 } }, { if: flag.e43_hroi, then: [ { set: flag.sf_hroi_dead } ] } ]
+      next: sf_home
+
+- id: sf_home
+  kind: spine
+  art: open_sea
+  when: Winter, 844
+  title: The long way home
+  text: |
+    [if flag.sf_left_early]You come back alone, up the long coast, ahead of the fleet. Behind you, you hear later, the emir caught it at Tablada.[else]The fleet goes out past the marshes and the sea-mouth: what's left of it. Before it goes, it trades its prisoners back to the Moors on the beach for clothes and food, because nobody has any left. The Moors' general watches from his horse, and says nothing, and lets you go.[/if]
+
+    Then the long coast north again, into winter: the storms off the Basques, the green mountains where Ramiro's men watch from the hills, the Garonne mouth, and at last the monks' island, where the men who didn't go come down to the beach to count the ships coming in, and stop counting.
+    [break]
+    Of fifty-odd ships, about twenty come home. They are heavy with silver and silk and strange coin, and men who will never quite talk about it.
+  choices:
+    - id: home
+      text: Haul up on the island, and drink to the ones who didn't come back.
+      effects: [ { days_foraged: 40 }, { fleet_end: true }, { deed: { type: deed, text: "Sailed with the southern fleet to Seville, and came home", weight: 8, witnesses: 1000 } } ]
+      result: |
+        That winter on the island, in every house, men tell it. The tower by the sea, the white city, the palm trees. It gets better with every telling, the way stories do, except the palm trees. Nobody tells that part twice.
+        [if flag.sf_hroi_dead]Hrói's father will come asking, next summer, from Vestfold. You'll have to be the one to tell him.[/if]

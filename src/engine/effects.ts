@@ -29,7 +29,7 @@ import { grantLand } from './land';
 import { loseSeat, takeSeat } from './rule';
 import { nameChild } from './family';
 import { loseHome } from './settle';
-import { claimBlock, claimLand } from './land';
+import { buyBlock, buyLand, claimBlock, claimLand } from './land';
 import { joinFleet, leaveFleet } from './sailfleet';
 /** They come back for a home fort in force: its people, and their neighbours. */
 const HOME_ATTACK = 1.4;
@@ -101,6 +101,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('know' in e) { if (!state.known.includes(e.know)) state.known.push(e.know); }
     else if ('journal' in e) journal(state, e.journal);
     else if ('days' in e) { state.day += e.days; heal(state, content, e.days); }
+    else if ('days_foraged' in e) { state.day += e.days_foraged; state.fedTo = state.day; heal(state, content, e.days_foraged); }
     else if ('nickname' in e) {
       state.hero.nickname = e.nickname;
       journal(state, `Men call you ${e.nickname} now.`);
@@ -166,6 +167,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       const p = at ? content.places[at] : undefined;
       if (p?.raid) startBattle(state, content, { foe: p.raid.foe, men: Math.round(p.raid.defenders * HOME_ATTACK), terrain: 'rampart', context: 'scene', place: at!, win: e.home_defence.win, lose: e.home_defence.lose });
     } else if ('fleet' in e) joinFleet(state, content, e.fleet);
+    else if ('buy_land' in e) { if (state.at && !buyBlock(state, content, state.at)) buyLand(state, content, state.at); }
     else if ('fleet_end' in e) leaveFleet(state, content);
     else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }
     else if ('lose_home' in e) state.after = { title: 'The settlement', lines: loseHome(state, content) };

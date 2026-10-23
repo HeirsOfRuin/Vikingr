@@ -151,3 +151,77 @@ An 830 life meets about 42 written scenes in its first two years; an 843 life me
 - **Approve 2 and 3, in that order?**
 - **The southern fleet (Seville, 844):** build it as a playable choice? Recommended yes. It is the most famous voyage of the decade, and a hard lesson.
 - **A captain in a fleet:** a voice at the fleet council, weighted by his ships and his name? Recommended yes. That is how a man rose from captain to leader.
+
+---
+
+## Josh's answer
+"Yes to all." Fleet sailing first, then the Loire years; Seville as a playable choice; a captain's voice at the fleet council.
+
+## Built
+### 2. Sailing in a fleet
+- **Fleets** (`content/registry/fleets.yaml`):
+  - the Vestfold fleet (843);
+  - the Danes at Dorestad (834);
+  - the southern fleet (844);
+  - Ragnarr's Seine fleet (845);
+  - Hastein's Loire fleet (847–848).
+
+  He joins one by a scene. Each breaks up at the turn of the year after its own, or when a scene says so.
+- **In a fleet:**
+  - the voyage goes at 85% of his own pace;
+  - the lone longship, the merchant, the pirates and the pilot don't come;
+  - a storm scatters the fleet: no ship founders, and seven in ten of the men washed over are picked up by other ships.
+- **15 fleet events, each written for the oar and for the steering-oar:**
+  - **at sea:** the leader's lantern, a straggler, the horn and the council, the fleet scattered;
+  - **in camp:** the stream, dice, the flux, foraging, the fleet's traders, another district's crew, the leader's tenth, three captains breaking away, the fleet's skald;
+  - **before the fight:** the sacrifice, and who goes first up the beach.
+- **The council:** a captain's voice there is his ships plus his fame ÷ 40 (`fleet.voice`). It decides whether the council follows his plan, and whether he may ask for the first place up the beach.
+
+### 3. The Loire years, 843–848 (33 scenes)
+- **The map grows south** to 42.5°N, taking in Bordeaux, the Garonne country, the Pyrenees and the Asturian coast. **Bordeaux** is a new place: a market and a raid, three days' coasting from Noirmoutier.
+- **843** (`content/scenes/843/02-loire.yaml`):
+  - the gathering off Skiringssal (Hrói the Vestfolder, a friend for the chapter);
+  - Count Lambert and his Breton (the road to the gate, or hostages);
+  - the night in the reeds;
+  - Nantes (existing; it now knows the road if the Breton gave it);
+  - the share-out of a city among 67 crews;
+  - three winter scenes on the island: the captives, a killing judged at the fleet's thing, the monks' cellar and the fire.
+- **844** (`03-south.yaml`):
+  - **The southern fleet:** the Garonne to Toulouse; the lighthouse and King Ramiro; Lisbon; Seville held six weeks; Tablada; the long way home.
+    - Told as a chain of scenes beyond the map's edge. The fleet lives off the land, so no stores are eaten.
+    - Tablada is a host battle against the emir's army, easier if he saw them coming.
+  - **Or stay** (`04-loire-later.yaml`):
+    - his first council with his own crew;
+    - the monks come back for their books;
+    - the salt fair;
+    - the southern fleet's survivors, with Hrói one-eyed or not at all.
+- **845–848:**
+  - Ragnarr's arrow reaches the Loire (into the existing Paris chapter);
+  - Hrói's father comes asking;
+  - Lambert's war (a host battle beside his Bretons, for the bridge at Nantes);
+  - a house on the monks' island (land, then settlement);
+  - Hastein's fleet for Bordeaux: the Dordogne (King Charles takes nine ships), the siege, the postern at night, and the duke of Gascony alive or dead.
+  - The chronicle's Bordeaux news now strikes the city unless he was there.
+
+## Measured
+**Reach** (18 raider bot lives from 843, 6 years):
+- **Every 843 scene fires in every life.**
+- **Fleet events:** the four sea events fire in 14–18 lives of 18, the camp events in 6–9.
+- **The southern fleet:** about 1 life in 4 goes south (the bots choose at random); the voyage is deadly, as written:
+  - Asturias: lost in 2 of 4 lives that went;
+  - Tablada: the wall broke in both lives that stood to fight.
+- **844 on the Loire:** the first-crew scene fired in every life, the monks in 16 of 18, the salt fair in 13. The survivors' scene fired in none: it needed a winter on the island, so it was moved to the next landfall in the Loire, 845–846.
+- **845–848:** Lambert's war 11–12 of 18; the island house 14–17; Bordeaux 4.
+
+**New story scenes met per life** (12 lives each):
+
+| Year of the life | 830 start | 843, before | 843, now |
+|---|---|---|---|
+| 1st | 24.8 | 3.0 | 9.0 |
+| 2nd | 17.3 | 1.7 | 7.3 |
+| 3rd | 5.7 | 1.4 | 2.8 |
+
+- **Plus the fleet events,** which count as world scenes in this table: about 6–8 more in the first year.
+- **Short of the target.** The first two years now carry about 24 written scenes against 830's 42, under the target of 28.
+- **Why:** 830's first year counts its whole written boyhood and its own sea events. An 843 life starts at sixteen at the arrow.
+- **To close the gap:** a short written 843 voyage south (the coast of the Franks seen for the first time), and more of 846–848 that every life meets, not only those who go to Bordeaux.

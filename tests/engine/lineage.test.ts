@@ -48,7 +48,7 @@ describe('A. character creation', () => {
 
 import { act, listActions } from '../../src/engine/index';
 import { sandboxGame } from '../helpers';
-import { dayOf } from '../../src/engine/calendar';
+import { dateOf, dayOf } from '../../src/engine/calendar';
 import { RngCursor, seedRng } from '../../src/engine/rng';
 import { FAMILY, familyYear, fam, heirs, winterBirth } from '../../src/engine/family';
 import { kill } from '../../src/engine/hero';
@@ -447,5 +447,25 @@ describe('sailing in a fleet (docs/FRAME-FLEET-843.md §2)', () => {
     s.day = dayOf(844, 59);
     expect(fleetYear(s, content).length).toBe(1);
     expect(s.fleet).toBeUndefined();
+  });
+});
+
+describe('the Loire years (docs/FRAME-FLEET-843.md §3)', () => {
+  it('the southern fleet: out past the map and home to the monks\' island, the fleet broken up', () => {
+    const s = sandboxGame(31);
+    s.day = dayOf(844, 120); s.at = 'noirmoutier'; s.phase = 'sailing'; s.fedTo = s.day; s.crew.men = 40; s.provisions = 2000;
+    s.places.noirmoutier!.norse = true;
+    openScene(s, 'e43_south', content);
+    let t = act(content, s, { t: 'choose', id: 'south' });
+    expect(t.fleet?.id).toBe('southern');
+    // take the quiet road through every scene: farms, keep to the ships, raid, leave early
+    const pickFirst = (ids: string[]) => { const o = listActions(t, content); const a = ids.map((id) => o.find((x) => (x.action as { id?: string }).id === id && x.enabled)).find(Boolean) ?? o.find((x) => x.enabled)!; t = act(content, t, a.action); };
+    for (let i = 0; i < 20 && t.pending; i++) pickFirst(['farms', 'ships', 'raid', 'leave', 'home', 'on']);
+    expect(t.seen.sf_home).toBeDefined();
+    expect(t.fleet).toBeUndefined();
+    expect(t.at).toBe('noirmoutier');
+    expect(dateOf(t.day).year).toBe(844);
+    expect(t.hero.alive).toBe(true);
+    expect(t.provisions).toBe(2000);
   });
 });

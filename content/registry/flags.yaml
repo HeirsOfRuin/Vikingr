@@ -376,3 +376,14 @@ ru_dublin_ditch: { description: "Dug Dublin's ditch deeper against the Danes" }
 era843: { description: "A life begun in the spring of 843" }
 e43_debt: { description: "Owes Ölvir for the Hart" }
 e43_all_owed: { description: "Owes Ölvir all six pounds for the Hart" }
+# The Loire years (docs/FRAME-FLEET-843.md §3)
+e43_hroi: { description: "Made a friend of Hrói the Vestfolder at the gathering, 843" }
+e43_gate_known: { description: "Got the road to the gate at Nantes out of Lambert's Breton" }
+e43_lambert_hostages: { description: "Made Count Lambert give hostages before Nantes" }
+sf_went: { description: "Sailed south with the southern fleet, 844" }
+sf_warned: { description: "Knew the emir's army was coming before Tablada" }
+sf_left_early: { description: "Left Seville before the emir came" }
+sf_hroi_dead: { description: "Hrói died at Tablada" }
+bx_sworn: { description: "Sailed with Hastein's fleet for Bordeaux" }
+bx_taken: { description: "Was at the taking of Bordeaux, 848" }
+e43_hroi_back: { description: "Hrói came back from the south, one-eyed" }
