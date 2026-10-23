@@ -1,0 +1,186 @@
+# The skald (playtest 8): a poet of his own household, at sea or at home. The engine side is src/engine/skald.ts:
+# aboard he sees the deeds done and they weigh a quarter more, and he can die in a rout; at home he sings at the
+# jarl's benches; at any feast he tells the deeds better; he wants his Yule gifts, or he goes; and when the hero
+# dies, he makes the death-song. These scenes are where you find one, use one, and can lose one.
+
+# ---- finding one ----
+- id: sk_hire_east
+  kind: pool
+  trigger: arrive
+  at: [hedeby, birka, kaupang, ribe, hladir, uppsala]
+  chance: 0.3
+  cooldown_days: 365
+  requires: ["!skald", "year >= 831"]
+  art: birsay
+  title: A skald between lords
+  text: |
+    There is a skald at the ale-benches by the beach-market, a lean Icelander with a cloak gone thin at the shoulders and a harp-case nobody has seen him open. His name is Þjóðólfr. His last lord drowned off Jutland in the spring, he says, with the ship and the verses about him, and a skald without a lord is a man who sings for his supper at strangers' fires.
+
+    He gives you a verse to show what he can do. It is about a stranger's ship coming in to Hedeby, and it is about yours, and he must have made it while you were tying up.
+
+    "I go where the deeds are," he says. "Is that you?"
+  choices:
+    - id: hire
+      text: Take him into your household. He will want his gifts at Yule.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { skald: Þjóðólfr } ]
+      result: |
+        He weighs the silver on his palm without looking at it, which is how you know he has done this before. "Give me something to make verses about," he says, "and I will make you something that outlives the both of us."
+
+        You can take him to sea, where he will see what you do and make it count for more, or leave him at home to sing your name at the jarl's benches. A skald aboard is a skald in the rout with everyone else.
+    - id: verse
+      text: Pay him for one verse about you, and send him on.
+      requires: ["silver >= 12"]
+      effects: [ { add: { silver: -12 } }, { deed: { type: deed, text: "A wandering skald made a verse about his ship", weight: 1.5, witnesses: 80 } } ]
+      result: He makes it there and then, eight lines, and the beach-market hears it. By evening you have heard it twice, from men who don't know it's about you.
+    - id: no
+      text: Buy him an ale, and nothing more.
+      result: He drinks it, thanks you as if you had given him a ring, and is gone with a Swedish shipmaster before the tide turns.
+
+- id: sk_hire_west
+  kind: pool
+  trigger: arrive
+  at: [dublin, york, orkney, skye, man, linn_duachaill]
+  chance: 0.3
+  cooldown_days: 365
+  requires: ["!skald", "year >= 831"]
+  art: hearth_ormr
+  title: The half-Irish poet
+  text: |
+    His mother was Irish and his father was from Sogn, and he has a poet's training from the one and a skald's tongue from the other, and he will tell you so. His name is Óttarr. He has been at the court of an Irish king, where the poets sit higher than the warriors, and he is not sure he likes the Norse halls better, except that they pay in silver and not in cattle.
+
+    He knows the Irish forms and the Norse ones, and he can do both in the same verse, which nobody else in the room can follow.
+  choices:
+    - id: hire
+      text: Take him into your household. He will want his gifts at Yule.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { skald: Óttarr } ]
+      result: |
+        "A Norse lord," he says, "pays once a year and expects to be remembered for ever. An Irish king pays every week and expects to be remembered by Thursday. I'll take the Norse terms." He shakes your hand like a man selling a horse.
+
+        You can take him to sea, where he will see what you do and make it count for more, or leave him at home to sing your name at the jarl's benches. A skald aboard is a skald in the rout with everyone else.
+    - id: no
+      text: Wish him a better lord than you.
+      result: '"There isn''t one in this room," he says, and goes to find out whether that is true of the next.'
+
+# ---- at sea ----
+- id: sk_verse
+  kind: queued
+  art: open_sea
+  title: The verse while the blood is wet
+  text: |
+    {skald} the skald has been quiet since the fight, sitting on his sea-chest with his lips moving. Now he stands up in the waist of the ship, steadies himself with one hand on the mast, and says he has it.
+
+    The men stop bailing to listen. It is about the fight just done, and it has the names in it, and some of them are the names of men still bleeding in the bilge.
+  choices:
+    - id: make
+      text: Let him finish it, and have it be the fight's verse.
+      effects: [ { verse: last }, { add: { crew.morale: 1 } } ]
+      result: |
+        He finishes it, and the ship cheers, and he says it again so they can learn it. By the time you raise your own beach every man aboard has it, and every man aboard will say it in a hall somewhere this winter, with himself a little nearer the front of the wall than he was.
+    - id: men
+      text: Tell him to put the men in it, not you.
+      effects: [ { add: { crew.morale: 2 } }, { add: { honour: 1 } } ]
+      result: He gives you a look, the way a smith looks at a man who tells him where to hit, and then does it. The verse has eleven names in it by the end and only one of them is yours. The men will not forget it, and neither will their mothers.
+    - id: later
+      text: Tell him to keep it for the feast. Not now.
+      result: He sits back down, sulking, and goes on moving his lips. It will be better for the waiting, he says. It had better be.
+
+- id: sk_seasick
+  kind: pool
+  trigger: sea
+  chance: 0.12
+  cooldown_days: 300
+  requires: ["skald.aboard", "!fleet"]
+  art: open_sea
+  title: The skald at sea
+  text: |
+    {skald} the skald is being sick over the side for the third day running, and between bouts he is composing a verse about it. The men think this is the funniest thing they have ever seen. He thinks it is the best verse he has ever made, and it may be.
+  choices:
+    - id: oar
+      text: Put him on an oar. It will take his mind off it.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: He rows like a man trying to stir porridge with a spear, and the bench behind him curses him for two days, and on the third he has a verse about rowing that makes the whole ship howl. Nobody curses him after that. They want the next one.
+    - id: leave
+      text: Leave him be. He's not here to row.
+      result: He gets his sea-legs by the end of the week, and is unbearable about it.
+
+- id: sk_fleet_skalds
+  kind: pool
+  trigger: sea
+  chance: 0.2
+  cooldown_days: 300
+  requires: ["skald.aboard", fleet]
+  art: open_sea
+  title: The fleet's skalds
+  text: |
+    In camp, when sixty ships are drawn up on a river beach, the skalds find each other the way dogs do. There are a dozen in {fleet}, and each one of them is making verses about the fleet, and each one of them has his own lord a little nearer the front of every fight than the others. {skald} the skald comes back to your fire one night and says that {fleet_leader}'s skald has been telling the camp that your ship was last up the beach at the last landing.
+  choices:
+    - id: answer
+      text: Tell {skald} to answer him, at the leader's fire, in front of everyone.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: He answers it at {fleet_leader}'s own fire, two nights later, with a verse in which {fleet_leader}'s skald is a seagull following the fleet for its scraps. The camp laughs for a week. {fleet_leader} laughs too, after a while, because it is good.
+        effects: [ { deed: { type: deed, text: "His skald bested the fleet leader's at the leader's own fire", weight: 2, witnesses: 400 } } ]
+      failure:
+        text: He answers it, and the other one answers back, and the other one is better. The camp laughs at the wrong man. {skald} doesn't speak for two days.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: deed
+      text: Tell {skald} you'll give him something to answer with. Be first up the next beach.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: He says that is the best answer a lord ever gave him, and he will hold the verse until he can use it. The men heard you say it. They'll hold you to it, too.
+
+# ---- at home ----
+- id: sk_drapa
+  kind: pool
+  trigger: hall
+  chance: 0.25
+  cooldown_days: 700
+  requires: [skald, "place == home_fjord", "base == hall", "fame.living >= 30"]
+  art: hearth_ormr
+  title: A drápa for the hall
+  text: |
+    {skald} the skald comes to you after the meal, when the hall has gone quiet, and says what he has been working toward all year. Not a verse. A drápa: a long praise-poem with a refrain, the kind that is made for kings and earls, with your deeds in it from the first ship to the last, and your name carved in the refrain so men cannot sing it without you.
+
+    It is a winter's work, he says. And a drápa is paid for as a drápa. A lord who orders one and pays for a ditty is remembered for that.
+  choices:
+    - id: drapa
+      text: Order it, and pay what a drápa is worth. Four pounds of silver.
+      requires: ["silver >= 192"]
+      effects: [ { add: { silver: -192 } }, { verse: best }, { verse: best }, { favour: 1 }, { deed: { type: deed, text: "Had a drápa made for him, as kings do", weight: 4, witnesses: 200 } } ]
+      result: |
+        He takes the winter over it. At the midwinter feast he gives it to the hall from the high seat, standing, and it takes as long as a meal, and when he comes to the refrain the second time the whole hall says it with him, and the third time they shout it. The jarl's men are there. They will take the refrain home with them.
+    - id: flokkr
+      text: A shorter poem, then. A flokkr. A pound of silver.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { verse: best } ]
+      result: He makes it, and it is good, and he makes sure you know what it would have been.
+    - id: no
+      text: Tell him there is not enough yet for a drápa.
+      result: '"Then go and do it," he says. He doesn''t say it unkindly.'
+
+- id: sk_poached
+  kind: pool
+  trigger: hall
+  chance: 0.12
+  cooldown_days: 700
+  requires: [skald, "winter >= 832"]
+  art: hearth_ormr
+  title: A better offer
+  text: |
+    A ship came in from the south before the ice, and in it was a man from a lord greater than you, and he has been drinking with {skald} the skald for three nights. Now {skald} comes to you, not quite meeting your eye, and says he has had an offer. A gold ring, and a seat in a king's hall, and a king's deeds to make verses of. He has not said yes, he says. He wanted to hear what you would say first.
+  choices:
+    - id: match
+      text: Give him a silver arm-ring, and say a king's deeds are other men's deeds.
+      requires: ["rings.silver >= 1"]
+      effects: [ { ring: { metal: silver, n: -1 } } ]
+      result: He turns the ring on his arm, and laughs, and says a king's skald is one of twenty, and yours is the only one. He stays. The man from the south sails without him.
+    - id: silver
+      text: Pay him a pound of silver to stay.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } } ]
+      result: He takes it. He stays. It is not the same as a ring from your own arm, and you both know it, but he stays.
+    - id: go
+      text: Tell him to go, if a king's ring is what he wants.
+      effects: [ { skald_gone: "went south to a king's hall, with your blessing" } ]
+      result: He goes in the spring. You hear later that he made a verse about you in the king's hall, the first winter, and that it was kind.

@@ -18,3 +18,4 @@
 - { id: boast_kept, name: "A boast kept", weight: 4 }
 - { id: first_voyage, name: "Uncharted water sailed", weight: 6 }
 - { id: weapon_named, name: "A weapon given a name", weight: 3 }
+- { id: death_song, name: "A death-song made", weight: 10 }

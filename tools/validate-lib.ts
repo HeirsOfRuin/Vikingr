@@ -204,7 +204,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     // hostages (src/engine/hostages.ts, plunder.ts): taken in a raid; a broken peace
     'hs_taken', 'hs_broken', 'hi_heir',
     // lords and rule (docs/FRAME-WORLD.md): found with two lords; a rival for the seat; the legends' years
-    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'is_landnam',
+    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'is_landnam', 'sk_verse',
   ];
   while (queue.length) {
     const id = queue.pop()!;

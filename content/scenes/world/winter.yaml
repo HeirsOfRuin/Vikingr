@@ -269,8 +269,8 @@
       text: Offer him a place in your household.
       visible_if: "!flag.skald"
       requires: ["silver >= 48"]
-      effects: [ { add: { silver: -48 } }, { set: flag.skald } ]
-      result: He bites the silver, then grins, showing three teeth. "Give me something to make verses about," he says.
+      effects: [ { add: { silver: -48 } }, { skald: Hallbjörn } ]
+      result: He bites the silver, then grins, showing three teeth. His name is Hallbjörn. "Give me something to make verses about," he says.
     - id: send
       text: Feed him one night, and send him on.
       result: He goes on up the valley next morning. In the spring you hear he made a verse about your hospitality. It doesn't rhyme anything flattering.

@@ -117,6 +117,11 @@ const baseEffect = z.union([
   /** He buys land where he stands, as the Land action does, if he can (docs/FRAME-FLEET-843.md §3). */
   z.object({ buy_land: z.literal(true) }).strict(),
   z.object({ fleet_end: z.literal(true) }).strict(),
+  /** A skald joins his household by name, or leaves it, and why (playtest 8). */
+  z.object({ skald: z.string().min(1) }).strict(),
+  z.object({ skald_gone: z.string().min(1) }).strict(),
+  /** The skald makes a verse: of the last deed done, or of the heaviest told deed with none yet. */
+  z.object({ verse: z.enum(['last', 'best']) }).strict(),
   // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
   z.object({ take_hostage: z.object({ kind: id, captain: id.optional(), place: id.optional(), name: z.string().optional(), who: z.string().optional(), kin: z.string().optional(), price: z.number().int().min(1).optional() }).strict() }).strict(),
   // a Norse ship-fort (longphort) holds a place, or is lost (docs/FRAME-IRELAND-SEINE.md)

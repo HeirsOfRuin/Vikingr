@@ -409,6 +409,8 @@ export interface GameState {
   homeAt?: string;
   /** The great fleet he sails with (docs/FRAME-FLEET-843.md §2). */
   fleet?: import('./sailfleet').FleetState;
+  /** His skald, by name, and whether he sails this summer (playtest 8). */
+  skald?: import('./skald').SkaldState;
   /** Lines an effect adds to the scene's result (what went into the hold). */
   notes?: string[];
 }

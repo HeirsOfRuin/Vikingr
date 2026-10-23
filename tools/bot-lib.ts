@@ -27,7 +27,7 @@ export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
 
 // instant actions (the hoard, the wall, shops) are deliberate choices, never a fallback: they don't move time
-const INSTANT = ['cruise_plan', 'course', 'shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint', 'make_ring', 'cut_ring'];
+const INSTANT = ['cruise_plan', 'course', 'shop', 'listen', 'trade', 'hoard_in', 'hoard_out', 'hang', 'sell_item', 'give_item', 'divide', 'equip', 'appoint', 'make_ring', 'cut_ring', 'skald_aboard'];
 const fallback = (opts: ActionOption[]) => (opts.find((o) => o.enabled && !INSTANT.includes(o.action.t)) ?? opts.find((o) => o.enabled)!).action;
 const find = (opts: ActionOption[], pred: (a: Action) => boolean) => opts.find((o) => o.enabled && pred(o.action));
 
@@ -213,6 +213,8 @@ export class Bot {
     const sk = h('skald'); if (sk && state.deeds.some((d) => d.told !== null && !d.verse)) return sk;
     if (state.flags.owes_jarl && state.silver > 260) { const b = h('buy_ship'); if (b) return b; }
     const hang = pick((a) => a.t === 'hang'); if (hang) return hang;
+    // the bold take the skald to sea; the careful leave him at the jarl's benches (playtest 8)
+    { const want = this.policy === 'raider' || this.policy === 'reckless'; const sa = pick((a) => a.t === 'skald_aboard' && a.on === want); if (sa) return sa; }
     if (state.silver > FARM_PRICE + 24) { const b = h('buy_farm'); if (b) return b; }
     if (state.silver > HALL_PRICE + 150) { const b = h('build_hall'); if (b) return b; }
     if (state.silver > 700 && state.ships.length < 3) { const b = h('build', 'snekkja'); if (b) return b; }

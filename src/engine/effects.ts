@@ -1,4 +1,5 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { hireSkald, loseSkald } from './skald';
 import { effAttr } from './hero';
 import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
@@ -12,7 +13,7 @@ import { addShip, appoint, desert, FLEET_MAX, hiredShip, PRIZE_HULL, shipOf, sto
 import type { ContentBundle, Effect } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
-import { addDeed } from './fame';
+import { addDeed, composeVerse } from './fame';
 import { addWound, heal } from './hero';
 import { addLoyalty, addRecruits, capacity, clampMorale, newMan } from './crew';
 import { startDuel, startBattle } from './fights';
@@ -171,6 +172,12 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('goods' in e) { const line = stowGoods(state, content, e.goods.id, e.goods.lots); (state.notes ??= []).push(line); journal(state, line); }
     else if ('buy_land' in e) { if (state.at && !buyBlock(state, content, state.at)) buyLand(state, content, state.at); }
     else if ('fleet_end' in e) leaveFleet(state, content);
+    else if ('skald' in e) hireSkald(state, e.skald);
+    else if ('skald_gone' in e) loseSkald(state, e.skald_gone);
+    else if ('verse' in e) {
+      const d = e.verse === 'last' ? [...state.deeds].reverse().find((x) => !x.verse) : composeVerse(state);
+      if (d) { d.verse = true; d.told ??= state.day; (state.notes ??= []).push(`The verse: ${d.text}. It will outlive you.`); }
+    }
     else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }
     else if ('lose_home' in e) state.after = { title: 'The settlement', lines: loseHome(state, content) };
     else if ('take_hostage' in e) {

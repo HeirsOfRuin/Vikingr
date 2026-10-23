@@ -1,5 +1,6 @@
 // Deeds, telling, fading, verses, and the table of living legends.
 // A deed adds to fame only once it has been told (DESIGN §7).
+import { SKALD, skaldSees } from './skald';
 import { ABLATE } from './hardship';
 import { FIGHT_DEEDS, NAMED_FAME } from './items';
 import type { ContentBundle, Rival } from '../content/schema';
@@ -23,7 +24,9 @@ export function addDeed(
   if (!def) throw new Error(`unknown deed type ${d.type}`);
   // a fighting deed done with a named weapon in his hand is told with the weapon's name in it (FRAME-FOUNDATION §3)
   const named = FIGHT_DEEDS.includes(d.type) && !!state.items?.find((x) => x.uid === state.kit?.weapon)?.name;
-  const weight = Math.round((d.weight ?? def.weight) * (d.mult ?? 1) * (named ? NAMED_FAME : 1) * 10) / 10;
+  // a skald aboard saw it done, and has it in verse before the ship is home (playtest 8)
+  const seen = skaldSees(state) ? SKALD.aboardDeed : 1;
+  const weight = Math.round((d.weight ?? def.weight) * (d.mult ?? 1) * (named ? NAMED_FAME : 1) * seen * 10) / 10;
   const deed: Deed = {
     n: state.deeds.length + 1,
     type: d.type,

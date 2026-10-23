@@ -1,5 +1,6 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
+import { skaldRout, skaldSees } from './skald';
 import { stow } from './fleet';
 import { coastMult } from './hardship';
 import { sackedBy } from './chronicle';
@@ -276,6 +277,8 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     if (named) lines.push(named);
   }
   state.crew.morale += won ? BATTLE.wonMorale : b.over === 'lost' ? -BATTLE.lostMorale : -0.5;
+  // a skald aboard is in the rout with everyone else (playtest 8)
+  if (b.over === 'lost') { const l = skaldRout(state, () => rng.float()); if (l) lines.push(l); }
   state.crew.morale -= namedLost.length * 0.5;
   for (const m of aliveMen(state)) addLoyalty(m, won ? 1 : 0);
 
@@ -318,6 +321,8 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   const crewMult = mult * (state.service ? SERVICE_DEED : 1);
   if (won && b.context === 'sea') addDeed(state, content, { type: 'sea_fight_won', text: `Beat ${foeName === 'them' ? 'a crew' : foeName} at sea`, witnesses, mult: crewMult });
   if (won && b.context === 'scene') addDeed(state, content, { type: 'battle_won', text: `Beat ${foeName}${b.place ? atWhere : ''}`, witnesses, mult: crewMult });
+  // a skald who saw the fight wants to make it a verse while the blood is wet: once a summer (playtest 8)
+  if (won && skaldSees(state) && (state.flags._sk_verse ?? 0) < dateOf(state.day).year) { state.flags._sk_verse = dateOf(state.day).year; state.queue.push({ scene: 'sk_verse', day: state.day }); }
   for (const d of b.deeds) {
     if (d.who) {
       const m = state.men.find((x) => x.id === d.who);

@@ -1,5 +1,6 @@
 // The hero's body: attributes after wounds, hit points, skills learned by use,
 // wounds that heal or stay, ageing, and death.
+import { deathSong } from './skald';
 import type { Attr, ContentBundle, Skill } from '../content/schema';
 import type { Death, GameState } from './state';
 import type { RngCursor } from './rng';
@@ -101,6 +102,9 @@ export function afterlife(state: GameState, cause: Death['cause']): Death['after
 export function kill(state: GameState, cause: Death['cause'], text: string): void {
   state.hero.alive = false;
   state.hero.hp = 0;
+  // his skald makes the death-song, if the skald outlived him; it is lasting fame, and counts for the afterlife
+  const song = deathSong(state);
   state.death = { day: state.day, cause, text, afterlife: afterlife(state, cause) };
   journal(state, text);
+  if (song) journal(state, `${song.text}.`);
 }

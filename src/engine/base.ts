@@ -1,5 +1,6 @@
 // The base (FRAME-FOUNDATION §4): where he keeps what he wins. His father's farm while he is young; a farm of his
 // own; a hall. Thralls work it, his wife runs it, trophies hang on its walls, and his hoard is buried under its floor.
+import { SKALD } from './skald';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { journal } from './journal';
@@ -73,8 +74,10 @@ export function takeWinterYield(state: GameState): string | null {
 
 /** How much better his deeds are told at a feast in his own hall. */
 export function feastMult(state: GameState): number {
-  if (state.base.level === 'father' || state.at !== (state.homeAt ?? 'home_fjord')) return 1;
-  return (state.base.level === 'hall' ? 1 + HALL_FEAST : 1) * (1 + Math.min(TROPHY_FEAST_MAX, TROPHY_FEAST * state.base.trophies.length));
+  // a skald of his own tells it at any feast he gives; the hall and its trophies only at home (playtest 8)
+  const poet = state.flags.skald ? 1 + SKALD.hallFeast : 1;
+  if (state.base.level === 'father' || state.at !== (state.homeAt ?? 'home_fjord')) return poet;
+  return poet * (state.base.level === 'hall' ? 1 + HALL_FEAST : 1) * (1 + Math.min(TROPHY_FEAST_MAX, TROPHY_FEAST * state.base.trophies.length));
 }
 
 export function hallActionsFor(state: GameState, base: number): number {

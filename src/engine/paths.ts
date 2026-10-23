@@ -1,6 +1,7 @@
 // Value paths used by conditions ("skill.weapons >= 3") and effects ({ add: { silver: -24 } }).
 // One resolver for reading and one checker for the validator, so a path that
 // reads also validates, and an unknown path fails the build.
+import { skaldAboard } from './skald';
 import { ATTRS, SKILLS, PHASES, PLACE_KINDS, PEOPLES, type Attr, type ContentBundle, type Skill } from '../content/schema';
 import type { GameState } from './state';
 import { dateOf } from './calendar';
@@ -60,6 +61,9 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   heir: (s) => (s.hero.father ? 1 : 0),
   /** In a great fleet (docs/FRAME-FLEET-843.md §2), which, and his voice at its council (0 at the oar). */
   fleet: (s) => (s.fleet ? 1 : 0),
+  /** His skald (playtest 8): kept, and aboard this summer. */
+  skald: (s) => (s.flags.skald ? 1 : 0),
+  'skald.aboard': (s) => (skaldAboard(s) ? 1 : 0),
   'fleet.id': (s) => s.fleet?.id ?? '',
   'fleet.voice': (s) => councilVoice(s),
   /** Settled abroad (docs/FRAME-LINEAGE.md C), and where home is. */

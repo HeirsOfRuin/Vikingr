@@ -1,5 +1,6 @@
 // Engine facade. Three calls: newGame, view, act. Pure: act clones the state,
 // works on the copy, and returns it. The UI, the bot and the tests all use this.
+import { skaldOf } from './skald';
 import { cutRing, makeRing, METALS, RING, ringsOf, ringWords, type Metal } from './rings';
 import type { Attr, ContentBundle, DuelMove, Order, Skill } from '../content/schema';
 import { DUEL_MOVES, SKILLS } from '../content/schema';
@@ -89,6 +90,7 @@ export type Action =
   | { t: 'hoard_in'; n?: number }
   | { t: 'hoard_out'; n?: number }
   | { t: 'hang'; item: string }
+  | { t: 'skald_aboard'; on: boolean }
   | { t: 'make_ring' }
   | { t: 'cut_ring'; metal: Metal }
   | { t: 'keep_thralls' }
@@ -326,6 +328,11 @@ export function baseActions(state: GameState, content: ContentBundle): ActionOpt
   for (const m of METALS) if (ringsOf(state)[m] > 0) out.push(opt('Arm-rings', { t: 'cut_ring', metal: m }, `Cut a ${m} arm-ring into hacksilver`, true, undefined, formatSilver(RING[m].weight)));
   for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall`));
   if (!state.service) out.push(...familyActions(state, content, opt));
+  // the skald: to sea this summer, or the jarl's benches (playtest 8)
+  const sk = skaldOf(state);
+  if (sk && !state.service && state.ships.length) out.push(sk.aboard
+    ? opt('Your skald', { t: 'skald_aboard', on: false }, `Leave ${sk.name} at home this summer`, true, undefined, "Safe; he sings your name at the jarl's benches")
+    : opt('Your skald', { t: 'skald_aboard', on: true }, `Take ${sk.name} to sea this summer`, true, undefined, 'Deeds he sees weigh a quarter more; he can die in a rout'));
   return out;
 }
 
@@ -981,6 +988,12 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'hang':
       hangTrophy(state, content, action.item);
       break;
+    case 'skald_aboard': {
+      const sk = skaldOf(state)!;
+      sk.aboard = action.on;
+      journal(state, action.on ? `${sk.name} the skald sails with you this summer.` : `${sk.name} the skald stays at home this summer.`);
+      break;
+    }
     case 'make_ring':
     case 'cut_ring': {
       const line = action.t === 'make_ring' ? makeRing(state) : cutRing(state, action.metal);

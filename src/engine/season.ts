@@ -1,5 +1,6 @@
 // The year at home: spring muster, the autumn share-out and homecoming,
 // the winter hall, and the turn of the year.
+import { skaldOf, skaldYear } from './skald';
 import { hirdLeaves, hirdRoom } from './hird';
 import { hostageYear } from './hostages';
 import { endFelag, FAVOUR, favourMuster, jarlCut, partnerCut, shiftFavour } from './allies';
@@ -276,14 +277,15 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       if (fm > 1) for (const d of told0.fresh) { const w = Math.round(d.weight * fm * 10) / 10; extra += w - d.weight; d.weight = w; }
       const told = told0.told;
       const gained = Math.round((told0.gained + extra) * 10) / 10;
-      if (fm > 1) lines.push(state.base.trophies.length ? `In your own hall, under ${plural(state.base.trophies.length, 'trophy', 'trophies')} on the wall, the telling goes better.` : 'In your own hall, the telling goes better.');
+      const ownHall = state.base.level !== 'father' && state.at === (state.homeAt ?? 'home_fjord') && (state.base.level === 'hall' || state.base.trophies.length > 0);
+      if (ownHall) lines.push(state.base.trophies.length ? `In your own hall, under ${plural(state.base.trophies.length, 'trophy', 'trophies')} on the wall, the telling goes better.` : 'In your own hall, the telling goes better.');
       state.crew.morale += 1;
       for (const m of aliveMen(state)) addLoyalty(m, 1);
       give(state, 'feast');
       learn(state, 'speech', 2);
       lines.push(`You feast ${plural(mouths(state) + FEAST_GUESTS - 1, 'guest')} for three nights. ${formatSilver(cost)}.`);
       lines.push(told.length ? `Your deeds are told at the benches: ${plural(told.length, 'deed')}, ${gained} fame.` : 'There is nothing new to tell, so they tell the old ones again.');
-      if (state.flags.skald && told.length) lines.push('Your skald has the hall laughing and then silent, in the right places.');
+      if (state.flags.skald && told.length) lines.push(`${skaldOf(state)!.name} the skald tells them, and has the hall laughing and then silent, in the right places.`);
       break;
     }
     case 'gift':
@@ -310,7 +312,8 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       break;
     case 'skald': {
       const d = composeVerse(state);
-      lines.push(d ? `The skald makes a verse of it: ${d.text}. It will outlive you.` : 'The skald has nothing worth a verse yet. He says so.');
+      const who = skaldOf(state)?.name ?? 'The skald';
+      lines.push(d ? `${who} makes a verse of it: ${d.text}. It will outlive you.` : `${who} has nothing worth a verse yet. He says so.`);
       break;
     }
     case 'build': {
@@ -439,7 +442,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // the winter's sickness and the winter's bills, and what the district thinks of him (docs/FRAME-HARDSHIP.md)
   const hardLines = turnOfYear(state, content, rng, year, !atHome(state));
   // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
-  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng), ...fleetYear(state, content));
+  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng), ...fleetYear(state, content), ...skaldYear(state));
   // lords, land and rule (docs/FRAME-WORLD.md §C-E): a dead lord, a secret oath come out, the holdings, the seat
   const wintered = state.at;
   hardLines.push(...lordsYear(state, content, rng), ...secretYear(state, content, rng), ...holdingsYear(state, content, rng, wintered), ...ruleYear(state, content, rng, wintered));
