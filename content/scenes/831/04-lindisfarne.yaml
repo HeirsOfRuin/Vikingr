@@ -56,7 +56,7 @@
         text: |
           You send Bersi, because Bersi can talk about money with anybody. He comes back at evening on a borrowed horse with a reeve's man, a chest, and a very satisfied face.
 
-          The Northumbrians would rather pay than fight. The chest has three hundred in it, in silver pennies with a king's head on them, and the reeve's man watches you count it with an expression like a man passing a stone.
+          The Northumbrians would rather pay than fight. The chest has six pounds in it, fifteen hundred silver pennies with a king's head on them, and the reeve's man watches you count it with an expression like a man passing a stone.
         effects: [ { set: flag.l_tribute }, { standing: { place: lindisfarne, n: -2 } }, { add: { loot: 300, man.bersi.loyalty: 1 } }, { deed: { type: deed, text: Took tribute from the reeve of Bamburgh, weight: 3 } } ]
         next: l_after
       failure:

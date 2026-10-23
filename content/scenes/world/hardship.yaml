@@ -31,7 +31,7 @@
     - id: sell
       text: Sell your grain to them. At this winter's price.
       visible_if: ["base != father"]
-      effects: [ { add: { silver: 40 } }, { envy: 2 }, { add: { honour: -1 } }, { set: flag.ha_sold_dear } ]
+      effects: [ { add: { silver: 144 } }, { envy: 2 }, { add: { honour: -1 } }, { set: flag.ha_sold_dear } ]
       result: |
         They pay. They have to. A man who sells barley in a famine at three times its price is within the law, and everyone who pays him remembers it for the rest of their lives, and teaches it to their children.
 

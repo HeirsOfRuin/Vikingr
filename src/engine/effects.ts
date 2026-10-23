@@ -31,6 +31,7 @@ import { nameChild } from './family';
 import { loseHome } from './settle';
 import { buyBlock, buyLand, claimBlock, claimLand } from './land';
 import { joinFleet, leaveFleet } from './sailfleet';
+import { stowGoods } from './trade';
 /** They come back for a home fort in force: its people, and their neighbours. */
 const HOME_ATTACK = 1.4;
 
@@ -167,6 +168,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       const p = at ? content.places[at] : undefined;
       if (p?.raid) startBattle(state, content, { foe: p.raid.foe, men: Math.round(p.raid.defenders * HOME_ATTACK), terrain: 'rampart', context: 'scene', place: at!, win: e.home_defence.win, lose: e.home_defence.lose });
     } else if ('fleet' in e) joinFleet(state, content, e.fleet);
+    else if ('goods' in e) { const line = stowGoods(state, content, e.goods.id, e.goods.lots); (state.notes ??= []).push(line); journal(state, line); }
     else if ('buy_land' in e) { if (state.at && !buyBlock(state, content, state.at)) buyLand(state, content, state.at); }
     else if ('fleet_end' in e) leaveFleet(state, content);
     else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }

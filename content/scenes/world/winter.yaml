@@ -327,7 +327,7 @@
       check: { skill: lore, attr: wit, difficulty: 5 }
       success:
         text: The red horse is tired, and you saw it, and nobody else did. He goes down on his knees in the third round, and you take half a pound off his owner and a pound off the men who backed him.
-        effects: [ { add: { silver: 48 } } ]
+        effects: [ { add: { silver: 72 } } ]
       failure:
         text: The red horse wins again. His owner takes your half-pound with a smile you'd like to remove.
         effects: [ { add: { silver: -24 } } ]

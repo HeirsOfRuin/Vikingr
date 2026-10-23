@@ -45,7 +45,7 @@
   choices:
     - id: farms
       text: Keep to the river country. Toulouse's walls are too high.
-      effects: [ { days_foraged: 40 }, { add: { loot: 160 } } ]
+      effects: [ { days_foraged: 40 }, { add: { loot: 110 } }, { goods: { id: wine, lots: 2 } } ]
       result: A month of river farms and churches, and the ships low in the water with wine and cloth and silver. Toulouse watches you from its walls, and you watch it back, and in the end the fleet goes back down the river and out to sea.
       next: sf_asturias
     - id: walls
@@ -128,7 +128,7 @@
       check: { skill: trade, attr: wit, difficulty: 5 }
       success:
         text: They have silver, and silk, and a thing in a glass jar that smells of every flower at once, and they want swords and furs and captives. You trade for thirteen days and come away with things no one in Norway has ever seen, and a merchant's word that the emir's army is two weeks behind his riders. You remember that.
-        effects: [ { days_foraged: 14 }, { add: { loot: 120 } }, { set: flag.sf_warned } ]
+        effects: [ { days_foraged: 14 }, { add: { loot: 50 } }, { goods: { id: silk, lots: 1 } }, { set: flag.sf_warned } ]
       failure:
         text: They want too much for too little, and you don't know what anything's worth here. You come away with a jar of the flower-smell and a feeling you've been robbed politely.
         effects: [ { days_foraged: 14 }, { add: { loot: 30 } } ]
@@ -148,7 +148,7 @@
   choices:
     - id: plunder
       text: Plunder the city with the rest. You came for this.
-      effects: [ { days_foraged: 40 }, { add: { loot: 420, honour: -1 } }, { captives: 6 } ]
+      effects: [ { days_foraged: 40 }, { add: { loot: 280, honour: -1 } }, { goods: { id: silk, lots: 3 } }, { captives: 6 } ]
       result: Six weeks of it, and your ship so full of silver and silk and captives that she wallows. You have never been so rich. You have never wanted so badly to leave.
       next: sf_tablada
     - id: watch

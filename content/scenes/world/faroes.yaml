@@ -23,11 +23,11 @@
       success:
         text: |
           He hasn't seen iron in two years, or news in ten, and he pays for both in the island's own coin: bales of the coarse brown wool, sacks of eider down light as smoke, dried puffins strung by the hundred. In Kaupang the down alone would buy you a sword.
-        effects: [ { add: { loot: 220 } }, { standing: { place: faroes, n: 2 } }, { set: flag.f_traded }, { item: { id: faroes_down } } ]
+        effects: [ { goods: { id: down, lots: 4 } }, { goods: { id: wool, lots: 3 } }, { add: { provisions: 60 } }, { standing: { place: faroes, n: 2 } }, { set: flag.f_traded }, { item: { id: faroes_down } } ]
       failure:
         text: |
           He drives a harder bargain than you expected from a man who hasn't seen a stranger in ten years. You come away with some wool, some down, and the feeling of having been robbed by a shepherd.
-        effects: [ { add: { loot: 80 } }, { standing: { place: faroes, n: 1 } }, { set: flag.f_traded } ]
+        effects: [ { goods: { id: down, lots: 1 } }, { goods: { id: wool, lots: 2 } }, { standing: { place: faroes, n: 1 } }, { set: flag.f_traded } ]
     - id: claim
       text: Walk the empty valley over the ridge, and set up stones. Land for later.
       effects: [ { set: flag.f_land_claimed }, { standing: { place: faroes, n: -1 } } ]

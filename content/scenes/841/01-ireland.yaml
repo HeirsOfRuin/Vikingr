@@ -185,7 +185,7 @@
   choices:
     - id: market
       text: Run the slave market at the gate. It's what the fort is for.
-      effects: [ { add: { silver: 96, honour: -1 } }, { standing: { people: gael, n: -1 } } ]
+      effects: [ { add: { silver: 240, honour: -1 } }, { standing: { people: gael, n: -1 } } ]
       result: The trade is brisk and ugly and very profitable. The ships that leave in the spring for Kaupang go low in the water, and every man in them is a man you sold.
     - id: kin
       text: Drink with the Irish brothers-in-law, and learn which kings are at war.

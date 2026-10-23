@@ -112,6 +112,21 @@ export function buyLot(state: GameState, content: ContentBundle, at: string, goo
   return `You buy ${content.goods[good]!.lot} for ${formatSilver(price)}.`;
 }
 
+/** Goods a scene hands over, free: as many lots as fit the hold (or the sea-chest at another man's oar). The
+ *  rest is left on the beach, and the line says so. */
+export function stowGoods(state: GameState, content: ContentBundle, good: string, lots: number): string {
+  const g = content.goods[good]!;
+  const fit = Math.min(lots, Math.floor(goodsRoom(state, content) / g.bulk));
+  if (fit > 0) {
+    state.cargo ??= {};
+    (state.cargo[good] ??= { lots: 0, cost: 0 }).lots += fit;
+  }
+  const what = `${g.name.toLowerCase()} (${fit} ${fit === 1 ? 'lot' : 'lots'}, about ${formatSilver(fit * g.price)} at an ordinary market)`;
+  if (fit === lots) return `Into the ${state.service ? 'sea-chest' : 'hold'}: ${what}.`;
+  if (fit === 0) return `No room in the ${state.service ? 'sea-chest' : 'hold'} for the ${g.name.toLowerCase()}: it stays on the beach.`;
+  return `Into the ${state.service ? 'sea-chest' : 'hold'}: ${what}. ${lots - fit} more stay on the beach; there's no room.`;
+}
+
 export function sellLot(state: GameState, content: ContentBundle, at: string, good: string): string {
   const c = state.cargo?.[good];
   if (!c || c.lots <= 0) return '';

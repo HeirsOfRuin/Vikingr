@@ -131,11 +131,11 @@
       text: Buy amber while everyone else is watching the race.
       check: { skill: trade, attr: wit, difficulty: 4 }
       success:
-        text: The sellers have all gone to the race but one old woman, who sells you a sack of it for almost nothing to be rid of you. It'll sell for five times as much in Hedeby.
-        effects: [ { add: { loot: 60 } } ]
+        text: The sellers have all gone to the race but one old woman, who sells you two sacks of it for almost nothing to be rid of you. It'll sell for five times as much in Hedeby.
+        effects: [ { add: { silver: -6 } }, { goods: { id: amber, lots: 2 } } ]
       failure:
         text: The one seller who stayed behind is the sharpest trader on the coast, and you pay full price. It'll still sell in Hedeby. Just.
-        effects: [ { add: { loot: 12 } } ]
+        effects: [ { add: { silver: -30 } }, { goods: { id: amber, lots: 1 } } ]
     - id: drink
       text: Drink with the headmen. They drink mare's milk; the poor drink mead.
       effects: [ { add: { skill.lore: 1 } }, { standing: { place: truso, n: 1 } } ]
@@ -189,11 +189,11 @@
         You walk it twice. A ditch from the river to the pool, a bank and a stockade on top, the ships drawn up inside. A hundred men could hold it against an Irish king's whole hosting, and winter in it, and raid all Leinster in the spring. Nobody has done it yet. Somebody will.
     - id: trade
       text: Trade with the church's people. They have hides and cattle and want iron.
-      effects: [ { add: { skill.trade: 1, silver: 12 } }, { standing: { place: dublin, n: 2 } } ]
+      effects: [ { add: { skill.trade: 1 } }, { goods: { id: hides, lots: 3 } }, { standing: { place: dublin, n: 2 } } ]
       result: The church's steward is a careful man with very clean hands, and drives a hard bargain in good Latin and worse Norse. You part friends, or as near as a Christian priest and a Northman with a ship can be.
     - id: cattle
       text: Take the cattle at the ford, and go.
-      effects: [ { add: { loot: 40 } }, { standing: { place: dublin, n: -3 } } ]
+      effects: [ { add: { provisions: 120 } }, { goods: { id: hides, lots: 2 } }, { standing: { place: dublin, n: -3 } } ]
       result: The herdsmen run. The cattle don't, being cattle. You eat well for a week, and the next time you come up the Liffey, the Irish will be waiting at the ford.
 
 - id: pl_clonmacnoise
@@ -353,7 +353,7 @@
   choices:
     - id: salt
       text: Take the salt. It's worth more in the north than the monks' silver.
-      effects: [ { add: { loot: 60 } }, { standing: { place: noirmoutier, n: -2 } } ]
+      effects: [ { goods: { id: salt, lots: 10 } }, { standing: { place: noirmoutier, n: -2 } } ]
       result: You fill the bilge with it. Salt, the men say, is the best plunder there is. It doesn't fight back, nobody comes after it, and every farm in Norway needs it.
     - id: monk
       text: Find the old monk who stayed behind, and make him talk about the Loire.
@@ -381,7 +381,7 @@
     - id: wine
       text: Pay, behave, and buy wine.
       requires: ["silver >= 12"]
-      effects: [ { add: { silver: -12, skill.trade: 1 } }, { standing: { place: nantes, n: 2 } } ]
+      effects: [ { add: { silver: -36, skill.trade: 1 } }, { goods: { id: wine, lots: 2 } }, { standing: { place: nantes, n: 2 } } ]
       result: The wine here is better than anything that reaches Hedeby, and cheaper, and the Bretons who sell it are friendlier than the Franks, because they hate the Franks more than they hate you. You learn a great deal about the count from them. None of it is good.
     - id: feast
       text: Ask, carefully, when the city keeps its great feasts.

@@ -244,6 +244,6 @@
       check: { skill: cunning, attr: agi, difficulty: 4 }
       success:
         text: Two casks, rolled down the beach in the dark and stowed under the benches. They'll fetch a pound of silver at any market on the coast, or keep your bench happy until spring.
-        effects: [ { add: { silver: 24 } } ]
+        effects: [ { goods: { id: wine, lots: 2 } } ]
       failure:
         text: You drop the first cask on the shingle and it bursts. The men who were watching laugh until they fall over. That's the most you get out of it.

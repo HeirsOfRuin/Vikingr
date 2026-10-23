@@ -96,7 +96,7 @@
     - id: fontenelle
       text: Stand with Ásgeir at Fontenelle, and take the abbot's six pounds.
       effects: [ { add: { loot: 100 } }, { deed: { type: deed, text: "Took the abbot of Fontenelle's silver to spare his house", weight: 1 } }, { queue: { scene: sn_captives, days: 2 } } ]
-      result: The abbot counts out six pounds of silver on the landing, coin by coin, and writes it down. Ásgeir divides it among the ships there and then, and the abbey stands. In the abbey's book, you learn later, it says what was paid, and to whom, and on what day. Monks write everything down.
+      result: The abbot counts out six pounds of silver on the landing, coin by coin, and writes it down. Ásgeir divides it among the ships there and then, two pounds to the Raven, and the abbey stands. In the abbey's book, you learn later, it says what was paid, and to whom, and on what day. Monks write everything down.
 
 - id: sn_captives
   kind: queued

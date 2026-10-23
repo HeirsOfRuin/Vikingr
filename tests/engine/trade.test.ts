@@ -93,4 +93,16 @@ describe('trade', () => {
     expect(s.cargo?.soapstone).toBeUndefined();
     expect(s.cargo?.furs?.lots).toBe(1);
   });
+
+  it('a scene can put goods in the hold, as many as fit, at no cost', () => {
+    const s = trader();
+    const r = new RngCursor(seedRng(1));
+    applyEffects(s, content, r, [{ goods: { id: 'oil', lots: 3 } }]);
+    expect(s.cargo?.oil).toEqual({ lots: 3, cost: 0 });
+    expect(s.notes?.[0]).toMatch(/Into the hold/);
+    const room = goodsRoom(s, content);
+    applyEffects(s, content, r, [{ goods: { id: 'salt', lots: 999 } }]);
+    expect(s.cargo?.salt?.lots).toBe(Math.floor(room / content.goods.salt!.bulk));
+    expect(cargoBulk(s, content)).toBeLessThanOrEqual(cargoBulk(s, content) + goodsRoom(s, content));
+  });
 });

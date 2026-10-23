@@ -409,4 +409,6 @@ export interface GameState {
   homeAt?: string;
   /** The great fleet he sails with (docs/FRAME-FLEET-843.md §2). */
   fleet?: import('./sailfleet').FleetState;
+  /** Lines an effect adds to the scene's result (what went into the hold). */
+  notes?: string[];
 }

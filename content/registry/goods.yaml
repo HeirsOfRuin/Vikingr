@@ -12,3 +12,7 @@
 - { id: glass, name: Rhenish glass, lot: "a crate of glass", price: 24, bulk: 12 }
 - { id: grain, name: Grain, lot: "a sack of grain", price: 8, bulk: 50 }
 - { id: falcons, name: Gyrfalcons, lot: "a pair of white falcons, hooded", price: 60, bulk: 4 }
+# Goods that scenes hand over (docs/FRAME-FLEET-843.md, playtest 8): a whale's oil, the Moors' silk, an Irish herd's hides
+- { id: oil, name: Whale oil, lot: "a cask of whale oil", price: 18, bulk: 30 }
+- { id: silk, name: Silk, lot: "a bolt of Moorish silk", price: 90, bulk: 4 }
+- { id: hides, name: Hides, lot: "a bale of cattle hides", price: 14, bulk: 30 }

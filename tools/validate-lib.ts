@@ -300,7 +300,12 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     for (const g of [...p.trade.cheap, ...p.trade.dear]) if (!content.goods[g]) errors.push(`place ${p.id}: unknown good "${g}" in trade`);
     for (const g of p.trade.cheap) if (p.trade.dear.includes(g)) errors.push(`place ${p.id}: "${g}" is both cheap and dear`);
   }
-  for (const g of Object.keys(content.goods)) if (!Object.values(content.places).some((p) => p.trade?.cheap.includes(g))) warnings.push(`good ${g}: no market sells it`);
+  // a good no market sells is fine if scenes hand it over (silk from Seville); one nobody wants is not
+  const handed = new Set([...JSON.stringify(Object.values(content.scenes)).matchAll(/"goods":\{"id":"([a-z_]+)"/g)].map((m) => m[1]));
+  for (const g of Object.keys(content.goods)) {
+    if (!handed.has(g) && !Object.values(content.places).some((p) => p.trade?.cheap.includes(g))) warnings.push(`good ${g}: no market sells it`);
+    if (!Object.values(content.places).some((p) => p.trade?.dear.includes(g) || p.trade?.cheap.includes(g))) warnings.push(`good ${g}: no market trades it`);
+  }
   for (const a of Object.values(content.art)) {
     if (artFiles && !artFiles.includes(a.id)) errors.push(`art ${a.id}: no picture src/art/${a.id}.png (run tools/art.ts)`);
     for (const f of a.fx ?? []) {

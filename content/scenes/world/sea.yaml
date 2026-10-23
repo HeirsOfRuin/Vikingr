@@ -20,11 +20,11 @@
       success:
         text: |
           They don't believe it at first. When they do, they're so relieved that they trade like men at a funeral feast: wine, good cloth, a crate of Rhineland glass, for some of your hacksilver and a promise to tell nobody you saw them.
-        effects: [ { add: { loot: 60, crew.morale: 1 } }, { standing: { people: frisian, n: 1 } } ]
+        effects: [ { add: { silver: -12, crew.morale: 1 } }, { goods: { id: wine, lots: 2 } }, { goods: { id: glass, lots: 2 } }, { standing: { people: frisian, n: 1 } } ]
       failure:
         text: |
           They don't believe it, and they're right not to: by the time the haggling is done, half your men are muttering that you could have had the lot for nothing. You get some wine.
-        effects: [ { add: { loot: 15, crew.morale: -1 } } ]
+        effects: [ { add: { silver: -12, crew.morale: -1 } }, { goods: { id: wine, lots: 1 } } ]
     - id: take
       text: Run her down and take her.
       danger: true
@@ -297,10 +297,10 @@
       check: { skill: craft, attr: end, difficulty: 4 }
       success:
         text: Three days of the foulest work any of you has ever done, and at the end of it twelve casks of oil that will fetch good silver in any market from here to Kaupang.
-        effects: [ { days: 3 }, { add: { provisions: 80, loot: 70 } } ]
+        effects: [ { days: 3 }, { add: { provisions: 80 } }, { goods: { id: oil, lots: 12 } } ]
       failure:
-        text: Three days of the foulest work any of you has ever done, and half the casks leak. You get some meat and a smell you'll never get out of your beard.
-        effects: [ { days: 3 }, { add: { provisions: 80, loot: 15 } } ]
+        text: Three days of the foulest work any of you has ever done, and half the casks leak. Five are sound. You get some meat and a smell you'll never get out of your beard.
+        effects: [ { days: 3 }, { add: { provisions: 80 } }, { goods: { id: oil, lots: 5 } } ]
     - id: leave
       text: Leave it. Somebody owns every shore.
       visible_if: "!service"
@@ -316,8 +316,8 @@
       visible_if: service
       check: { skill: craft, attr: end, difficulty: 4 }
       success:
-        text: You boil it down at night, after the ship's work is done, and end with a cask of good oil that a trader in the next port weighs out silver for without arguing.
-        effects: [ { days: 2 }, { add: { silver: 18, crew.morale: 1 } } ]
+        text: You boil it down at night, after the ship's work is done, and end with two casks of good oil of your own, lashed under your bench, for the next market.
+        effects: [ { days: 2 }, { add: { crew.morale: 1 } }, { goods: { id: oil, lots: 2 } } ]
       failure:
         text: The cask leaks. You end with a smell you'll never get out of your beard, and the men naming you after it.
         effects: [ { days: 2 } ]

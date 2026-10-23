@@ -112,6 +112,8 @@ const baseEffect = z.union([
   z.object({ claim_land: z.literal(true) }).strict(),
   /** He sails with a great fleet now, or leaves it (docs/FRAME-FLEET-843.md §2). */
   z.object({ fleet: id }).strict(),
+  /** Goods into the hold, as many lots as fit (playtest 8: a whale's oil is casks of oil, not a few coins). */
+  z.object({ goods: z.object({ id, lots: z.number().int().min(1) }).strict() }).strict(),
   /** He buys land where he stands, as the Land action does, if he can (docs/FRAME-FLEET-843.md §3). */
   z.object({ buy_land: z.literal(true) }).strict(),
   z.object({ fleet_end: z.literal(true) }).strict(),

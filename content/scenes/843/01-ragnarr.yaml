@@ -93,8 +93,8 @@
     Nantes is being spent as fast as it can be. There is dice in every house, and Frankish wine in every cup, and a market on the beach where Franks come over in boats to buy back their own cows. The salt-pans glitter in the low sun. Nobody has ever wintered this far south.
   choices:
     - id: salt
-      text: Work the salt-pans with the Franks who stayed, for silver.
-      effects: [ { add: { silver: 36, skill.trade: 1 } } ]
+      text: Work the salt-pans with the Franks who stayed, for silver and a share of the salt.
+      effects: [ { add: { silver: 24, skill.trade: 1 } }, { goods: { id: salt, lots: 2 } } ]
       result: |
         The Franks who stayed are poor men who would rather work for Northmen than starve for a count. They show you how the pans are flooded and dried and raked, and they cheat you a little, and you let them, and by Yule you know what salt is worth in every port on the coast.
     - id: river
@@ -122,13 +122,13 @@
 
     Ölvir is going home. "I've done what I came for," he says, "and so has the Hart. She's old. I'll have a new one built at Askøy with what Nantes paid me." He looks at you sideways. "Unless somebody wants her. She'd do for a young man, for a summer or two, on this side of the sea."
     [break]
-    "Six pounds," he says. "Or your word on it, and the silver at Noirmoutier this time next year. A man who breaks his word to me doesn't sail these waters long."
+    "Four pounds," he says. "Or your word on it, and the silver at Noirmoutier this time next year. A man who breaks his word to me doesn't sail these waters long."
   choices:
     - id: buy
-      text: "Count out the Nantes silver: three pounds now, and your word for the rest."
-      requires: ["silver >= 72"]
+      text: "Count out the Nantes silver: two pounds now, and your word for the rest."
+      requires: ["silver >= 96"]
       effects:
-        - { add: { silver: -72 } }
+        - { add: { silver: -96 } }
         - { ship: { type: karvi, name: the Hart, crew: 14 } }
         - { set: flag.e43_debt }
         - { queue: { scene: e43_debt, days: 330 } }
@@ -153,7 +153,7 @@
         - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
         - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
       result: |
-        "All of it," Ölvir says. "Six pounds, here, next spring." He takes your hand and holds it a moment longer than he needs to. "I liked your father." Twelve men carry their chests across to the Hart. They are the ones nobody else wanted. They will do.
+        "All of it," Ölvir says. "Four pounds, here, next spring." He takes your hand and holds it a moment longer than he needs to. "I liked your father." Twelve men carry their chests across to the Hart. They are the ones nobody else wanted. They will do.
 
         You are seventeen, and she's yours, and so is the debt.
 
@@ -163,13 +163,13 @@
   text: |
     [if place == noirmoutier]Ölvir's new ship comes round the point at Noirmoutier in the spring, as he said it would, and Ölvir comes up the beach to find you.[else]Word comes from Ölvir, by a ship from the Loire: he was at Noirmoutier, as he said he would be, and you were not. He will come and find you. He knows where Hordaland is.[/if]
 
-    [if flag.e43_all_owed]"Six pounds," he says.[else]"Three pounds," he says. "The rest of her."[/if]
+    [if flag.e43_all_owed]"Four pounds," he says.[else]"Two pounds," he says. "The rest of her."[/if]
   choices:
     - id: pay
       text: Pay him.
-      requires: [{ any: [{ all: ["!flag.e43_all_owed", "silver >= 72"] }, "silver >= 144"] }]
+      requires: [{ any: [{ all: ["!flag.e43_all_owed", "silver >= 96"] }, "silver >= 192"] }]
       effects:
-        - { if: flag.e43_all_owed, then: [ { add: { silver: -144 } } ], else: [ { add: { silver: -72 } } ] }
+        - { if: flag.e43_all_owed, then: [ { add: { silver: -192 } } ], else: [ { add: { silver: -96 } } ] }
         - { clear: flag.e43_debt }
         - { add: { honour: 1 } }
       result: |

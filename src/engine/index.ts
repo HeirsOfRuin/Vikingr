@@ -802,6 +802,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
         }
       }
       if (text) text = renderText(text, state, content, { keepDead: scene.id.startsWith('mourn_') });
+      // what went into the hold, said plainly after the scene's own words
+      if (state.notes?.length) { text = `${text ?? ''}\n\n${state.notes.join('\n\n')}`.trim(); delete state.notes; }
       const pd = state.pending as Pending | null;
       if (pd) {
         if (text && pd.t === 'duel') pd.duel.log.unshift(text);

@@ -319,18 +319,19 @@
       check: { skill: command, attr: pre, difficulty: 5 }
       success:
         text: The fair's reeve meets you on the shore and pays without arguing, in salt and silver. It's been done before. It'll be done again next year. Nobody's hurt, and the fair goes on, and the salt goes all over Frankia with a little less silver behind it.
-        effects: [ { add: { loot: 120 } }, { standing: { place: nantes, n: -1 } } ]
+        effects: [ { add: { loot: 60 } }, { goods: { id: salt, lots: 8 } }, { standing: { place: nantes, n: -1 } } ]
       failure:
         text: The reeve has hired a Breton crew to keep the fair, and they meet you on the shore with spears. You row back to the island with nothing, which is better than the alternative.
     - id: trade
-      text: Buy salt at the fair price, to sell where it's dear.
+      text: Buy salt at the fair price, to sell where it's dear (most of a pound).
+      requires: ["silver >= 40"]
       check: { skill: trade, attr: wit, difficulty: 4 }
       success:
         text: Salt by the cart-load, at the fair price, which is a third of what it fetches in Dublin or Kaupang. The traders don't like selling to a Northman, but they like silver better.
-        effects: [ { add: { loot: 60, skill.trade: 1 } } ]
+        effects: [ { add: { silver: -40, skill.trade: 1 } }, { goods: { id: salt, lots: 10 } } ]
       failure:
         text: The traders put their prices up when they see your shield on your back. You buy anyway, and make a little.
-        effects: [ { add: { loot: 20 } } ]
+        effects: [ { add: { silver: -40 } }, { goods: { id: salt, lots: 5 } } ]
     - id: leave
       text: Leave the fair alone.
       result: You watch the barges go up and down the bay all summer, loaded with salt, and do nothing about it. The other captains think you're a fool. The fair's reeve, if he knew, would think you were a saint.
