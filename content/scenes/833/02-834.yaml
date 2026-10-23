@@ -33,7 +33,7 @@
     - id: sail
       text: Send the arrow back with your answer. Dorestad, at midsummer.
       visible_if: "!service"
-      effects: [ { set: flag.fr_dorestad_sworn }, { know: ribe }, { know: dorestad }, { add: { crew.morale: 2 } } ]
+      effects: [ { set: flag.fr_dorestad_sworn }, { fleet: danes834 }, { know: ribe }, { know: dorestad }, { add: { crew.morale: 2 } } ]
       result: |
         You send it back with your own mark cut into the shaft. By the next morning every man in the district knows, and by the end of the week your muster is the biggest it's ever been. Men will row a long way to see Dorestad burn.
     - id: west
@@ -43,7 +43,7 @@
     - id: oar
       text: Find a place at a Danish oar, since you have no ship of your own.
       visible_if: service
-      effects: [ { set: flag.fr_dorestad_sworn }, { know: dorestad } ]
+      effects: [ { set: flag.fr_dorestad_sworn }, { fleet: danes834 }, { know: dorestad } ]
       result: "{captain} has already decided: you're going. The whole ship is going. Nobody is staying at home this summer."
 
 - id: do_fleet

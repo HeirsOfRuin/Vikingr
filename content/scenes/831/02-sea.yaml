@@ -4,7 +4,7 @@
   trigger: sea
   chance: 0.05
   once: true
-  requires: ["year >= 831"]
+  requires: ["year >= 831", "!fleet"]
   art: open_sea
   title: Danish sails
   text: |

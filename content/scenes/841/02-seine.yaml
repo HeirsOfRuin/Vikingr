@@ -142,7 +142,7 @@
   choices:
     - id: go
       text: Send back your mark on the arrow. Paris.
-      effects: [ { set: flag.sn_845_sworn }, { know: rouen }, { know: paris }, { know: walcheren }, { add: { crew.morale: 2 } } ]
+      effects: [ { set: flag.sn_845_sworn }, { fleet: seine845 }, { know: rouen }, { know: paris }, { know: walcheren }, { add: { crew.morale: 2 } } ]
       result: The whole district hears about it by evening. Men come to your muster from two valleys over, wanting to go to Paris. Everybody wants to go to Paris.
     - id: no
       text: Ragnarr has enough ships. Let him go without yours.

@@ -420,7 +420,7 @@
   choices:
     - id: go
       text: Send back your mark on the arrow. The Loire, at midsummer.
-      effects: [ { set: flag.cw_nantes_sworn }, { know: nantes }, { know: noirmoutier }, { add: { crew.morale: 1 } } ]
+      effects: [ { set: flag.cw_nantes_sworn }, { fleet: vestfold }, { know: nantes }, { know: noirmoutier }, { add: { crew.morale: 1 } } ]
       result: The man from Vestfold cuts your mark into the shaft himself, and grins again. "Sixty-seven ships," he says. "Sixty-eight now." Your muster doubles in a week.
     - id: no
       text: Let the Vestfold men have their saint's day.

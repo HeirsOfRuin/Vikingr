@@ -407,4 +407,6 @@ export interface GameState {
   family?: import('./family').FamilyState;
   /** Where home is, once he has settled abroad (docs/FRAME-LINEAGE.md C). Absent: Hordaland. */
   homeAt?: string;
+  /** The great fleet he sails with (docs/FRAME-FLEET-843.md §2). */
+  fleet?: import('./sailfleet').FleetState;
 }

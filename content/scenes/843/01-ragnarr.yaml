@@ -47,6 +47,7 @@
       effects:
         - { join_ship: { captain: Ölvir, ship_name: the Hart, type: karvi, crew: 30, home: noirmoutier, route: [noirmoutier, nantes] } }
         - { set: flag.cw_nantes_sworn }
+        - { fleet: vestfold }
         - { know: noirmoutier }
         - { know: nantes }
         - { days: 75 }
@@ -63,6 +64,7 @@
           - { shares: 1.5 }
           - { set: flag.prow_man }
           - { set: flag.cw_nantes_sworn }
+          - { fleet: vestfold }
           - { know: noirmoutier }
           - { know: nantes }
           - { days: 75 }
@@ -72,6 +74,7 @@
         effects:
           - { join_ship: { captain: Ölvir, ship_name: the Hart, type: karvi, crew: 30, home: noirmoutier, route: [noirmoutier, nantes] } }
           - { set: flag.cw_nantes_sworn }
+          - { fleet: vestfold }
           - { know: noirmoutier }
           - { know: nantes }
           - { days: 75 }

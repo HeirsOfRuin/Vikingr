@@ -14,6 +14,7 @@ import { addDeed } from './fame';
 import { trigger } from './director';
 import { journal } from './journal';
 import { formatSilver, plural } from './format';
+import { FLEET, fleetName } from './sailfleet';
 
 export interface Route {
   to: string;
@@ -132,6 +133,18 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
   state.stats.storms += 1;
   lines.push('A storm. Black water over the bows, the sail split, men bailing with helmets.');
   state.provisions = Math.round(state.provisions * 0.85);
+  // in a great fleet the storm scatters the ships, and the fleet gathers again at the meeting-place
+  if (state.fleet) {
+    lines.push(`By morning ${fleetName(state, content)} is scattered over twenty miles of sea. You make for the meeting-place, and the ships come in one by one over the next days, most of them.`);
+    let over = 0;
+    for (const ship of state.ships) { ship.hull = Math.max(FLEET.hullFloor, ship.hull - (4 + rng.int(14))); over += rng.int(3); }
+    const lost = Math.round(over * (1 - FLEET.rescued));
+    state.crew.men = Math.max(0, state.crew.men - lost);
+    if (lost) lines.push(`${plural(lost, 'man', 'men')} lost to the sea. Other ships picked up the rest.`);
+    state.crew.morale -= 1;
+    clampMorale(state);
+    return;
+  }
   scatter(state, content, rng, lines);
   let lostMen = 0;
   for (let i = state.ships.length - 1; i >= 0; i--) {
@@ -193,7 +206,7 @@ export function runVoyage(state: GameState, content: ContentBundle, rng: RngCurs
     state.day += 1;
     v.daysAtSea += 1;
     v.wind = rollWind(v.wind, rng);
-    v.progress += WIND.progress[v.wind] * fleetSpeed(state, content);
+    v.progress += WIND.progress[v.wind] * fleetSpeed(state, content) * (state.fleet ? FLEET.pace : 1);
     if (eatDays(state, 1) && v.daysAtSea % 3 === 1) lines.push('The food is gone. The men row on water and anger.');
     state.fedTo = state.day;
     learn(state, 'seamanship', 1);

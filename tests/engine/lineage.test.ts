@@ -398,3 +398,54 @@ describe('playtest 7: the oarsman', () => {
     expect(ids).not.toContain('rail');
   });
 });
+
+import { startVoyage, runVoyage } from '../../src/engine/voyage';
+import { fleetYear } from '../../src/engine/sailfleet';
+
+describe('sailing in a fleet (docs/FRAME-FLEET-843.md §2)', () => {
+  function inVestfold(): GameState {
+    let t = newGame(content, { background: 'freedman', seed: 21, name: 'Ari', era: 843 });
+    t = act(content, t, { t: 'continue' });
+    t = act(content, t, { t: 'choose', id: 'boats' });
+    t = act(content, t, { t: 'continue' });
+    return act(content, t, { t: 'choose', id: 'bench' });
+  }
+  it('taking the Vestfold arrow puts him in the fleet', () => {
+    expect(inVestfold().fleet?.id).toBe('vestfold');
+  });
+  it('a lone raider never comes for the fleet; the fleet\'s own events do', () => {
+    const seen = new Set<string>();
+    for (let seed = 0; seed < 40; seed++) {
+      const s = sandboxGame(seed);
+      s.fleet = { id: 'vestfold', since: s.day };
+      s.day = dayOf(843, 140); s.at = 'orkney'; s.phase = 'sailing'; s.provisions = 9000; s.known.push('orkney', 'iona');
+      s.rng = seedRng(seed);
+      startVoyage(s, content, 'iona');
+      runVoyage(s, content, new RngCursor(seedRng(seed)));
+      if (s.pending?.t === 'scene') seen.add(s.pending.id);
+    }
+    expect([...seen].some((id) => id.startsWith('fs_'))).toBe(true);
+    for (const id of ['g_sea_rivals', 'g_sea_merchant', 'g_sea_pirates', 'rg_pilot']) expect(seen.has(id)).toBe(false);
+  });
+  it('a storm scatters the fleet; no ship founders', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const s = sandboxGame(seed);
+      s.fleet = { id: 'vestfold', since: s.day };
+      s.ships[0]!.hull = 5;
+      s.day = dayOf(843, 300); s.at = 'orkney'; s.phase = 'sailing'; s.provisions = 9000; s.known.push('orkney', 'faroes');
+      startVoyage(s, content, 'iona', true);
+      for (let i = 0; i < 10 && s.voyage; i++) { s.pending = null; runVoyage(s, content, new RngCursor(seedRng(seed * 7 + i))); }
+      expect(s.ships.length).toBe(1);
+      expect(s.hero.alive).toBe(true);
+    }
+  });
+  it('the fleet breaks up at the turn of the year after its own', () => {
+    const s = sandboxGame(3);
+    s.fleet = { id: 'vestfold', since: dayOf(843, 140) };
+    s.day = dayOf(843, 300);
+    expect(fleetYear(s, content)).toEqual([]);
+    s.day = dayOf(844, 59);
+    expect(fleetYear(s, content).length).toBe(1);
+    expect(s.fleet).toBeUndefined();
+  });
+});

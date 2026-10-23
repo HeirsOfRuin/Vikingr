@@ -1,0 +1,34 @@
+# Great fleets he can sail with (docs/FRAME-FLEET-843.md §2). While he is with one, the voyage goes at the fleet's
+# pace, a lone raider doesn't come for sixty ships, a storm scatters the fleet instead of drowning it, and the fleet's
+# own events come up at sea and in camp. Joined by a scene ({ fleet: id }); left by a scene ({ fleet_end: true }) or
+# at the turn of the year after `until`.
+- id: vestfold
+  name: the Vestfold fleet
+  leader: the Vestfold jarls
+  ships: 67
+  until: 843
+  desc: Sixty-seven ships out of Vestfold and the west, Norwegians all, bound for the Loire. They winter on Noirmoutier.
+- id: danes834
+  name: the Danish fleet
+  leader: Ubbi
+  ships: 34
+  until: 834
+  desc: Horik's hersirs and Ubbi's Danes, bound up the Rhine for Dorestad.
+- id: southern
+  name: the southern fleet
+  leader: the captains of the Loire
+  ships: 54
+  until: 844
+  desc: Fifty-odd ships out of the Loire, bound south past the Basques for the Moors' country.
+- id: seine845
+  name: Ragnarr's fleet
+  leader: Ragnarr
+  ships: 120
+  until: 845
+  desc: A hundred and twenty ships for the Seine and Paris, under Ragnarr.
+- id: loire847
+  name: Hastein's fleet
+  leader: Hastein
+  ships: 40
+  until: 848
+  desc: The Loire Northmen under Hastein, bound south for the Garonne and Bordeaux.

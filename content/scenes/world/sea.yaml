@@ -6,7 +6,7 @@
   trigger: sea
   chance: 0.08
   cooldown_days: 150
-  requires: ["year >= 832", "!service"]
+  requires: ["year >= 832", "!service", "!fleet"]
   art: open_sea
   title: A fat knarr
   text: |
@@ -63,7 +63,7 @@
   trigger: sea
   chance: 0.06
   cooldown_days: 200
-  requires: ["year >= 832"]
+  requires: ["year >= 832", "!fleet"]
   art: open_sea
   title: Shields along her side
   text: |
@@ -368,7 +368,7 @@
   trigger: sea
   chance: 0.1
   cooldown_days: 120
-  requires: ["year >= 832", "cargo.lots >= 4", "!service"]
+  requires: ["year >= 832", "cargo.lots >= 4", "!service", "!fleet"]
   art: open_sea
   title: Low in the water
   text: |

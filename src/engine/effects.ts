@@ -30,6 +30,7 @@ import { loseSeat, takeSeat } from './rule';
 import { nameChild } from './family';
 import { loseHome } from './settle';
 import { claimBlock, claimLand } from './land';
+import { joinFleet, leaveFleet } from './sailfleet';
 /** They come back for a home fort in force: its people, and their neighbours. */
 const HOME_ATTACK = 1.4;
 
@@ -164,7 +165,9 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       const at = state.homeAt ?? state.at;
       const p = at ? content.places[at] : undefined;
       if (p?.raid) startBattle(state, content, { foe: p.raid.foe, men: Math.round(p.raid.defenders * HOME_ATTACK), terrain: 'rampart', context: 'scene', place: at!, win: e.home_defence.win, lose: e.home_defence.lose });
-    } else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }
+    } else if ('fleet' in e) joinFleet(state, content, e.fleet);
+    else if ('fleet_end' in e) leaveFleet(state, content);
+    else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }
     else if ('lose_home' in e) state.after = { title: 'The settlement', lines: loseHome(state, content) };
     else if ('take_hostage' in e) {
       const t = e.take_hostage;

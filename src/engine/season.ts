@@ -28,6 +28,7 @@ import {
   HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
 } from './tuning';
 import { atHome, settledAbroad, settledMuster, SETTLE } from './settle';
+import { fleetYear } from './sailfleet';
 
 export const JARL_CUT = 0.25;
 export const PROVISION_DAYS = 40;
@@ -438,7 +439,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // the winter's sickness and the winter's bills, and what the district thinks of him (docs/FRAME-HARDSHIP.md)
   const hardLines = turnOfYear(state, content, rng, year, !atHome(state));
   // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
-  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng));
+  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng), ...fleetYear(state, content));
   // lords, land and rule (docs/FRAME-WORLD.md §C-E): a dead lord, a secret oath come out, the holdings, the seat
   const wintered = state.at;
   hardLines.push(...lordsYear(state, content, rng), ...secretYear(state, content, rng), ...holdingsYear(state, content, rng, wintered), ...ruleYear(state, content, rng, wintered));

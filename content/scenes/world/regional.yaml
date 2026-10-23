@@ -73,7 +73,7 @@
   trigger: sea
   chance: 0.15
   cooldown_days: 200
-  requires: ["year >= 832", "bound.people == danish || bound.people == swedish || bound.people == frisian"]
+  requires: ["year >= 832", "bound.people == danish || bound.people == swedish || bound.people == frisian", "!fleet"]
   art: open_sea
   title: A pilot
   text: |
@@ -218,7 +218,7 @@
   trigger: sea
   chance: 0.15
   cooldown_days: 200
-  requires: ["bound.people == baltic || bound == gotland", "!service"]
+  requires: ["bound.people == baltic || bound == gotland", "!service", "!fleet"]
   art: open_sea
   title: Small boats
   text: |
@@ -250,7 +250,7 @@
   trigger: sea
   chance: 0.15
   cooldown_days: 200
-  requires: ["year >= 832", "bound.people == english || bound.people == frankish", "!service"]
+  requires: ["year >= 832", "bound.people == english || bound.people == frankish", "!service", "!fleet"]
   art: open_sea
   title: The coastguard
   text: |

@@ -108,6 +108,9 @@ const baseEffect = z.union([
   z.object({ lose_home: z.literal(true) }).strict(),
   /** A landnám: the land where he stands becomes his (docs/FRAME-LINEAGE.md E). */
   z.object({ claim_land: z.literal(true) }).strict(),
+  /** He sails with a great fleet now, or leaves it (docs/FRAME-FLEET-843.md §2). */
+  z.object({ fleet: id }).strict(),
+  z.object({ fleet_end: z.literal(true) }).strict(),
   // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
   z.object({ take_hostage: z.object({ kind: id, captain: id.optional(), place: id.optional(), name: z.string().optional(), who: z.string().optional(), kin: z.string().optional(), price: z.number().int().min(1).optional() }).strict() }).strict(),
   // a Norse ship-fort (longphort) holds a place, or is lost (docs/FRAME-IRELAND-SEINE.md)
@@ -376,6 +379,10 @@ export type Background = z.infer<typeof background>;
 export const upbringingDef = z.object({ id, when: z.enum(['always', 'sailed', 'fostered_lord', 'fostered_captain', 'plain']), label: z.string(), desc: z.string(), skills }).strict();
 export type UpbringingDef = z.infer<typeof upbringingDef>;
 
+/** A great fleet he can sail with (docs/FRAME-FLEET-843.md §2). */
+export const fleetDef = z.object({ id, name: z.string(), leader: z.string(), ships: z.number().int().min(2), until: z.number().int(), desc: z.string() }).strict();
+export type FleetDef = z.infer<typeof fleetDef>;
+
 export const flagDef = z.object({ description: z.string() }).strict();
 
 export const ITEM_KINDS = ['weapon', 'shield', 'helmet', 'armour', 'keepsake', 'fitting'] as const;
@@ -458,4 +465,5 @@ export interface ContentBundle {
   lords: Record<string, LordDef>;
   coasts: Record<string, CoastDef>;
   upbringing: Record<string, UpbringingDef>;
+  fleets: Record<string, FleetDef>;
 }

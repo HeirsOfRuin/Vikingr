@@ -79,6 +79,7 @@ export function loadContent(root = ROOT): S.ContentBundle {
     fates: byId(check(z.array(S.fateDef), read(reg('fates.yaml')), 'registry/fates.yaml'), 'fate'),
     banter: check(z.array(S.banterLine), read(reg('banter.yaml')), 'registry/banter.yaml'),
     recruits: byId(check(z.array(S.recruitOrigin), read(reg('recruits.yaml')), 'registry/recruits.yaml'), 'recruit origin'),
+    fleets: byId(check(z.array(S.fleetDef), read(reg('fleets.yaml')), 'registry/fleets.yaml'), 'fleet'),
     upbringing: byId(check(z.array(S.upbringingDef), read(reg('upbringing.yaml')), 'registry/upbringing.yaml'), 'upbringing'),
     coasts: byId(check(z.array(S.coastDef), read(reg('coasts.yaml')), 'registry/coasts.yaml'), 'coast'),
     lords: byId(check(z.array(S.lordDef), read(reg('lords.yaml')), 'registry/lords.yaml'), 'lord'),

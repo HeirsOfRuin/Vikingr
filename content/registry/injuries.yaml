@@ -13,3 +13,4 @@
 - { id: old_ribs, name: "Old ribs", desc: "They knitted crooked. You get short of breath at the oar now, which you never used to.", attrs: { end: -1 } }
 - { id: old_leg, name: "A leg that never healed right", desc: "A hitch in the stride that the men copy behind your back.", attrs: { agi: -1 } }
 - { id: winter_cough, name: "A winter cough", desc: "The sickness let you live. It didn't let you go.", days: 70, attrs: { end: -1 } }
+- { id: flux, name: "The flux", desc: "A camp sickness. A week in the dunes, and weak as a lamb for a month after.", days: 30, attrs: { end: -1 } }

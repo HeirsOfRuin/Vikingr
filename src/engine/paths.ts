@@ -15,6 +15,7 @@ import { claimMargin, seatOpen, SEATS, type Seat } from './rule';
 import { holdingAt } from './land';
 import { legendFame } from './fame';
 import { focusChild, ownChildren } from './family';
+import { councilVoice } from './sailfleet';
 
 const s_lords = (state: GameState, id: string) => state.lords?.[id];
 
@@ -57,6 +58,10 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   'child.first': (s) => { const c = focusChild(s); return c && ownChildren(s).filter((x) => x.sex === c.sex)[0] === c ? 1 : 0; },
   children: (s) => ownChildren(s).filter((c) => c.alive).length,
   heir: (s) => (s.hero.father ? 1 : 0),
+  /** In a great fleet (docs/FRAME-FLEET-843.md §2), which, and his voice at its council (0 at the oar). */
+  fleet: (s) => (s.fleet ? 1 : 0),
+  'fleet.id': (s) => s.fleet?.id ?? '',
+  'fleet.voice': (s) => councilVoice(s),
   /** Settled abroad (docs/FRAME-LINEAGE.md C), and where home is. */
   settled: (s) => (s.homeAt && s.homeAt !== 'home_fjord' ? 1 : 0),
   home: (s) => s.homeAt ?? 'home_fjord',
@@ -116,6 +121,7 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'base') return ['father', 'farm', 'hall'];
   if (path === 'bound') return ['', ...Object.keys(content.places)];
   if (path === 'home') return Object.keys(content.places);
+  if (path === 'fleet.id') return ['', ...Object.keys(content.fleets)];
   if (path === 'bound.people') return ['', ...PEOPLES];
   if (path === 'oath') return ['', ...Object.keys(content.lords)];
   if (path === 'rule') return ['', ...SEATS];

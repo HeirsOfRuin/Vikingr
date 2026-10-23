@@ -1,0 +1,470 @@
+# Sailing in a great fleet (docs/FRAME-FLEET-843.md §2): the fleet's own life at sea, in camp, and before the
+# fight. Every event reads one way at the oar and another at the steering-oar: an oarsman hears what the fleet
+# council decided; a captain sits in it, and his voice counts by his ships and his name ({fleet.voice}).
+
+# ---- at sea ----
+- id: fs_lantern
+  kind: pool
+  trigger: sea
+  chance: 0.25
+  cooldown_days: 60
+  requires: [fleet]
+  art: open_sea
+  title: The leader's lantern
+  text: |
+    At night {fleet} keeps together by a lantern at the masthead of {fleet_leader}'s ship: a single yellow point, far ahead, that every steersman in sixty ships is watching. Lose it, and you are alone on the sea in the dark, with a fleet somewhere around you that might run you down.
+
+    [if service]It's your watch. {captain} is asleep in the stern with his cloak over his face, and the steersman has his eyes on the light.[else]Your steersman wants to know whether to keep station, or push on through the fleet while the wind holds.[/if]
+  choices:
+    - id: watch
+      text: Keep your eyes on the light with the steersman, and wake him when he nods.
+      visible_if: service
+      check: { skill: seamanship, attr: wit, difficulty: 4 }
+      success:
+        text: The steersman nods twice before dawn, and you nudge him twice, and the light is still there at sunrise, a ship's length further off than it should be. {captain} wakes, looks at the fleet all round, and says nothing, which from him is praise.
+        effects: [ { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: You both nod. When you wake the light is gone, and so is the fleet, and there's a bad stretch of grey sea before a horn sounds off the starboard bow. {captain} doesn't ask whose watch it was. He knows.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: sleep
+      text: Sleep while you can. The steersman has the light.
+      visible_if: service
+      result: You sleep. In the morning the fleet is all around you, sixty sails on a grey sea, and somebody else's ship has run down a færing in the night and is pretending it hasn't.
+    - id: station
+      text: Keep station on the light. Sixty ships in the dark is no place to be clever.
+      visible_if: "!service"
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: You keep station all night, a ship's length behind and to starboard of a Vestfold karvi with a red sail, and at dawn the fleet is all around you, and the men have slept.
+    - id: push
+      text: Push on through the fleet while the wind holds, and be first to the landfall.
+      visible_if: "!service"
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: You thread the fleet in the dark by the sound of the other ships' oars and the shapes of their sails against the stars, and at dawn you are second only to the leader, with the whole fleet strung out behind you. Men will remember whose ship was first at the landfall.
+        effects: [ { progress: 1 }, { deed: { type: deed, text: "Brought his ship through the fleet in the dark, first to the landfall", weight: 2, witnesses: 300 } } ]
+      failure:
+        text: In the dark you foul a Hordaland ship's oars, and there's a long stretch of shouting and splintered wood. Nobody drowns. Everybody hears about it.
+        effects: [ { add: { crew.morale: -1 } } ]
+
+- id: fs_straggler
+  kind: pool
+  trigger: sea
+  chance: 0.2
+  cooldown_days: 90
+  requires: [fleet]
+  art: open_sea
+  title: A ship falling behind
+  text: |
+    One of the fleet is falling behind: a small karvi with a patched sail, her crew bailing, her steersman waving a cloak from the stern. A sprung plank, or a cracked keel. The fleet isn't waiting. Fleets don't.
+
+    [if service]{captain} watches her, chewing his beard, and says nothing.[/if]
+  choices:
+    - id: tow
+      text: Drop back, put a line aboard her, and tow her to the next landfall.
+      visible_if: "!service"
+      effects: [ { days: 1 }, { add: { crew.morale: -1, honour: 1 } }, { deed: { type: deed, text: "Dropped back from the fleet to tow a sinking ship home", weight: 2, witnesses: 60 } } ]
+      result: Two days of hard rowing with another ship on your tail, and the men cursing you for every stroke of it. Her captain gives you his hand at the landfall in front of the whole fleet, and a cask of Frankish wine, and his word that his ship is yours if you ever need her. Men remember that sort of thing longer than they remember a raid.
+    - id: leave
+      text: Leave her. She knew the sea when she put out on it.
+      visible_if: "!service"
+      result: You hold your course with the fleet. By evening she is a speck astern, and then nothing. Nobody in the fleet says anything about it. Nobody in the fleet would have stopped for you, either.
+    - id: say
+      text: "Tell {captain} you'll take an extra oar if he drops back for her."
+      visible_if: service
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          "You'll take two," {captain} says, and drops back. Two days of hard rowing with another ship on your tail, and you pull an oar and a half the whole way. At the landfall her captain gives {captain} his hand, and then, when he finds out who talked him into it, gives you a silver ring off his own arm.
+        effects: [ { days: 1 }, { add: { honour: 1 } }, { ring: { metal: silver, n: 1 } } ]
+      failure:
+        text: "\"I've a ship of my own to get home,\" {captain} says. You watch her fall astern until she's a speck, and then nothing."
+    - id: row
+      text: Keep your head down, and row.
+      visible_if: service
+      result: You row. By evening she is a speck astern. At the landfall nobody mentions her, and nobody needs to.
+
+- id: fs_horn
+  kind: pool
+  trigger: sea
+  chance: 0.2
+  cooldown_days: 120
+  requires: [fleet]
+  art: muster
+  title: The horn
+  text: |
+    A horn from {fleet_leader}'s ship, three long blasts, and the whole fleet lies to with its sails slatting. The captains are called aboard. Boats go across from every ship, with the captains in the sterns trying to look as if they do this every day.
+
+    [if service]{captain} points at you and two others. "You row me." You row him across, and sit in the boat alongside, and hear every word that comes over the gunwale.[else]Your boat goes across with the rest. Forty captains in one ship, and every one of them with a plan.[/if]
+  choices:
+    - id: listen
+      text: Hold the boat alongside, and listen.
+      visible_if: service
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        You hear all of it: where the fleet is going, and why, and who argued for what, and which of the captains hates which. {fleet_leader} lets them shout themselves out, and then says what they'll do, which is what he'd decided before the horn. On the way back {captain} says, "Well?" and you tell him what you think, and he listens, and then tells you to row.
+    - id: speak
+      text: Speak at the council for the plan you believe in.
+      visible_if: "!service"
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: |
+          Forty captains stop talking to listen to you, which they would not have done a year ago. [if fleet.voice >= 3]Your ships are behind you, and your name, and when you're done half the council is nodding, and {fleet_leader} looks at you a long moment and says, "So." It's your plan they follow.[else]You say it well. {fleet_leader} listens, nods, and does what he had decided before the horn. But he remembers your face, and so do the others.[/if]
+        effects: [ { if: "fleet.voice >= 3", then: [ { deed: { type: deed, text: "Turned the fleet council to his plan", weight: 4, witnesses: 400 } } ], else: [ { add: { honour: 1 } } ] } ]
+      failure:
+        text: You speak, and a Vestfold captain with a voice like a bull talks over you, and the council laughs, and that's the end of it. On the way back your men don't say anything about it, which is how you know they heard.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: quiet
+      text: Keep your counsel. Listen to who argues for what, and remember it.
+      visible_if: "!service"
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: You say nothing, and watch. By the end of it you know which captains will follow {fleet_leader} anywhere, which will follow him as far as the plunder, and which are already counting ships for a fleet of their own.
+
+- id: fs_scattered
+  kind: pool
+  trigger: sea
+  chance: 0.15
+  cooldown_days: 120
+  requires: [fleet]
+  art: storm
+  title: The fleet scattered
+  text: |
+    Dirty weather in the night, a squall out of nowhere, and in the grey of the morning there isn't another sail in sight. Somewhere over the horizon {fleet} is gathering at the meeting-place. Somewhere else, perhaps, are the ships that won't.
+  choices:
+    - id: find
+      text: Steer by the swell and the birds for the meeting-place.
+      visible_if: "!service"
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: By noon there's a sail on the horizon, and then three, and by evening you're in among the fleet at the meeting-place with ships still coming in behind you. Some captains spent the day going in circles. You didn't.
+        effects: [ { progress: 1 } ]
+      failure:
+        text: Two days of empty sea, and the men muttering, before you raise the fleet, gathered and waiting and laughing at you.
+        effects: [ { days: 2 }, { add: { crew.morale: -1 } } ]
+    - id: help
+      text: Go up the mast and look.
+      visible_if: service
+      oar: true
+      check: { skill: seamanship, attr: wit, difficulty: 4 }
+      success:
+        text: You see it first, from the masthead, a fleck of sail to the south-west that becomes three, and then a fleet. {captain} brings her round on your word, and gives you the first cup that night.
+        effects: [ { progress: 1 } ]
+      failure:
+        text: You see nothing, and the man who goes up after you sees nothing, and it's two days before {captain} raises the fleet by luck and stubbornness.
+        effects: [ { days: 2 } ]
+
+# ---- in camp ----
+- id: fs_water
+  kind: pool
+  trigger: arrive
+  chance: 0.25
+  cooldown_days: 90
+  requires: [fleet, "at.kind != home"]
+  art: muster
+  title: The stream
+  text: |
+    Sixty crews on one beach, and one stream. By the second morning there's a line at it, and by noon there's a fight at it: [if service]men from your ship and[else]your men and[/if] a Rogaland crew, over who was first with the casks, and it's going to be knives before long.
+  choices:
+    - id: wade
+      text: Wade in and pull your own men out of it.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: You drag the worst of them off by the collar and stand between, and say something about Franks being the ones to kill, which gets a laugh on both sides. The Rogaland captain comes over later and offers you a drink.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: Somebody hits you with a water-cask. When you wake, it's over, and your men are telling each other how it went, and none of them agree.
+        effects: [ { injury: cracked_ribs } ]
+    - id: brawl
+      text: Get your own blows in. They started it.
+      effects: [ { fight: { foe: beach_brawler, kind: duel, lethal: false } } ]
+    - id: dig
+      text: Go upstream with a spade, and dig a second pool.
+      check: { skill: craft, attr: end, difficulty: 4 }
+      success:
+        text: A morning's digging, and there are two pools and two lines and nothing to fight about. The fleet uses your pool for the rest of the stay, and calls it after you.
+        effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Dug a well for the fleet", weight: 1, witnesses: 200 } } ]
+      failure:
+        text: The ground is all stones. By the time you give up, the fight's over anyway.
+
+- id: fs_dice
+  kind: pool
+  trigger: arrive
+  chance: 0.2
+  cooldown_days: 120
+  requires: [fleet, "at.kind != home"]
+  art: yule_hall
+  title: Dice by the fire
+  text: |
+    Every night on the beach there's dice at every fire, and men going from fire to fire looking for a game they can win. A Dane from another ship, big and friendly and missing two fingers, has been winning at yours all evening, and he wants to play you.
+  choices:
+    - id: play
+      text: Play him, for a quarter-pound a throw.
+      requires: ["silver >= 12"]
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: You notice on the third throw what he's doing with the dice, and on the fourth you do it back. He laughs, and pays, and the men around the fire laugh with him. You don't play him again.
+        effects: [ { add: { silver: 30 } } ]
+      failure:
+        text: He takes a pound off you before you notice what he's doing with the dice, and by then it would be a killing to say so.
+        effects: [ { add: { silver: -24 } } ]
+    - id: call
+      text: Call him a cheat in front of the fire.
+      danger: true
+      effects: [ { fight: { foe: beach_brawler, kind: duel, lethal: false } }, { add: { honour: 1 } } ]
+    - id: no
+      text: Drink with him, and keep your silver.
+      result: He drinks better than he throws. By the end of the night you know where he's from, and how he lost the fingers, and that he thinks {fleet_leader} is a fool. That last is worth knowing.
+
+- id: fs_flux
+  kind: pool
+  trigger: arrive
+  chance: 0.15
+  cooldown_days: 200
+  requires: [fleet, "at.kind != home"]
+  art: muster
+  title: The flux
+  text: |
+    The flux comes through the camp the way it always does when too many men are on one beach too long: one crew, then the next, then all of them, and the smell of it carried on the wind. [if service]{captain}'s ship has it.[else]Your ship has it.[/if] Three men down in a day.
+  choices:
+    - id: move
+      text: Haul off the beach and lie at anchor till it passes.
+      visible_if: "!service"
+      effects: [ { days: 4 }, { add: { crew.morale: -1 } } ]
+      result: Four days at anchor, on water from the ship's casks and nothing else, away from the stink. You lose one man. Ships that stayed on the beach lose six and seven.
+    - id: stay
+      text: Stay with the fleet. Flux is the gods' business.
+      visible_if: "!service"
+      effects: [ { add: { crew.men: -4, crew.morale: -1 } } ]
+      result: You stay. It goes through the ship like fire through thatch, and four men are buried in the dunes before it's done.
+    - id: tend
+      text: Nurse the sick men from your bench, and boil every drop you drink.
+      visible_if: service
+      check: { skill: lore, attr: end, difficulty: 5 }
+      success:
+        text: You boil the water the way your grandmother did, and make them drink it, and sit up with them, and two of the three live. They don't forget it. Nor does {captain}.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: You sit up with them, and boil the water, and get it yourself. A week in the dunes, sicker than you've ever been, and one of the men you nursed is in a grave beside you when you can stand.
+        effects: [ { injury: flux }, { add: { crew.men: -2 } } ]
+    - id: away
+      text: Keep away from the sick, and from the beach, and pray.
+      visible_if: service
+      effects: [ { add: { crew.men: -3 } } ]
+      result: You sleep up in the dunes, away from the camp, and drink only from the spring, and live. Three men from the ship don't.
+
+- id: fs_forage
+  kind: pool
+  trigger: arrive
+  chance: 0.2
+  cooldown_days: 120
+  requires: [fleet, "at.kind != home", "at.standing <= 0"]
+  art: bangor_field
+  title: Foraging
+  text: |
+    A fleet eats a country bare in a week. {fleet_leader} sends out foraging parties every morning: a crew each, inland, for cattle and grain and anything else that can be eaten or sold. Today it's [if service]{captain}'s[else]your[/if] turn.
+  choices:
+    - id: go
+      text: Go inland with the foragers, and take what the farms have.
+      oar: true
+      danger: true
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: Three farms and a mill, and nobody fights. You come back down to the beach at dusk driving twenty head of cattle, with sacks of grain on their backs and the farmers' curses behind you. The fleet eats well that night, and knows whose cattle it's eating.
+        effects: [ { add: { provisions: 120, crew.morale: 1 } }, { standing: { n: -1 } } ]
+      failure:
+        text: The farmers have had a week of foragers, and they're waiting in a wood by the road, with the count's men.
+        effects: [ { battle: { foe: frankish_levy, men: 18, terrain: woods } } ]
+    - id: careful
+      text: Go, but keep to the open fields and come back before dark.
+      oar: true
+      effects: [ { add: { provisions: 60 } } ]
+      result: Half a day, two farms, a few cows and a lot of shouting. Not much, but everybody comes back.
+
+- id: fs_traders
+  kind: pool
+  trigger: arrive
+  chance: 0.25
+  cooldown_days: 90
+  requires: [fleet, "at.kind != home", "captives >= 2"]
+  art: muster
+  title: The fleet's traders
+  text: |
+    A fleet draws traders the way a carcass draws crows: Frisians with silver scales, a trader from Verdun with a string of mules and a ledger, a Dane who buys for the market at Hedeby. They walk the beach every morning, looking at the captives, and naming prices.
+  choices:
+    - id: sell
+      text: Sell your captives here, at the fleet's price.
+      visible_if: "!service"
+      effects: [ { sell_captives: 30 } ]
+      result: The Verdun man buys them all, and pays in good silver by weight, and writes something in his ledger, and leads them away up the beach on a rope. The price is low. The fleet's price is always low, because there's always more on the beach tomorrow.
+    - id: hold
+      text: Keep them for a better market.
+      visible_if: "!service"
+      result: You keep them, and feed them, and in three weeks you'll get twice as much at Dublin or Hedeby. If they live.
+    - id: watch
+      text: Watch {captain} sell the ship's captives, and learn what a man is worth.
+      visible_if: service
+      effects: [ { add: { skill.trade: 1 } } ]
+      result: |
+        A strong man, so much. A woman, so much. A child, less. A monk who can write, more. {captain} haggles like a farmer selling a horse, and the Verdun man writes it all in his ledger. You learn more about trade in a morning than in a year, and none of it makes you feel clean.
+
+- id: fs_challenge
+  kind: pool
+  trigger: arrive
+  chance: 0.18
+  cooldown_days: 150
+  requires: [fleet, "at.kind != home"]
+  art: muster
+  title: Another district's crew
+  text: |
+    A crew from Agder has been picking at [if service]{captain}'s men[else]your men[/if] since the fleet sailed: jokes about Hordaland sheep, about who rows like a woman, about whose ship was last at every landfall. Tonight their champion, a thick young man with a red beard and a borrowed sword, comes over to your fire to say it to your face.
+  choices:
+    - id: fight
+      text: Meet him on the sand, with blunt swords, in front of both crews.
+      effects: [ { fight: { foe: beach_brawler, kind: duel, lethal: false, win: fs_challenge_won } } ]
+    - id: laugh
+      text: Laugh, and offer him a horn of ale and a better joke.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: Your joke is better than his, and both crews laugh, and he drinks your ale with a red face and goes home. The Agder men don't pick at you after that. They pick at the Rogaland men instead.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: He doesn't laugh, and nor does anybody else. In the morning the Agder men are telling the fleet the Hordaland men wouldn't fight.
+        effects: [ { add: { crew.morale: -1 } } ]
+
+- id: fs_challenge_won
+  kind: spine
+  art: muster
+  title: Sand
+  text: |
+    You put him on his back on the sand in front of both crews, and stand over him with the blunt sword at his throat until he laughs and says enough. His own men cheer you, which is the way of it.
+  choices:
+    - id: up
+      text: Give him your hand, and pull him up.
+      effects: [ { add: { crew.morale: 1 } }, { deed: { type: duel_won, text: "Put Agder's champion on his back on the beach before the fleet", weight: 2, witnesses: 200 } } ]
+      result: He takes it. By the end of the night he's drinking at your fire, and by the end of the summer he's the best friend you have in the fleet.
+
+- id: fs_shares
+  kind: pool
+  trigger: arrive
+  chance: 0.15
+  cooldown_days: 200
+  requires: [fleet, "at.kind != home", "loot >= 100 || service"]
+  art: muster
+  title: The leader's share
+  text: |
+    {fleet_leader} has had it cried along the beach: a tenth of everything any ship takes goes to the leader's ship, for the leader's gifts and the leader's sacrifices and the leader's good name. Most of the fleet pays and grumbles. Some of the fleet grumbles and doesn't pay.
+
+    [if service]{captain} is somewhere in between. "A tenth," he says to the benches. "For what?"[else]Your men are watching to see which you are.[/if]
+  choices:
+    - id: pay
+      text: Pay the tenth, openly, in front of the beach.
+      visible_if: "!service"
+      effects: [ { add: { loot: -40, honour: 1 } } ]
+      result: You weigh it out at the leader's ship in front of everybody. {fleet_leader} nods to you, as one man to another, which is worth more than the silver in a fleet where everybody watches everybody.
+    - id: short
+      text: Pay something, and call it a tenth.
+      visible_if: "!service"
+      check: { skill: cunning, attr: pre, difficulty: 5 }
+      success:
+        text: Nobody weighs it twice. You keep half the tenth, and the leader's steward writes your name in the paid column.
+        effects: [ { add: { loot: -20 } } ]
+      failure:
+        text: The leader's steward weighs it twice, in front of everybody, and tells the beach what it comes to. You pay the rest, and a fine on top, and every crew in the fleet knows your name for the wrong reason.
+        effects: [ { add: { loot: -60, honour: -1 } } ]
+    - id: tell
+      text: "Tell {captain}: a tenth for the leader buys a place near him at the next fight, and a better share."
+      visible_if: service
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: He thinks about it, and pays, and at the next horn he's asked aboard the leader's ship with the men who paid. He doesn't say you were right. He gives you an extra share at the next division, which is the same thing.
+        effects: [ { add: { silver: 12 } } ]
+      failure:
+        text: "\"A tenth buys a fat leader,\" {captain} says. He pays half. Nothing comes of it, except a long look from the leader's steward."
+    - id: say
+      text: Say nothing. It's {captain}'s silver.
+      visible_if: service
+      result: It's {captain}'s silver, and {captain}'s choice. He pays, cursing. The benches curse with him.
+
+- id: fs_breakaway
+  kind: pool
+  trigger: arrive
+  chance: 0.15
+  cooldown_days: 300
+  requires: [fleet, "at.kind != home", "!service"]
+  art: muster
+  title: Ships of their own
+  text: |
+    Three captains come to your fire after dark, with a jar, and sit down without being asked. They're sick of {fleet_leader}: sick of the tenth, sick of waiting on councils, sick of being last up the beach. They mean to slip away with their ships before dawn, and raid the coast on their own account, and they want a fourth ship. Yours.
+  choices:
+    - id: go
+      text: Go with them. Four ships of your own choosing are better than sixty of somebody else's.
+      effects: [ { fleet_end: true }, { add: { honour: -1, crew.morale: 1 } } ]
+      result: You slip out at the turn of the tide in the dark, four ships with muffled oars. By noon you're your own men again, and the coast is yours. In the fleet they'll call it desertion. On the coast, nobody will call it anything.
+    - id: stay
+      text: Wish them luck, and stay.
+      result: They go before dawn. Two of the three ships come back to the fleet a month later, short of men and long on stories. The third doesn't come back at all.
+    - id: tell
+      text: Stay, and tell {fleet_leader} who's leaving.
+      effects: [ { add: { honour: -2 } }, { deed: { type: deed, text: "Gave three captains up to the fleet's leader", weight: 2, witnesses: 100 } } ]
+      result: The leader's men are waiting on the beach at the turn of the tide. Nobody dies. Three captains lose a tenth of everything they own, and the leader remembers your name. So do the three captains.
+
+- id: fs_skald
+  kind: pool
+  trigger: arrive
+  chance: 0.15
+  cooldown_days: 200
+  requires: [fleet, "at.kind != home"]
+  art: yule_hall
+  title: The fleet's skald
+  text: |
+    {fleet_leader} has a skald with him: an Icelander, they say, though there's no such place, a sour old man with a beautiful voice, who sits at the leader's fire making the poem of the voyage, verse by verse, and changing it every night according to who's paid him.
+  choices:
+    - id: pay
+      text: Give him a silver ring for a line about you.
+      requires: ["rings.silver >= 1"]
+      effects: [ { ring: { metal: silver, n: -1 } }, { deed: { type: deed, text: "Was named in the fleet's poem", weight: 4, witnesses: 400 } } ]
+      result: He takes the ring, and listens to what you did, and says nothing. That night at the leader's fire your name is in the poem, in a line about a sword and a gate and the sea-wolf's teeth. It's not exactly what you did. It's better.
+    - id: deed
+      text: Tell him what you did, and let him decide whether it's worth a line.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: He listens with his eyes shut. Then he puts you in the poem for nothing, because, he says, it's a good story, and the leader's story is boring.
+        effects: [ { deed: { type: deed, text: "Was named in the fleet's poem, for nothing", weight: 4, witnesses: 400 } } ]
+      failure:
+        text: He listens with his eyes shut, and then opens them and says, "No." That's all.
+    - id: leave
+      text: Leave the poem to the men who pay for it.
+      result: You leave it. The poem gets longer every night, and has more and more of the leader in it, and less and less of anybody else.
+
+# ---- before the fight ----
+- id: fs_sacrifice
+  kind: pool
+  trigger: arrive
+  chance: 0.2
+  cooldown_days: 200
+  requires: [fleet, "at.kind != home", "at.standing <= -1"]
+  art: muster
+  title: Before the fight
+  text: |
+    The night before they go in, {fleet_leader} makes the sacrifice on the beach: a horse, and the blood on the stones and on the ships' prows, and the meat for every crew. Then the leader stands up on a boat on the shingle and says who goes first up the beach. It's the place where the most men die, and where the names are made.
+  choices:
+    - id: first
+      text: Ask for the first place up the beach.
+      visible_if: "!service"
+      requires: ["fleet.voice >= 2"]
+      effects: [ { position: front }, { add: { crew.morale: 1 } } ]
+      result: The beach goes quiet. Then {fleet_leader} laughs, and gives it to you, and the fleet roars. Your men will go up the beach first tomorrow. Some of them won't come down it.
+    - id: line
+      text: Take the place you're given, in the line.
+      visible_if: "!service"
+      result: You're given a place in the middle of the line, with a Rogaland crew on one side and a Vestfold crew on the other. It's a good place to live, and a poor place to be remembered.
+    - id: prow
+      text: Ask {captain} to put you in the prow tomorrow, where the first blows come.
+      visible_if: service
+      oar: true
+      effects: [ { position: front } ]
+      result: He looks at you, and looks at the men, and nods. You eat the horse-meat with the prow-men that night, and nobody says much.
+    - id: bench
+      text: Eat the horse, and sleep, and stand where you're put.
+      visible_if: service
+      effects: [ { position: wall } ]
+      result: You eat the horse-meat and the bread and drink the blood-red ale, and sleep, and in the morning you'll stand where {captain} puts you, which is in the wall, with your bench-mates on either side.
