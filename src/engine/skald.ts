@@ -43,7 +43,8 @@ export function skaldAboard(state: GameState): boolean {
 
 export function hireSkald(state: GameState, name: string): void {
   state.flags.skald = 1;
-  state.skald = { name, aboard: false, since: state.day };
+  // taken on in a foreign port, he is already in your ship; at home, he waits to be asked
+  state.skald = { name, aboard: !state.service && state.ships.length > 0 && state.at !== (state.homeAt ?? 'home_fjord'), since: state.day };
   journal(state, `${name} the skald joined your household.`);
 }
 

@@ -121,23 +121,23 @@
       text: Stand up and claim the prow-man's share and a half, for the gate.
       visible_if: service
       requires: [flag.prow_man]
-      effects: [ { add: { silver: 60 } }, { ring: { metal: silver, n: 1 } } ]
-      result: Nobody argues. They saw you at the gate. Ölvir weighs it out, a share and a half, with a silver ring on top that he says is from him and not from the Hart. It's the most silver you've ever held in your hand.
+      effects: [ { add: { silver: 96 } }, { ring: { metal: silver, n: 1 } }, { goods: { id: glass, lots: 2 } } ]
+      result: Nobody argues. They saw you at the gate. Ölvir weighs it out, a share and a half, two pounds of hacksilver and cut plate, with two crates of Rhenish glass from a merchant's cellar, and a silver ring on top that he says is from him and not from the Hart. It's the most silver you've ever held in your hand.
     - id: take
       text: Take your share, and say nothing.
       visible_if: service
-      effects: [ { add: { silver: 40 } } ]
-      result: An oarsman's share of a city. It's more silver than your father ever saw at once, and less than the man in front of you got, and you'll never be sure why.
+      effects: [ { add: { silver: 64 } }, { goods: { id: glass, lots: 1 } } ]
+      result: "An oarsman's share of a city: a pound and a third of hacksilver, a church's candlestick cut in four, and a crate of Rhenish glass to sell at Hedeby. It's more silver than your father ever saw at once, and less than the man in front of you got, and you'll never be sure why."
     - id: dead
       text: Put part of your share aside for the kin of the dead men from your bench.
       visible_if: service
-      effects: [ { add: { silver: 20, honour: 1, crew.morale: 1 } } ]
+      effects: [ { add: { silver: 32, honour: 1, crew.morale: 1 } }, { goods: { id: glass, lots: 1 } } ]
       result: You put it aside in front of everybody, and two other men do the same, and then the whole bench. Ölvir says nothing, and puts in a ring of his own. When you come home, the dead men's mothers will have something more than a story.
     - id: fair
       text: Divide it fairly, by oars and by deeds, in front of everybody.
       visible_if: "!service"
-      effects: [ { add: { crew.morale: 2 } } ]
-      result: It takes all afternoon, and you weigh every share twice, and at the end of it there's nobody standing on your sailcloth with a face like a grievance. The ships on either side are still shouting.
+      effects: [ { add: { crew.morale: 2 } }, { goods: { id: wine, lots: 3 } }, { goods: { id: glass, lots: 3 } }, { goods: { id: salt, lots: 4 } } ]
+      result: It takes all afternoon, and you weigh every share twice, and the ship's own share of the city's goods goes into your hold, wine and glass and salt from the merchants' cellars, and at the end of it there's nobody standing on your sailcloth with a face like a grievance. The ships on either side are still shouting.
     - id: council
       text: Argue at the leaders' tenth for a bigger share for the ships that held the gate.
       visible_if: "!service"

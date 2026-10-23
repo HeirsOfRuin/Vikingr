@@ -225,3 +225,55 @@ An 830 life meets about 42 written scenes in its first two years; an 843 life me
 - **Short of the target.** The first two years now carry about 24 written scenes against 830's 42, under the target of 28.
 - **Why:** 830's first year counts its whole written boyhood and its own sea events. An 843 life starts at sixteen at the arrow.
 - **To close the gap:** a short written 843 voyage south (the coast of the Franks seen for the first time), and more of 846–848 that every life meets, not only those who go to Bordeaux.
+
+## Playtest 8: the voyage south, 845–848, the skald, payments
+Josh's words: "add the voyage south and more 846–848 scenes. Also add more use for the skald, like bringing them onto your boat or your hall ... Recheck all payments and ransoms ... it would make more sense if events like that gave you actual resource cargo, not just a couple pounds or less of silver."
+
+### Payments: goods, not coins
+- **New effect `goods: { id, lots }`.** Lots go into the hold, as many as fit. At another man's oar they go into the sea-chest (60). The result text says what went in and what was left on the beach.
+- **New goods:** whale oil, Moorish silk and cattle hides, with markets that want them.
+- **What changed:**
+  - **Into the hold:**
+    - **Salt:** the salt fair, Noirmoutier, the monks' island.
+    - **Whale oil:** the beached whale (12 casks).
+    - **Smaller lots:** amber at Truso; down and wool at the Faroes; wine and glass from merchants and Nantes; hides at Dublin.
+    - **The south:** silk from Seville and Lisbon, and wine from the Garonne.
+  - **Silver:** where the text named a sum, the silver now pays it: the Fontenelle and Lindisfarne tributes, the horse race, the harvest, the Irish winter market, and the Hart at four pounds.
+  - **The share-out of Nantes** paid an oarsman 40 ørtugar, under a pound, for a city. It now pays:
+    - an oarsman: 64 ørtugar and a crate of glass;
+    - the prow-man: 96 ørtugar, a ring and two crates;
+    - a captain: his ship's share of the city's wine, glass and salt.
+- **Ransoms checked and left as they were:** an abbot 300–700, a king's son 300–600, Gunhard 900, Forannán 1200, Duke William 1400, captives 20–32 a head.
+
+### The skald (`src/engine/skald.ts`, `content/scenes/world/skald.yaml`)
+- **Each skald has a name.** Kálfr if he came from Birsay; Hallbjörn, Þjóðólfr or Óttarr if hired later.
+- **Aboard or at home.** A home action switches him between the two, for the summer.
+  - **Aboard, away from home:** every deed he sees weighs a quarter more. If a fight is lost, he dies 3 times in 10. Once a summer, after a won fight, he makes the verse while the blood is wet: lasting fame, or the men's names instead of yours.
+  - **At home:** he sings at the jarl's benches, worth 1 favour at the turn of the year.
+  - **Hired in a foreign port,** he is already aboard.
+- **Any feast** he tells goes 15% better.
+- **His Yule gifts:** 24 ørtugar a year, or he goes to a lord who gives them.
+- **When the hero dies,** the skald makes the death-song: a lasting verse of weight 10, which counts toward the afterlife.
+- **Six scenes:**
+  - hiring one in the eastern or the western ports;
+  - the verse after a fight;
+  - seasick;
+  - the fleet's skalds at the leader's fire;
+  - a drápa for the hall (four pounds; two verses and the jarl's favour);
+  - a king's offer to lure him away.
+
+### The voyage south, 843 (`content/scenes/843/05-voyage.yaml`)
+One scene on each leg the Vestfold fleet sails, and one at each landfall:
+- King Horik's ships off the Danish point;
+- the market at Ribe (the Hamburg priest);
+- the low Frisian coast and the memory of Dorestad;
+- Harald Klak, the baptized Danish king, holding Walcheren for Lothar;
+- the Frankish beacons and the Breton tide-race.
+
+### 845–848, wherever he is (`content/scenes/843/06-years.yaml`)
+Scenes tied to the year, not the place, so every 843 life meets them:
+- a man from the Paris fleet with the flux and his share;
+- the hard winter of 846;
+- the kings' warning from Meersen (847);
+- a sixteen-year-old who wants a bench (847), five years after the hero's own;
+- Norse survivors of Forach and Sciath Nechtáin (848).

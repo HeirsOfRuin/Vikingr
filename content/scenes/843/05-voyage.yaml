@@ -1,0 +1,184 @@
+# The voyage south, 843 (playtest 8; docs/FRAME-FLEET-843.md, "to close the gap"): the Vestfold fleet's road from
+# Skiringssal to the Loire, seen for the first time. One scene on each leg the fleet sails (the Danish waters, the
+# Frisian coast, the Narrow Sea and the Breton capes) and one at each landfall (Ribe, Walcheren). History: Horik I
+# king of the Danes; Ribe the Danish market on the North Sea side; Harald Klak, the baptized Danish exile, holding
+# Walcheren for the emperor Lothar from 841; the Seine fleet of 841 under Ásgeir; the coast beacons of the Franks.
+
+# ---- the Danish waters ----
+- id: v43_danes
+  kind: pool
+  trigger: sea
+  chance: 1
+  once: true
+  weight: 40
+  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes", { any: ["bound == kaupang", "bound == hedeby", "bound == ribe"] }]
+  art: open_sea
+  title: King Horik's ships
+  text: |
+    Off the long sandy point where the Danish land ends, three ships come out from the shore and lie across the fleet's course, oars up, waiting: tall Danish warships with painted shields along their sides and a man in a red cloak standing in the stern of the middle one. King Horik's ships. The Danes have been the masters of these waters since before your grandfather's time, and every fleet that goes south goes past them, and they want to know whose it is.
+
+    The leaders' ships go forward to talk. The rest of the fleet lies on its oars, sixty-odd ships rolling in the swell, and waits to see whether it is going to be a fight.
+    [if service]Ölvir stands in the stern of the Hart with his hand on the steering-oar and says, to nobody in particular, "If they wanted a fight they'd have brought more than three."[/if]
+  choices:
+    - id: watch
+      text: Watch the Danes. You've heard of them all your life.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        The Danish ships are longer than yours and lower, with more oars a side, and the men in them sit their benches like men who have done nothing else since they could walk. The red cloak talks with the leaders for a while, and laughs once, and then the three ships pull away to the shore as fast as they came. Horik has let you through. Next time it may cost something.
+    - id: shout
+      text: Stand up on the bench and shout something about the Danes across the water.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: You shout it, and it carries, and the bench behind you roars, and somebody on the nearest Danish ship shouts something back that is nearly as good. Nobody draws a sword. When the Danes pull away, the ships around you are still saying your line, and somebody tells it at every fire for a week.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: You shout it, and it doesn't carry, and the only man who hears it is the steersman, who tells you to sit down before you start a war with the king of the Danes on your own. You sit down.
+    - id: count
+      text: Count the shields on the Danish ships, and the oars.
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: Forty oars to a ship, and shields for every one, and more men than oars. Three ships, a hundred and fifty men, and they were not afraid of sixty-seven ships. You remember that.
+
+- id: v43_ribe
+  kind: place
+  trigger: arrive
+  at: [ribe]
+  once: true
+  weight: 30
+  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
+  art: ship_home
+  title: The market at Ribe
+  text: |
+    Ribe is a strip of beach and a ditch and a market, on a river that winds through flat green marsh to the sea, and it is the biggest market you have ever seen. There are workshops in rows along the river: comb-makers sawing antler, bead-makers with little furnaces, a man casting brooches in clay moulds, and more Frisians than Danes, selling cloth and wine and pots from the Rhine. The fleet buys everything. Prices go up by noon.
+
+    A thin man in a brown robe with his head shaved on top is standing at the market cross, talking to anyone who will stop: a priest from the Saxon country, from the Christians' new church at Hamburg, come north to tell the Danes about his god. Nobody is stopping.
+  choices:
+    - id: dice
+      text: Find the dice game behind the bead-makers' huts.
+      requires: ["silver >= 12"]
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: The Frisians play with their own dice and you watch how they throw them, and when it's your turn you throw the way they do, and by dark you have half a pound of their silver and they are looking at you the way men look at a man who has worked something out.
+        effects: [ { add: { silver: 24 } } ]
+      failure:
+        text: The Frisians play with their own dice. You find this out a quarter of a pound too late.
+        effects: [ { add: { silver: -12 } } ]
+    - id: priest
+      text: Stop and listen to the Christian priest.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        He has a soft voice and terrible Danish, and he tells you that his god died on a tree, which you have heard before about another god, and that he made the world out of nothing, which you haven't. He asks where the fleet is going. You tell him. He makes a sign over you with two fingers and says he will pray for the people of wherever it is. He means it, which is odd.
+    - id: trade
+      text: Walk the workshops, and learn what things cost.
+      effects: [ { add: { skill.trade: 1 } } ]
+      result: The comb-makers tell you what antler costs in the north and what a comb fetches here, and the Frisians tell you what wine costs on the Rhine and what it fetches in Ribe, and by evening you understand that the money in the world is made by the men who carry things from where they are cheap to where they are dear, and that most of them never draw a sword.
+
+# ---- the Frisian coast ----
+- id: v43_frisia
+  kind: pool
+  trigger: sea
+  chance: 1
+  once: true
+  weight: 40
+  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes", "bound == walcheren"]
+  art: open_sea
+  title: The low country
+  text: |
+    South of the Danes the land goes flat, and then flatter, until it is hardly land at all: a grey-green line on the edge of the sea, with sandbanks in front of it that come and go with the tide, and here and there a mound with a farm on top of it and cattle standing round the farm, waiting for the water to go down. The Frisians live on their mounds the way gulls live on rocks. The old men say the sea takes a village a year.
+
+    Somewhere behind those sands is the mouth of the Rhine, and up the Rhine is Dorestad, that the Danes burned four years running when you were a boy.
+  choices:
+    - id: dorestad
+      text: Ask the old men about Dorestad.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        One of them was there, in 834, with a Danish crew. A town a mile long on the river bank, he says, with a wooden street along the water and ships tied up three deep, and a church, and a mint where they struck the emperor's pennies. They burned the lot, and came back the next year and burned what had been built again. "It's not what it was," he says. "Nothing is that's been burned four times."
+    - id: sands
+      text: Watch the sands with the steersman, and learn how they lie.
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: The water over a sandbank is a different colour, the steersman shows you, and it breaks differently in a swell, and the gulls stand on it at low water. By the end of the day you can see the banks before he points to them.
+        effects: [ { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: You watch the water all day and it all looks like water. In the afternoon a Rogaland ship ahead of you runs onto a bank that nobody saw, and sits there with her crew in the sea to their waists, pushing, while the fleet goes past and laughs.
+    - id: fish
+      text: Trade for fish with a Frisian boat that comes out to look at the fleet.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: Two Frisians in a little boat, a man and his son, with a catch of flatfish they are willing to sell to anybody, even sixty-seven ships of Northmen. You give them a ring of bronze for the lot. The bench eats fresh fish that night, and the son waves at the fleet all the way back to his mound.
+
+- id: v43_walcheren
+  kind: place
+  trigger: arrive
+  at: [walcheren]
+  once: true
+  weight: 30
+  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
+  art: muster
+  title: The baptized king
+  text: |
+    Walcheren belongs to a Dane. His name is Harald, and he was a king in Denmark once, before Horik's family drove him out, and he went to the emperor Louis and was baptized at Ingelheim with the emperor standing godfather, in a white robe, and was given land in Frisia to hold. The emperor's son Lothar has given him this island now, to keep other Danes off it. He keeps it by letting them stop here, for a price.
+
+    Harald's men come down to the beach to meet the fleet: Danes in Frankish cloaks, with crosses on cords round their necks and Thor's hammers next to the crosses. Their lord stays in his hall. He is old, they say, and tired of Northmen.
+  choices:
+    - id: hall
+      text: Go up to the hall with the leaders' men, and see the baptized king.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: |
+          You get in at the back, and see him: an old man in a red Frankish cloak with a gold cross on his chest, sitting in a Frankish chair, listening to the leaders with his eyes half shut. When they ask about the Loire he opens them. "The Franks are at war with each other," he says. "Three brothers and one empire. While they fight, the rivers are open. Go now. It will not last." He is wrong about the last part, but not about the rest.
+        effects: [ { add: { skill.lore: 1 } }, { know: rouen } ]
+      failure:
+        text: Harald's door-wards look at you once and you are on the beach again. You hear later that the old man said the Franks were at war with each other and the rivers were open. You'd guessed.
+    - id: crosses
+      text: Ask one of Harald's men why he wears both the cross and the hammer.
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: '"The cross is for the Franks," he says, "and the hammer is for the sea. Out here the Franks don''t see you." He tucks the cross into his shirt as he says it, as if to show you how it''s done.'
+    - id: rest
+      text: Sleep on dry land while you can.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: You sleep in the dunes with the sound of the sea on one side and the bells of Harald's church on the other, and wake up with sand in everything.
+
+# ---- the Narrow Sea and the Breton capes ----
+- id: v43_beacons
+  kind: pool
+  trigger: sea
+  chance: 1
+  once: true
+  weight: 40
+  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes", "bound == noirmoutier"]
+  art: open_sea
+  title: The coast of the Franks
+  text: |
+    For three days the fleet goes down the coast of the Franks, close enough to see it: white cliffs, and then a long low shore of dunes and forest, and the wide grey mouth of the Seine, where Ásgeir's fleet went in two summers ago and came out laden. On the other side of the water, on clear mornings, there are the white cliffs of the English.
+
+    At night the Franks light fires on the headlands as the fleet goes by: one on the point ahead, and then the next one along, and the next, a line of little lights going away south faster than any ship. They are telling the coast you are coming.
+    [break]
+    On the fourth day the coast turns west into the rocks of the Bretons, and the old men stop talking, and the steersmen stand up. Here the tide runs between the islands and the capes like a river in flood.
+  choices:
+    - id: race
+      text: Take a turn at the oar through the tide-race, with the strongest men.
+      visible_if: service
+      check: { skill: seamanship, attr: str, difficulty: 5 }
+      success:
+        text: The Hart goes through the race with the tide under her and the water standing up in ridges on either side, and you pull till you can't see, and then you're through, into flat water in the lee of a cape, and Ölvir is laughing in the stern. A Rogaland ship behind you loses three oars and a man.
+        effects: [ { add: { skill.seamanship: 1, crew.morale: 1 } } ]
+      failure:
+        text: The race takes your oar out of your hands and nearly takes you over the side with it. The man behind grabs your belt. You come through bruised and empty-handed, and Ölvir gives you another oar, and says nothing at all.
+    - id: fires
+      text: Count the beacons, and work out how fast the news is going.
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: A fire every few miles, each one lit as soon as the last one shows. The news is going south faster than a horse. Every church and every count on this coast will know the fleet is coming before it comes. Lambert's road had better be a good one.
+    - id: wait
+      text: Have the steersman wait for slack water before you go through the race.
+      visible_if: "!service"
+      check: { skill: seamanship, attr: wit, difficulty: 4 }
+      success:
+        text: You lie in the lee of an island while half the fleet goes through on the flood and loses oars and men, and then go through at slack water like a ship crossing a millpond. The leaders saw. They'll remember who was patient.
+        effects: [ { add: { crew.morale: 1 } }, { deed: { type: deed, text: "Brought his ship through the Breton race without a scratch", weight: 2, witnesses: 300 } } ]
+      failure:
+        text: You wait for slack water, and get the time wrong, and go through on the turn of the tide with the race building against you. You come out the other side with a sprung plank and two men hurt, and the fleet a mile ahead.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: push
+      text: Follow the leaders straight through on the flood.
+      visible_if: "!service"
+      effects: [ { add: { crew.morale: -1, skill.seamanship: 1 } } ]
+      result: You go through with the rest of the fleet, in the noise and the spray, and lose two oars and nearly a man. On the other side the sea goes flat as a pond, and the coast turns south again, toward the Loire.

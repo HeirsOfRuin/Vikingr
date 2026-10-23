@@ -1,0 +1,154 @@
+# The years after the Loire, 845-848 (playtest 8): scenes every 843 life meets, wherever it winters, not only the
+# lives that stay on the Loire. History: the flux in Ragnarr's fleet after Paris (845, the Translatio of St Germain);
+# the hard winter of 845-846 (Annals of St-Bertin); the three Frankish kings at Meersen sending to Horik to stop the
+# raids (847); the Irish victories of 848 at Forach and Sciath Nechtáin, where Jarl Tomrair fell (Annals of Ulster).
+
+- id: y45_flux
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 15
+  requires: [flag.era843, { any: ["winter == 845", "winter == 846"] }]
+  art: hearth_ormr
+  title: A man from the Paris fleet
+  text: |
+    He comes in out of the dark with the snow on his shoulders, a big man gone thin, with a Frankish sword-belt and a heavy bag he won't put down, and he asks for a place by the fire. He was with Ragnarr at Paris, he says. He has his share of the emperor's silver in the bag, seven thousand pounds among the whole fleet, and what's left of him to carry it.
+
+    Then he sits down, and you see how grey he is, and smell it. It's the flux, the bloody flux, that went through Ragnarr's fleet on the way home from the Seine. They say Ragnarr himself died of it, shouting that the Christians' saint was killing him. Half the men round the fire move to the other end of the hall.
+  choices:
+    - id: nurse
+      text: Give him a bed by the fire, and see to him yourself.
+      check: { skill: craft, attr: end, difficulty: 5 }
+      success:
+        text: |
+          You keep him clean and give him water and broth and keep the others away from his bucket, and on the ninth day he sits up and asks for meat. When he can walk he opens the bag and counts you out a pound of the emperor's silver. "Ragnarr never gave me a thing I didn't take," he says. "You can have this for nothing."
+        effects: [ { add: { silver: 48, honour: 1 } } ]
+      failure:
+        text: |
+          He dies on the fifth night, and you have it by the seventh: the cramps, and the blood, and the shame of it. You live, which a good many of Ragnarr's men did not. When you can stand, there is the bag by his bed, and nobody else in the hall will touch it.
+        effects: [ { injury: flux }, { add: { silver: 48 } } ]
+    - id: outhouse
+      text: Give him food and a bed in the byre, away from everyone.
+      result: He goes to the byre without complaint; he's been sent to worse. In the morning he's gone, and the bag with him, and a trail in the snow toward the next farm. You hear in the spring that he died at a farm two valleys away, and that they burned the byre.
+    - id: away
+      text: Send him on. You'll not have the flux in your hall.
+      effects: [ { add: { honour: -1 } } ]
+      result: He looks at you a long moment and then goes back out into the dark with his bag. The men who moved to the other end of the hall come back to the fire. None of them looks at you.
+
+- id: y46_winter
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 15
+  requires: [flag.era843, "winter == 846"]
+  art: yule_hall
+  title: The hard winter
+  text: |
+    The winter comes early and stays. The fjords freeze to their mouths, which the old men say has not happened since they were boys, and the snow lies to the eaves, and the cattle eat the thatch. In the Frankish country, the traders say, wolves come into the villages and men eat bread made of earth, and the price of grain has gone up tenfold, and the kings are too busy with each other to care.
+
+    By midwinter there are men at the door every day: families from the outlying farms, with children, and nothing left in their store-houses. A Frisian grain ship is iced in at the river mouth, and her master will sell to anyone, at his price.
+  choices:
+    - id: feed
+      text: Buy the Frisian's grain, and feed whoever comes to the door.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, honour: 1 } }, { favour: 1 }, { deed: { type: open_handed, text: "Fed the hungry in the hard winter of 846", weight: 3, witnesses: 150 } } ]
+      result: The Frisian sells it to you a sack at a time, at four times what it's worth, and you pay, and the grain goes out of your door in bowls to anybody who comes. In the spring the families go back to their farms. They remember whose door it was. So does the jarl.
+    - id: hoard
+      text: Buy the Frisian's grain, and hold it till spring, when it will fetch more.
+      visible_if: "!service"
+      requires: ["silver >= 36"]
+      effects: [ { add: { silver: -36, honour: -1 } }, { goods: { id: grain, lots: 6 } } ]
+      result: You buy half the ship's hold, and stack the sacks in your store-house under guard, and turn the people at the door away. In the spring grain is still dear from Frisia to the Loire. Nobody who came to your door that winter will forget it, either.
+    - id: share
+      text: Share your own bread with the family at the door, and leave the rest to the rich.
+      effects: [ { add: { honour: 1, hamingja: 1 } } ]
+      result: You give them what you have, which is not much, and go hungry yourself for a week. Their youngest boy follows you round all winter like a dog. In the spring, when they go home, his mother presses a little bronze hammer into your hand and won't take it back.
+
+- id: y47_meersen
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 15
+  requires: [flag.era843, "year == 847"]
+  art: muster
+  when: Spring, 847
+  title: The kings' warning
+  text: |
+    The news comes north with the first ships of the spring. The three Frankish kings, the emperor Lothar and his brothers Louis and Charles, met at a place called Meersen on the Maas, and for once agreed on something: they have sent to King Horik of the Danes, to say that if his people go on raiding their coasts, they will make war on him together.
+
+    Horik has made a show of it. His reeves have gone round the Danish markets saying that Northmen bound for Frankia will not find a welcome there this summer. Nobody knows how long the show will last.
+    [if service]{captain} hears it out, and spits, and says that three brothers who can't agree on a dinner won't agree on a war.[else]Your men want to know what it means for the summer.[/if]
+  choices:
+    - id: laugh
+      text: Laugh at it. Three brothers who've been at each other's throats for ten years.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The men laugh with you. By midsummer, it turns out, you were right; the Danes are raiding Frisia again by harvest, and the kings are quarrelling about something else.
+    - id: west
+      text: Think of the west, where no king of the Franks can reach. Ireland, and the Scots' islands.
+      effects: [ { know: dublin }, { add: { skill.lore: 1 } } ]
+      result: The Irish have their own kings, and they hate each other worse than the Franks do, and there are Norse ship-forts at Duibhlinn and Linn Duachaill that take any crew that comes. You find the men who have been there, and ask them the way.
+    - id: think
+      text: Think about it. Kings agreeing is worth watching.
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: It's the first time since the old emperor died that the three of them have agreed on anything. They agreed on you. It won't last, but it's worth knowing that it can happen.
+
+- id: y47_boy
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 15
+  requires: [flag.era843, "winter == 847"]
+  art: hearth_ormr
+  title: A boy who wants a bench
+  text: |
+    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the snow to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About Nantes, and the south, and what you did.
+
+    You were sixteen yourself, on the beach at Skiringssal, five summers ago. It doesn't feel like five.
+  choices:
+    - id: take
+      text: Take him on. Someone took you.
+      visible_if: "!service"
+      effects: [ { add: { crew.men: 1, crew.morale: 1 } }, { deed: { type: deed, text: "Gave a fatherless boy his first bench", weight: 1, witnesses: 40 } } ]
+      result: |
+        You give him a bench, and a shield to go with his spear, and he looks at you the way you once looked at Ölvir. Your men tease him all winter. In the spring he's still there, and they've stopped.
+    - id: captain
+      text: Take him to {captain}, and speak for him.
+      visible_if: service
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: "{captain} looks the boy over, and then looks at you, and says, \"If you'll answer for him.\" You will. The boy has his bench by morning, next to yours, and asks you questions until the ice goes out."
+        effects: [ { add: { honour: 1, skill.speech: 1 } } ]
+      failure:
+        text: "{captain} looks the boy over and says he has no bench for a child with a home-made spear. The boy goes back out into the snow. You give him your second-best knife at the door, and he goes."
+    - id: home
+      text: Send him home to his brother. The sea is no place to be sixteen.
+      result: He goes, but not home. You hear in the spring that he took a bench with a Hordaland crew going west, and in the autumn that the crew did not come back. You think about that more than you meant to.
+
+- id: y48_ireland
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 15
+  requires: [flag.era843, "winter == 848"]
+  art: hearth_ormr
+  title: The men from Ireland
+  text: |
+    A crew comes in at the end of the sailing, on a ship with half her oars gone and patches on her sail: Norse from Ireland, a dozen of them, hard men with Irish cloaks and Irish words in their mouths. It was a bad year there, they say. Máel Sechnaill of Mide beat the Northmen at Forach, and seven hundred of them died in one field. In the south, the kings of Cashel and Leinster killed Jarl Tomrair at Sciath Nechtáin, him and two hundred of his hird. The Irish have learned to fight in a wall.
+
+    The man who speaks for them is called Hámundr. Their jarl is dead, and their ship is falling apart, and they need a lord who has silver and benches. They have looked round the hall, and they have looked at you.
+  choices:
+    - id: take
+      text: Take them on. Pay for their keep and their gear.
+      visible_if: "!service"
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72, crew.men: 10, skill.lore: 1 } } ]
+      result: |
+        You pay for their winter's keep and new shields, and Hámundr gives you his hand, and the others give you their names. They know the Irish, and the Irish wall, and they fight like men who've lost everything once already. Your own men are wary of them until the first fight. After that, nobody is.
+    - id: listen
+      text: Sit with Hámundr, and get out of him how the Irish beat them.
+      effects: [ { add: { skill.lore: 1, skill.weapons: 1 } } ]
+      result: |
+        The Irish used to fight the way the Irish do, he says, in rushes, every man for his name. Now they stand in a wall like Northmen, and their kings have stopped killing each other long enough to kill us. They have horses, too, to ride down the men who break. "Ireland's not the place it was," he says. "Not for the likes of us." He drinks. "Not for anybody."
+    - id: away
+      text: Feed them for the night, and send them on.
+      result: They go on in the morning, toward the next hall, where somebody else will look at them and decide. Hámundr nods to you at the door, as if he expected nothing else. You'd rather he had cursed you.

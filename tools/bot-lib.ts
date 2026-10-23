@@ -228,6 +228,8 @@ export class Bot {
     const doy = dateOf(state.day).doy;
     // at another man's oar the captain decides: follow him, and haul up when he does
     if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? fallback(opts);
+    // the bold take the skald to sea; the careful leave him at the jarl's benches (playtest 8)
+    { const want = this.policy === 'raider' || this.policy === 'reckless'; const sa = pick((a) => a.t === 'skald_aboard' && a.on === want); if (sa) return sa; }
     const raid = pick((a) => a.t === 'raid');
     const year = dateOf(state.day).year;
     if (raid && this.policy !== 'homebody' && !this.passed.has(`${year}:${at}`)) {
