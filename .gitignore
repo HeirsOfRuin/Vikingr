@@ -1,6 +1,7 @@
 node_modules
 dist
 src/content/bundle.json
+src/content/routes.json
 *.log
 smoke-out
 .map-cache

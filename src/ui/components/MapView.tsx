@@ -5,6 +5,8 @@ import type { ContentBundle } from '../../content/schema';
 import type { GameState } from '../../engine/state';
 import { lonLatToTile, type MapData } from '../../engine/mapgrid';
 import { routes } from '../../engine/voyage';
+import { alongPath, legKey } from '../../engine/seaway';
+import seaRoutes from '../../content/routes.json';
 import { formatDate } from '../../engine/calendar';
 import { tierAt, TIER_NAMES, TIER_HINTS, type Tier } from '../../engine/standing';
 
@@ -27,10 +29,21 @@ function fleetAt(state: GameState, content: ContentBundle): [number, number] {
   if (state.at) return p(state.at);
   const v = state.voyage;
   if (!v) return p('home_fjord');
-  const a = p(v.from);
-  const b = p(v.to);
   const f = Math.min(1, v.progress / v.total);
-  return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  const path = legPath(content, v.from, v.to);
+  return path ? alongPath(path, f) : (() => { const a = p(v.from), b = p(v.to); return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f] as [number, number]; })();
+}
+
+/** The sea route of a leg, from `from` to `to` (src/engine/seaway.ts), or null if none was found. */
+function legPath(content: ContentBundle, from: string, to: string): number[] | null {
+  const r = (seaRoutes as { routes: Record<string, number[]> }).routes;
+  const fwd = r[legKey(from, to)];
+  if (fwd) return fwd;
+  const back = r[legKey(to, from)];
+  if (!back) return null;
+  const out: number[] = [];
+  for (let i = back.length - 2; i >= 0; i -= 2) out.push(back[i]!, back[i + 1]!);
+  return out;
 }
 
 export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: (a: Action) => void }) {
@@ -96,8 +109,11 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
           <svg width={map.cols * PX} height={map.rows * PX}>
             {legs.map((l) => {
               const a = content.places[l.a]!, b = content.places[l.b]!;
-              const [x1, y1] = lonLatToTile(a.lon, a.lat), [x2, y2] = lonLatToTile(b.lon, b.lat);
-              return <line key={l.a + l.b} x1={x1 * PX} y1={y1 * PX} x2={x2 * PX} y2={y2 * PX} stroke="#b5ac97" stroke-opacity="0.5" stroke-width={1.2 / scale} stroke-dasharray={`${4 / scale} ${4 / scale}`} />;
+              const path = legPath(content, l.a, l.b);
+              const pts = path ?? [...lonLatToTile(a.lon, a.lat), ...lonLatToTile(b.lon, b.lat)];
+              let d = '';
+              for (let i = 0; i < pts.length; i += 2) d += `${i ? 'L' : 'M'}${(pts[i]! * PX).toFixed(1)} ${(pts[i + 1]! * PX).toFixed(1)}`;
+              return <path key={l.a + l.b} d={d} fill="none" stroke="#b5ac97" stroke-opacity="0.5" stroke-width={1.2 / scale} stroke-linejoin="round" stroke-dasharray={`${4 / scale} ${4 / scale}`} />;
             })}
             {places.map((p) => {
               const [x, y] = lonLatToTile(p.lon, p.lat);
