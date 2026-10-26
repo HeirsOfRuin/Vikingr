@@ -352,6 +352,18 @@ export const lordDef = z.object({
 export type LordDef = z.infer<typeof lordDef>;
 
 /** A coast to go a-viking along on standing orders (docs/FRAME-PACING.md). */
+/** The shore between the ports (content/registry/strands.yaml): kinds of unnamed settlement, and each people's. */
+export const strandKind = z.object({
+  id, label: z.string(), desc: z.array(z.string()).min(1), men: z.tuple([z.number().int().min(1), z.number().int().min(1)]),
+  wealth: z.tuple([z.number().int().min(0), z.number().int().min(0)]), food: z.number().int().min(0),
+  defenders: z.enum(['local', 'church', 'lord']), goods: z.enum(['catch', 'farm', 'market']), terrain: z.enum(TERRAINS),
+  weight: z.number().positive(), christian: z.boolean().optional(), arms: z.boolean().optional(),
+}).strict();
+export type StrandKind = z.infer<typeof strandKind>;
+export const strandPeople = z.object({ local: id, church: id, lord: id, catch: id, farm: id, market: id }).strict();
+export type StrandPeople = z.infer<typeof strandPeople>;
+export const strandsDef = z.object({ kinds: z.array(strandKind).min(1), peoples: z.record(z.string(), strandPeople) }).strict();
+
 export const coastDef = z.object({ id, name: z.string(), regions: z.array(z.string()).min(1), desc: z.string() }).strict();
 export type CoastDef = z.infer<typeof coastDef>;
 
@@ -475,6 +487,7 @@ export interface ContentBundle {
   chronicle: { events: Record<string, ChronEvent>; raiders: Record<string, ChronRaider> };
   lords: Record<string, LordDef>;
   coasts: Record<string, CoastDef>;
+  strands: { kinds: Record<string, StrandKind>; peoples: Record<string, StrandPeople> };
   upbringing: Record<string, UpbringingDef>;
   fleets: Record<string, FleetDef>;
 }

@@ -75,6 +75,7 @@ export class Bot {
   noPlan = -1;
   planned = '';
   bought = new Map<number, number>();
+  harried = new Set<string>();
   constructor(public policy: Policy, public rng: RngCursor) {}
 
   position(): Position {
@@ -149,6 +150,14 @@ export class Bot {
           }
         }
         return { t: 'continue' };
+      }
+      case 'strand': {
+        // the shore between the ports (playtest 10): land if the odds are good enough for this captain
+        const t = (state.pending as { target: { men: number } }).target;
+        const ours = state.crew.men + aliveMen(state).length;
+        const nerve = this.policy === 'reckless' ? 1.6 : this.policy === 'raider' ? 1.0 : 0.6;
+        if (t.men <= ours * nerve) return { t: 'strand', what: 'land' };
+        return pick((a) => a.t === 'strand' && a.what === 'back') ?? enabled[0]!.action;
       }
       case 'shop': {
         // a second hull when rich: a knarr if the holds are the trouble, else a karvi (docs/FRAME-FLEET.md)
@@ -245,6 +254,12 @@ export class Bot {
         if ((expected !== null && expected > ours * nerve) || (expected === null && this.policy === 'coward')) this.passed.add(`${year}:${at}`);
         else return raid;
       } else return raid;
+    }
+    // the shore between the ports, once in a while, for the bold (playtest 10)
+    if ((this.policy === 'raider' || this.policy === 'reckless') && !this.harried.has(`${state.day}:${at}`) && this.rng.float() < 0.3) {
+      this.harried.add(`${state.day}:${at}`);
+      const h = pick((a) => a.t === 'harry');
+      if (h) return h;
     }
     this.visited.add(at);
     // standing orders (docs/FRAME-PACING.md): carry on, or plan the summer

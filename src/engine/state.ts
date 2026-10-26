@@ -137,6 +137,8 @@ export interface PlunderState {
   /** The dead and the hall searched for war-gear (once a raid); the stores taken (once a raid). Playtest 9. */
   armed?: boolean;
   stores?: boolean;
+  /** An unnamed place on the shore (src/engine/strand.ts): its own wealth, not the port's. */
+  strand?: import('./strand').StrandTarget;
 }
 
 export interface Deed {
@@ -244,6 +246,8 @@ export interface BattleState {
   deeds: { type: string; text: string; who: string | null }[];
   over: null | 'won' | 'lost' | 'parted';
   context: 'raid' | 'sea' | 'scene';
+  /** An unnamed place on the shore, raided (src/engine/strand.ts). */
+  strand?: import('./strand').StrandTarget;
   place: string | null;
   win?: string;
   lose?: string;
@@ -266,6 +270,7 @@ export type Pending =
   | { t: 'shop'; shops: ('smith' | 'market' | 'shipwright')[] }
   | { t: 'trade' }
   | { t: 'cruise' }
+  | { t: 'strand'; target: import('./strand').StrandTarget }
   /** The heir's spread and upbringing (docs/FRAME-LINEAGE.md B). */
   | { t: 'heir' }
   | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string; then?: 'heir' };
@@ -414,6 +419,8 @@ export interface GameState {
   fleet?: import('./sailfleet').FleetState;
   /** His skald, by name, and whether he sails this summer (playtest 8). */
   skald?: import('./skald').SkaldState;
+  /** Raids on each coast's shore this year (src/engine/strand.ts). */
+  harried?: Record<string, { year: number; n: number }>;
   /** Lines an effect adds to the scene's result (what went into the hold). */
   notes?: string[];
 }

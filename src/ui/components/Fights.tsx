@@ -225,7 +225,7 @@ function FightBody({ content, b, options, onAct }: { content: ContentBundle; b: 
 }
 
 export function PlunderView({ content, p, options, onAct }: { content: ContentBundle; p: PlunderState; options: ActionOption[]; onAct: (a: Action) => void }) {
-  const name = content.places[p.place]?.name ?? p.place;
+  const name = p.strand ? `${p.strand.label} near ${content.places[p.place]?.name ?? p.place}` : content.places[p.place]?.name ?? p.place;
   return (
     <div>
       <h2>Plunder: {name}</h2>

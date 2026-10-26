@@ -1,5 +1,6 @@
 // Engine facade. Three calls: newGame, view, act. Pure: act clones the state,
 // works on the copy, and returns it. The UI, the bot and the tests all use this.
+import { alarmWord, findStrand, harried, harryBlock, harryCoast, landStrand, STRAND, type StrandTarget } from './strand';
 import { skaldOf } from './skald';
 import { cutRing, makeRing, METALS, RING, ringsOf, ringWords, type Metal } from './rings';
 import type { Attr, ContentBundle, DuelMove, Order, Skill } from '../content/schema';
@@ -90,6 +91,8 @@ export type Action =
   | { t: 'hoard_in'; n?: number }
   | { t: 'hoard_out'; n?: number }
   | { t: 'hang'; item: string }
+  | { t: 'harry' }
+  | { t: 'strand'; what: 'land' | 'on' | 'back' }
   | { t: 'skald_aboard'; on: boolean }
   | { t: 'make_ring' }
   | { t: 'cut_ring'; metal: Metal }
@@ -147,7 +150,7 @@ export interface ActionOption {
   group: string;
 }
 
-export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'cruise' | 'heir' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
+export type Screen = 'scene' | 'report' | 'duel' | 'battle' | 'plunder' | 'shop' | 'trade' | 'cruise' | 'strand' | 'heir' | 'voyage' | 'place' | 'muster' | 'return' | 'hall' | 'death';
 
 export interface View {
   screen: Screen;
@@ -568,6 +571,15 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       out.push(opt('', { t: 'continue' }, 'Done'));
       return out;
     }
+    case 'strand': {
+      const t = (p as { target: StrandTarget }).target;
+      const ours = state.crew.men + aliveMen(state).length + 1;
+      return [
+        opt('The shore', { t: 'strand', what: 'land' }, `Land and take ${t.label}`, true, undefined, `About ${t.men} who might stand, against your ${ours}`),
+        opt('The shore', { t: 'strand', what: 'on' }, 'Sail on and look further along the coast', harryBlock(state, content) === null, 'Not enough food, or the season is over.', 'Another day'),
+        opt('The shore', { t: 'strand', what: 'back' }, `Back to ${content.places[t.anchor]?.name ?? 'port'}`),
+      ];
+    }
     case 'plunder': {
       const pl = (p as { plunder: import('./state').PlunderState }).plunder;
       const left = ALARM_MAX - pl.alarm;
@@ -578,7 +590,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
         opt('Plunder', { t: 'plunder', what: 'arms' }, 'Search the dead and the hall for war-gear', !pl.armed, 'You have searched already.', 'A sword, mail or a helmet, for yourself; once a raid'),
         opt('Plunder', { t: 'plunder', what: 'stores' }, 'Break open the stores', !pl.stores, 'You have emptied them already.', state.service ? 'Goods for your sea-chest; once a raid' : 'Goods for the hold: wine, salt, cloth, hides; once a raid'),
-        ...(!state.service && kindsAt(content, pl.place).length ? [opt('Plunder', { t: 'plunder', what: 'hostage' }, 'Look for someone worth a ransom', !pl.searched, 'You have looked already.', 'A king\'s kin, an abbot, a lord\'s wife and children; slow and loud')] : []),
+        ...(!state.service && !pl.strand && kindsAt(content, pl.place).length ? [opt('Plunder', { t: 'plunder', what: 'hostage' }, 'Look for someone worth a ransom', !pl.searched, 'You have looked already.', 'A king\'s kin, an abbot, a lord\'s wife and children; slow and loud')] : []),
         state.service
           ? opt('Plunder', { t: 'plunder', what: 'leave' }, `Head for the ships before ${state.service.captain} blows the horn`, true, undefined, `Carrying ${formatSilver(pl.taken)}`)
           : opt('Plunder', { t: 'plunder', what: 'leave' }, 'Back to the ships, now', true, undefined, `Carrying ${formatSilver(pl.taken)}`),
@@ -657,6 +669,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const hire = hireable(state, content, at);
           if (canHire(state, content, at) > 0) out.push(opt('Here', { t: 'hire' }, hire > 0 ? `Hire ${plural(hire, 'man', 'men')} here` : 'Hire men here', hire > 0, 'No benches free, or no silver for the gift.', `${formatSilver(hire * SIGN_ON_GIFT)}`));
           out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them; and they will remember' : 'Food for the crew; the locals will remember'));
+          // the shore between the ports (playtest 10)
+          const hc = harryCoast(state, content, at);
+          if (hc) { const hb = harryBlock(state, content); out.push(opt('Raid', { t: 'harry' }, 'Harry the shore along the coast', !hb, hb ?? undefined, `A day along the shore for farms, hamlets, churches; the coast is ${alarmWord(harried(state, hc))}`)); }
         }
       }
       // share out on the strand, when the holds are full and the summer isn't (playtest 4)
@@ -990,6 +1005,25 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
     case 'hang':
       hangTrophy(state, content, action.item);
       break;
+    case 'harry': {
+      const why = harryBlock(state, content);
+      if (why) throw new Error(why);
+      state.day += STRAND.days;
+      state.pending = { t: 'strand', target: findStrand(state, content, rng, state.at!) };
+      break;
+    }
+    case 'strand': {
+      const t = (state.pending as { target: StrandTarget }).target;
+      if (action.what === 'back') { state.pending = null; break; }
+      if (action.what === 'on') {
+        state.day += STRAND.days;
+        state.pending = { t: 'strand', target: findStrand(state, content, rng, t.anchor) };
+        break;
+      }
+      state.pending = null;
+      landStrand(state, content, rng, t);
+      break;
+    }
     case 'skald_aboard': {
       const sk = skaldOf(state)!;
       sk.aboard = action.on;

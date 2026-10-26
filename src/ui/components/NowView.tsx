@@ -1,4 +1,5 @@
 import { focusChild, heirSets } from '../../engine/family';
+import { harried } from '../../engine/strand';
 import { HEIR_ATTRS } from '../../engine/makeup';
 import { Makeup } from './Makeup';
 import { goodsRoom } from '../../engine/trade';
@@ -119,6 +120,23 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
         <div class="screen">
           <h2>Orders for the coast</h2>
           <p>You tell the men where, how long, what to take and how far to push it. They sail, scout and raid, and they come and find you whenever something needs you: a fight you said you would lead, a bad wound, heavy losses, a stranger on the beach.</p>
+          <Actions options={options} onAct={onAct} />
+        </div>
+      </>
+    );
+  }
+  if (p?.t === 'strand') {
+    const t = p.target;
+    const anchor = content.places[t.anchor]?.name ?? t.anchor;
+    const n = harried(state, t.coast);
+    return (
+      <>
+        <Art content={content} state={state} art={{ key: 'open_sea' }} />
+        <div class="screen">
+          <h2>Along the shore</h2>
+          <p>A day's rowing along the coast from {anchor}, and the lookout in the bow points: {t.label}. {t.desc}</p>
+          <p class="small">The men reckon about {t.men} who might stand and fight. {n === 0 ? 'Nobody on this coast is expecting you.' : n <= 2 ? 'Word of you is going along this coast; they are watching the sea.' : 'This coast is roused: beacons on the headlands, the cattle driven inland, every man with a spear.'}</p>
+          <p class="muted small sans">Food for {Math.floor(state.provisions / Math.max(1, mouths(state)))} days. Raids on this coast this year: {n}.</p>
           <Actions options={options} onAct={onAct} />
         </div>
       </>

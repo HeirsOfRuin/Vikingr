@@ -2,6 +2,7 @@
 // the same engine sails, scouts, fights and plunders as if he tapped every button himself; and it stops for him
 // whenever something needs him: a scene, a fight he said he would lead, a bad wound, heavy losses, full holds,
 // empty stores. Before he sets out, his men's reckoning comes from the same engine: the summer run twenty times.
+import { findStrand, harried, harryBlock, harryCoast, landStrand, STRAND } from './strand';
 import type { ContentBundle } from '../content/schema';
 import type { GameState, Position } from './state';
 import { RngCursor, seedRng } from './rng';
@@ -34,6 +35,8 @@ export interface CruiseState {
   log: string[];
   /** Places raided, or looked at and left alone, this cruise. */
   done: string[];
+  /** Days spent harrying the shore from each port this cruise (playtest 10). */
+  shore?: Record<string, number>;
 }
 
 export const CRUISE = {
@@ -53,11 +56,22 @@ export const CRUISE = {
   /** The reckoning: the summer run this many times. */
   forecastRuns: 20,
   guard: 80,
+  /** The shore between the ports: days harried from each port, while there are named places left, and after. */
+  shorePerPort: 1,
+  shoreWhenDone: 3,
+  /** A coast this roused (raids this year) is left alone: careful stops sooner. */
+  shoreAlarm: { careful: 4, bold: 7 } as Record<Boldness, number>,
 } as const;
 
 export const AIM_LABEL: Record<Aim, string> = { silver: 'Silver', balance: 'Silver and captives', captives: 'Captives' };
 export const BOLD_LABEL: Record<Boldness, string> = { careful: 'Careful', bold: 'Bold' };
 export const LEAD_LABEL: Record<Lead, string> = { all: 'Every fight', close: 'The close ones', none: 'None: the men handle them' };
+
+/** The coast a place lies on (by its region), or null. */
+export function coastOf(content: ContentBundle, at: string): string | null {
+  const region = content.places[at]?.region;
+  return Object.values(content.coasts).find((c) => region && c.regions.includes(region))?.id ?? null;
+}
 
 /** Raidable places he knows on a coast, not taken this summer, not held by the Norse, not done this cruise. */
 export function coastTargets(state: GameState, content: ContentBundle, coast: string, done: string[] = []): string[] {
@@ -136,6 +150,8 @@ function autoPlunder(state: GameState, content: ContentBundle, rng: RngCursor, o
   while (state.pending?.t === 'plunder' && round++ < 12) {
     const p = state.pending.plunder;
     const what: PlunderWhat = p.alarm >= CRUISE.alarmStop[o.bold] ? 'leave'
+      // the stores first: goods for the hold, unless it's only captives he wants (playtest 10)
+      : round === 1 && o.aim !== 'captives' && !p.stores ? 'stores'
       : o.aim === 'silver' ? 'grab' : o.aim === 'captives' ? 'captives' : round % 2 ? 'grab' : 'captives';
     plunderAction(state, content, rng, what);
   }
@@ -181,6 +197,25 @@ export function runCruise(state: GameState, content: ContentBundle, rng: RngCurs
     const targets = coastTargets(state, content, o.coast, c.done)
       .map((id) => ({ id, d: id === at ? 0 : coursePath(state, content, at, id)?.days ?? 999 }))
       .filter((t) => t.d < 999).sort((a, b) => a.d - b.d);
+    // the shore between the ports (playtest 10): a day along it from each port, more once the named places are done
+    c.shore ??= {};
+    const cap = targets.length ? CRUISE.shorePerPort : CRUISE.shoreWhenDone;
+    if (targets[0]?.id !== at && harryCoast(state, content, at) === o.coast && (c.shore[at] ?? 0) < cap && !harryBlock(state, content) && harried(state, o.coast) < CRUISE.shoreAlarm[o.bold]) {
+      c.shore[at] = (c.shore[at] ?? 0) + 1;
+      state.day += STRAND.days;
+      const t = findStrand(state, content, rng, at);
+      const ours = state.crew.men + aliveMen(state).length;
+      if (t.men > ours * CRUISE.nerve[o.bold]) { c.log.push(`${dayWord(state)}: ${t.label} along the shore from ${content.places[at]!.name}. About ${t.men} of them; you leave it alone.`); continue; }
+      const before = { loot: state.loot, captives: state.captives, men: state.crew.men, food: state.provisions };
+      landStrand(state, content, rng, t);
+      const lead = !sim && (o.lead === 'all' || (o.lead === 'close' && t.men > ours * CRUISE.close));
+      if (lead) { c.log.push(`${dayWord(state)}: ${t.label} along the shore. You lead it yourself.`); break; }
+      autoFight(state, content, rng, o);
+      const won = state.loot > before.loot || state.captives > before.captives;
+      c.log.push(`${dayWord(state)}: ${t.label} along the shore from ${content.places[at]!.name}. ${won ? 'Taken' : 'Beaten off'}: ${formatSilver(Math.max(0, state.loot - before.loot))}${state.captives > before.captives ? `, ${plural(state.captives - before.captives, 'captive')}` : ''}${state.provisions > before.food ? ', and the cattle' : ''}; ${plural(Math.max(0, before.men - state.crew.men), 'man', 'men')} lost.`);
+      if (sim && pendingT(state) === 'scene') state.pending = null;
+      continue;
+    }
     const next = targets[0]?.id;
     if (!next) { lines.push(...endCruise(state, content, rng, 'There is nothing left on this coast that you know of.', sim)); break; }
     if (next !== at) {

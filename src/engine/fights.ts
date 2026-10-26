@@ -1,5 +1,6 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
+import { strandRaided } from './strand';
 import { skaldRout, skaldSees } from './skald';
 import { stow } from './fleet';
 import { coastMult } from './hardship';
@@ -331,6 +332,24 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     } else addDeed(state, content, { type: d.type, text: `${d.text}${atWhere}`, witnesses });
   }
 
+  // the shore between the ports (src/engine/strand.ts): its own plunder, its own wealth
+  if (b.context === 'raid' && b.strand) {
+    const t = b.strand;
+    const name = t.label.charAt(0).toUpperCase() + t.label.slice(1);
+    if (won) {
+      lines.unshift(`${name} is yours for the afternoon.`);
+      clampMorale(state);
+      startPlunder(state, t.anchor, lines, b.win, content);
+      if (state.pending?.t === 'plunder') state.pending.plunder.strand = { ...t };
+      return;
+    }
+    strandRaided(state, content, t);
+    lines.unshift(`${name} held. You get back to the boats with your wounded and nothing else.`);
+    journal(state, `Beaten off at ${t.label} near ${content.places[t.anchor]?.name ?? t.anchor}.`);
+    clampMorale(state);
+    state.pending = { t: 'report', title: 'Beaten off', lines };
+    return;
+  }
   // plunder: a raid you command goes on to the plunder rounds; in another man's ship, he divides it
   if (b.context === 'raid' && b.place && won && !state.service) {
     const pl = content.places[b.place]!;

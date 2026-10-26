@@ -82,6 +82,10 @@ export function loadContent(root = ROOT): S.ContentBundle {
     fleets: byId(check(z.array(S.fleetDef), read(reg('fleets.yaml')), 'registry/fleets.yaml'), 'fleet'),
     upbringing: byId(check(z.array(S.upbringingDef), read(reg('upbringing.yaml')), 'registry/upbringing.yaml'), 'upbringing'),
     coasts: byId(check(z.array(S.coastDef), read(reg('coasts.yaml')), 'registry/coasts.yaml'), 'coast'),
+    strands: (() => {
+      const s = check(S.strandsDef, read(reg('strands.yaml')), 'registry/strands.yaml');
+      return { kinds: byId(s.kinds, 'strand kind'), peoples: s.peoples };
+    })(),
     lords: byId(check(z.array(S.lordDef), read(reg('lords.yaml')), 'registry/lords.yaml'), 'lord'),
     chronicle: (() => {
       const c = check(z.object({ events: z.array(S.chronEvent), raiders: z.array(S.chronRaider) }).strict(), read(reg('chronicle.yaml')), 'registry/chronicle.yaml');

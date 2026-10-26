@@ -188,6 +188,11 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     for (const id of [...(p.tells ?? []), ...(p.rumours ?? [])]) if (!content.places[id]) errors.push(`place ${p.id}: tells or rumours of unknown place "${id}"`);
     for (const id of p.rumours ?? []) if (!content.places[id]!.rumour) warnings.push(`place ${id}: rumoured at ${p.id} but has no rumour text`);
   }
+  // the shore between the ports (playtest 10): every people's table names real foes and goods
+  for (const [people, t] of Object.entries(content.strands.peoples)) {
+    for (const k of ['local', 'church', 'lord'] as const) if (!content.foes[t[k]]) errors.push(`strands: ${people}.${k} names no foe "${t[k]}"`);
+    for (const k of ['catch', 'farm', 'market'] as const) if (!content.goods[t[k]]) errors.push(`strands: ${people}.${k} names no good "${t[k]}"`);
+  }
   for (const l of content.legs) if (l.expedition && content.places[l.a]?.known && content.places[l.b]?.known) warnings.push(`leg ${l.a}-${l.b}: an expedition between two places known from the start`);
 
   // reachability of linked scenes from starts and triggers

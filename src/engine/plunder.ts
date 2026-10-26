@@ -1,5 +1,9 @@
 // Plunder against the alarm (DESIGN §11.3, step 3). After the assault, each round takes more,
 // and the countryside wakes. Leave in time, or lose what you are carrying getting back to the ships.
+import { strandRaided } from './strand';
+import { mouths } from './crew';
+/** A raid on an unnamed place on the shore is a smaller deed than a named one (base raid weight is 3). */
+const STRAND_DEED = 1.5;
 import { SERVICE_DEED } from './fights';
 import { stow } from './fleet';
 import type { ContentBundle } from '../content/schema';
@@ -49,17 +53,19 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
   if (pend?.t !== 'plunder') throw new Error('not plundering');
   const p = pend.plunder;
   const ps = state.places[p.place]!;
-  const name = content.places[p.place]?.name ?? p.place;
+  const name = p.strand ? p.strand.label : content.places[p.place]?.name ?? p.place;
   p.round += 1;
   switch (what) {
     case 'grab': {
-      const take = Math.max(1, Math.round(ps.wealth * (0.14 + 0.12 * rng.float())));
-      ps.wealth -= take;
+      // an unnamed place on the shore has its own wealth, not the port's (src/engine/strand.ts)
+      const src = p.strand ?? ps;
+      const take = Math.max(1, Math.round(src.wealth * (0.14 + 0.12 * rng.float())));
+      src.wealth -= take;
       p.taken += take;
       p.alarm += 1.5 + rng.float() * 1.5;
       const things = ['altar plate and a silver-bound book', 'a reliquary and two candlesticks', 'cloth, wax and a chest of coin', 'the abbot\'s cup and a gilded cross', 'hacksilver from a hole under a floor'];
       p.log.push(`You strip the next house: ${things[rng.int(things.length)]}. ${formatSilver(take)}.`);
-      const ring = plunderRing(state, rng, ps.wealth + take);
+      const ring = plunderRing(state, rng, src.wealth + take);
       if (ring) p.log.push(ring);
       break;
     }
@@ -121,6 +127,8 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
 function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: PlunderState, caught: boolean): void {
   const ps = state.places[p.place]!;
   const pl = content.places[p.place]!;
+  const t = p.strand;
+  const where = t ? `${t.label} near ${pl.name}` : pl.name;
   const lines: string[] = [];
   let taken = p.taken;
   if (caught) {
@@ -131,11 +139,18 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
     lines.push(`The countryside comes down on you before you are done: men with spears from every farm for a day's walk. You run for the ships, dropping ${formatSilver(dropped)} on the way, and ${plural(lost, 'man', 'men')} do not reach them.`);
   } else if (state.service) lines.push(`${state.service.captain}'s horn sounds from the strand, and you walk down to the ships with the rest, under the weight of it.`);
   else lines.push('You call the men off while the going is good, and walk down to the ships under the weight of it.');
-  ps.raided += 1;
-  onRaided(state, content, p.place, { burned: p.burned, captives: p.captives > 0 });
-  ps.lastRaided = state.day;
-  ps.defence = Math.min(3, ps.defence * (p.burned ? 1.8 : 1.5));
-  if (p.burned) ps.wealth = Math.round(ps.wealth * 0.5);
+  if (t) {
+    // the shore: the coast's alarm and the port's memory, and the cattle driven down to the boats
+    strandRaided(state, content, t);
+    const food = Math.round(mouths(state) * t.food);
+    if (food > 0) { state.provisions += food; lines.push(`You drive the cattle down to the boats and carry off the stores: food for ${t.food} days.`); }
+  } else {
+    ps.raided += 1;
+    onRaided(state, content, p.place, { burned: p.burned, captives: p.captives > 0 });
+    ps.lastRaided = state.day;
+    ps.defence = Math.min(3, ps.defence * (p.burned ? 1.8 : 1.5));
+    if (p.burned) ps.wealth = Math.round(ps.wealth * 0.5);
+  }
   const left = stow(state, content, taken);
   if (left) {
     taken -= left;
@@ -145,16 +160,16 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
   state.stats.raids += 1;
   if (p.captives) state.captives += p.captives;
   const mult = POSITION_FAME[state.position];
-  addDeed(state, content, { type: 'raid', text: `Raided ${pl.name}${p.burned ? ' and burned it' : ''}`, witnesses: state.crew.men, mult: mult * (p.burned ? 1.2 : 1) * (state.service ? SERVICE_DEED : 1) });
+  addDeed(state, content, { type: 'raid', text: t ? `Harried ${where}${p.burned ? ' and burned it' : ''}` : `Raided ${pl.name}${p.burned ? ' and burned it' : ''}`, weight: t ? STRAND_DEED : undefined, witnesses: state.crew.men, mult: mult * (p.burned ? 1.2 : 1) * (state.service ? SERVICE_DEED : 1) });
   lines.push(`In all: ${formatSilver(taken)}${p.captives ? `, and ${plural(p.captives, 'captive')}` : ''}.`);
-  journal(state, `Raided ${pl.name}: ${formatSilver(taken)}${p.captives ? `, ${plural(p.captives, 'captive')}` : ''}${p.burned ? '; burned it' : ''}.`);
-  if (!state.service) brokePeace(state, p.place, content);
+  journal(state, `${t ? 'Harried' : 'Raided'} ${where}: ${formatSilver(taken)}${p.captives ? `, ${plural(p.captives, 'captive')}` : ''}${p.burned ? '; burned it' : ''}.`);
+  if (!state.service && !t) brokePeace(state, p.place, content);
   if (p.hostage) {
     lines.push(`And ${hostageWho(state, p.hostage)}, under guard in the ship.`);
     state.queue.push({ scene: 'hs_taken', day: state.day });
   }
   const burnt = `${p.place}_burning`;
-  state.pending = { t: 'report', title: `Leaving ${pl.name}`, lines, next: p.next, art: p.burned && content.art[burnt] ? burnt : pl.art };
+  state.pending = { t: 'report', title: `Leaving ${t ? t.label : pl.name}`, lines, next: p.next, art: t ? 'open_sea' : p.burned && content.art[burnt] ? burnt : pl.art };
 }
 
 function hostageWho(state: GameState, id: string): string {
