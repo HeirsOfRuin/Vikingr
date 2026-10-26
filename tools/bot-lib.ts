@@ -354,7 +354,7 @@ export function playLife(content: ContentBundle, policy: Policy, seed: number, y
     const a = bot.choose(state, content);
     if (!a) return { policy, seed, steps, years: dateOf(state.day).year - startYear, state, error: `dead end on ${screenOf(state)} at day ${state.day}` };
     try {
-      state = act(content, state, a);
+      state = act(content, state, a, { inPlace: true });
     } catch (e) {
       return { policy, seed, steps, years: dateOf(state.day).year - startYear, state, error: `action failed: ${(e as Error).message}` };
     }

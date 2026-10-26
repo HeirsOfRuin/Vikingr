@@ -773,10 +773,12 @@ function sameAction(a: Action, b: Action): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-export function act(content: ContentBundle, input: GameState, action: Action): GameState {
+/** One action. The game's screens keep the state they pass in (it is copied); a bot or a measuring tool that never
+ *  looks back can pass `inPlace` and skip the copy, which was 40% of a bot run (the review). */
+export function act(content: ContentBundle, input: GameState, action: Action, opts?: { inPlace?: boolean }): GameState {
   const allowed = listActions(input, content).find((o) => sameAction(o.action, action));
   if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && action.t !== 'give_item' && action.t !== 'rename_child' && action.t !== 'heir_make' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
-  const state = structuredClone(input);
+  const state = opts?.inPlace ? input : structuredClone(input);
   const rng = new RngCursor(state.rng);
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
     if (!state.pending && lines.length) state.pending = { t: 'report', title, lines, next, art: art?.key, laughter: art?.laughter };
