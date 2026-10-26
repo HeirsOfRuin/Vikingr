@@ -12,7 +12,7 @@
   art: hearth_ormr
   title: A man from the Paris fleet
   text: |
-    He comes in out of the dark with the snow on his shoulders, a big man gone thin, with a Frankish sword-belt and a heavy bag he won't put down, and he asks for a place by the fire. He was with Ragnarr at Paris, he says. He has his share of the emperor's silver in the bag, seven thousand pounds among the whole fleet, and what's left of him to carry it.
+    He comes in out of the dark with the winter on his shoulders, a big man gone thin, with a Frankish sword-belt and a heavy bag he won't put down, and he asks for a place by the fire. He was with Ragnarr at Paris, he says. He has his share of the emperor's silver in the bag, seven thousand pounds among the whole fleet, and what's left of him to carry it.
 
     Then he sits down, and you see how grey he is, and smell it. It's the flux, the bloody flux, that went through Ragnarr's fleet on the way home from the Seine. They say Ragnarr himself died of it, shouting that the Christians' saint was killing him. Half the men round the fire move to the other end of the hall.
   choices:
@@ -29,7 +29,7 @@
         effects: [ { injury: flux }, { add: { silver: 48 } } ]
     - id: outhouse
       text: Give him food and a bed in the byre, away from everyone.
-      result: He goes to the byre without complaint; he's been sent to worse. In the morning he's gone, and the bag with him, and a trail in the snow toward the next farm. You hear in the spring that he died at a farm two valleys away, and that they burned the byre.
+      result: He goes to the byre without complaint; he's been sent to worse. In the morning he's gone, and the bag with him, and a trail toward the next farm. You hear in the spring that he died at a farm down the coast, and that they burned the byre.
     - id: away
       text: Send him on. You'll not have the flux in your hall.
       effects: [ { add: { honour: -1 } } ]
@@ -44,9 +44,9 @@
   art: yule_hall
   title: The hard winter
   text: |
-    The winter comes early and stays. The fjords freeze to their mouths, which the old men say has not happened since they were boys, and the snow lies to the eaves, and the cattle eat the thatch. In the Frankish country, the traders say, wolves come into the villages and men eat bread made of earth, and the price of grain has gone up tenfold, and the kings are too busy with each other to care.
+    The winter comes early and stays. [if place == home_fjord]The fjords freeze to their mouths, which the old men say has not happened since they were boys, and the snow lies to the eaves, and the cattle eat the thatch.[else]Even here the rivers freeze at the edges, which the people say has not happened in their lives, and the frost kills the winter wheat in the ground, and the cattle die in the fields.[/if] In the Frankish country, the traders say, wolves come into the villages and men eat bread made of earth, and the price of grain has gone up tenfold, and the kings are too busy with each other to care.
 
-    By midwinter there are men at the door every day: families from the outlying farms, with children, and nothing left in their store-houses. A Frisian grain ship is iced in at the river mouth, and her master will sell to anyone, at his price.
+    By midwinter there are men at the door every day: families from the outlying farms, with children, and nothing left in their store-houses. A Frisian grain ship is weather-bound in the river mouth, and her master will sell to anyone, at his price.
   choices:
     - id: feed
       text: Buy the Frisian's grain, and feed whoever comes to the door.
@@ -101,7 +101,7 @@
   art: hearth_ormr
   title: A boy who wants a bench
   text: |
-    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the snow to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About Nantes, and the south, and what you did.
+    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the winter to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About Nantes, and the south, and what you did.
 
     You were sixteen yourself, on the beach at Skiringssal, five summers ago. It doesn't feel like five.
   choices:
@@ -116,10 +116,10 @@
       visible_if: service
       check: { skill: speech, attr: pre, difficulty: 4 }
       success:
-        text: "{captain} looks the boy over, and then looks at you, and says, \"If you'll answer for him.\" You will. The boy has his bench by morning, next to yours, and asks you questions until the ice goes out."
+        text: "{captain} looks the boy over, and then looks at you, and says, \"If you'll answer for him.\" You will. The boy has his bench by morning, next to yours, and asks you questions until the spring."
         effects: [ { add: { honour: 1, skill.speech: 1 } } ]
       failure:
-        text: "{captain} looks the boy over and says he has no bench for a child with a home-made spear. The boy goes back out into the snow. You give him your second-best knife at the door, and he goes."
+        text: "{captain} looks the boy over and says he has no bench for a child with a home-made spear. The boy goes back out into the weather. You give him your second-best knife at the door, and he goes."
     - id: home
       text: Send him home to his brother. The sea is no place to be sixteen.
       result: He goes, but not home. You hear in the spring that he took a bench with a Hordaland crew going west, and in the autumn that the crew did not come back. You think about that more than you meant to.

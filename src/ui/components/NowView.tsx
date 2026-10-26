@@ -178,7 +178,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
         if (svc) return <><h2>Home</h2><p>{ship} is hauled up on the jarl's landing, and the men are on the strand round the heap, waiting for {svc.captain} to divide the summer.</p><p class="muted small sans">In the heap: {formatSilver(state.loot)}{state.captives ? `, and ${state.captives} captives for the trader` : ''}. Your shares: {svc.shares}.</p></>;
         return <><h2>Home</h2><p>The ships are hauled up and the men want their shares. How you divide the plunder is how they will remember the summer.</p><p class="muted small sans">Plunder: {formatSilver(state.loot)}. {state.flags.owes_jarl ? 'The jarl takes a quarter first, for the loan of the ship. ' : ''}The crew is {moraleWord(state.crew.morale)}.</p></>;
       case 'hall':
-        return <><h2>The winter hall</h2><p>Snow to the eaves, and the long nights. {state.hallLeft === 1 ? 'One more thing to do before spring.' : `${state.hallLeft} things to do before spring.`}</p><p class="muted small sans">Silver: {formatSilver(state.silver)}. {state.deeds.some((x) => x.told === null) ? 'Some deeds have not been told yet: a feast would tell them.' : 'Every deed has been told.'}</p></>;
+        return <><h2>The winter hall</h2><p>{winterLine(state, content)} {state.hallLeft === 1 ? 'One more thing to do before spring.' : `${state.hallLeft} things to do before spring.`}</p><p class="muted small sans">Silver: {formatSilver(state.silver)}. {state.deeds.some((x) => x.told === null) ? 'Some deeds have not been told yet: a feast would tell them.' : 'Every deed has been told.'}</p></>;
       default:
         return (
           <>
@@ -205,4 +205,12 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
       </div>
     </>
   );
+}
+
+/** The winter outside the hall door: snow in the north, rain and wind on the coasts of the Franks (playtest 9). */
+function winterLine(state: GameState, content: ContentBundle): string {
+  const p = state.at ? content.places[state.at] : undefined;
+  if (p && p.lat < 52) return 'Rain and salt wind off the sea, mud to the ankles, and the long nights.';
+  if (p && p.lat < 57) return 'Sleet off the sea, frost in the mornings, and the long nights.';
+  return 'Snow to the eaves, and the long nights.';
 }

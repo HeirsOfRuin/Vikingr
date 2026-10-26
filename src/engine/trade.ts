@@ -25,8 +25,8 @@ export const TRADE = {
   buyMarkup: 1.05,
   sellMarkdown: 0.95,
   perSkill: 0.01,
-  /** What a man at another's oar can stow in his sea-chest. */
-  seaChest: 60,
+  /** What a man at another's oar can stow in his sea-chest and under his bench (playtest 9: 60 left a sack of salt on the beach). */
+  seaChest: 120,
   /** A year's profit that is a deed. */
   deedProfit: 240,
 } as const;

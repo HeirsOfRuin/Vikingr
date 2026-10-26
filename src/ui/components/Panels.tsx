@@ -84,6 +84,7 @@ export function HeroPanel({ content, state, onAct }: { content: ContentBundle; s
       <h2>{h.name}{h.nickname ? ` ${h.nickname}` : ''}</h2>
       <p class="muted">{bg?.label}, {age(state)} winters old. {state.service ? `An oarsman in ${state.service.captain}'s ship` : state.ships.length ? "A ship's captain" : 'Without a ship'}. {capitalise(honourWord(state.honour))}.</p>
       <KitCard content={content} state={state} onAct={onAct} />
+      <GoodsCard content={content} state={state} />
       <div class="card">
         <h3>Body</h3>
         Blood {Math.round(h.hp)}/{hpMax(state, content)}
@@ -387,4 +388,32 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
       </div>
     </div>
   );
+}
+
+/** Goods in the hold or the sea-chest (playtest 9: "I was told I gained salt or wine, but it never showed up"). */
+function GoodsCard({ content, state }: { content: ContentBundle; state: GameState }) {
+  const goods = Object.entries(state.cargo ?? {}).filter(([, c]) => c.lots > 0);
+  const where = state.service ? 'Your sea-chest' : 'In the hold';
+  return (
+    <div class="card">
+      <h3>{where}</h3>
+      {goods.length ? goods.map(([g, c]) => {
+        const def = content.goods[g];
+        const dear = Object.values(content.places).filter((p) => state.known.includes(p.id) && p.trade?.dear.includes(g)).map((p) => p.name);
+        return (
+          <p key={g}>
+            <b>{lotsWord(c.lots, def?.lot ?? g)}</b> <span class="muted small">— {def?.name}, about {formatSilver((def?.price ?? 0) * c.lots)} at an ordinary market{dear.length ? `; wanted at ${dear.slice(0, 3).join(', ')}` : ''}.</span>
+          </p>
+        );
+      }) : <p class="empty">No goods. Trade goods and the things a scene hands you (salt, wine, oil, silk) are kept here, and sold on a trading beach.</p>}
+    </div>
+  );
+}
+
+/** "a crate of glass", 3 → "3 crates of glass"; "a pair of white falcons, hooded" → "3 pairs of white falcons, hooded". */
+function lotsWord(n: number, lot: string): string {
+  const bare = lot.replace(/^an? /, '');
+  if (n === 1) return `1 ${bare}`;
+  const [head, ...rest] = bare.split(' ');
+  return `${n} ${head}${/(s|x|ch|sh)$/.test(head!) ? 'es' : 's'}${rest.length ? ' ' + rest.join(' ') : ''}`;
 }

@@ -128,7 +128,10 @@ function sellCaptives(state: GameState, lines: string[]): void {
   if (state.captives <= 0) return;
   const price = state.captives * CAPTIVE_PRICE;
   state.loot += price;
-  lines.push(`A trader from Kaupang takes the ${plural(state.captives, 'captive')} off your hands for ${formatSilver(price)}. Nobody watches them go except Hallvard.`);
+  // who buys them, and who watches, depends on where the summer ends (playtest 9: a Kaupang trader on the Loire, and a dead man watching)
+  const trader = state.at === 'home_fjord' ? 'A trader from Kaupang' : 'A slave-trader who follows the fleets';
+  const watcher = state.men.some((m) => m.id === 'hallvard' && m.alive) ? ' Nobody watches them go except Hallvard.' : '';
+  lines.push(`${trader} takes the ${plural(state.captives, 'captive')} off your hands for ${formatSilver(price)}.${watcher}`);
   journal(state, `Sold ${plural(state.captives, 'captive')} for ${formatSilver(price)}.`);
   state.captives = 0;
 }
@@ -154,7 +157,7 @@ export function serviceShare(state: GameState, content: ContentBundle, rng?: Rng
     : `${svc.captain} has nothing to divide but his thanks, and he is short of those too.`);
   journal(state, `Your share of the summer: ${formatSilver(mine)}.`);
   const { told, gained } = tellDeeds(state);
-  if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
+  if (told.length) lines.push(`${atHome(state) ? 'At the homecoming feast' : 'Round the winter fires'} the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
   startWinter(state, hallActionsFor(state, HALL_ACTIONS), content, rng);
   return lines;
 }
@@ -182,7 +185,7 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   }
   // the homecoming feast tells the summer's deeds
   const { told, gained } = tellDeeds(state);
-  if (told.length) lines.push(`At the homecoming feast the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
+  if (told.length) lines.push(`${atHome(state) ? 'At the homecoming feast' : 'Round the winter fires'} the summer is told and retold: ${plural(told.length, 'deed')}, ${gained} fame.`);
   startWinter(state, hallActionsFor(state, HALL_ACTIONS), content, rng);
   return lines;
 }

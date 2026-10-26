@@ -69,8 +69,10 @@ function shortDate(day: number): string {
   return `${d.dom} ${MONTHS[d.month]!.slice(0, 3)} ${d.year}`;
 }
 
-function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843) => void; onPreview: (scene: string, name: string) => void }) {
-  const [step, setStep] = useState<'title' | 'new' | 'make' | 'preview'>(start);
+function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onLoad: (s: GameState) => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843) => void; onPreview: (scene: string, name: string) => void }) {
+  const [step, setStep] = useState<'title' | 'new' | 'make' | 'preview' | 'load'>(start);
+  const [code, setCode] = useState('');
+  const [msg, setMsg] = useState('');
   const [bg, setBg] = useState('younger_son');
   const [era, setEra] = useState<830 | 843>(830);
   const [name, setName] = useState(NAMES[Math.floor(Math.random() * NAMES.length)]!);
@@ -84,10 +86,29 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview }: { cont
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
+          <button class="choice" onClick={() => setStep('load')}><span class="txt">Load a saved life<span class="hint">Paste a save code (it starts VIKR1.)</span></span></button>
           <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into a chapter part-way through. Not saved.</span></span></button>
         </div>
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
       </div>
+    );
+  }
+  if (step === 'load') {
+    // playtest 9: "no way to load games from save text" — the menu had it, but only once a life was under way
+    return (
+      <main class="screen">
+        <h1>Load a saved life</h1>
+        <p>Paste the text you saved from the menu (Save as text). It starts VIKR1.</p>
+        <textarea id="title-save-code" value={code} placeholder="VIKR1.…" onInput={(e) => setCode((e.target as HTMLTextAreaElement).value)} style={{ width: '100%', minHeight: 160 }} />
+        {msg && <p class="small sans">{msg}</p>}
+        <div class="choices">
+          <button class="choice primary" onClick={async () => {
+            try { const s = fromSave(await decodeSaveCode(code), content); if (s.warnings.length) setMsg(s.warnings.join(' ')); onLoad(s.state); }
+            catch (e) { setMsg((e as Error).message || 'That is not a save code.'); }
+          }}><span class="txt">Load</span></button>
+          <button class="choice" onClick={() => { setMsg(''); setStep('title'); }}><span class="txt">Back</span></button>
+        </div>
+      </main>
     );
   }
   if (step === 'preview') {
@@ -186,6 +207,7 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
           hasSave={hasSave}
           start={titleStep}
           onContinue={() => { const l = loadGame(content); if (l) setState(l.state); }}
+          onLoad={(s) => { setPreview(null); setState(s); setTab('now'); }}
           onNew={(bg, name, attrs, skillSet, era) => { setPreview(null); setState(newGame(content, { background: bg, seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name, attrs, skillSet, era })); setTab('now'); }}
           onPreview={(scene, name) => {
             const c = CHAPTERS.find((x) => x.scene === scene)!;
