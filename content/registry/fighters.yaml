@@ -225,3 +225,13 @@
   weapon: 3
   habits: { strike: 4, guard: 2, feint: 1 }
   desc: The loud Rogalander with five ships who took the fort's high seat because he had five ships. He has seven now.
+# ---- the Loire camp (playtest 9: more fights in the 843 story) ----
+- id: thorgeirr_vestfold
+  name: Þorgeirr Vestfolding
+  attrs: { str: 4, agi: 3, end: 3, wit: 2, pre: 2 }
+  weapons: 3
+  shield: 3
+  armour: 1
+  weapon: 2
+  habits: { strike: 4, guard: 2, feint: 1 }
+  desc: The dead Vestfolder's brother, with a winter's grief in him and nobody else to put it on.

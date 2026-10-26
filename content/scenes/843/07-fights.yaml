@@ -1,0 +1,142 @@
+# Fights in the Loire years (playtest 9: "it seemed a bit empty without more fights"). A quarrel in the winter camp,
+# the Franks coming over to the island at dawn, and a raid into Poitou with Hastein's men. History: the Norse held
+# Noirmoutier from 843 and raided Poitou and Saintonge from it through the 840s (Annals of St-Bertin; Ermentarius).
+
+- id: e43_camp_duel
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 15
+  requires: [seen.e43_killing, "place == noirmoutier", "winter == 843"]
+  art: holmgang
+  title: The dead man's brother
+  text: |
+    The Vestfolder who was killed at the fire had a brother in another ship, and the brother has spent the winter drinking and remembering. His name is Þorgeirr. He doesn't care much who struck the blow; he cares that a man from [if service]the Hart[else]your ship[/if] did it and walked away with a man-price, and he has decided that you, who were at the fire, will do.
+
+    He finds you on the beach in the grey of a January afternoon, with half the camp behind him to watch, and says it loud: that you stood by and let his brother die, and that you are a coward from a ship of cowards.
+  choices:
+    - id: fight
+      text: Take off your cloak. If he wants it settled, settle it.
+      danger: true
+      effects: [ { fight: { foe: thorgeirr_vestfold, kind: duel, lethal: false, win: e43_camp_duel_won } } ]
+    - id: words
+      text: Tell him plainly what you saw, in front of the camp, and that you'll not fight a grieving man.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: You tell it again, slowly, all of it, and that his brother had a knife out at the end. The camp listens. Þorgeirr's own shipmates take him by the arms and walk him back to their fire. In the spring he finds you, sober, and gives you his hand without a word.
+        effects: [ { add: { honour: 1 } } ]
+      failure:
+        text: He doesn't hear a word of it. He spits at your feet, and the camp sees you walk away. It will be a long winter.
+        effects: [ { add: { honour: -1 } } ]
+    - id: ring
+      text: Give him a silver arm-ring for his brother, and let that be the end of it.
+      requires: ["rings.silver >= 1"]
+      effects: [ { ring: { metal: silver, n: -1 } } ]
+      result: He weighs it on his palm, and looks at you, and something goes out of him. "He'd have taken the ring," he says, "and laughed." He goes back to his own fire. Nobody calls you a coward. Some of them think it.
+
+- id: e43_camp_duel_won
+  kind: spine
+  art: holmgang
+  title: On the beach
+  text: |
+    Þorgeirr goes down on the wet sand and stays down, and the camp, which came to see a killing, sees a man helped up instead. You give him your hand. After a moment, he takes it.
+  choices:
+    - id: on
+      text: Back to the fire.
+      effects: [ { deed: { type: duel_won, text: "Beat the dead Vestfolder's brother on the beach at Noirmoutier", weight: 3, witnesses: 300 } } ]
+      result: The fleet talks about it for a week, which on Noirmoutier in January is a long time. Þorgeirr sails with Hastein's men in the spring. He nods to you whenever your ships pass.
+
+- id: y45_island_attack
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  once: true
+  weight: 25
+  requires: [flag.era843, "year >= 845", "year <= 847"]
+  art: bangor_field
+  title: The Franks on the island
+  text: |
+    They come over at low water in the dark, across the causeway sands from the mainland, the way the monks used to walk: the count of Poitou's men, with torches, meaning to burn the Northmen's ships on the beach while the Northmen sleep. A dog hears them first. Then everybody does.
+
+    You come out of the house with your shield and no shoes, into a beach full of running men and fire.
+  choices:
+    - id: wall
+      text: Get to the ships and stand in front of them with your shipmates.
+      oar: true
+      danger: true
+      effects: [ { host: { title: "The beach at Noirmoutier", foe: frankish_levy, terrain: beach, men: 20, ratio: 0.8, wings: [ { name: "The camp's crews", men: 300, quality: 0.9, foe_men: 260 } ], role: wing, win: y45_island_won } } ]
+    - id: boats
+      text: Get your own ship off the beach before the fire reaches her.
+      visible_if: "!service"
+      check: { skill: seamanship, attr: agi, difficulty: 5 }
+      success:
+        text: You and a dozen men put your backs to the Hart and she goes down the shingle into the water with the fire a ship's length behind her. From the bay you watch the camp fight on the beach. They hold, just. Nobody thanks you for saving your ship instead of theirs.
+        effects: [ { add: { honour: -1 } } ]
+      failure:
+        text: The Franks get to her before the tide does. You save her, in the end, with a scorched side and three men hurt, and the fight on the beach is over by the time you've done it.
+        effects: [ { add: { crew.morale: -1 } } ]
+    - id: hide
+      text: Get down behind the monks' wall until it's over.
+      visible_if: service
+      effects: [ { add: { honour: -2 } } ]
+      result: You stay behind the wall, and the fight goes on without you, and in the morning your bench-mates look at your clean shield and say nothing at all.
+
+- id: y45_island_won
+  kind: spine
+  art: bangor_field
+  title: Dawn on the island
+  text: |
+    By dawn the Franks are back across the sands, the ones who can still walk, and the tide is coming in over the ones who can't. Two ships burned. The rest are safe, because men like you stood in front of them in the dark with no shoes on.
+  choices:
+    - id: strip
+      text: Go through the Frankish dead on the sands before the tide takes them.
+      effects: [ { add: { silver: 18 } }, { deed: { type: battle_won, text: "Held the ships on Noirmoutier beach against the Franks, at night", weight: 3, witnesses: 400 } } ]
+      result: Belt-buckles, a purse, a good knife, a Frankish cloak-pin with garnets in it. The tide comes in over the rest.
+    - id: count
+      text: Count your own, and see to the hurt.
+      effects: [ { add: { crew.morale: 1 } }, { deed: { type: battle_won, text: "Held the ships on Noirmoutier beach against the Franks, at night", weight: 3, witnesses: 400 } } ]
+      result: You spend the morning with the hurt, binding and holding and fetching water. The men remember who came.
+
+- id: y46_poitou
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 20
+  requires: [flag.era843, "year >= 846", "year <= 847", "!service", "ships >= 1", "place == noirmoutier || place == nantes"]
+  art: celtic_monastery
+  title: A monastery in Poitou
+  text: |
+    Hastein's men are going south along the coast for a week: four ships, to a monastery in the Poitou marshes that has been paying the Franks' count to protect it, and that the count, being busy, is not protecting. They want a fifth ship. They want yours.
+
+    "The monks have a wall," says the man Hastein sent, "and a few of the count's men behind it, and the rest is waiting for us in the church."
+  choices:
+    - id: go
+      text: Go with them.
+      danger: true
+      effects: [ { days: 8 }, { host: { title: "The monks' wall in Poitou", foe: frankish_levy, terrain: rampart, men: 16, ratio: 0.8, wings: [ { name: "Hastein's crews", men: 140, quality: 1.0, foe_men: 90 } ], role: wing, raid: false, win: y46_poitou_won, lose: y46_poitou_lost } } ]
+    - id: no
+      text: Not this time. Your men need the summer for other things.
+      result: The four ships go without you, and come back a week later low in the water, and Hastein's man nods to you on the beach as if he'd expected nothing else.
+
+- id: y46_poitou_won
+  kind: spine
+  art: iona_burning
+  title: Over the monks' wall
+  text: |
+    The count's men are brave and too few. Once the wall is taken, the monastery is yours for the afternoon: the church, the store-houses, the abbot's own house with its glass windows.
+  choices:
+    - id: take
+      text: Take what's yours of it, and get back to the ships before the count hears.
+      effects: [ { add: { loot: 220 } }, { goods: { id: wine, lots: 3 } }, { captives: 4 }, { deed: { type: raid, text: "Took a Poitou monastery with Hastein's men", weight: 3, witnesses: 200 } } ]
+      result: Silver from the altar, wine from the cellar, four novices who will fetch a price at the Verdun trader's, and a story for the winter fires.
+
+- id: y46_poitou_lost
+  kind: spine
+  art: bangor_field
+  title: Under the monks' wall
+  text: |
+    The wall is higher than Hastein's man said, and the count's men behind it are more than a few. You get your men back to the ships with what you can carry, which is your wounded.
+  choices:
+    - id: on
+      text: Back to the island.
+      effects: [ { add: { crew.morale: -1 } } ]
