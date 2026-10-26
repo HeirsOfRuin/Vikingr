@@ -60,7 +60,7 @@ function SceneView({ content, state, scene, onAct }: { content: ContentBundle; s
       <Art content={content} state={state} art={scene.art} />
       <div class="screen prose">
         {scene.when && <div class="pagecount">{scene.when}</div>}
-        <h2>{scene.title}</h2>
+        <h2>{renderText(scene.title, state, content)}</h2>
         <div class={scene.placeholder ? 'placeholder' : ''}>{paras(pages[Math.min(page, pages.length - 1)] ?? '')}</div>
         {last ? (
           <Actions options={listActions(state, content)} onAct={onAct} danger={danger} />

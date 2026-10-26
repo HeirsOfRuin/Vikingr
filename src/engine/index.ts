@@ -832,7 +832,7 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       if (pd) {
         if (text && pd.t === 'duel') pd.duel.log.unshift(text);
         if (text && pd.t === 'battle') pd.battle.log.unshift(text);
-      } else if (text) report(scene.title, text.trim().split(/\n\s*\n/), next, typeof scene.art === 'string' ? { key: scene.art } : scene.art);
+      } else if (text) report(renderText(scene.title, state, content), text.trim().split(/\n\s*\n/), next, typeof scene.art === 'string' ? { key: scene.art } : scene.art);
       else if (next) open(state, next, content);
       break;
     }

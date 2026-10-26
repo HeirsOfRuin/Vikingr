@@ -1,0 +1,16 @@
+# Continuity rules, checked by tools/narrative/continuity.ts (npm run continuity).
+# The tool plays bot lives and renders every scene and report. It flags:
+#  - rules: a phrase used while its condition (scene grammar) does not hold
+#  - the dead: a fallen sworn man or captain named in a sentence that is not
+#    about his death or memory. `memorial` adds this game's own words for that.
+# Format: game-narrative skill, tools/continuity.ts.
+
+rules: []
+
+memorial:
+  # toasts and verses for the dead
+  - "over the fire"
+  - "calls him .* the "
+  - "isn't here|is not here|not among"
+  # the rites
+  - "under [A-Za-z'’]+ tongue"
