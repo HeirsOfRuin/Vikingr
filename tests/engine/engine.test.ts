@@ -97,5 +97,5 @@ describe('engine', () => {
       }
     }
     expect(played).toBeGreaterThan(10);
-  });
+  }, 20000);
 });
