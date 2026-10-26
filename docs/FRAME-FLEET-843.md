@@ -277,3 +277,14 @@ Scenes tied to the year, not the place, so every 843 life meets them:
 - the kings' warning from Meersen (847);
 - a sixteen-year-old who wants a bench (847), five years after the hero's own;
 - Norse survivors of Forach and Sciath Nechtáin (848).
+
+## Playtest 9: the Loire life, from a save
+- **The calendar.** Season-start scenes could fire on any quiet moment, winter included. The Loire spring (the Hart, the southern fleet) fired on 12 January 844, so the voyage south ran January to April, the island's winter scenes came in June, and spring began on 8 July. Season-start scenes now wait for the spring unless written for the winter (`director.ts`).
+- **Fleet fights.** A fight in a fleet takes a `ratio`: the men in front of your ship are counted from your crew (never fewer than 6). The Asturian beach, the night attack on Noirmoutier and the Poitou raid are host battles beside allied crews. Tablada, the Dordogne and the Bordeaux postern scale the same way.
+- **Pay.** The Garonne pays 260 and 4 casks of wine (Toulouse 480); Lisbon 200 and 4 captives; Seville 900, 4 bolts of silk and 8 captives (the richest take of a life).
+- **Goods.** A card on the Hero tab shows the hold or sea-chest: lots, value at an ordinary market, and where they are wanted. The sea-chest holds 120.
+- **Spending and men.** A great fleet's camp has 10 men for hire; Noirmoutier is a Norse camp from 843.
+- **Loot.** Two plunder choices, once a raid each: search the dead and the hall for war-gear (helmet 30%, mail 15%, a Frankish sword 15%, more among Franks, Frisians and English), or break open the stores (2–4 lots of goods by people).
+- **Aude of Nantes.** The captive girl on the monks' island can be bought out of the captives (24). In spring 844 her father brings the ransom: send her home (72), give her back without it (honour 2), or keep her. Kept, she is a bondwoman and runs the household; from the winter of 847, grown, she can be freed and married, or freed with a dowry. Sent home, her father helps at Lambert's war.
+- **Fights.** The dead Vestfolder's brother (a duel in the winter camp), the Franks on the island at night (845–847), a Poitou monastery with Hastein's men (846–847).
+- **Abroad.** The captive trader, the winter fires and the weather read for where the life winters. A save can be loaded from the title screen.
