@@ -301,7 +301,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
     case 'train': {
       const a = learn(state, 'weapons', 5);
       const b = learn(state, 'shield', 4);
-      if (state.service) lines.push('Weeks of sword-play in the snow with Ketill and the others, behind your father\'s byre, until your arms are lead and your shins are black.');
+      if (state.service) lines.push(`Weeks of sword-play in the snow with ${state.men.some((m) => m.id === 'ketill' && m.alive) ? 'Ketill and the others' : 'your bench-mates'}, behind your father's byre, until your arms are lead and your shins are black.`);
       else {
         state.crew.quality = Math.min(2, state.crew.quality + 0.1);
         lines.push('Weeks of sword-play in the snow with the sworn men, and the crew drilled at the wall until they curse you.');
@@ -383,7 +383,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       state.silver -= 12;
       state.hamingja = Math.min(5, state.hamingja + 1);
       learn(state, 'lore', 3);
-      lines.push('A horse is killed at the hof, and the blood sprinkled on the posts and the people. The godi seems satisfied. Hallvard certainly is.');
+      lines.push(`A horse is killed at the hof, and the blood sprinkled on the posts and the people. The godi seems satisfied.${state.men.some((m) => m.id === 'hallvard' && m.alive) ? ' Hallvard certainly is.' : ''}`);
       break;
     }
   }

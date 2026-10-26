@@ -390,6 +390,8 @@ export interface GameState {
   /** Hostages held at home, and the one a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md). */
   hostages?: import('./hostages').Hostage[];
   hfocus?: string | null;
+  /** The last hostage to leave his hands, for the text of the scene that let them go. */
+  hgone?: import('./hostages').Hostage;
   /** The world without him (docs/FRAME-WORLD.md §B): events past, and the news. */
   chron?: import('./chronicle').ChronState;
   /** Lords (docs/FRAME-WORLD.md §C): what each thinks of him, his oath, and a second one kept secret. */

@@ -156,7 +156,8 @@ function focus(state: GameState): Hostage | undefined {
 
 function drop(state: GameState, content: ContentBundle, h: Hostage): void {
   state.hostages = hostagesOf(state).filter((x) => x !== h);
-  if (state.hfocus === h.id) state.hfocus = null;
+  // the scene's outcome is still about them: keep who they were for its text (the render scan: "among the , he")
+  if (state.hfocus === h.id) { state.hfocus = null; state.hgone = h; }
   if (h.captain) shiftRel(state, content, h.captain, 2);
 }
 

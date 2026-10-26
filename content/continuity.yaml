@@ -12,5 +12,7 @@ memorial:
   - "over the fire"
   - "calls him .* the "
   - "isn't here|is not here|not among"
+  # a skald's verse of an old deed: the dead man's deed is the subject
+  - "makes a verse of it"
   # the rites
   - "under [A-Za-z'’]+ tongue"

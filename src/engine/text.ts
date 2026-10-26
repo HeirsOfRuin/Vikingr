@@ -24,7 +24,7 @@ import { fatherName, focusChild } from './family';
 import { fleetLeader, fleetName } from './sailfleet';
 
 function focusH(state: GameState): Hostage | undefined {
-  return state.hostages?.find((h) => h.id === state.hfocus);
+  return state.hostages?.find((h) => h.id === state.hfocus) ?? (state.hfocus ? undefined : state.hgone);
 }
 
 const IF = /\[if ([^\]]+)\]([\s\S]*?)\[\/if\]/g;
@@ -117,7 +117,9 @@ export function renderText(text: string, state: GameState, content: ContentBundl
     .replace(/\{seat_place\}/g, () => (state.rule ? content.places[SEAT_DEF[state.rule.seat].place]!.name : 'your seat'))
     .replace(/\{rival\}/g, () => (state.rule ? rivalOf(state, content, state.rule.seat).name : 'your rival'))
     .replace(/[ \t]+\n/g, '\n')
-    .replace(/\n{3,}/g, '\n\n');
+    .replace(/\n{3,}/g, '\n\n')
+    // a token's fallback ("the captain", "her daughter") at the start of a sentence takes a capital (the render scan)
+    .replace(/(^|(?<!\.)[.!?]["”]?\s+|\n)(the|her|his|their|your) /g, (_m, pre: string, w: string) => `${pre}${w.charAt(0).toUpperCase()}${w.slice(1)} `);
 }
 
 /** Validator: condition errors inside [if] passages, and unknown {tokens}. */

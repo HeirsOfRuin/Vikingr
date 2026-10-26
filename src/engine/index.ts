@@ -880,7 +880,8 @@ export function act(content: ContentBundle, input: GameState, action: Action): G
       // a leg of a course, interrupted and finished: the course goes on unless something else has the stage
       if (action.t === 'voyage_on' && r.arrived && state.course && !state.pending) r.lines.push(...sailCourse(state, content, rng));
       if (action.t === 'voyage_on' && r.arrived && state.cruise && !state.pending) r.lines.push(...runCruise(state, content, rng));
-      const talk = banter(state, content, rng, 'sea', 0.6);
+      // the men talk on a quiet leg; one broken off by a scene is told after it, and the scene may kill the man talking
+      const talk = state.pending ? null : banter(state, content, rng, 'sea', 0.6);
       if (talk) r.lines.push(talk);
       reportAfter('At sea', r.lines);
       break;

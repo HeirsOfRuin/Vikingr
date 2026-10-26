@@ -184,7 +184,8 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
       if (b === 'master') return !!m && m.alive && state.ships.some((x) => x.master === `man:${m.id}`);
       if (!m) return b === 'alive' ? false : 0;
       if (b === 'alive') return m.alive;
-      if (b === 'loyalty') return m.loyalty;
+      // a dead man's loyalty is nothing: passages that ask for it are about the living (the parting at Birsay named the dead)
+      if (b === 'loyalty') return m.alive ? m.loyalty : 0;
       return 0;
     }
   }
