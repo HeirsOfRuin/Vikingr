@@ -54,18 +54,24 @@ export function heroDuelSide(state: GameState, content: ContentBundle, kind: Due
 }
 
 export function startDuel(state: GameState, content: ContentBundle, foeId: string, kind: DuelState['kind'], lethal: boolean, win?: string, lose?: string): void {
+  const d = heroDuel(state, content, foeId, kind, lethal, fightRng(state, `duel:${foeId}`));
+  d.win = win;
+  d.lose = lose;
+  state.pending = { t: 'duel', duel: d };
+}
+
+/** The duel he would fight, set up and opened: one code path for the fight and for the men's reckoning of it. */
+export function heroDuel(state: GameState, content: ContentBundle, foeId: string, kind: DuelState['kind'], lethal: boolean, rng: RngCursor): DuelState {
   const f = content.fighters[foeId];
   if (!f) throw new Error(`unknown fighter ${foeId}`);
   const readChance = 0.04 * (effAttr(state, content, 'wit') + state.hero.skills.cunning);
   const d = makeDuel(kind, lethal, foeId, heroDuelSide(state, content, kind), sideFromFighter(f, kind), readChance);
-  d.win = win;
-  d.lose = lose;
   d.log.push(kind === 'holmgang'
     ? `The cloak is pegged out on the turf. Three shields each. ${f.name} spits on his palms.`
     : `${f.name} comes at you.`);
   // every single combat is fought in the second form (docs/FRAME-COMBAT-2.md)
-  startBout(d, { readScore: fightEye(state, content), guile: fighterGuile(f), adviser: adviser(state), unyielding: f.unyielding }, fightRng(state, `duel:${foeId}`));
-  state.pending = { t: 'duel', duel: d };
+  startBout(d, { readScore: fightEye(state, content), guile: fighterGuile(f), adviser: adviser(state), unyielding: f.unyielding }, rng);
+  return d;
 }
 
 /** A fight's own chance, from the save: the same fight on the same day opens the same way after a reload. */

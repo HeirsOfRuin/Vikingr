@@ -165,7 +165,7 @@
   armour: 0
   weapon: 3
   habits: { strike: 6, guard: 1, feint: 1 }
-  guile: 0
+  guile: 2  # was 0: a careful boy read him 91% of the time (docs/FRAME-DUEL-3.md)
   desc: A berserkr out of the north, in a wolf's pelt and nothing much else. You can see every blow coming. That is not the same as stopping it.
 - id: ch_grjotgard
   name: Grjótgarðr the Old

@@ -1,5 +1,6 @@
 // Engine facade. Three calls: newGame, view, act. Pure: act clones the state,
 // works on the copy, and returns it. The UI, the bot and the tests all use this.
+import { choiceFight, duelOdds, reckonWords } from './reckon';
 import { alarmWord, findStrand, harried, harryBlock, harryCoast, landStrand, STRAND, type StrandTarget } from './strand';
 import { skaldOf } from './skald';
 import { cutRing, makeRing, METALS, RING, ringsOf, ringWords, type Metal } from './rings';
@@ -379,7 +380,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         .filter((c) => test(c.visible_if, state, content) && !needsTheDead(state, c.requires))
         .map((c) => {
           const ok = test(c.requires, state, content);
-          return opt('', { t: 'choose', id: c.id }, renderText(c.text, state, content), ok, ok ? undefined : `Requires ${unmetLabel(c.requires!, state, content)}`, c.check ? checkBand(state, content, c.check) : undefined);
+          // a single combat on offer: the men's reckoning of it (docs/FRAME-DUEL-3.md)
+          const f = ok ? choiceFight(c) : null;
+          const reck = f && content.fighters[f.foe] ? reckonWords(duelOdds(state, content, f.foe, f.kind, f.lethal), f.lethal) : undefined;
+          const band = c.check ? checkBand(state, content, c.check) : undefined;
+          return opt('', { t: 'choose', id: c.id }, renderText(c.text, state, content), ok, ok ? undefined : `Requires ${unmetLabel(c.requires!, state, content)}`, reck && band ? `${band}. ${reck}` : reck ?? band);
         });
     }
     case 'duel': {

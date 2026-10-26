@@ -95,10 +95,11 @@ export class Bot {
         // a lord who wants men takes the oath when he can (docs/FRAME-HIRD-HOSTAGES.md)
         const id = state.pending!.t === 'scene' ? state.pending!.id : '';
         if (id.startsWith('hi_') && this.policy !== 'homebody') { const sw = pick((a) => a.t === 'choose' && a.id === 'swear'); if (sw) return sw; }
-        // a challenger who came looking: anyone but a reckless man sizes him up, and refuses a much better swordsman
-        const ch = id.startsWith('ch_') ? content.fighters[id] : undefined;
-        if (ch && this.policy !== 'reckless' && ch.weapons > state.hero.skills.weapons + 1) {
-          const safe = enabled.filter((o) => o.action.t === 'choose' && o.action.id !== 'fight');
+        // a single combat on offer: anyone but a reckless man listens to the men's reckoning (docs/FRAME-DUEL-3.md)
+        // and turns down a fight they say he'd lose
+        const grim = (o: ActionOption) => /he'd (kill|likely beat|beat) you/.test(o.hint ?? '');
+        if (this.policy !== 'reckless' && enabled.some(grim)) {
+          const safe = enabled.filter((o) => !grim(o));
           if (safe.length) return safe[this.rng.int(safe.length)]!.action;
         }
         return enabled[this.rng.int(enabled.length)]!.action;
