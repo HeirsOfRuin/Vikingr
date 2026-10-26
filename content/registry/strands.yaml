@@ -5,8 +5,8 @@ kinds:
   - id: hamlet
     label: a fishing hamlet
     desc: [ "Six or seven turf-roofed houses above the tide-line, boats drawn up on the shingle, nets drying on poles.", "A cluster of huts in a cove, smoke from two of them, a woman on the beach gutting fish who hasn't seen you yet." ]
-    men: [3, 8]
-    wealth: [10, 30]
+    men: [4, 10]
+    wealth: [50, 120]
     food: 6
     defenders: local
     goods: catch
@@ -15,8 +15,8 @@ kinds:
   - id: farm
     label: a big farm
     desc: [ "A long hall with its byres and barns round a yard, cattle in the home-field, a track up from the landing-place.", "A rich farm at the head of a little bay: a hall, a mill, sheep on the hill behind." ]
-    men: [6, 14]
-    wealth: [25, 60]
+    men: [8, 18]
+    wealth: [100, 240]
     food: 12
     defenders: local
     goods: farm
@@ -25,8 +25,8 @@ kinds:
   - id: church
     label: a church
     desc: [ "A small stone church with a bell-tower, a priest's house and a graveyard, above a village at the river mouth.", "A cell of a few monks on a headland, with a chapel and a guest-house for pilgrims." ]
-    men: [2, 8]
-    wealth: [40, 110]
+    men: [3, 10]
+    wealth: [180, 450]
     food: 4
     defenders: church
     goods: market
@@ -36,8 +36,8 @@ kinds:
   - id: village
     label: a market village
     desc: [ "A street of houses along a creek, with a market-place, warehouses on the water and boats from up the coast.", "A village where a road meets the shore, with a weekly market and a reeve's house bigger than the rest." ]
-    men: [10, 22]
-    wealth: [50, 130]
+    men: [14, 28]
+    wealth: [240, 560]
     food: 8
     defenders: local
     goods: market
@@ -46,8 +46,8 @@ kinds:
   - id: hall
     label: a lord's hall
     desc: [ "A lord's hall behind a bank and palisade, his household's horses in the paddock, his boats on the strand.", "A thegn's estate: a great hall, a chapel, barns, and armed men about the yard who have seen your sails." ]
-    men: [16, 30]
-    wealth: [80, 200]
+    men: [22, 40]
+    wealth: [320, 800]
     food: 10
     defenders: lord
     goods: farm
