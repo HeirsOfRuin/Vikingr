@@ -70,14 +70,14 @@
     - id: go
       text: Go up the river with Lambert's Bretons.
       danger: true
-      effects: [ { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
+      effects: [ { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, ratio: 1.0, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
     - id: price
       text: Ask for two pounds a ship, and the bridge-toll for a year.
       danger: true
       check: { skill: trade, attr: pre, difficulty: 6 }
       success:
         text: Lambert looks at you a long time. "You've learned," he says, and agrees. You go up the river at the head of his Bretons with a better bargain than any captain in the Loire.
-        effects: [ { add: { silver: 48 } }, { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
+        effects: [ { add: { silver: 48 } }, { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, ratio: 1.0, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
       failure:
         text: "\"I'll find someone cheaper,\" Lambert says. He does. The other captain comes back down the river in a month with a ship full of the count's furniture."
     - id: no
@@ -159,7 +159,7 @@
     - id: help
       text: Take your ship up the Dordogne after them, in the dark.
       danger: true
-      effects: [ { battle: { foe: frankish_levy, men: 28, terrain: ship, win: bx_dordogne_won } } ]
+      effects: [ { battle: { foe: frankish_levy, men: 28, ratio: 1.2, terrain: ship, win: bx_dordogne_won } } ]
     - id: hastein
       text: Keep with Hastein. Nine ships are nine ships; the city is the city.
       result: You keep with Hastein. The nine ships don't come back. The Franks hang their crews along the Dordogne, men say, and Charles writes to the Pope about it.
@@ -196,17 +196,17 @@
       text: You do.
       visible_if: "!service"
       danger: true
-      effects: [ { days_foraged: 200 }, { position: front }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 40, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 50 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
+      effects: [ { days_foraged: 200 }, { position: front }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 40, ratio: 1.1, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 50 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
     - id: second
       text: Let Hastein's own men go first. Follow them in.
       visible_if: "!service"
       danger: true
-      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
+      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
     - id: crew
       text: Go through the postern with your captain's crew.
       visible_if: service
       danger: true
-      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: man, win: bx_taken, lose: bx_repulsed } } ]
+      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: man, win: bx_taken, lose: bx_repulsed } } ]
 
 - id: bx_taken
   kind: spine

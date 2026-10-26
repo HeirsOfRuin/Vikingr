@@ -15,6 +15,9 @@ function eligible(s: Scene, state: GameState, content: ContentBundle, trigger: T
   if (s.once && state.seen[s.id] !== undefined) return false;
   if (s.cooldown_days !== undefined && state.seen[s.id] !== undefined && state.day - state.seen[s.id]! < s.cooldown_days) return false;
   if (s.phase && !s.phase.includes(state.phase)) return false;
+  // the start of a season is not the middle of a winter: a season scene waits for the spring unless it is written
+  // for the winter (playtest 9: the Loire spring and the southern fleet fired on 12 January, mid-winter)
+  if (trigger === 'phase_start' && state.phase === 'winter' && !s.phase?.includes('winter') && !JSON.stringify(s.requires ?? []).includes('phase == winter')) return false;
   if (s.at && (!state.at || !s.at.includes(state.at))) return false;
   if (s.at_kind && (!state.at || !s.at_kind.includes(content.places[state.at]!.kind))) return false;
   return test(s.requires, state, content);

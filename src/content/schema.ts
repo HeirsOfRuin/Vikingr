@@ -42,7 +42,7 @@ const baseEffect = z.union([
   z.object({ injury: id }).strict(),
   z.object({ man: z.object({ id, loyalty: z.number().optional(), join: z.boolean().optional(), leave: z.boolean().optional(), swear: z.boolean().optional(), nickname: z.string().optional() }).strict() }).strict(),
   z.object({ fight: z.object({ foe: id, kind: z.enum(['duel', 'holmgang']), lethal: z.boolean(), win: id.optional(), lose: id.optional(), parted: id.optional() }).strict() }).strict(),
-  z.object({ battle: z.object({ foe: id, men: z.number().int(), terrain: z.enum(TERRAINS), raid: z.boolean().optional(), win: id.optional(), lose: id.optional(), parted: id.optional() }).strict() }).strict(),
+  z.object({ battle: z.object({ foe: id, men: z.number().int(), ratio: z.number().positive().optional(), terrain: z.enum(TERRAINS), raid: z.boolean().optional(), win: id.optional(), lose: id.optional(), parted: id.optional() }).strict() }).strict(),
   z.object({ queue: z.object({ scene: id, days: z.number().int().min(0) }).strict() }).strict(),
   z.object({ know: id }).strict(),
   z.object({ journal: z.string() }).strict(),
@@ -76,7 +76,7 @@ const baseEffect = z.union([
   z.object({ ally: z.object({ id, meet: z.boolean().optional(), rel: z.number().int().optional(), felag: z.boolean().optional(), kill: z.boolean().optional() }).strict() }).strict(),
   z.object({ favour: z.number().int() }).strict(),
   z.object({ host: z.object({
-    title: z.string(), foe: id, terrain: z.enum(TERRAINS), men: z.number().int().min(1),
+    title: z.string(), foe: id, terrain: z.enum(TERRAINS), men: z.number().int().min(1), ratio: z.number().positive().optional(),
     wings: z.array(z.object({ name: z.string(), men: z.number().int().min(0).optional(), ally: z.boolean().optional(), foe_men: z.number().int().min(1), quality: z.number().optional() }).strict()).min(1).max(2),
     role: z.enum(['man', 'wing', 'host']).optional(), reserve: z.object({ us: z.number().int().min(0), them: z.number().int().min(0) }).strict().optional(),
     raid: z.boolean().optional(), win: id.optional(), lose: id.optional(),

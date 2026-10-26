@@ -45,7 +45,7 @@
   choices:
     - id: farms
       text: Keep to the river country. Toulouse's walls are too high.
-      effects: [ { days_foraged: 40 }, { add: { loot: 110 } }, { goods: { id: wine, lots: 2 } } ]
+      effects: [ { days_foraged: 40 }, { add: { loot: 260 } }, { goods: { id: wine, lots: 4 } } ]
       result: A month of river farms and churches, and the ships low in the water with wine and cloth and silver. Toulouse watches you from its walls, and you watch it back, and in the end the fleet goes back down the river and out to sea.
       next: sf_asturias
     - id: walls
@@ -54,10 +54,10 @@
       check: { skill: command, attr: wit, difficulty: 6 }
       success:
         text: Nothing gives at the walls. But the suburbs outside them give, and the abbey by the river gives, and you come back down to the ships with a gold cross on your shoulder that two men can barely carry. The fleet talks about it all the way to the sea.
-        effects: [ { days_foraged: 40 }, { add: { loot: 300 } }, { deed: { type: raid, text: "Went up the Garonne to the walls of Toulouse with the southern fleet", weight: 4, witnesses: 500 } } ]
+        effects: [ { days_foraged: 40 }, { add: { loot: 480 } }, { deed: { type: raid, text: "Went up the Garonne to the walls of Toulouse with the southern fleet", weight: 4, witnesses: 500 } } ]
       failure:
         text: The walls are manned, and the men on them have crossbows. You lose men in the suburbs for nothing, and come back down the river with less than the ones who stayed with the farms.
-        effects: [ { days_foraged: 40 }, { add: { loot: 80, crew.men: -4, crew.morale: -1 } } ]
+        effects: [ { days_foraged: 40 }, { add: { loot: 140, crew.men: -4, crew.morale: -1 } } ]
       next: sf_asturias
 
 - id: sf_asturias
@@ -73,7 +73,7 @@
     - id: land
       text: Land with the fleet, and fight for the beach.
       danger: true
-      effects: [ { battle: { foe: asturian_levy, men: 34, terrain: beach, win: sf_asturias_won, lose: sf_asturias_lost } } ]
+      effects: [ { host: { title: "The beach below the tower", foe: asturian_levy, terrain: beach, men: 34, ratio: 1.1, wings: [ { name: "The fleet's crews", men: 500, quality: 0.9, foe_men: 520 } ], role: wing, win: sf_asturias_won, lose: sf_asturias_lost } } ]
     - id: ships
       text: Keep your men in the ships. This is a fight for cattle, not silver.
       effects: [ { add: { honour: -1 } } ]
@@ -120,7 +120,7 @@
   choices:
     - id: raid
       text: Raid the country round the city while the riders are gone.
-      effects: [ { days_foraged: 14 }, { add: { loot: 140 } }, { captives: 4 } ]
+      effects: [ { days_foraged: 14 }, { add: { loot: 200 } }, { captives: 4 } ]
       result: Thirteen days of farms and villas, and captives who speak a language nobody in the fleet has heard, and coin with writing on it instead of kings. Then the leaders say south again. There's a bigger city up a bigger river.
       next: sf_seville
     - id: trade
@@ -128,10 +128,10 @@
       check: { skill: trade, attr: wit, difficulty: 5 }
       success:
         text: They have silver, and silk, and a thing in a glass jar that smells of every flower at once, and they want swords and furs and captives. You trade for thirteen days and come away with things no one in Norway has ever seen, and a merchant's word that the emir's army is two weeks behind his riders. You remember that.
-        effects: [ { days_foraged: 14 }, { add: { loot: 50 } }, { goods: { id: silk, lots: 1 } }, { set: flag.sf_warned } ]
+        effects: [ { days_foraged: 14 }, { add: { loot: 90 } }, { goods: { id: silk, lots: 2 } }, { set: flag.sf_warned } ]
       failure:
         text: They want too much for too little, and you don't know what anything's worth here. You come away with a jar of the flower-smell and a feeling you've been robbed politely.
-        effects: [ { days_foraged: 14 }, { add: { loot: 30 } } ]
+        effects: [ { days_foraged: 14 }, { add: { loot: 50 } } ]
       next: sf_seville
 
 - id: sf_seville
@@ -148,7 +148,7 @@
   choices:
     - id: plunder
       text: Plunder the city with the rest. You came for this.
-      effects: [ { days_foraged: 40 }, { add: { loot: 280, honour: -1 } }, { goods: { id: silk, lots: 3 } }, { captives: 6 } ]
+      effects: [ { days_foraged: 40 }, { add: { loot: 900, honour: -1 } }, { goods: { id: silk, lots: 4 } }, { captives: 8 } ]
       result: Six weeks of it, and your ship so full of silver and silk and captives that she wallows. You have never been so rich. You have never wanted so badly to leave.
       next: sf_tablada
     - id: watch
@@ -156,14 +156,14 @@
       check: { skill: cunning, attr: wit, difficulty: 5 }
       success:
         text: On the fifth day you see the dust. Horsemen, thousands of them, coming down from the north-east, three days out. You ride back on a stolen horse and tell the leaders, and some of them believe you, and get their ships ready, and the rest go on plundering.
-        effects: [ { days_foraged: 40 }, { add: { loot: 240 } }, { set: flag.sf_warned } ]
+        effects: [ { days_foraged: 40 }, { add: { loot: 700 } }, { goods: { id: silk, lots: 2 } }, { set: flag.sf_warned } ]
       failure:
         text: You watch the hills for a month and see nothing but goats. Then you come back to the city to find the fleet has plundered it clean without you.
-        effects: [ { days_foraged: 40 }, { add: { loot: 120 } } ]
+        effects: [ { days_foraged: 40 }, { add: { loot: 360 } } ]
       next: sf_tablada
     - id: leave
       text: Get your ship down the river and out to sea now, with what you have.
-      effects: [ { days_foraged: 20 }, { add: { loot: 200, honour: -1 } }, { set: flag.sf_left_early } ]
+      effects: [ { days_foraged: 20 }, { add: { loot: 500, honour: -1 } }, { goods: { id: silk, lots: 2 } }, { set: flag.sf_left_early } ]
       result: You go at night, with your oars muffled, past the fleet's guard-ships, which call after you, and out into the marshes, and to the sea. Behind you the fleet goes on plundering Ishbiliya. You'll hear what happened to it.
       next: sf_home
 
@@ -181,7 +181,7 @@
       text: Form the wall on the plain, and hold them while the ships get away.
       danger: true
       effects:
-        - { if: flag.sf_warned, then: [ { host: { title: "The plain of Tablada", foe: moorish_host, terrain: field, men: 60, wings: [ { name: "The fleet's crews", men: 240, quality: 0.9, foe_men: 300 } ], role: wing, win: sf_tablada_held, lose: sf_tablada_broken } } ], else: [ { host: { title: "The plain of Tablada", foe: moorish_host, terrain: field, men: 80, wings: [ { name: "The fleet's crews", men: 200, quality: 0.8, foe_men: 360 } ], role: wing, win: sf_tablada_held, lose: sf_tablada_broken } } ] }
+        - { if: flag.sf_warned, then: [ { host: { title: "The plain of Tablada", foe: moorish_host, terrain: field, men: 60, ratio: 1.3, wings: [ { name: "The fleet's crews", men: 240, quality: 0.9, foe_men: 300 } ], role: wing, win: sf_tablada_held, lose: sf_tablada_broken } } ], else: [ { host: { title: "The plain of Tablada", foe: moorish_host, terrain: field, men: 80, ratio: 1.6, wings: [ { name: "The fleet's crews", men: 200, quality: 0.8, foe_men: 360 } ], role: wing, win: sf_tablada_held, lose: sf_tablada_broken } } ] }
     - id: run
       text: Run for the ships, now, before the horsemen close.
       danger: true
@@ -192,7 +192,7 @@
         next: sf_home
       failure:
         text: The horsemen are faster than any man. They catch you on the open ground between the plain and the river.
-        effects: [ { battle: { foe: moorish_host, men: 50, terrain: field, win: sf_tablada_held, lose: sf_tablada_broken } } ]
+        effects: [ { battle: { foe: moorish_host, men: 50, ratio: 1.5, terrain: field, win: sf_tablada_held, lose: sf_tablada_broken } } ]
 
 - id: sf_tablada_held
   kind: spine

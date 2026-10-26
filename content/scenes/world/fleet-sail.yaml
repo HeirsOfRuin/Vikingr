@@ -272,7 +272,7 @@
         effects: [ { add: { provisions: 120, crew.morale: 1 } }, { standing: { n: -1 } } ]
       failure:
         text: The farmers have had a week of foragers, and they're waiting in a wood by the road, with the count's men.
-        effects: [ { battle: { foe: frankish_levy, men: 18, terrain: woods } } ]
+        effects: [ { battle: { foe: frankish_levy, men: 18, ratio: 0.8, terrain: woods } } ]
     - id: careful
       text: Go, but keep to the open fields and come back before dark.
       oar: true

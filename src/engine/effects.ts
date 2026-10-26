@@ -94,8 +94,8 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       startDuel(state, content, e.fight.foe, e.fight.kind, e.fight.lethal, e.fight.win, e.fight.lose);
       if (e.fight.parted && state.pending?.t === 'duel') state.pending.duel.parted = e.fight.parted;
     } else if ('battle' in e) {
-      const { raid, parted, ...b } = e.battle;
-      startBattle(state, content, { ...b, context: raid ? 'raid' : state.voyage ? 'sea' : 'scene', place: state.at });
+      const { raid, parted, ratio, ...b } = e.battle;
+      startBattle(state, content, { ...b, men: foesFor(state, b.men, ratio), context: raid ? 'raid' : state.voyage ? 'sea' : 'scene', place: state.at });
       if (parted && state.pending?.t === 'battle') state.pending.battle.parted = parted;
       if (raid && state.at && !state.seasonRaids.includes(state.at)) state.seasonRaids.push(state.at);
     }
@@ -225,7 +225,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const pf = partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
         return { name: pid ? `${content.captains[pid]!.name}'s men` : w.name, men: pf.men, quality: 1, foe_men: w.foe_men };
       });
-      startHost(state, content, { title: h.title, foe: h.foe, terrain: h.terrain, context: h.raid ? 'raid' : 'scene', place: h.raid ? state.at : null, foeMen: h.men, wings, role: h.role, reserve: h.reserve, win: h.win, lose: h.lose });
+      startHost(state, content, { title: h.title, foe: h.foe, terrain: h.terrain, context: h.raid ? 'raid' : 'scene', place: h.raid ? state.at : null, foeMen: foesFor(state, h.men, h.ratio), wings, role: h.role, reserve: h.reserve, win: h.win, lose: h.lose });
     } else if ('favour' in e) {
       shiftFavour(state, e.favour);
     } else if ('lord' in e) {
@@ -330,4 +330,12 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     }
   }
   void rng;
+}
+
+/** A fight in a fleet is the whole fleet's: the men in front of his own ship are counted from his crew, not fixed
+ * (playtest 9: 17 men against a fixed 34 at the Asturian beach, with sixty ships on the same sand). Never fewer than 6. */
+export function foesFor(state: GameState, men: number, ratio?: number): number {
+  if (ratio === undefined) return men;
+  const ours = state.crew.men + state.men.filter((m) => m.alive).length + 1;
+  return Math.max(Math.min(men, 6), Math.round(ours * ratio));
 }
