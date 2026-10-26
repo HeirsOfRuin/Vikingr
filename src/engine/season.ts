@@ -449,6 +449,12 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // lords, land and rule (docs/FRAME-WORLD.md §C-E): a dead lord, a secret oath come out, the holdings, the seat
   const wintered = state.at;
   hardLines.push(...lordsYear(state, content, rng), ...secretYear(state, content, rng), ...holdingsYear(state, content, rng, wintered), ...ruleYear(state, content, rng, wintered));
+  // history goes on without him: from 843 the Norse hold Noirmoutier, the monks' island, as their camp on the Loire
+  if (year >= 844 && !state.flags._lp843 && state.places.noirmoutier) {
+    state.flags._lp843 = 1;
+    state.places.noirmoutier.norse = true;
+    state.places.noirmoutier.standing = Math.max(state.places.noirmoutier.standing ?? 0, 4);
+  }
   // history goes on without him: in 841 the Norse build ship-forts at Duibhlinn and Linn Duachaill and winter in Ireland
   if (year >= 841 && !state.flags._lp841) {
     state.flags._lp841 = 1;

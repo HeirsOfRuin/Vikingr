@@ -152,3 +152,64 @@
     - id: away
       text: Feed them for the night, and send them on.
       result: They go on in the morning, toward the next hall, where somebody else will look at them and decide. Hámundr nods to you at the door, as if he expected nothing else. You'd rather he had cursed you.
+
+# ---- Aude of Nantes (playtest 9: "a slave who could become my wife ... the captive on the monks' island") ----
+# Bought out of the captives in the winter of 843 (e43_captives). In the spring her father's ransom comes: take it
+# and send her home, or keep her. Kept, she is a bondwoman in your household, and nothing more, until she is a grown
+# woman; then you can free her and marry her, as Höskuldr's son married Melkorka's line, or free her and let her go.
+- id: y44_aude
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 25
+  requires: [flag.e43_aude, "year >= 844", "year <= 845"]
+  art: muster
+  title: The ransom for Aude
+  text: |
+    The priest's boat comes across from the mainland with the spring ransoms, and in it is a thin grey man in a good cloak gone shabby, who stands up in the bow before it touches the shingle and looks along the beach for one face. He is Aude's father. He got out of Nantes on St John's Day with nothing but the cloak, and he has spent the winter borrowing against his warehouses to buy back his daughter.
+
+    He has the silver in a purse: a pound and a half, which the priest says is the price the fleet asked for a merchant's daughter. Aude is standing behind you. She hasn't said anything. She doesn't need to.
+  choices:
+    - id: home
+      text: Take the silver, and give her back to her father.
+      effects: [ { add: { silver: 72, honour: 1 } }, { set: flag.e43_aude_home }, { journal: "Aude went home to Nantes with her father." } ]
+      result: |
+        Her father weighs out the silver with shaking hands, and then holds his daughter on the shingle as if he will never let go, and says something to you in Frankish that the Breton won't translate. Aude looks back once from the boat. In the summer a cask of good wine comes over from the mainland with the priest, with no message, addressed to you.
+    - id: free
+      text: Give her back to him and keep your silver in your purse. Tell him to keep his.
+      effects: [ { add: { honour: 2, hamingja: 1 } }, { set: flag.e43_aude_home }, { journal: "Gave Aude back to her father without a ransom." } ]
+      result: |
+        He doesn't understand, and then he does, and he goes down on his knees on the shingle, which embarrasses everyone. The men on the beach think you are mad. The priest tells the story all along the Loire. For years afterwards, Franks who would spit at any other Northman will sell you bread.
+    - id: keep
+      text: Tell him she is not for sale. She stays in your household.
+      effects: [ { add: { honour: -1 } }, { set: flag.e43_aude_kept }, { journal: "Kept Aude of Nantes in his household." } ]
+      result: |
+        Her father stands on the shingle with his purse in his hand until the priest takes his arm and leads him back to the boat. Aude doesn't cry. She goes back up to the house and goes on with her work, and from that day she speaks to you only when she must, and always in Norse, which she has learned faster than anyone expected.
+
+- id: y47_aude
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 20
+  requires: [flag.e43_aude_kept, "winter >= 847", "!married"]
+  art: hearth_ormr
+  title: Aude
+  text: |
+    Four winters on, Aude runs your household better than anyone you could have hired: she keeps the stores, she haggles with traders in three languages, she can count silver faster than you, and the men are a little afraid of her. She is a grown woman now, nineteen or twenty, and other men have noticed it, and one of your crew has asked you, awkwardly, what her price would be.
+
+    She is still yours, by law. She has never once asked you for anything. Tonight she sits down across the fire from you, uninvited, and waits for you to say what she is going to be.
+  choices:
+    - id: marry
+      text: Free her in front of the household, and ask her to be your wife.
+      effects: [ { wife: Aude }, { add: { honour: 1 } }, { journal: "Freed Aude of Nantes, and married her." } ]
+      result: |
+        You do it properly: the freeing-ale in front of witnesses, her name spoken as a free woman's. Then you ask her. She takes long enough to answer that the hall goes quiet. "You kept me from my father," she says, in her careful Norse. "I have not forgotten. I have also not forgotten that you bought me out of that church." She looks at you a long time. "Yes. But I keep the keys."
+    - id: free
+      text: Free her, give her a dowry of silver, and let her choose for herself.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, honour: 2 } }, { journal: "Freed Aude of Nantes, with a dowry." } ]
+      result: |
+        The freeing-ale, the witnesses, a pound of silver in her lap. She looks at it, and at you, and says nothing for a while. In the spring she marries a Frisian merchant who trades on the Loire, and runs his warehouses better than he does. Whenever your ship is in the river, there is wine at a fair price, and a word of warning if the count's men are about.
+    - id: stay
+      text: Tell her nothing will change.
+      result: She nods, once, as if that was the answer she expected, and gets up and goes back to her work. Nothing changes. Something has.

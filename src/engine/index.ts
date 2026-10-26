@@ -576,6 +576,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? 'More silver; more noise'),
         opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, 'Worth silver in Kaupang; slow and loud'),
         opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
+        opt('Plunder', { t: 'plunder', what: 'arms' }, 'Search the dead and the hall for war-gear', !pl.armed, 'You have searched already.', 'A sword, mail or a helmet, for yourself; once a raid'),
+        opt('Plunder', { t: 'plunder', what: 'stores' }, 'Break open the stores', !pl.stores, 'You have emptied them already.', state.service ? 'Goods for your sea-chest; once a raid' : 'Goods for the hold: wine, salt, cloth, hides; once a raid'),
         ...(!state.service && kindsAt(content, pl.place).length ? [opt('Plunder', { t: 'plunder', what: 'hostage' }, 'Look for someone worth a ransom', !pl.searched, 'You have looked already.', 'A king\'s kin, an abbot, a lord\'s wife and children; slow and loud')] : []),
         state.service
           ? opt('Plunder', { t: 'plunder', what: 'leave' }, `Head for the ships before ${state.service.captain} blows the horn`, true, undefined, `Carrying ${formatSilver(pl.taken)}`)

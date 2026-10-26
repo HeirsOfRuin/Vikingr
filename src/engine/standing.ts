@@ -59,9 +59,15 @@ export function norseHeld(state: GameState, id: string): boolean {
   return !!state.places[id]?.norse;
 }
 
+/** Men for hire in a great fleet's camp, wherever it lies. */
+export const FLEET_HIRE = 10;
+
 export function canHire(state: GameState, content: ContentBundle, id: string): number {
   const p = content.places[id]!;
-  if (p.kind === 'home' || !(HIRING_PEOPLES.includes(p.people) || norseHeld(state, id))) return 0;
+  if (p.kind === 'home') return 0;
+  // a great fleet's camp is full of men whose ships are lost or whose captains are dead (playtest 9: no way to hire on the Loire)
+  if (state.fleet && !state.service) return Math.max(0, FLEET_HIRE - (state.places[id]?.hired ?? 0));
+  if (!(HIRING_PEOPLES.includes(p.people) || norseHeld(state, id))) return 0;
   return Math.max(0, HIRE_POOL[tierAt(state, content, id)] - (state.places[id]?.hired ?? 0));
 }
 

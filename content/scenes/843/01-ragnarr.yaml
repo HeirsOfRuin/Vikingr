@@ -94,17 +94,17 @@
   choices:
     - id: salt
       text: Work the salt-pans with the Franks who stayed, for silver and a share of the salt.
-      effects: [ { add: { silver: 24, skill.trade: 1 } }, { goods: { id: salt, lots: 2 } } ]
+      effects: [ { longphort: noirmoutier }, { add: { silver: 24, skill.trade: 1 } }, { goods: { id: salt, lots: 2 } } ]
       result: |
         The Franks who stayed are poor men who would rather work for Northmen than starve for a count. They show you how the pans are flooded and dried and raked, and they cheat you a little, and you let them, and by Yule you know what salt is worth in every port on the coast.
     - id: river
       text: Spend the winter on the river with the Breton guides, learning the channels.
-      effects: [ { add: { skill.seamanship: 1 } }, { know: rouen } ]
+      effects: [ { longphort: noirmoutier }, { add: { skill.seamanship: 1 } }, { know: rouen } ]
       result: |
         The Bretons hate the Franks more than they fear you, and for a cup of wine they'll tell you anything: where the sandbars are at low water, which monasteries have walls, and that there is another river to the north, the Seine, that goes all the way to Paris.
     - id: hastein
       text: Sit with the young captains in the biggest house, and listen.
-      effects: [ { add: { skill.lore: 1 } } ]
+      effects: [ { longphort: noirmoutier }, { add: { skill.lore: 1 } } ]
       result: |
         The talk is of the south: Spain, and the Moors, and a city whose roofs are gold. A thin, dark young man called Hastein does most of it, and wins most of the dice, and looks at you once as if he were adding you up. You have a feeling he got the right answer.
 

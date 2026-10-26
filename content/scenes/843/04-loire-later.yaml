@@ -65,6 +65,8 @@
   text: |
     Count Lambert sends for you. He has his county now, and he has lost it again, and he is at war with the Frankish king, and with half the counts of the west, and he is living in a Breton hall with a borrowed army and no money. [if flag.e43_lambert_hostages]The two horsemen he gave as hostages before Nantes are with him. One of them nods to you as if you were old friends.[/if]
 
+    [if flag.e43_aude_home]Aude's father, the cloth-merchant, is in Lambert's hall too, selling him cloth on credit he will never see again. He knows you at once, and takes you aside, and tells you which of the count's men at the bridge drink, and which of them are honest.[/if]
+
     "The Franks have a count at Nantes again," he says, "who is not me. He has two hundred men and a river bridge. I'll pay a pound of silver for every ship that comes up the river with me, and what's in the count's hall besides. You know the road." He smiles his bad smile. "I showed it to you."
   choices:
     - id: go

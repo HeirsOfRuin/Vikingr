@@ -134,6 +134,9 @@ export interface PlunderState {
   /** Someone worth a ransom was looked for (once a raid), and found. */
   searched?: boolean;
   hostage?: string;
+  /** The dead and the hall searched for war-gear (once a raid); the stores taken (once a raid). Playtest 9. */
+  armed?: boolean;
+  stores?: boolean;
 }
 
 export interface Deed {

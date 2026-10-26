@@ -174,6 +174,14 @@
       text: Call the guard. She's somebody's silver.
       effects: [ { add: { silver: 6, honour: -1 } } ]
       result: The guard drags her back to the church, and the leaders give you a reward of a few coins for your watchfulness. She's sold to the Verdun trader in the spring. You never learn her name.
+    - id: buy
+      text: Go to the leaders and buy her out of the captives yourself, before the Verdun trader does.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { set: flag.e43_aude }, { journal: "Bought Aude of Nantes out of the fleet's captives." } ]
+      result: |
+        The leaders' man weighs your silver and writes nothing down; one girl less in the church is one girl less to feed. Her name is Aude. She is a cloth-merchant's daughter from Nantes, and her father is alive, she thinks, if he got out of the city. She sleeps by the fire in the house where your bench-mates sleep, and works for her bread like everyone else, and watches you as if she is trying to work out what you are.
+
+        In the spring the priest's boat will come again, with the ransoms.
     - id: shake
       text: Shake your head. If you let her go, they'll hang you for it.
       result: She stands there a moment longer, and then goes back up to the church, slowly. In the spring her father's silver comes over in the priest's boat, enough for her and two more. You see her go, and she doesn't look at you.

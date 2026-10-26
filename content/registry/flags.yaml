@@ -387,3 +387,7 @@ sf_hroi_dead: { description: "Hrói died at Tablada" }
 bx_sworn: { description: "Sailed with Hastein's fleet for Bordeaux" }
 bx_taken: { description: "Was at the taking of Bordeaux, 848" }
 e43_hroi_back: { description: "Hrói came back from the south, one-eyed" }
+# playtest 9: Aude of Nantes, the captive girl on the monks' island
+e43_aude: { description: "Bought Aude of Nantes out of the captives on Noirmoutier" }
+e43_aude_kept: { description: "Kept Aude in your household instead of taking her father's ransom" }
+e43_aude_home: { description: "Sent Aude home to Nantes" }

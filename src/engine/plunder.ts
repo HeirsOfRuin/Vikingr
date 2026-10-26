@@ -13,8 +13,28 @@ import { onRaided } from './standing';
 import { coastPlunderStart } from './hardship';
 import { plunderRing } from './rings';
 import { brokePeace, findHostage, hostagesOf, HOSTAGE } from './hostages';
+import { giveItem } from './items';
+import { stowGoods } from './trade';
 
-export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'hostage' | 'leave';
+/** What a raid's stores hold, by the people raided: goods into the hold (playtest 9: "select specific things to keep"). */
+const STORES: Record<string, { good: string; what: string }[]> = {
+  frankish: [{ good: 'wine', what: 'casks of wine from the cellar' }, { good: 'salt', what: 'sacks of salt from the store-house' }, { good: 'glass', what: 'crates of Rhenish glass from a merchant\'s house' }],
+  frisian: [{ good: 'wool', what: 'bales of Frisian cloth' }, { good: 'wine', what: 'casks of Rhine wine' }],
+  english: [{ good: 'wool', what: 'bales of English wool' }, { good: 'grain', what: 'sacks of grain from the barns' }],
+  gael: [{ good: 'hides', what: 'bales of cattle hides' }, { good: 'grain', what: 'sacks of oats from the barns' }],
+  pict: [{ good: 'hides', what: 'bales of hides' }, { good: 'wool', what: 'bales of wool' }],
+  briton: [{ good: 'hides', what: 'bales of hides' }, { good: 'wool', what: 'bales of wool' }],
+};
+const STORES_ANY = [{ good: 'grain', what: 'sacks of grain from the barns' }, { good: 'hides', what: 'bales of hides' }];
+
+/** War-gear on the dead and in the hall: the chance of each, best first. One find a search. */
+export const ARMS = [
+  { id: 'mail', p: 0.15, line: 'a mail shirt, off a dead man who will not need it, with only one ring burst' },
+  { id: 'frankish_sword', p: 0.15, line: 'a Frankish sword, pattern-welded, from a rack in the hall' },
+  { id: 'helmet', p: 0.3, line: 'an iron cap, dented but sound' },
+] as const;
+
+export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'hostage' | 'arms' | 'stores' | 'leave';
 export const ALARM_MAX = 10;
 
 export function startPlunder(state: GameState, place: string, lines: string[], next?: string, content?: ContentBundle): void {
@@ -59,6 +79,30 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
         p.hostage = h.id;
         p.log.push(`You find ${h.who}. You know what they are worth by the way the others try to hide them.`);
       } else p.log.push('You turn the place over for anyone worth a ransom, and find only the poor, who are worth what the poor are worth.');
+      break;
+    }
+    case 'arms': {
+      p.armed = true;
+      p.alarm += 1.5;
+      // the Franks keep swords and mail; a monastery's dead have none (but the abbot's hall may)
+      const rich = ['frankish', 'frisian', 'english'].includes(content.places[p.place]?.people ?? '') ? 1.3 : 0.8;
+      const roll = rng.float();
+      let acc = 0;
+      const find = ARMS.find((a) => (acc += a.p * rich) > roll);
+      if (find && content.items[find.id]) {
+        giveItem(state, content, find.id);
+        p.log.push(`You go through the dead and the hall for war-gear, and come out with ${find.line}. It's yours, not the heap's.`);
+        journal(state, `Took ${content.items[find.id]!.name.toLowerCase()} at ${name}.`);
+      } else p.log.push('You go through the dead and the hall for war-gear, and find spears, a broken shield and a sword with half a blade. Nothing worth carrying.');
+      break;
+    }
+    case 'stores': {
+      p.stores = true;
+      p.alarm += 1.5;
+      const list = STORES[content.places[p.place]?.people ?? ''] ?? STORES_ANY;
+      const s = list[rng.int(list.length)]!;
+      const lots = 2 + rng.int(3);
+      p.log.push(`You break open the stores: ${s.what}. ${stowGoods(state, content, s.good, lots)}`);
       break;
     }
     case 'burn': {
