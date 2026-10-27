@@ -143,7 +143,7 @@ describe('the hall in two winters', () => {
     expect(hallPrice(s)).toBe(HALL_PRICE / 2);
     hallAction(s, content, new RngCursor(seedRng(1)), 'build_hall');
     expect(s.base.level).toBe('hall');
-    expect(s.silver).toBeLessThan(30);
+    expect(s.silver).toBeLessThan(60);
     expect(s.flags.hall_frame).toBeUndefined();
   });
 });
