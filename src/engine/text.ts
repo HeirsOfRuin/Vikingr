@@ -121,7 +121,7 @@ export function renderText(text: string, state: GameState, content: ContentBundl
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     // a token's fallback ("the captain", "her daughter") at the start of a sentence takes a capital (the render scan)
-    .replace(/(^|(?<!\.)[.!?]["”]?\s+|\n)(the|her|his|their|your) /g, (_m, pre: string, w: string) => `${pre}${w.charAt(0).toUpperCase()}${w.slice(1)} `);
+    .replace(/(^|(?<!\.)[.!?]["”]?\s+|\n)(the|her|his|their|your|young) /g, (_m, pre: string, w: string) => `${pre}${w.charAt(0).toUpperCase()}${w.slice(1)} `);
 }
 
 /** Validator: condition errors inside [if] passages, and unknown {tokens}. */
