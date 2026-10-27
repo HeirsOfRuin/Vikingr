@@ -51,11 +51,12 @@ export function texts(c: ContentBundle): { where: string; text: string }[] {
   return out;
 }
 
-/** One life per (background, policy, seed), YEARS long, rendered as the UI renders it. */
+/** One life per (era, background, policy, seed), YEARS long, rendered as the UI renders it. */
 function play(content: ContentBundle, runs: number, observe: (o: { state: GameState; scene: string; texts: Seen[] }) => void): void {
-  for (const bg of Object.keys(content.backgrounds)) for (const [pi, policy] of POLICIES.entries()) for (let i = 0; i < runs; i++) {
-    const seed = 11 + i * 104729 + pi * 7919;
-    let state = newGame(content, { background: bg, seed, name: 'Bot' });
+  // every era: the later starts at half the runs (they share most of the world's scenes with 830)
+  for (const era of [830, 843, 865] as const) for (const bg of Object.keys(content.backgrounds)) for (const [pi, policy] of POLICIES.entries()) for (let i = 0; i < (era === 830 ? runs : Math.max(1, Math.floor(runs / 2))); i++) {
+    const seed = 11 + i * 104729 + pi * 7919 + (era - 830) * 31;
+    let state = newGame(content, { background: bg, seed, name: 'Bot', era });
     const bot = new Bot(policy, new RngCursor(seedRng(seed ^ 0x5bd1e995)));
     const start = dateOf(state.day).year;
     for (let step = 0; step < 4000 && !state.death && dateOf(state.day).year < start + YEARS; step++) {
