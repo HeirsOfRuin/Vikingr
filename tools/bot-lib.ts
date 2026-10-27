@@ -1,7 +1,7 @@
 // Reference players. They do not need to play well; they need to play consistently,
 // so two runs are comparable (game-building skill, Part 2 #5).
 import { hirdRoom } from '../src/engine/hird';
-import { FARM_PRICE, HALL_PRICE } from '../src/engine/base';
+import { FARM_PRICE, HALL_PRICE, hallPrice } from '../src/engine/base';
 import { hold, holdRoom, SECONDHAND } from '../src/engine/fleet';
 import { buyPrice, sellPrice } from '../src/engine/trade';
 import { partner } from '../src/engine/allies';
@@ -226,7 +226,8 @@ export class Bot {
     // the bold take the skald to sea; the careful leave him at the jarl's benches (playtest 8)
     { const want = this.policy === 'raider' || this.policy === 'reckless'; const sa = pick((a) => a.t === 'skald_aboard' && a.on === want); if (sa) return sa; }
     if (state.silver > FARM_PRICE + 24) { const b = h('buy_farm'); if (b) return b; }
-    if (state.silver > HALL_PRICE + 150) { const b = h('build_hall'); if (b) return b; }
+    if (state.silver > hallPrice(state) + 150) { const b = h('build_hall'); if (b) return b; }
+    if (state.silver > HALL_PRICE / 2 + 100) { const b = h('hall_frame'); if (b) return b; }
     if (state.silver > 700 && state.ships.length < 3) { const b = h('build', 'snekkja'); if (b) return b; }
     if (state.silver > 120 && state.hamingja < 2) { const b = h('blot'); if (b) return b; }
     return h('train')!;

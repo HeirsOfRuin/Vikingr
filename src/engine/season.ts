@@ -247,7 +247,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
 
 // ---- the winter hall ----
 
-export type HallWhat = 'feast' | 'gift' | 'gift_gold' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall' | 'jarl_gift';
+export type HallWhat = 'feast' | 'gift' | 'gift_gold' | 'train' | 'rest' | 'skald' | 'build' | 'blot' | 'buy_ship' | 'work' | 'buy_farm' | 'build_hall' | 'hall_frame' | 'jarl_gift';
 
 export function feastCost(state: GameState): number {
   return mouths(state) + FEAST_GUESTS;
@@ -362,15 +362,25 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       lines.push(`You buy the old Ketilsstead at the head of the fjord from a widow going to live with her daughter: a longhouse with a bad roof, a byre, a field, a strip of shore. ${formatSilver(FARM_PRICE)}.`, state.base.wife ? `${state.base.wife} walks round it twice, and says it will do, and starts on the roof.` : 'It is cold, and it is empty, and it is yours.');
       break;
     }
+    case 'hall_frame': {
+      const half = Math.round(HALL_PRICE / 2);
+      state.silver -= half;
+      state.flags.hall_frame = dateOf(state.day).year;
+      journal(state, 'Raised the frame of a hall.');
+      lines.push(`All winter the carpenters raise the frame on your land: oak posts, the tie-beams, the ridge. ${formatSilver(half)}. It stands against the sky without a roof, and the whole district walks out to look at it. Next winter, the roof and the high seat.`);
+      break;
+    }
     case 'build_hall': {
       const rebuilt = !!state.flags.hall_burned;
+      const framed = !!state.flags.hall_frame;
       state.silver -= hallPrice(state);
       delete state.flags.hall_burned;
+      delete state.flags.hall_frame;
       state.base.level = 'hall';
       if (!rebuilt) addDeed(state, content, { type: 'deed', text: 'Built a hall of his own', weight: 5, witnesses: state.crew.men + 30 });
       journal(state, rebuilt ? 'Rebuilt the hall.' : 'Built a hall.');
       if (rebuilt) lines.push(`All winter the carpenters work on the burned posts, and raise the hall again on the old stones, carving the beasts back where they were. ${formatSilver(Math.round(HALL_PRICE / 2))}.`, 'It smells of new oak and old smoke. At the first feast in it, the hall is as full as it ever was.');
-      else lines.push(`All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They say your name at the door. That is what a hall is for.');
+      else lines.push(framed ? `All winter the carpenters work on the frame you raised last year: the roof like an upturned ship, the posts carved with beasts biting their own tails, the high seat. ${formatSilver(Math.round(HALL_PRICE / 2))}.` : `All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They say your name at the door. That is what a hall is for.');
       break;
     }
     case 'work': {

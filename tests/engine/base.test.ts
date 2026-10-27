@@ -117,10 +117,33 @@ describe('the base', () => {
     expect(feastMult(after)).toBeCloseTo(1.15 * (1 + TROPHY_FEAST_MAX));
   });
 
-  it('a hall gives an extra winter action at home, and four more men at the muster', () => {
+  it('a hall gives an extra winter action at home, and ten more men at the muster', () => {
     const s = winterHome();
     expect(hallOpts(s)).toContain('feast');
     s.base.level = 'hall';
-    expect(BASE.hall.muster).toBe(4);
+    expect(BASE.hall.muster).toBe(10);
+  });
+});
+
+describe('the hall in two winters', () => {
+  it('the frame for half, then the roof for the other half', async () => {
+    const { sandboxGame, content } = await import('../helpers');
+    const { hallAction } = await import('../../src/engine/season');
+    const { RngCursor, seedRng } = await import('../../src/engine/rng');
+    const { canRaiseFrame, hallPrice, HALL_PRICE } = await import('../../src/engine/base');
+    const s = sandboxGame(3);
+    s.base.level = 'farm';
+    s.silver = HALL_PRICE;
+    s.deeds.push({ n: 1, type: 'deed', day: s.day, place: null, text: 'x', weight: 60, witnesses: 0, told: s.day, verse: false });
+    expect(canRaiseFrame(s)).toBeNull();
+    hallAction(s, content, new RngCursor(seedRng(1)), 'hall_frame');
+    // half the price gone (the farm's winter takings may come in on the same action)
+    expect(s.silver).toBeLessThan(HALL_PRICE / 2 + 30);
+    s.silver = HALL_PRICE / 2;
+    expect(hallPrice(s)).toBe(HALL_PRICE / 2);
+    hallAction(s, content, new RngCursor(seedRng(1)), 'build_hall');
+    expect(s.base.level).toBe('hall');
+    expect(s.silver).toBeLessThan(30);
+    expect(s.flags.hall_frame).toBeUndefined();
   });
 });

@@ -23,8 +23,10 @@ export interface BaseState {
 
 export const BASE: Record<BaseLevel, { name: string; desc: string; thralls: number; perThrall: number; income: number; muster: number }> = {
   father: { name: "Your father's farm", desc: 'A bench by your father\'s fire, a corner of his byre, and your mother\'s opinion of everything you bring home.', thralls: 4, perThrall: 1, income: 0, muster: 0 },
-  farm: { name: 'Your own farm', desc: 'A longhouse of your own, turf-roofed, with a byre at one end, a field, a strip of shore, and a door nobody else can shut on you.', thralls: 6, perThrall: 3, income: 12, muster: 1 },
-  hall: { name: 'Your hall', desc: 'A hall with carved posts and a high seat, long enough to feast forty men, where your trophies hang and your name is said at the door.', thralls: 12, perThrall: 3, income: 24, muster: 4 },
+  // the review (docs/REVIEW-2026-10.md): a crew of 30 fell to 8-14 by year six, and a hall was 1 life in 10; a man's
+  // own place now brings men to the spring muster, and a hall gifts from the district
+  farm: { name: 'Your own farm', desc: 'A longhouse of your own, turf-roofed, with a byre at one end, a field, a strip of shore, and a door nobody else can shut on you.', thralls: 6, perThrall: 3, income: 12, muster: 3 },
+  hall: { name: 'Your hall', desc: 'A hall with carved posts and a high seat, long enough to feast forty men, where your trophies hang and your name is said at the door.', thralls: 12, perThrall: 3, income: 48, muster: 10 },
 };
 /** A farm of his own: 4 pounds. A hall on it: 12 pounds, and a name men know. */
 export const FARM_PRICE = 192;
@@ -86,7 +88,17 @@ export function hallActionsFor(state: GameState, base: number): number {
 
 /** A hall that burned is raised again on its old stones, at half the price (docs/FRAME-HARDSHIP.md). */
 export function hallPrice(state: GameState): number {
-  return state.flags.hall_burned ? Math.round(HALL_PRICE / 2) : HALL_PRICE;
+  // a burned hall is raised on its old stones; a frame already standing needs only its roof (half, either way)
+  return state.flags.hall_burned || state.flags.hall_frame ? Math.round(HALL_PRICE / 2) : HALL_PRICE;
+}
+
+/** The hall in two winters: the frame first, for half the price; the roof and the high seat the next. */
+export function canRaiseFrame(state: GameState): string | null {
+  if (state.base.level !== 'farm') return 'You need a farm of your own to build it on.';
+  if (state.flags.hall_frame || state.flags.hall_burned) return 'The frame is already standing.';
+  if (livingFame(state) < HALL_FAME) return 'Nobody would come to the hall of a man without a name. Not yet.';
+  if (state.silver < Math.round(HALL_PRICE / 2)) return `You need ${formatSilver(Math.round(HALL_PRICE / 2))}.`;
+  return null;
 }
 
 export function canBuildHall(state: GameState): string | null {

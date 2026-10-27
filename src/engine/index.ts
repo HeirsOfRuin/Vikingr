@@ -35,7 +35,7 @@ import { adaptivePolicy as duelInstinct, BEATS, canYield, fightOut, habitPolicy,
 import { adaptivePolicy as battleAuto, availableOrders, doctrinePolicy, enemyForecast, fightOutBattle, INTENSITY, MATCHUP, ORDER_NAMES, POSITION_NAMES, resolveRound } from './battle';
 import { finishBattle, finishDuel, freshScout, startBattle, startRaid, surpriseChance } from './fights';
 import { breakBoast, goalMet, keepBoast } from './boasts';
-import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom } from './base';
+import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom, canRaiseFrame, HALL_PRICE } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
 import { eatAshore, expeditionRoads, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
@@ -505,7 +505,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (home && state.base.level === 'father') out.push(opt('Your base', { t: 'hall', what: 'buy_farm' }, 'Buy a farm of your own', state.silver >= FARM_PRICE, `You need ${formatSilver(FARM_PRICE)}.`, formatSilver(FARM_PRICE)));
       if (home && state.base.level === 'farm') {
         const why = canBuildHall(state);
-        out.push(opt('Your base', { t: 'hall', what: 'build_hall' }, state.flags.hall_burned ? 'Rebuild the hall' : 'Build a hall', !why, why ?? undefined, formatSilver(hallPrice(state))));
+        out.push(opt('Your base', { t: 'hall', what: 'build_hall' }, state.flags.hall_burned ? 'Rebuild the hall' : state.flags.hall_frame ? 'Roof the hall and carve the high seat' : 'Build a hall', !why, why ?? undefined, formatSilver(hallPrice(state))));
+        // or in two winters: the frame now, the roof next winter (the review: a hall was 1 life in 10)
+        if (!state.flags.hall_frame && !state.flags.hall_burned) { const fw = canRaiseFrame(state); out.push(opt('Your base', { t: 'hall', what: 'hall_frame' }, 'Raise the frame of a hall', !fw, fw ?? undefined, `${formatSilver(Math.round(HALL_PRICE / 2))} now, the same again to roof it next winter`)); }
       }
       if (lord || state.base.level !== 'father') out.push(opt('Hall', { t: 'hall', what: 'feast' }, 'Hold a feast', state.silver >= fc, `You need ${formatSilver(fc)}.`, formatSilver(fc)));
       else {
