@@ -50,7 +50,8 @@ import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
 import { BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
-import { startIn843 } from './era';
+import { startInEra } from './era';
+import { armyCamp } from './sailfleet';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
 
 export type Action =
@@ -168,8 +169,8 @@ export interface NewGameOptions {
   attrs?: Record<Attr, number>;
   /** Which way he was raised: a skill set id; the first if left out. */
   skillSet?: string;
-  /** Horik's days (830, the default) or Ragnarr's days (843) (docs/FRAME-LINEAGE.md D). */
-  era?: 830 | 843;
+  /** Horik's days (830, the default), Ragnarr's days (843) or the Great Army (865) (docs/FRAME-LINEAGE.md D). */
+  era?: 830 | 843 | 865;
 }
 
 export function newGame(content: ContentBundle, opts: NewGameOptions): GameState {
@@ -243,7 +244,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
   state.musterPool = 4 + 2 * effAttr(state, content, 'pre');
   // the first season's food comes from the farm and the jarl
   state.provisions = mouths(state) * 20;
-  if (opts.era === 843) startIn843(state, content, bg.id);
+  if (opts.era === 843 || opts.era === 865) startInEra(state, content, bg.id, opts.era);
   else open(state, bg.start_scene, content);
   return state;
 }
@@ -702,7 +703,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (at === homeOf(state)) {
         out.push(...homeActions(state, content));
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
-      } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, `Winter at ${place.name}`, tier !== 'hostile' && tier !== 'unfriendly', 'Nobody here will give you a roof.'));
+      } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, armyCamp(state) === at || (tier !== 'hostile' && tier !== 'unfriendly'), 'Nobody here will give you a roof.'));
       return out;
     }
   }

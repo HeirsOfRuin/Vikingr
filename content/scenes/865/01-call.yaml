@@ -1,0 +1,145 @@
+# The Great Army (docs/FRAME-865.md): a life begun in the spring of 865. Paris was paid off twenty years ago, the
+# Loire Northmen are old men now, and the talk is of England. History: the Anglo-Saxon Chronicle for 865-878
+# (the micel here: East Anglia 865, York 866-867, Nottingham 867-868, Thetford and Edmund 869, Reading and Ashdown
+# 870-871, Repton 873-874, the parting in 874, Northumbria shared out 876, Chippenham and Edington 878). The
+# sons of Ragnarr and their father's death in a snake-pit are the sagas' story, told here as the men told it.
+
+- id: e65_boyhood
+  kind: spine
+  art: home_fjord
+  when: 849 to 865
+  title: The old men and the young men
+  text: |
+    The old men at the fire were at Paris, or say they were. They tell it every winter: the river, the abbey, the Frankish king paying seven thousand pounds of silver to make the ships go away. Seven thousand. The number gets no smaller.
+
+    The young men talk about England. England has four kings and no ships, and the four kings hate each other more than they hate anyone from across the sea.
+    [break]
+    What did you do with your boyhood, while the old men told it and the young men planned it?
+  choices:
+    - id: fire
+      text: Sat with the old men, and learned how Paris was done.
+      effects: [ { add: { skill.lore: 1, skill.speech: 1 } } ]
+      result: You know where the Franks keep their silver and how long a king takes to decide to pay. Most of the old men's stories turn out to be about waiting. Nobody puts that part in the verses.
+      next: e65_call
+    - id: boats
+      text: Went out with the fishing boats, and then the traders, as far as Kaupang.
+      effects: [ { add: { skill.seamanship: 1, skill.trade: 1 } } ]
+      result: You know the coast as far as the Vík, and what wool fetches at Kaupang, and that a Dane will cheat a Norwegian and call it friendship.
+      next: e65_call
+    - id: yard
+      text: Fought with every boy in the district, and then with their fathers.
+      effects: [ { add: { skill.weapons: 1, skill.shield: 1 } } ]
+      result: You have a broken finger that set crooked and a reputation, and a few of the fathers have stopped laughing at you, which is worth more than the finger.
+      next: e65_call
+
+- id: e65_call
+  kind: spine
+  art: muster
+  when: Spring, 865
+  title: The sons of Ragnarr
+  text: |
+    [if background == outlaw]You broke a man's skull at the spring thing over a horse, and the thing put you out of Hordaland for three winters. You are on the beach at Kormt with your sea-chest, outside the district's law, looking for a ship that doesn't ask.[else]You are sixteen, and the ship-talk has been about England all winter.[/if]
+
+    The story comes up the coast with the Danish traders, and gets better at every landing. Ragnarr, the one who took Paris, went to England in his old age with two ships, and the king of the Northumbrians, Ælla, took him and threw him into a pit of snakes. He sang in the pit, they say, until the snakes stopped him. Now his sons are gathering ships to answer for it: Ívarr, and Hálfdan, and Ubbi. Not a fleet, the Danes say. An army.
+    [break]
+    A Sotra man called Kolr is taking his ship. Kolr is fifty, lame in one leg from a Frisian arrow, and has been to England twice and come back both times, which is more than most. His ship is the Elk, thirty oars, old and fast.
+
+    "The sons of Ragnarr want men," Kolr says. "I want silver. I've heard the snakes story told four ways, and in two of them there are no snakes." He looks you over. [if background == outlaw]"A man with blood on him. The English won't mind." [elif background == freedman]"Leysingr's lad. Can you ride a horse? You'll have to learn." [else]"A second son. They make the best oarsmen. Nothing to go home to." [/if]
+  choices:
+    - id: bench
+      text: Take the bench.
+      effects:
+        - { join_ship: { captain: Kolr, ship_name: the Elk, type: karvi, crew: 30, home: gipeswic, route: [gipeswic] } }
+        - { set: flag.ga_army }
+        - { fleet: greatarmy }
+        - { know: gipeswic }
+        - { know: york }
+        - { days: 120 }
+      result: |
+        The Elk goes south to the Danes at the end of the spring, and the Danes go west in the autumn, more ships than you can count from any one deck. You row, and bail, and listen, and by the time the English coast comes up out of the sea you know which of the Danes to trust with your silver, which is none of them.
+    - id: ask
+      text: Ask him which way the snakes story is true.
+      check: { skill: speech, attr: pre, difficulty: 4 }
+      success:
+        text: |
+          Kolr laughs, which he does not do often. "The way that gets the most ships to England," he says. "You'll do. Sit near me, where I can hear you."
+        effects:
+          - { join_ship: { captain: Kolr, ship_name: the Elk, type: karvi, crew: 30, home: gipeswic, route: [gipeswic] } }
+          - { set: flag.ga_army }
+          - { set: flag.ga_kolr_ear }
+          - { fleet: greatarmy }
+          - { know: gipeswic }
+          - { know: york }
+          - { days: 120 }
+      failure:
+        text: |
+          "The way that pays," Kolr says, and limps off down the beach without waiting to hear what you think of it. You take the bench anyway. The Elk sails at the end of the spring.
+        effects:
+          - { join_ship: { captain: Kolr, ship_name: the Elk, type: karvi, crew: 30, home: gipeswic, route: [gipeswic] } }
+          - { set: flag.ga_army }
+          - { fleet: greatarmy }
+          - { know: gipeswic }
+          - { know: york }
+          - { days: 120 }
+
+- id: e65_east_angles
+  kind: place
+  trigger: arrive
+  at: [gipeswic]
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 865"]
+  art: muster
+  title: The East Angles' horses
+  text: |
+    The army comes ashore in East Anglia in the autumn and does nothing at all, which frightens the English worse than burning would. It digs a ditch round a camp and sits behind it, eating the East Angles' cattle, and sends word to their king that it would like horses.
+
+    King Edmund sends horses. He sends them in herds, with boys to lead them, and peace, and food for the winter, and a priest with a face like a wet week to say how glad the East Angles are of their guests. The Danes take it all and thank him very nicely.
+
+    Kolr looks at the horses. "Now," he says, "we are not a fleet any more."
+  choices:
+    - id: ride
+      text: Learn to ride, before the spring.
+      oar: true
+      effects: [ { add: { skill.weapons: 1 } }, { set: flag.ga_rider } ]
+      result: |
+        A Norwegian on a horse is a joke the Danes never tire of. You come off forty times before Yule, once into a frozen ditch, and the Danes cheer each one. By spring you can stay on at a canter with a shield on your arm, which is all the army asks. The horse never forgives you.
+    - id: trade
+      text: Trade what the army doesn't need with the East Angles across the ditch.
+      oar: true
+      effects: [ { add: { silver: 18, skill.trade: 1 } } ]
+      result: The East Angles will buy anything that comes back over the ditch, including their own cloaks. You learn a little English, all of it about prices. By Yule you have three-quarters of a pound and a name among the camp's thieves as a fair man, which in that company is a kind of insult.
+    - id: listen
+      text: Sit with the Danes and learn who the sons of Ragnarr are.
+      oar: true
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: |
+        Ívarr is the one to watch: thin, quiet, never in a hurry, and the others look at him before they speak. Hálfdan is the one who likes a fight. Ubbi goes where Ívarr sends him. Nobody can tell you whether they are really Ragnarr's sons. Everyone can tell you about the snakes.
+
+- id: e65_ivarr
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: [flag.ga_army, "winter == 865"]
+  art: yule_hall
+  title: Ívarr
+  text: |
+    At Yule the sons of Ragnarr feast the army in a barn the East Angles built for tithes, and you are near enough the high end to see them.
+
+    They call Ívarr the Boneless, and nobody will tell you why. He doesn't look boneless. He looks like a man who has been ill for years and decided not to die of it. He eats little, drinks less, and watches everyone. When the skalds start on his father and the snakes, he listens to every verse as if he were checking it for mistakes.
+
+    Late in the night his eye comes down the benches and stops on you, a stranger with a Hordaland accent, and he says something to the man beside him, who comes down to ask what you think the English will do in the spring.
+  choices:
+    - id: truth
+      text: Tell him what you think. The English will wait for someone else to fight first.
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: The man goes back up the hall and says it in Ívarr's ear. Ívarr looks at you again, longer, and lifts his cup an inch from the table. In the spring Kolr is told that the Elk will ride in the van, which pays better and dies faster. Kolr says that is what comes of having a clever oarsman.
+        effects: [ { add: { hamingja: 1 } }, { set: flag.ga_ivarr_knows }, { deed: { type: deed, text: "Was noticed by Ívarr at the army's Yule", weight: 2, witnesses: 200 } } ]
+      failure:
+        text: You say something about the English being cowards. The man nods politely and goes back up the hall with it. Ívarr doesn't look at you again, which, Kolr says afterwards, is the best thing that could have happened.
+    - id: drink
+      text: Tell him the English will do whatever Ívarr wants, and drink his health.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The man laughs and goes back to his bench. Your own benches drink Ívarr's health with you, loudly, and then their own, and then the horses'. It is a good Yule.

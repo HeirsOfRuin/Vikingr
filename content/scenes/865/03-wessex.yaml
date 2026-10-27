@@ -1,0 +1,150 @@
+# East Anglia and Wessex, 869-872. ASC: in 869 the army rode over Mercia into East Anglia and wintered at
+# Thetford; King Edmund fought them and was killed (Abbo's Passio, a century later, has him bound to a tree and
+# shot with arrows for refusing to deny Christ, and names Ívarr, "Hinguar"). In 870 the army went into Wessex
+# and dug in at Reading, between the Thames and the Kennet; in January 871 the West Saxons beat it on Ashdown,
+# where the Danish king Bagsecg and five jarls fell. Nine battles that year; King Æthelred died after Easter,
+# and his brother Alfred paid the army to leave. It wintered at London, 871-872.
+
+- id: e69_east
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 869", "place == york"]
+  art: muster
+  title: The road to Thetford
+  text: |
+    In the summer the sons of Ragnarr go back for King Edmund. Nobody says why. He gave them horses and peace four years ago, and paid them to go away, and did everything right. Perhaps that is why.
+
+    The army rides south through Mercia, which shuts its gates and lets it pass, and into East Anglia from the west, by the old road, to a king's town called Thetford at a ford on the Little Ouse.
+  choices:
+    - id: ride
+      text: Go south with the army.
+      effects: [ { route: [thetford] }, { camp: thetford }, { know: thetford } ]
+      result: "[if flag.ga_rider]You ride, and keep up, and the Danes have stopped laughing at you. [/if]The East Angles see the army coming and pull their cattle into the woods. It doesn't help them."
+
+- id: e69_edmund
+  kind: place
+  trigger: arrive
+  at: [thetford]
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 869"]
+  art: bangor_field
+  title: King Edmund
+  text: |
+    Edmund of the East Angles comes out to fight, which nobody expected of a king who had paid so nicely. He has his thegns and the levy of two shires, and they stand on the frozen field outside Thetford and are beaten in a morning, and the king is taken in a church a day later, sitting by the altar, waiting.
+
+    Ívarr talks with him in a barn all afternoon, through a priest. Nobody hears what is said. Then Ívarr comes out and says the English king will not rule under him, and will not give up his god, and so he can go to his god.
+    [break]
+    They tie Edmund to a tree in the yard and give the bowmen leave. The English priests are made to watch. So is the army.
+  choices:
+    - id: shoot
+      text: Take a bow, with the Danes.
+      effects: [ { add: { honour: -2, hamingja: 1 } }, { set: flag.ga_edmund_shot }, { deed: { type: deed, text: "Was one of the bowmen at the death of King Edmund", weight: 3, witnesses: 400 } } ]
+      result: |
+        He doesn't cry out. That is the thing everybody says afterwards, Dane and Englishman alike, and it's true. He prays, and then he stops, and they cut his head off and throw it in the woods. The English will spend the next hundred years telling each other how he died. They will tell it about you.
+    - id: watch
+      text: Stand with the army, and keep your bow on your back.
+      effects: [ { add: { honour: 1 } } ]
+      result: You watch it. Some of the Danes laugh. Most don't. In the evening the English priests ask the army for the king's body, and Ívarr gives it to them, but not the head. Months later you hear they found it in the woods, guarded by a wolf. You saw the woods. There are a great many wolves.
+    - id: speak
+      text: Say, loud enough for Ívarr's men to hear, that a king alive is worth a ransom.
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success:
+        text: Ívarr's man hears it, and takes it up to him. Ívarr hears it, and looks at you across the yard, and says, quite gently, that the English will pay more for a saint than they ever would for a king. Then he gives the bowmen the nod. He remembers your face. That is not always good.
+        effects: [ { add: { honour: 2 } }, { set: flag.ga_spoke_for_edmund } ]
+      failure:
+        text: Nobody hears it but the Danes next to you, who look at you as if you'd farted in a temple. You don't say it again.
+
+- id: e70_reading
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 870", "place == thetford"]
+  art: muster
+  title: Wessex
+  text: |
+    Three kingdoms out of four, now: Northumbria has a king who does what he's told, Mercia pays, East Anglia has a dead king and a Danish one. The fourth is Wessex, which has the most land and the most silver and two brothers on the throne who sat outside Nottingham all one winter and never attacked.
+
+    "They'll attack this time," says a Dane who has been to Wessex. "It's theirs."
+
+    In the autumn the army goes in, by the Thames, to a royal estate called Reading, and digs a ditch from one river to the other.
+  choices:
+    - id: go
+      text: Go up the Thames with the army.
+      effects: [ { route: [london, reading] }, { camp: reading }, { know: reading }, { know: london } ]
+      result: The ditch takes three days, with every man digging, the sons of Ragnarr included. Hálfdan digs like a thrall and swears like one. The West Saxons watch from the downs and do nothing, which is not the same as doing nothing.
+
+- id: e71_ashdown
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "winter == 870", "place == reading"]
+  art: bangor_field
+  title: Ashdown
+  text: |
+    In the dead of the winter the army goes out of Reading onto the downs to bring the West Saxons to a fight, and the West Saxons come. The army splits in two on the ridge: the kings in one wall, under Bagsecg and Hálfdan, and the jarls in the other.
+
+    The English do the same. Their king is at his prayers in his tent, men say afterwards, and won't come out until the priest is done, and so it is the young brother, Alfred, who sees the Danes on the high ground and decides not to wait for him. He comes up the hill at you like a wild boar, with a little thorn tree in the middle of the field between the two walls.
+  choices:
+    - id: hold
+      text: Stand in the jarls' wall, and take the charge.
+      oar: true
+      danger: true
+      effects: [ { host: { title: "Ashdown", foe: west_saxon_host, terrain: field, men: 30, ratio: 1.0, wings: [ { name: "The kings' wall", men: 300, quality: 1.0, foe_men: 360 } ], role: wing, win: e71_ashdown_held, lose: e71_ashdown_lost } } ]
+
+- id: e71_ashdown_held
+  kind: spine
+  art: bangor_field
+  title: The thorn tree
+  text: |
+    Your part of the wall holds. The rest doesn't. The kings' wall goes back past the thorn tree, and then breaks, and then runs, and Bagsecg the king is killed in it, and five jarls with him, and the English chase the rest along the downs until dark.
+
+    You walk back to Reading in the night with your men round you, in good order, which counts for something. You were the part of the army that wasn't beaten. Nobody will remember that.
+  choices:
+    - id: back
+      text: Get inside the ditch.
+      effects: [ { deed: { type: battle_won, text: "Held his part of the wall at Ashdown, when the kings' wall broke", weight: 3, witnesses: 300 } } ]
+      result: The army counts its dead behind the ditch, and it is the first time in five years that the counting takes all night.
+
+- id: e71_ashdown_lost
+  kind: spine
+  art: bangor_field
+  title: The downs
+  text: |
+    The English come up the hill faster than men in mail should, and the jarls' wall goes back past the thorn tree, and then everything goes. You run with the rest along the top of the downs, with West Saxon horsemen in the rear, and a man beside you takes a spear between the shoulders and goes down without a word.
+
+    Bagsecg the king is dead on the field, and five jarls with him. The English chase you until dark.
+  choices:
+    - id: back
+      text: Get inside the ditch.
+      effects: [ { add: { crew.morale: -1 } } ]
+      result: The army counts its dead behind the ditch, and it is the first time in five years that the counting takes all night. Hálfdan walks the ditch until morning, and nobody sleeps.
+
+- id: e71_alfred
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 871", "place == reading"]
+  art: muster
+  title: Nine battles
+  text: |
+    It goes on all that year. The army beats the West Saxons at Basing, and loses to them, and beats them again, nine fights in one year by the English count, and the English king dies after Easter and his brother Alfred is king, at twenty-two, with an army that won't stop coming back.
+
+    In the summer a new army comes up the Thames from Denmark, the summer army, under kings called Guthrum and Oscetel and Anwend, and the West Saxons look at the new ships and do the sums. Alfred sends to the army to ask what it would take.
+    [break]
+    It takes a great deal. The army goes to London for the winter, rich, and men who have had enough start talking about home.
+  choices:
+    - id: stay
+      text: Stay with the army. There's more England.
+      effects: [ { route: [london] }, { camp: london }, { add: { silver: 60 } } ]
+      result: Your share of the West Saxon silver is a pound and a quarter, weighed out on the Thames bank by a Dane who keeps his thumb on the scale until he sees you watching. London is a ruin with a market in it. You winter there.
+    - id: home
+      text: Take your share of the West Saxon silver and sail for home.
+      visible_if: "!service"
+      effects: [ { add: { silver: 60 } }, { fleet_end: true }, { set: flag.ga_went_home } ]
+      result: You take your share and the Elk's men take theirs, and you go down the Thames on the ebb with half a dozen other ships that have had enough. England is still there behind you. So, mostly, are you.

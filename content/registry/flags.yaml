@@ -389,3 +389,20 @@ e43_argantlon_betrothed: { description: "Promised to Argantlon, daughter of the 
 e43_argantlon_owed: { description: "The bride-price for Argantlon is still owed" }
 e43_ragnhild_betrothed: { description: "Promised to Ragnhild of Vestfold, Hrói's sister" }
 e43_ragnhild_owed: { description: "The mundr for Ragnhild is still owed" }
+# the Great Army, 865 (docs/FRAME-865.md)
+era865: { description: "A life begun in the spring of 865" }
+ga_army: { description: "Went to England with the great army" }
+ga_kolr_ear: { description: "Sat at Kolr's ear in the Elk", saga: true }
+ga_rider: { description: "Learned to ride in East Anglia" }
+ga_ivarr_knows: { description: "Ívarr noticed him at the army's Yule in East Anglia" }
+ga_saw_aella: { description: "Watched what the sons of Ragnarr did to Ælla at York", saga: true }
+ga_edmund_shot: { description: "Was one of the bowmen at King Edmund's death", saga: true }
+ga_spoke_for_edmund: { description: "Spoke for King Edmund's life, in Ívarr's hearing", saga: true }
+ga_went_home: { description: "Went home from the great army with the West Saxon silver", saga: true }
+ga_heard_harald: { description: "Heard at London of Harald of Vestfold, who means to be king of all Norway", saga: true }
+ga_halfdan: { description: "Went north with Hálfdan after Repton" }
+ga_guthrum: { description: "Went south with Guthrum after Repton" }
+ga_landed: { description: "Was given land in the Vale of York by Hálfdan" }
+ga_sold_claim: { description: "Sold his claim to land in Northumbria to a Dane from Jutland", saga: true }
+ga_baptised: { description: "Was baptized at Aller with Guthrum", saga: true }
+ga_refused_aller: { description: "Refused the baptism at Aller, and went to the new army on the Thames", saga: true }

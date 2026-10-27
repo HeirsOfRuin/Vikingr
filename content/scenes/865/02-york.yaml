@@ -1,0 +1,199 @@
+# York, 866-868. ASC: the army went from East Anglia over the Humber to York on All Saints' Day 866, while the
+# Northumbrians were fighting among themselves; on 21 March 867 the two kings, Osberht and Ælla, broke into the
+# city together and were killed in it. In the autumn the army went into Mercia, to Nottingham, and the Mercians
+# and West Saxons besieged it there; no great battle came of it, and the Mercians made peace. In 868 the army
+# went back to York and stayed the year.
+
+- id: e66_north
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 866", "place == gipeswic"]
+  art: muster
+  title: North, over the Humber
+  text: |
+    The army sits in East Anglia all summer, eating King Edmund's cattle and riding his horses fat, and in the autumn word comes down from the north: the Northumbrians have thrown out their king, Osberht, and taken a man called Ælla instead, and now the two of them are at war, and nobody is minding York.
+
+    Ælla. The snake-pit king. The sons of Ragnarr hear the name and the camp is struck in a morning.
+    [break]
+    "The horses go by the road," Kolr says, "and the ships go by the sea, and we meet them in the Humber. Which are you?"
+  choices:
+    - id: horse
+      text: Ride north with the army.
+      visible_if: flag.ga_rider
+      effects: [ { route: [york] }, { camp: york }, { add: { skill.cunning: 1 } } ]
+      result: Six days on the old Roman road, through a country that empties ahead of you like a pond with the plug pulled. You see more of England in a week than most Englishmen see in their lives, and none of it sees you, because it has all gone into the woods.
+    - id: ship
+      text: Go round by sea in the Elk.
+      effects: [ { route: [york] }, { camp: york } ]
+      result: The Elk goes north with the ships, up the coast and into the Humber, a brown river as wide as a fjord with no mountains to hold it. The horses beat you there. The men who rode never let you forget it.
+
+- id: e66_york_taken
+  kind: place
+  trigger: arrive
+  at: [york]
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 866"]
+  art: celtic_monastery
+  title: All Saints' Day
+  text: |
+    The army comes to York on the English feast of All Saints, and York, which has Roman walls and a minster and a king's hall and four thousand people, opens like a door. There is nobody on the walls. The Northumbrians are off fighting each other somewhere to the north, and the people who are left are at mass.
+
+    By evening there are Danes in the king's hall and horses in the minster, and the archbishop has gone out of the north gate on a mule with his gold in a bag that two men noticed too late.
+  choices:
+    - id: minster
+      text: Go into the minster with the first of them.
+      oar: true
+      effects: [ { add: { loot: 120, honour: -1 } }, { longphort: york }, { standing: { place: york, n: -2 } }, { deed: { type: raid, text: "Was in the minster at York the day the army took it", weight: 3, witnesses: 500 } } ]
+      result: |
+        The altar plate is gone before you get there, but the archbishop's people forgot the books, and the bindings are worth more than the plate. A priest kneels by the font and prays at you, very fast, in Latin, and you leave him there. He'll be the one who writes it down.
+    - id: market
+      text: Take the merchants' quarter by the river, before the others think of it.
+      oar: true
+      effects: [ { add: { loot: 80 } }, { goods: { id: wool, lots: 4 } }, { longphort: york }, { add: { skill.trade: 1 } } ]
+      result: The Frisian merchants by the Ouse have seen this before. They stand in their doorways with their scales out and offer to sell you their own stock at a fair price, and you take the stock and leave the scales, and one of them thanks you for it.
+    - id: gate
+      text: Hold the north gate, in case the Northumbrians come home.
+      oar: true
+      effects: [ { add: { honour: 1 } }, { longphort: york }, { position: front }, { deed: { type: deed, text: "Held the north gate of York for the army", weight: 2, witnesses: 200 } } ]
+      result: They don't come home. You stand at the north gate all night in the rain with eight Danes, listening to the city being taken behind you. In the morning Hálfdan rides out to look at the road, sees you there, and asks your name. It's not much of a share. It's something.
+
+- id: e67_kings
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 867", "place == york"]
+  art: bangor_field
+  title: The two kings
+  text: |
+    In the spring the two kings of Northumbria stop fighting each other, which nobody expected, and come for York together, which everyone should have.
+
+    They come on a March morning with every man in the north behind them, and the old Roman walls the Danes never bothered to mend let them in at three places at once. Then there are Englishmen in the streets, and the fight is in the lanes between the houses, a shield-wall six men wide with a thatch fire on either side.
+    [break]
+    [if service]Kolr is limping up the lane ahead of you with his axe, shouting for the Elk's men.[else]Your men come down the lane at a run, looking for you.[/if] The English are coming the other way.
+  choices:
+    - id: fight
+      text: Get into the lane, and hold it.
+      oar: true
+      danger: true
+      effects: [ { host: { title: "The lanes of York", foe: northumbrian_levy, terrain: rampart, men: 30, ratio: 1.1, wings: [ { name: "Ívarr's Danes", men: 400, quality: 1.1, foe_men: 420 } ], role: wing, win: e67_kings_won, lose: e67_kings_lost } } ]
+
+- id: e67_kings_won
+  kind: spine
+  art: bangor_field
+  title: Ælla
+  text: |
+    The English break in the lanes, and the ones who break first are trapped against the ones still coming in, and by noon the streets of York are full of them, dead and dying, and both their kings among them. Osberht dies in the street with his hearth-men round him. Ælla is taken alive.
+
+    What the sons of Ragnarr do with Ælla, they do in the old Roman yard behind the king's hall, with the army watching. Afterwards men tell it in different ways. The skalds will say they cut the blood-eagle on his back, for the snakes. The men who were there mostly don't say.
+  choices:
+    - id: watch
+      text: Watch it, all of it. You came for this.
+      effects: [ { add: { hamingja: 1, honour: -1 } }, { set: flag.ga_saw_aella } ]
+      result: You watch. You will be asked about it for the rest of your life, by men who weren't there, and you will find that you don't want to tell them. That is the thing nobody warned you about.
+      next: e67_kolr
+    - id: away
+      text: Go and see to the wounded.
+      effects: [ { add: { honour: 1, crew.morale: 1 } } ]
+      result: The Elk's men lost four in the lanes and have six more who won't row for a month. You bind what can be bound, and hear it from the yard, and keep binding. Kolr finds you at it afterwards, white, with his leg bleeding through the bandage. "Good lad," he says. "Somebody had to."
+      next: e67_kolr
+
+- id: e67_kings_lost
+  kind: spine
+  art: bangor_field
+  title: The lane that broke
+  text: |
+    Your lane goes. The English come through it over the men who were holding it, and you are carried back into the yard of somebody's house with a spear-cut in your arm and a dead Dane across your legs.
+
+    It doesn't matter, in the end, which is the worst thing about it. The army holds everywhere else, and by noon both the kings of Northumbria are dead in the streets, and York is a Danish town. You were beaten in the only fight you saw, and you are on the winning side.
+  choices:
+    - id: up
+      text: Get up, and find the Elk's men.
+      effects: [ { add: { crew.morale: -1 } } ]
+      result: You find most of them. Not all.
+      next: e67_kolr
+
+- id: e67_kolr
+  kind: spine
+  art: muster
+  title: Kolr's steering-oar
+  text: |
+    [if service]Kolr died in the lanes. A Northumbrian spear, low, in the bad leg, which is the joke he would have made of it; it opened the big vein, and he was dead before anyone could get a belt round it. The Elk's men burn him on the bank of the Ouse with his axe and his horse, which he never liked.
+
+    Then they sit by the ship and look at each other, and then, one at a time, at you.[else]The army counts its dead. Kolr of Sotra is among them, the old Elk's steersman, and his men burn him on the bank of the Ouse.[/if]
+    [break]
+    [if service]"Someone has to steer her," says the oldest of them, Grjótgarðr, who has never wanted to steer anything in his life. "The army's going up the Trent to winter in Mercia. We can sell her to a Dane, or we can go with it. You've got a head. You've been at Kolr's ear." He spits. "And nobody else wants it."[else]The army is going up the Trent in the autumn, to winter in Mercia, at a place called Nottingham.[/if]
+  choices:
+    - id: steer
+      text: Take the steering-oar.
+      visible_if: service
+      effects:
+        - { ship: { type: karvi, name: the Elk, crew: 18 } }
+        - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
+        - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
+        - { if: "man.hallvard.loyalty >= 5", then: [ { man: { id: hallvard, swear: true } } ], else: [ { man: { id: hallvard, leave: true } } ] }
+        - { if: "man.bersi.loyalty >= 5", then: [ { man: { id: bersi, swear: true } } ], else: [ { man: { id: bersi, leave: true } } ] }
+        - { route: [nottingham] }
+        - { camp: nottingham }
+        - { deed: { type: deed, text: "Took the Elk's steering-oar at eighteen, after York", weight: 3, witnesses: 200 } }
+      result: |
+        You take it. The oar is worn smooth where Kolr's hands were and nowhere else, and it takes you a summer to find out why: he steered with one hand, and held on with the other, because of the leg. Eighteen men stay. The rest take their shares and sell their benches to Danes.
+
+        You are eighteen, and she's yours, in the middle of an army in the middle of England.
+    - id: sell
+      text: Tell them to sell her, and take a Dane's bench yourself.
+      visible_if: service
+      effects: [ { add: { silver: 40 } }, { captain: Hrafn }, { route: [nottingham] }, { camp: nottingham } ]
+      result: A Dane called Hrafn buys her for less than she's worth and more than he can afford, and keeps you on at your old bench, at your old share, with forty in your purse from the sale. He steers worse than Kolr. Everyone does.
+    - id: on
+      text: Go up the Trent with the army.
+      visible_if: "!service"
+      effects: [ { route: [nottingham] }, { camp: nottingham } ]
+      result: The army goes up the Trent in the autumn, horses on the bank, ships in the river. York stays Danish behind it, with a Northumbrian king the sons of Ragnarr chose, who does what he's told.
+
+- id: e67_nottingham
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: [flag.ga_army, "winter == 867", "place == nottingham"]
+  art: yule_hall
+  title: The siege that wasn't
+  text: |
+    The army winters at Nottingham, in the Mercian king's town on its red rock over the Trent, and the Mercian king sends to Wessex for help, and the West Saxon king and his young brother come up with their whole host and camp outside the ditch.
+
+    And then nothing happens. The English won't attack a ditch with Danes behind it. The Danes won't come out to a field with Englishmen on it. The two armies sit and look at each other across the frozen meadows all winter, and the Mercians, who have to feed both of them, look at their stores and do sums.
+  choices:
+    - id: sortie
+      text: Take a few men out at night, after the West Saxons' horses.
+      oar: true
+      danger: true
+      effects: [ { battle: { foe: english_fyrd, terrain: field, men: 12, ratio: 0.8, raid: true } } ]
+    - id: caves
+      text: Find out what the people who live in the caves under the town are selling.
+      oar: true
+      effects: [ { add: { silver: 24, skill.cunning: 1 } } ]
+      result: The caves under the rock go back further than anyone admits, and the people who live in them will sell anything, including the West Saxons' plans, which they get from the West Saxons' cooks. You buy the plans for a few coins and sell them to a Danish hersir for more. By spring you know that the English mean to do nothing, which everyone knew.
+    - id: wait
+      text: Sit it out. Somebody will pay.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: Somebody does. In the spring the Mercian king makes peace and pays the army to go back to York, and the West Saxons go home without having fought, and the young brother, whose name is Alfred, is heard to say it was the worst winter of his life. He will have worse.
+
+- id: e68_back
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 868", "place == nottingham"]
+  art: muster
+  title: Back to York
+  text: |
+    The Mercians pay, and the army goes back down the Trent to York, and spends the whole of the summer there doing very little, which the sons of Ragnarr call resting the horses and the army calls drinking.
+  choices:
+    - id: go
+      text: Go back to York with them.
+      effects: [ { route: [york] }, { camp: york } ]
+      result: York is quieter than you left it. The Northumbrians have a king again, an Englishman called Ecgberht, who rules them for the Danes and is not allowed to forget it. The minster has a new bell. It sounds very loud.

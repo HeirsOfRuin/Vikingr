@@ -71,8 +71,9 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         sceneRef(where, e.battle.parted);
         lethal = true;
       } else if ('queue' in e) sceneRef(where, e.queue.scene);
-      else if ('know' in e) {
-        if (!content.places[e.know]) errors.push(`${where}: unknown place "${e.know}"`);
+      else if ('know' in e || 'camp' in e) {
+        const pid = 'know' in e ? e.know : e.camp;
+        if (!content.places[pid]) errors.push(`${where}: unknown place "${pid}"`);
       } else if ('boast' in e || 'keep_boast' in e) {
         const b = 'boast' in e ? e.boast : e.keep_boast;
         if (!content.boasts[b]) errors.push(`${where}: unknown boast "${b}" (declare it in content/registry/boasts.yaml)`);
@@ -211,7 +212,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     // hostages (src/engine/hostages.ts, plunder.ts): taken in a raid; a broken peace
     'hs_taken', 'hs_broken', 'hi_heir',
     // lords and rule (docs/FRAME-WORLD.md): found with two lords; a rival for the seat; the legends' years
-    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'is_landnam', 'sk_verse',
+    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'e65_boyhood', 'is_landnam', 'sk_verse',
   ];
   while (queue.length) {
     const id = queue.pop()!;
@@ -233,7 +234,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   for (const id of Object.keys(content.scenes)) if (!reached.has(id)) errors.push(`scene ${id}: unreachable (no start, trigger or link leads to it)`);
 
   // flags (some are set by the engine, not by content: the end of exile, a broken promise at a wedding)
-  const ENGINE_FLAGS = ['outlaw_ended', 'child_son', 'child_daughter', 'era843', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren', 'placeholder_start',
+  const ENGINE_FLAGS = ['outlaw_ended', 'child_son', 'child_daughter', 'era843', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren', 'placeholder_start', 'era865',
     ...['harek', 'kolbeinn', 'horik', 'turgeis', 'irish_king', 'rorik'].flatMap((l) => [`call_${l}`, `served_${l}`])];
   const textRead = new Set<string>();
   const { flags: _f, ...rest } = content;

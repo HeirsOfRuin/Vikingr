@@ -20,7 +20,13 @@ export const FLEET = {
   voiceFame: 1 / 40,
 } as const;
 
-export interface FleetState { id: string; since: number }
+/** `camp`: where an army that lives on land winters (docs/FRAME-865.md); a captain in it may winter there too. */
+export interface FleetState { id: string; since: number; camp?: string }
+
+/** The army's winter camp, if he is with an army that keeps one. */
+export function armyCamp(state: GameState): string | undefined {
+  return state.fleet?.camp;
+}
 
 export function inFleet(state: GameState): boolean {
   return !!state.fleet;

@@ -7,7 +7,7 @@ const runs = Number(process.argv.find((a) => a.startsWith('--runs='))?.slice(7) 
 const years = Number(process.argv.find((a) => a.startsWith('--years='))?.slice(8) ?? 10);
 const policies: Policy[] = ['raider', 'coward'];
 console.log(`${runs} lives per beginning × ${policies.join(', ')}, ${years} years`);
-for (const era of [830, 843] as const) {
+for (const era of [830, 843, 865] as const) {
   const cells: string[] = [];
   for (const p of policies) {
     let alive = 0, fame = 0, plunder = 0, ships = 0, n = 0, errs = 0;

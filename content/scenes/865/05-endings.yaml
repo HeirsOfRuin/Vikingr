@@ -1,0 +1,181 @@
+# The two armies, 875-878. North: ASC 876, "Hálfdan shared out the land of the Northumbrians, and they were
+# ploughing and providing for themselves"; in 877 he went to Ireland after Dublin and was killed at Strangford
+# Lough (AU). South: Guthrum slipped past Alfred to Wareham in 876 and to Exeter; in 877 the Danish fleet was
+# wrecked in a storm off Swanage, 120 ships; at Twelfth Night 878 he took Chippenham and drove Alfred into the
+# marshes at Athelney; in May Alfred beat him at Edington, and Guthrum and thirty of his best men were baptized
+# at Aller, with Alfred standing godfather, and given great gifts.
+
+- id: e76_plough
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, flag.ga_halfdan, "year >= 876", "place == york"]
+  art: muster
+  title: The sharing of the land
+  text: |
+    Hálfdan does what he said. In the spring of the third year after Repton he sits on a horse in the yard at York, with the English reeves who know where every field in Northumbria is, and gives the country away.
+
+    Not to everyone. To the men who came with him. A hide here, a valley there, an English thegn's hall with the thegn's widow still in it. The English who are left will plough for the new men, or leave. Most of them stay. Where would they go?
+    [break]
+    When your name is called, the reeve reads out a place in the Vale of York, on the Ouse, with a ford and a mill and a hall that needs a roof. "Well?" Hálfdan says.
+  choices:
+    - id: take
+      text: Take the land, and put your spear in the ground at the ford.
+      effects: [ { claim_land: true }, { set: flag.ga_landed }, { deed: { type: deed, text: "Was given land in the Vale of York when Hálfdan shared out Northumbria", weight: 4, witnesses: 400 } } ]
+      result: |
+        You ride out to it the next day. The English at the mill stand in a row and look at you, and you look at them, and the miller, a big slow man called Wulfstan, asks in careful Norse whether you want the rent in flour or in silver. Flour, you say. He looks almost disappointed.
+    - id: sell
+      text: Sell your claim to a Dane who wants it more, for silver.
+      effects: [ { add: { silver: 144 } }, { set: flag.ga_sold_claim } ]
+      result: A Dane from Jutland with four sons and no land gives you three pounds for it on the spot and thanks you as if you'd saved his life. Perhaps you have. You put the silver in your chest and look at the hills, and wonder what you'd have done with a mill.
+
+- id: e76_eadgyth
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: [flag.ga_landed, "winter >= 876", "!married", "!flag.betrothed"]
+  art: hearth_ormr
+  title: The thegn's widow
+  text: |
+    The hall at the ford has a woman in it. Her husband was the thegn of the place and died in the lanes of York nine years ago, and she has held it since, through the Danes and the English king the Danes chose and the Danes again. Her name is Eadgyth. She is thirty, with two children and a steward who is afraid of her, and she has been running your mill since before you knew you had one.
+
+    She doesn't leave. She has nowhere to go, and anyway it's hers. She sits across your fire every evening, mending, and corrects your English, and waits to see what kind of man the Danes have sent her.
+  choices:
+    - id: marry
+      text: Ask her to marry you, in front of her steward and your men.
+      effects: [ { wife: Eadgyth }, { add: { honour: 1 } }, { standing: { place: york, n: 2 } }, { journal: "Married Eadgyth, widow of the thegn at the ford." } ]
+      result: |
+        She takes a long time to answer. "My children keep their father's name," she says. "And the priest comes on Sundays. And you don't touch the mill." You agree to all three. The English in the valley come to the wedding because they are curious, and stay because the ale is good, and from then on the valley is a little less yours and a great deal more peaceful.
+    - id: leave
+      text: Give her the dower-house across the river, and leave her be.
+      effects: [ { add: { honour: 1 } } ]
+      result: She moves across the river with her children and her steward, and runs the mill from there, which you hadn't intended, and the mill does better than ever. On feast days she sends over a loaf.
+
+- id: e77_strangford
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: [flag.ga_army, flag.ga_halfdan, "year == 877", "!service"]
+  art: muster
+  title: Hálfdan's last summer
+  text: |
+    Hálfdan has given away Northumbria and can't sit still on what's left. He wants Dublin, which was his brother Ívarr's, and he is gathering ships for Ireland. He sends to every man he gave land to. [if flag.ga_landed]You have a mill and a ford and a harvest coming in.[else]You have silver, and no land to keep you.[/if]
+  choices:
+    - id: go
+      text: Go to Ireland with him.
+      danger: true
+      effects: [ { host: { title: "Strangford Lough", foe: danish_raiders, terrain: ship, men: 30, ratio: 1.1, wings: [ { name: "Hálfdan's ships", men: 200, quality: 1.0, foe_men: 260 } ], role: wing, win: e77_strangford_end, lose: e77_strangford_end } } ]
+    - id: stay
+      text: Stay at home, and get the harvest in.
+      effects: [ { fleet_end: true } ]
+      result: He goes without you. In the autumn word comes back that the Dublin Norse met him on Strangford Lough and that he is dead, and most of his ships. You get the harvest in. It is a good one.
+
+- id: e77_strangford_end
+  kind: spine
+  art: bangor_field
+  title: Strangford Lough
+  text: |
+    The Dublin Norse know the lough and Hálfdan doesn't. They come at his ships at the narrows on the turn of the tide, the Fair Foreigners against the Dark, the Irish say, who watch it from the shore. Hálfdan dies on his own deck with his hearth-men round him.
+
+    Whatever your own part of it was, it's over by dark. What is left of the Northumbrian ships goes home.
+  choices:
+    - id: home
+      text: Go home to Northumbria.
+      effects: [ { fleet_end: true }, { deed: { type: battle_won, text: "Was at Strangford Lough the day Hálfdan fell", weight: 3, witnesses: 300 } } ]
+      result: The army that came to England twelve years ago is finished. What is left of it is ploughing.
+
+- id: e77_swanage
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, flag.ga_guthrum, "year >= 876", "year <= 877", "place == thetford"]
+  art: muster
+  title: Swanage
+  text: |
+    Guthrum gets past Alfred in the night, the whole army on horseback, and rides across Wessex to the sea at Wareham, and the ships come round to meet it. Alfred catches up and makes peace and takes oaths on the army's holy ring, and Guthrum's men break the oaths the same week and ride to Exeter. The ships go round by sea to meet them.
+
+    Off Swanage, under the white cliffs, a storm comes out of the south-west.
+  choices:
+    - id: bail
+      text: Bail, and pull, and leave the steering to the steersman.
+      visible_if: service
+      effects: [ { route: [hamwic, chippenham] }, { camp: chippenham }, { know: chippenham } ]
+      result: You bail until you can't feel your hands and then pull until you can't feel your arms, and the steersman gets her out past the point while the ships astern go onto the cliffs one after another. A hundred and twenty ships are lost off Swanage that night, the English say. Yours isn't one.
+    - id: sea
+      text: Get the ship off the lee shore. Now.
+      visible_if: "!service"
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: You get her out with the oars, past the point, while the ships astern of you go onto the cliffs one after another. A hundred and twenty ships are lost under the cliffs at Swanage that night, the English say. Yours isn't one of them.
+        effects: [ { route: [hamwic, chippenham] }, { camp: chippenham }, { know: chippenham }, { deed: { type: deed, text: "Brought his ship through the storm off Swanage when a hundred and twenty were lost", weight: 3, witnesses: 200 } } ]
+      failure:
+        text: You get her out, but not clean. She loses her mast and four men over the side and half her cargo, and limps into Hamwic three days later with the bailers working in shifts. A hundred and twenty ships were lost off Swanage. Yours is one of the lucky ones, which is not how it feels.
+        effects: [ { add: { crew.men: -4 } }, { lose_cargo: 4 }, { route: [hamwic, chippenham] }, { camp: chippenham }, { know: chippenham } ]
+
+- id: e78_chippenham
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 40
+  requires: [flag.ga_army, flag.ga_guthrum, "winter >= 877", "place == chippenham"]
+  art: yule_hall
+  title: Twelfth Night
+  text: |
+    At midwinter Guthrum does what nobody does: he marches in the snow. The army comes over the downs on the English Twelfth Night and into Chippenham, the king's own hall, while the king's household is drunk at the feast.
+
+    Alfred gets out. Nobody knows how; the gate was watched. He is gone into the west with a handful of men, into the marshes where the Parrett and the Tone go into the sea, and Wessex, without a king, starts to kneel.
+  choices:
+    - id: hall
+      text: Take the king's hall, and everything in it.
+      oar: true
+      effects: [ { add: { loot: 160 } }, { standing: { place: chippenham, n: -3 } } ]
+      result: The king's hall at Chippenham is full of the feast, and the feast is full of silver. You eat Alfred's Twelfth Night supper off his own plate, with his harper playing for you because nobody has told him to stop.
+    - id: marsh
+      text: Ride west after the king, into the marshes.
+      danger: true
+      oar: true
+      effects: [ { battle: { foe: english_fyrd, terrain: woods, men: 15, ratio: 1.0, raid: true } } ]
+
+- id: e78_edington
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, flag.ga_guthrum, "year == 878", "place == chippenham"]
+  art: bangor_field
+  title: Edington
+  text: |
+    In the spring the king comes out of the marshes. He has been sending messengers all winter, by night, through a country full of Danes, and in May the men of three shires meet him at a stone in the woods, and the next day he is at Edington, on the downs, with an army that has been told it is the last one Wessex will ever have.
+
+    Guthrum comes out to meet him. The West Saxon wall is the longest you have ever seen, and the closest packed, and it doesn't move.
+  choices:
+    - id: fight
+      text: Stand in Guthrum's wall.
+      oar: true
+      danger: true
+      effects: [ { host: { title: "Edington", foe: west_saxon_host, terrain: field, men: 30, ratio: 1.1, wings: [ { name: "Guthrum's wall", men: 500, quality: 1.0, foe_men: 600 } ], role: wing, win: e78_aller, lose: e78_aller } } ]
+
+- id: e78_aller
+  kind: spine
+  art: muster
+  title: Aller
+  text: |
+    It ends the way Ashdown ended, only this time there is nowhere to go. The Danish wall goes back, and then breaks, and the army runs to its camp, and Alfred sits down outside the ditch and waits. Two weeks of it. The army eats its horses. Then Guthrum asks for terms.
+
+    The terms are strange. Hostages, and an oath, and an army that leaves Wessex and never comes back; that much everyone expected. But Alfred wants something else as well. He wants Guthrum baptized, and thirty of his best men with him, with Alfred himself standing godfather. The king's priests will put the white cloth on them at a place called Aller, and the king will give them gifts.
+    [break]
+    Guthrum names his thirty. Your name is among them.
+  choices:
+    - id: baptism
+      text: Go into the water at Aller with Guthrum.
+      effects: [ { add: { silver: 96, honour: -1 } }, { set: flag.ga_baptised }, { fleet_end: true }, { deed: { type: deed, text: "Was baptized at Aller with Guthrum, with the king of Wessex for godfather", weight: 3, witnesses: 300 } } ]
+      result: |
+        The water is cold and the priest's hand is heavy on your head. Then a white cloth for eight days, and a feast, and gifts from the king's own hand, a sword-belt and two pounds of silver, given with a look that weighs you very exactly. Guthrum goes to East Anglia and rules it as a Christian king, more or less. A great many Danes are more or less Christian after Aller.
+    - id: refuse
+      text: Refuse. Take your men and go to the Thames, where a new army is gathering.
+      effects: [ { add: { hamingja: 1 } }, { fleet_end: true }, { route: [london] }, { set: flag.ga_refused_aller } ]
+      result: Guthrum looks at you, says nothing, and names another man in your place. That summer a new army comes into the Thames from the east and winters at Fulham, looking at Frankia across the sea. They're glad of a ship that has seen Edington. They are going to the Franks, who still pay.

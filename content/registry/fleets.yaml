@@ -32,3 +32,9 @@
   ships: 40
   until: 848
   desc: The Loire Northmen under Hastein, bound south for the Garonne and Bordeaux.
+- id: greatarmy
+  name: the great army
+  leader: the sons of Ragnarr
+  ships: 140
+  until: 878
+  desc: Not a fleet but an army, the English call it, the micel here, under Ívarr and Hálfdan and Ubbi. Danes mostly, and anyone else who comes. It winters where it likes.

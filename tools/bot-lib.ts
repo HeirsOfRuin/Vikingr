@@ -19,6 +19,7 @@ import { armCost } from '../src/engine/items';
 import { LATE_SEASON_DOY, WINTER_ABROAD_DOY } from '../src/engine/tuning';
 import { holdingAt } from '../src/engine/land';
 import { SEAT_DEF } from '../src/engine/rule';
+import { armyCamp } from '../src/engine/sailfleet';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
 export const BOT_OPTS = { scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false, /** Take land and settle on it (docs/FRAME-LINEAGE.md C, E): off in the check, on in measure:lineage. */ settle: false };
@@ -325,6 +326,12 @@ export class Bot {
     }
     // a ruler abroad goes to be seen at his seat before the winter, every other year at least
     if (goingHome && state.rule && SEAT_DEF[state.rule.seat].place !== 'home_fjord' && dateOf(state.day).year - state.rule.seen >= 1) target = SEAT_DEF[state.rule.seat].place;
+    // a captain in an army that keeps a winter camp winters in it (docs/FRAME-865.md)
+    const camp = armyCamp(state);
+    if (camp && (goingHome || hungry) && !(state.holdings ?? []).length) {
+      if (at === camp) { const w = pick((a) => a.t === 'winter_here'); if (w) return w; }
+      target = camp;
+    }
     if (!target) target = 'home_fjord';
     if (target === at) return pick((a) => a.t === 'rest') ?? fallback(opts);
     const hop = nextHop(state, content, at, target);
@@ -344,7 +351,7 @@ export interface RunResult {
 }
 
 /** Plays one life (or `years` of it). Errors on dead ends and softlocks instead of hanging. */
-export function playLife(content: ContentBundle, policy: Policy, seed: number, years: number, background = 'younger_son', until?: (s: GameState) => boolean, make?: { attrs?: Record<Attr, number>; skillSet?: string; era?: 830 | 843 }): RunResult {
+export function playLife(content: ContentBundle, policy: Policy, seed: number, years: number, background = 'younger_son', until?: (s: GameState) => boolean, make?: { attrs?: Record<Attr, number>; skillSet?: string; era?: 830 | 843 | 865 }): RunResult {
   let state = newGame(content, { background, seed, name: 'Bot', ...make });
   const bot = new Bot(policy, new RngCursor(seedRng(seed ^ 0x5bd1e995)));
   const startYear = dateOf(state.day).year;

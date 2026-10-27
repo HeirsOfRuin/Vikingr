@@ -69,12 +69,12 @@ function shortDate(day: number): string {
   return `${d.dom} ${MONTHS[d.month]!.slice(0, 3)} ${d.year}`;
 }
 
-function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onLoad: (s: GameState) => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843) => void; onPreview: (scene: string, name: string) => void }) {
+function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onLoad: (s: GameState) => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843 | 865) => void; onPreview: (scene: string, name: string) => void }) {
   const [step, setStep] = useState<'title' | 'new' | 'make' | 'preview' | 'load'>(start);
   const [code, setCode] = useState('');
   const [msg, setMsg] = useState('');
   const [bg, setBg] = useState('younger_son');
-  const [era, setEra] = useState<830 | 843>(830);
+  const [era, setEra] = useState<830 | 843 | 865>(830);
   const [name, setName] = useState(NAMES[Math.floor(Math.random() * NAMES.length)]!);
   if (step === 'title') {
     return (
@@ -134,11 +134,12 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
   return (
     <main class="screen">
       <h1>Spring, {era}</h1>
-      <p>You are sixteen. {era === 830 ? 'You grew up on the stories: ships that came home low in the water, old men at the hearth with one hand and an arm-ring.' : 'You grew up on the news: Dorestad stripped, the ship-forts in Ireland, Rouen burned on the Seine.'} Who are you?</p>
+      <p>You are sixteen. {era === 830 ? 'You grew up on the stories: ships that came home low in the water, old men at the hearth with one hand and an arm-ring.' : era === 843 ? 'You grew up on the news: Dorestad stripped, the ship-forts in Ireland, Rouen burned on the Seine.' : 'You grew up on the old men\'s stories of Paris, and the young men\'s talk of England.'} Who are you?</p>
       <h3>Your days</h3>
       <div class="bgs">
         <button class={`choice bg${era === 830 ? ' on' : ''}`} onClick={() => setEra(830)}><span class="txt">Horik's days, 830<span class="hint">The first great raids. The written story from your boyhood: Orkney, Iona, Bangor, Dorestad.</span></span></button>
         <button class={`choice bg${era === 843 ? ' on' : ''}`} onClick={() => setEra(843)}><span class="txt">Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.</span></span></button>
+        <button class={`choice bg${era === 865 ? ' on' : ''}`} onClick={() => setEra(865)}><span class="txt">The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.</span></span></button>
       </div>
       <h3 style={{ marginTop: 18 }}>Name</h3>
       <input type="text" id="new-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />

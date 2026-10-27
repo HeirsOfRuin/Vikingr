@@ -177,3 +177,20 @@
   leader: "the emir's general"
   doctrine: { hold: 1, push: 2, flank: 3, missiles: 2 }
   desc: "Abd al-Rahman's army out of Córdoba: horsemen in mail on fast horses, archers, and a general who has read about war and fought it. They have never seen Northmen before, and they learn quickly."
+# The Great Army's enemies (docs/FRAME-865.md): kings' households, not a shire's farmers.
+- id: west_saxon_host
+  name: The West Saxon host
+  quality: 2
+  resolve: hird
+  guile: 2
+  leader: "the king's brother"
+  doctrine: { hold: 3, push: 2, wedge: 1, missiles: 1 }
+  desc: The king's thegns and their men, in mail, under a dragon banner, and the shire fyrds behind them. They have fought you before and learned from it.
+- id: mercian_host
+  name: The Mercian host
+  quality: 1
+  resolve: warriors
+  guile: 1
+  leader: "the ealdorman of the Tomsæte"
+  doctrine: { hold: 4, missiles: 2, push: 1 }
+  desc: The Mercian king's men and his ealdormen's, with the West Saxons' help when they can get it. They would rather besiege you than fight you.

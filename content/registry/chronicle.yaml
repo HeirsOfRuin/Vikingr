@@ -411,6 +411,7 @@ events:
       From the east road: the Slavs of the lake country have asked a Swede called Rurik to come and rule them, because they can't stop fighting each other. He has built a fort at Hólmgarðr, on the river, and the silver road from the east runs past his door.
 
   - id: c865_army
+    unless: flag.ga_army
     year: 865
     doy: 280
     who: ivar
@@ -423,6 +424,7 @@ events:
       A great army has gone to England: not a raid, an army, more ships than anyone can count, under Ivar and his brothers, the sons of Ragnarr, men say. They have wintered among the East Angles, who gave them horses to be rid of them.
 
   - id: c867_york
+    unless: seen.e66_york_taken
     year: 867
     doy: 80
     who: ivar
@@ -434,6 +436,7 @@ events:
       The great army has taken York. The two kings of Northumbria made peace with each other long enough to attack it together, and both died in the streets. York is a Danish town now, Jórvík, and the army winters in it.
 
   - id: c869_edmund
+    unless: seen.e69_edmund
     year: 869
     doy: 324
     who: ivar
@@ -455,6 +458,7 @@ events:
       Olaf and Ivar have taken Dumbarton, the Britons' rock on the Clyde, after a siege of four months. The well inside ran dry. They took two hundred ships of captives back to Dublin.
 
   - id: c871_alfred
+    unless: seen.e71_alfred
     year: 871
     doy: 120
     by: The great army
@@ -481,6 +485,7 @@ events:
       Ivar is dead in Dublin: king of the Norsemen of all Ireland and Britain, the Irish annals call him. He died in his bed, of a sickness, which nobody expected of him.
 
   - id: c874_repton
+    unless: seen.e74_parting
     year: 874
     doy: 300
     who: halfdan
@@ -490,6 +495,7 @@ events:
       The army wintered at Repton in Mercia, and drove the Mercian king over the sea to Rome. Mercia has a Danish puppet now. Half the army has gone north with Halfdan to share out the land, and the other half south with Guthrum after Wessex.
 
   - id: c876_plough
+    unless: seen.e76_plough
     year: 876
     doy: 150
     who: halfdan
@@ -499,6 +505,7 @@ events:
       Halfdan has shared out the land of Northumbria among his men, and they are ploughing it. The great army is becoming farmers. There is land in England for any Norseman who can hold a sword and a plough.
 
   - id: c878_edington
+    unless: seen.e78_edington
     year: 878
     doy: 130
     by: King Alfred

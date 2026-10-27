@@ -300,6 +300,12 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       addRings(state, e.ring.metal, n);
       journal(state, n > 0 ? `You have ${n === 1 ? `a ${e.ring.metal} arm-ring` : `${n} ${e.ring.metal} arm-rings`} more.` : `Gave away ${-n === 1 ? `a ${e.ring.metal} arm-ring` : `${-n} ${e.ring.metal} arm-rings`}.`);
     }
+    else if ('camp' in e) {
+      // the army moves its winter quarters; a captain in it winters where it does
+      if (state.service) state.service.home = e.camp;
+      if (state.fleet) state.fleet.camp = e.camp;
+      if (!state.known.includes(e.camp)) state.known.push(e.camp);
+    }
     else if ('join_ship' in e) {
       const j = e.join_ship;
       state.service = { captain: j.captain, route: [...(j.route ?? [])], shares: state.service?.shares ?? 1, ...(j.home ? { home: j.home } : {}) };

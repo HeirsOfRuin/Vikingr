@@ -1,0 +1,110 @@
+# London and Repton, 872-874. ASC: the army wintered at London 871-872 and the Mercians made peace; in 872-873
+# at Torksey; in 873-874 at Repton, where it drove King Burgred over the sea and gave Mercia to Ceolwulf, "a
+# foolish king's thegn". The excavations at Repton found the army's D-shaped camp against the church, and a
+# charnel of some 260 dead in an old Mercian building. AU 873: Ívarr died, king of the Northmen of all Ireland
+# and Britain. In 874 the army split: Hálfdan north to the Tyne, Guthrum, Oscetel and Anwend south to Cambridge.
+
+- id: e72_london
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: [flag.ga_army, "winter == 871", "place == london"]
+  art: yule_hall
+  title: Lundenwic
+  text: |
+    London is a Roman city with nobody in it and a trading strand along the river outside the walls with everybody in it. The army winters inside the walls, among the stones, and the strand goes on trading as if nothing had happened, because for the strand nothing has.
+
+    Ships come up the Thames all winter: Frisians with wine, Danes with men, and once, late, a ship out of Hordaland with men who won't say why they left. Then they do. A king called Harald, out of Vestfold, is beating every other king in Norway one by one, and men who won't kneel to him are packing.
+  choices:
+    - id: news
+      text: Get the Hordaland men drunk, and hear the news from home.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.ga_heard_harald } ]
+      result: The news from home is all Harald. He has sworn not to cut his hair until he is king of all Norway, they say, and his hair is getting long. Your father's farm is still there. So is your brother. Nobody in Hordaland has knelt yet. They will.
+    - id: strand
+      text: Go down to the strand, and trade the army's loot for good silver.
+      oar: true
+      effects: [ { add: { silver: 30, skill.trade: 1 } } ]
+      result: The strand's merchants give honest weight to anyone with an army behind him. You change a winter's worth of altar-cloth and candlesticks into clean silver and a little wine, and the Frisian who buys the candlesticks tells you, in confidence, that he will sell them back to the bishop at Easter.
+
+- id: e73_repton
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 873", "place == london"]
+  art: muster
+  title: Up the Trent
+  text: |
+    The Mercians have paid twice now, and the army has decided that a kingdom which pays twice can be had outright. In the autumn it goes north, round by the sea and up the Humber and the Trent, past Nottingham, to the Mercian kings' own minster at Repton, where their kings are buried, and makes its camp against the church wall.
+
+    Burgred of Mercia looks at the army on his fathers' graves and gives up. He takes ship for Rome, men say, to die near the Pope.
+  choices:
+    - id: go
+      text: Go up the Trent with the army.
+      effects: [ { route: [york, nottingham, repton] }, { camp: repton }, { know: repton } ]
+      result: The army digs its ditch in a half-circle against the river and uses the minster church as a gatehouse. The monks are allowed to stay, if they keep out of the way. They keep out of the way.
+
+- id: e74_repton
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "winter == 873", "place == repton"]
+  art: yule_hall
+  title: The winter at Repton
+  text: |
+    A sickness comes into the camp at Repton in the dead of the winter, the kind that comes into every camp in the end: a flux, and then a fever. Men who came through Ashdown and the lanes of York die of it on the straw in four days. They are laid in an old stone building by the church, the Mercian kings' burying-house, one on top of the other, until there are more than two hundred.
+
+    Then the news comes from Ireland. Ívarr is dead in Dublin, in his bed, of a sickness. The king of the Northmen of all Ireland and Britain, the Irish call him.
+    [if flag.ga_ivarr_knows]You remember him lifting his cup an inch from the table at Yule in East Anglia, and find that you mind.[elif flag.ga_spoke_for_edmund]You remember his voice in the yard at Thetford, quite gentle, and find that you don't mind at all.[/if]
+  choices:
+    - id: bury
+      text: Bury the Elk's dead properly, with their weapons, outside the stone house.
+      effects: [ { add: { honour: 1, crew.morale: 1 } } ]
+      result: You dig in frozen ground for two days, with the men who are still standing. Each man goes in with his sword and a coin and, for the ones who wore one, the little silver hammer. The monks watch from the church door and say nothing. In spring the grass comes up over all of it, Dane and Mercian king alike.
+    - id: nurse
+      text: Keep the sick apart from the well, the way the old men did on the Loire.
+      oar: true
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: You put the sick at the far end of the camp, and the well upwind, and the water from upstream of the latrines, and men laugh at you until they notice your benches aren't emptying. By spring two other ships are doing it. Nobody thanks you. They're alive to not thank you.
+        effects: [ { add: { crew.morale: 2, skill.lore: 1 } } ]
+      failure:
+        text: You try, and the sick won't be moved and the well won't stay away from them, and the fever goes through your benches like everyone else's. It takes four men.
+        effects: [ { add: { crew.morale: -1, crew.men: -4 } } ]
+    - id: drink
+      text: Drink to Ívarr, with the Danes, until you can't feel the cold.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: The Danes drink to Ívarr for three nights, and fight over who loved him best, and a man from Fyn is killed over it. Ívarr would have thought that about right.
+
+- id: e74_parting
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: [flag.ga_army, "year == 874", "place == repton"]
+  art: muster
+  title: Two armies
+  text: |
+    In the spring the army that came to England nine years ago comes apart, the way armies do, without anybody quite deciding it.
+
+    Hálfdan is going north. He has had enough of kings who pay and come back; he wants land, and Northumbria has more land than people since the lanes of York. He means to winter on the Tyne, beat the Picts and the Britons of the Clyde to keep the young men busy, and then share the country out.
+
+    Guthrum and the summer army's kings are going south, to Cambridge, and then back into Wessex. Alfred is the last English king, and Guthrum means to be the end of him.
+    [break]
+    Both of them want men. Both of them have asked for you.
+  choices:
+    - id: halfdan
+      text: Go north with Hálfdan, for land.
+      effects: [ { set: flag.ga_halfdan }, { route: [york] }, { camp: york } ]
+      result: Hálfdan claps you on the shoulder hard enough to hurt and says he'll find you a farm with a river on it. He says it to everyone. He might even mean it.
+    - id: guthrum
+      text: Go south with Guthrum, for Wessex.
+      effects: [ { set: flag.ga_guthrum }, { route: [thetford] }, { camp: thetford } ]
+      result: Guthrum is a broad, slow-speaking Dane with a patient face, nothing like the sons of Ragnarr. He looks at you a long time before he says anything. "Good," he says. "Alfred has learned. So must we."
+    - id: home
+      text: Neither. Take your silver and go home to Hordaland.
+      visible_if: "!service"
+      effects: [ { fleet_end: true }, { set: flag.ga_went_home } ]
+      result: Nine years. You go down the Trent with the spring flood, and out of the Humber, and north, with a ship full of men who have forgotten what their wives look like. Some of their wives have forgotten too.
