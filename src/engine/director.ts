@@ -1,6 +1,7 @@
 // Scene selection (from Knight of Adalia, reshaped for a map game):
 // queued scenes first, then scenes bound to a trigger: arriving at a place,
 // a day at sea, the start of a phase, an action in the hall.
+import { pickCrewman } from './crewman';
 import type { ContentBundle, Scene } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
@@ -15,6 +16,7 @@ function eligible(s: Scene, state: GameState, content: ContentBundle, trigger: T
   if (s.once && state.seen[s.id] !== undefined) return false;
   if (s.cooldown_days !== undefined && state.seen[s.id] !== undefined && state.day - state.seen[s.id]! < s.cooldown_days) return false;
   if (s.phase && !s.phase.includes(state.phase)) return false;
+  if (s.crewman && !pickCrewman(state, s.crewman)) return false;
   // the start of a season is not the middle of a winter: a season scene waits for the spring unless it is written
   // for the winter (playtest 9: the Loire spring and the southern fleet fired on 12 January, mid-winter)
   if (trigger === 'phase_start' && state.phase === 'winter' && !s.phase?.includes('winter') && !JSON.stringify(s.requires ?? []).includes('phase == winter')) return false;
@@ -42,6 +44,7 @@ export function fireQueued(state: GameState, content: ContentBundle): boolean {
   if (due < 0) return false;
   const [q] = state.queue.splice(due, 1);
   open(state, q!.scene, content);
+  if (q!.man) state.mfocus = q!.man;
   return true;
 }
 
@@ -52,4 +55,5 @@ export function open(state: GameState, id: string, content?: ContentBundle): voi
   // the man a recruiting scene offers, and the party a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md)
   if (s?.candidate) state.cand = makeCandidate(state, content!, s.candidate);
   if (s?.hostage) state.hfocus = pickHostage(state, content!, s.hostage)?.id ?? null;
+  if (s?.crewman) state.mfocus = pickCrewman(state, s.crewman)?.id ?? null;
 }

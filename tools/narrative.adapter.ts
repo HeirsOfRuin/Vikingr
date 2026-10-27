@@ -66,7 +66,8 @@ function play(content: ContentBundle, runs: number, observe: (o: { state: GameSt
         if (sc) {
           const keepDead = sc.id.startsWith('mourn_');
           texts.push({ kind: 'text', scene: sc.id, text: renderText(sc.text, state, content, { keepDead }) }, { kind: 'title', scene: sc.id, text: renderText(sc.title ?? '', state, content) });
-          for (const c of sc.choices) texts.push({ kind: 'choice', scene: sc.id, text: renderText(c.text, state, content) });
+          // only the choices the player can see (a hidden 'Give her to Ulf' after Ulf's death is not shown)
+          for (const c of sc.choices) if (test(c.visible_if, state, content)) texts.push({ kind: 'choice', scene: sc.id, text: renderText(c.text, state, content) });
         }
       } else if (p?.t === 'report') {
         texts.push({ kind: 'outcome', scene: `report: ${p.title}`, text: p.lines.join('\n\n') }, { kind: 'title', scene: `report: ${p.title}`, text: p.title });

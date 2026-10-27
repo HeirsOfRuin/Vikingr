@@ -37,7 +37,7 @@ export function makeCandidate(state: GameState, content: ContentBundle, origin: 
   const o = content.recruits[origin];
   if (!o) throw new Error(`unknown recruit origin ${origin}`);
   const rng = new RngCursor(seedRng((state.seed ^ hash(`${origin}:${state.day}:${state.men.length}`)) >>> 0));
-  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0]]);
+  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0], ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...npcNames(content)]);
   const pool = (o.names === 'norse' ? content.names : o.names).filter((n) => !taken.has(n));
   // the man who took a fallen sworn man's bench already has a name in the scenes: he keeps it
   const heir = origin === 'heir' ? state.men.filter((m) => !m.alive && m.sworn && state.standIns?.[m.id]).sort((a, b) => (b.diedOn ?? 0) - (a.diedOn ?? 0)).map((m) => state.standIns![m.id]!).find((n) => !state.men.some((x) => x.alive && x.name === n)) : undefined;
@@ -97,4 +97,10 @@ export function hirdLeaves(state: GameState): string[] {
     lines.push(`${m.name} comes to you at the turn of the year and gives you back his oath, which is more than most would do. He has found a lord who gives more, or says he has. He is gone by the morning.`);
   }
   return lines;
+}
+
+/** The first names of the world's lords, captains and fighters: a new crewman is not another Harek (npm run continuity). */
+function npcNames(content: ContentBundle): string[] {
+  const first = (n: string) => n.split(/[ ,]/)[0]!;
+  return [...Object.values(content.captains).map((c) => first(c.name)), ...Object.values(content.lords).map((l) => first(l.name)), ...Object.values(content.fighters).map((f) => first(f.name)), ...Object.values(content.men).map((m) => m.name)];
 }

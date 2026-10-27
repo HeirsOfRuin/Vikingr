@@ -1,6 +1,7 @@
 // Hardship (docs/FRAME-HARDSHIP.md): what holds a life back from climbing without limit. Upkeep that grows with
 // his size; envy that grows with his name; harvests, sickness and fire; coasts that learn; a body that ages.
 // The brake is progressive: it bites the great, and leaves a floor under the ruined.
+import { mournMan } from './crewman';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
@@ -290,6 +291,7 @@ export function rollSickness(state: GameState, content: ContentBundle, rng: RngC
     const heir = benchHeir(state, content);
     (state.standIns ??= {})[man.id] = heir;
     journal(state, `${man.name} died of the coughing sickness.`);
+    mournMan(state, content, man);
   }
   setback(state, 'sickness', `The coughing sickness went through the winter quarters: ${plural(dead, 'man', 'men')} died${names.length ? `, and ${names.join(' and ')}` : ''}.`);
   lines.push(`The coughing sickness came in the dark of the winter, the way it does where men sleep close. It took ${plural(dead, 'man', 'men')}${names.length ? `, and ${names.join(' and ')}, who had stood in every wall you ever stood in, and died coughing in the straw` : ''}.`);

@@ -1,5 +1,6 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
+import { mournMan } from './crewman';
 import { strandRaided } from './strand';
 import { skaldRout, skaldSees } from './skald';
 import { stow } from './fleet';
@@ -261,7 +262,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
       (state.standIns ??= {})[m.id] = heir;
       journal(state, `${heir} took ${m.name}'s bench.`);
       // a death is mourned, if a scene has been written for it
-      if (content.scenes[`mourn_${m.id}`]) state.queue.push({ scene: `mourn_${m.id}`, day: state.day + 1 });
+      mournMan(state, content, m);
     }
   }
   for (const n of b.named.filter((x) => x.hurt && !x.down)) {

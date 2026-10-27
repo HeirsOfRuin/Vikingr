@@ -1,0 +1,280 @@
+# The crew as people (docs/FRAME-CREW.md): scenes about one sworn man, picked by his temperament. {man} names
+# him; the crewman effect is what a choice does to him. Each needs a living sworn man of the kind, and his own ship.
+
+# ---- ambitious ----
+- id: cr_ship
+  kind: pool
+  trigger: hall
+  chance: 0.25
+  cooldown_days: 700
+  crewman: ambitious
+  requires: ["!service", "year >= 832"]
+  art: hearth_ormr
+  title: A ship of his own
+  text: |
+    {man} waits until the hall is half asleep, and then comes and sits on the bench beside you, closer than he usually would. He has been thinking, he says. He has been at the steering-oar more than anyone but you this year, and he has watched how you do it, and he thinks he could do it too. Not instead of you. Beside you. A ship of his own.
+
+    He doesn't ask for one. He just says it, and waits, the way a man does who has practised what he means to say.
+  choices:
+    - id: bless
+      text: Give him your blessing, and a pound of silver toward a hull of his own.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, honour: 1 } }, { crewman: { leave: "went off with your blessing to find a ship of his own" } } ]
+      result: |
+        He takes the silver, and then your hand, and holds it a moment longer than he needs to. In the spring he buys a battered karvi in Kaupang and goes west with a crew of boys. You hear of him, now and then. He always says your name when he says where he learned his trade.
+    - id: earn
+      text: Tell him a ship is earned, and he hasn't earned one yet.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: He takes it better than you expected. "Next summer, then," he says, and you can see him deciding to make sure of it. He is first at every oar until the ice.
+        effects: [ { crewman: { loyalty: 1 } } ]
+      failure:
+        text: He nods, and goes back to his place, and doesn't sit near you again all winter. The men who sit near him start to talk the way he talks.
+        effects: [ { crewman: { loyalty: -2 } } ]
+    - id: mate
+      text: Make him your steersman's mate. Let him learn it properly, under your eye.
+      effects: [ { crewman: { loyalty: 2 } } ]
+      result: He spends the next summer at your shoulder, and learns more than you meant to teach him, and is better for it. So is the ship.
+
+- id: cr_talk
+  kind: pool
+  trigger: hall
+  chance: 0.15
+  cooldown_days: 900
+  crewman: ambitious
+  requires: ["!service", "crew.men >= 10", "year >= 832"]
+  art: hearth_ormr
+  title: Talk at the fire
+  text: |
+    It comes to you the way these things do, sideways. {man} has been talking at the fire in the evenings. Not against you; nobody would say that. Just about how things might be done. Who might lead, if a leader fell. How a summer might go, with a different hand on the oar. Some of the younger men listen.
+  choices:
+    - id: face
+      text: Go to the fire, sit down across from him, and ask him to say it to your face.
+      danger: true
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: He looks at you a long time, and then laughs, and says he was only talking. The young men laugh too, a little late. It's over, and everyone at the fire knows who ended it.
+        effects: [ { crewman: { loyalty: 1 } }, { add: { crew.morale: 1 } } ]
+      failure:
+        text: He says it to your face, all of it, calmly, and some of it is true. In the spring he takes his chest off the ship, and two of the young men take theirs after him.
+        effects: [ { crewman: { leave: "left your service, and took two of the young men with him" } }, { add: { crew.men: -2, crew.morale: -1 } } ]
+    - id: ring
+      text: Give him a silver ring in front of everyone, and call him your right hand.
+      requires: ["rings.silver >= 1"]
+      effects: [ { ring: { metal: silver, n: -1 } }, { crewman: { loyalty: 3 } } ]
+      result: A man who has been called your right hand in front of the hall has nothing left to talk about at the fire. He knows it, and so do you, and the ring is worth it.
+    - id: ignore
+      text: Let him talk. Talk is wind.
+      effects: [ { crewman: { loyalty: -1 } }, { add: { crew.morale: -1 } } ]
+      result: The talk goes on all winter, a little louder each week. It isn't wind. It's weather.
+
+# ---- greedy ----
+- id: cr_skim
+  kind: pool
+  trigger: hall
+  chance: 0.2
+  cooldown_days: 700
+  crewman: greedy
+  requires: ["!service", "year >= 832"]
+  art: hearth_ormr
+  title: Light in the scales
+  text: |
+    One of the men comes to you, unhappily, with a handful of hacksilver and a story. When the summer's heap was weighed out on the strand, {man} was at the scales, and the scales were light. Not by much. By enough, over a summer, to buy a good sword.
+
+    {man} has heard he's been named. He's waiting by the door, with his chin up.
+  choices:
+    - id: forgive
+      text: Forgive him, quietly. He's fought well for you.
+      effects: [ { crewman: { loyalty: 1 } }, { add: { crew.morale: -1 } } ]
+      result: He's grateful, in his way. The man who told you is not. The men who hear about it decide that the scales are a matter of who your friends are.
+    - id: double
+      text: Make him pay it back twice over, in front of the whole crew.
+      effects: [ { crewman: { loyalty: -2 } }, { add: { silver: 24, crew.morale: 1 } } ]
+      result: He pays it, coin by coin, with every man watching. He'll never forget it. Neither will they, which was the point.
+    - id: send
+      text: Send him off the benches. A thief at the scales is a thief at the wall.
+      effects: [ { crewman: { leave: "was sent off the benches for a thief" } }, { add: { crew.morale: 1, honour: 1 } } ]
+      result: He goes without a word. The men nod as he passes. Whatever they thought of him at the wall, they thought less of him at the scales.
+
+- id: cr_share
+  kind: pool
+  trigger: hall
+  chance: 0.2
+  cooldown_days: 700
+  crewman: greedy
+  requires: ["!service", "silver >= 48", "year >= 832"]
+  art: hearth_ormr
+  title: A sworn man's share
+  text: |
+    {man} has done the reckoning, as he always does, and has come to you with it on a tally-stick: what an oarsman gets, what a sworn man gets, and how little the difference is for a man who swore his life. He thinks a sworn man's share should be bigger. He thinks it should start with his.
+  choices:
+    - id: pay
+      text: Give the sworn men a pound between them, and say it's for their oaths.
+      effects: [ { add: { silver: -48 } }, { crewman: { loyalty: 2 } } ]
+      result: The sworn men take it, and drink it, and {man} looks as if he invented generosity. Next year he'll be back with a longer stick.
+    - id: refuse
+      text: Tell him an oath isn't a trade.
+      effects: [ { crewman: { loyalty: -2 } } ]
+      result: He nods as if he expected nothing else, and goes away and does the reckoning again, more carefully, for some other lord's hall.
+
+# ---- hot ----
+- id: cr_quarrel
+  kind: pool
+  trigger: arrive
+  at_kind: [town, hall, island]
+  chance: 0.15
+  cooldown_days: 500
+  crewman: hot
+  requires: ["!service", "year >= 832"]
+  art: holmgang
+  title: A quarrel in port
+  text: |
+    You are not ashore an evening before {man} has a quarrel: a local man, a big one, the kind every port has, and words over a girl or a debt or nothing at all. By the time you hear of it, it's past words. The man has named the holmgang for the morning, and {man} has said yes before anyone could stop him.
+
+    He comes to find you, flushed and pleased with himself. He wants your blessing. He doesn't need it.
+  choices:
+    - id: let
+      text: Let him fight. He said yes; a man stands by his yes.
+      danger: true
+      effects: [ { crewman: { fights: { foe: local_champion, win: cr_quarrel_won, lose: cr_quarrel_lost } } } ]
+    - id: stand
+      text: Stand on the cloak in his place. He is your man; his quarrel is yours.
+      danger: true
+      effects: [ { crewman: { loyalty: 3 } }, { fight: { foe: local_champion, kind: holmgang, lethal: false } } ]
+    - id: pay
+      text: Pay the man off before the morning, and drag {man} back to the ship.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24 } }, { crewman: { loyalty: -1 } } ]
+      result: The local man takes your silver and laughs at {man} across the beach as you leave. {man} doesn't speak to you for a week. He is alive to not speak to you.
+
+- id: cr_quarrel_won
+  kind: queued
+  art: holmgang
+  title: On the cloak
+  text: |
+    {man} comes back from the cloak with blood on his face, most of it not his, carrying the other man's shield. The whole port saw it. He is going to tell this story for the rest of his life, and you are going to hear it every time.
+  choices:
+    - id: on
+      text: Clap him on the back, and tell him it was well done.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The crew carry him down to the ship on their shoulders, which he pretends to mind.
+
+- id: cr_quarrel_lost
+  kind: queued
+  art: holmgang
+  title: On the cloak
+  text: |
+    {man} is dead on the cloak before the sun is fully up. The local man wipes his sword and walks off through the crowd, and the crowd lets him. You carry {man} back to the ship yourselves.
+  choices:
+    - id: burn
+      text: Burn him on the beach, with his weapons, the way he'd want.
+      effects: [ { add: { crew.morale: -1 } } ]
+      result: The smoke goes up over the port all morning. The people come out to watch. Nobody says anything to you. Nobody needs to.
+
+# ---- pious ----
+- id: cr_omen
+  kind: pool
+  trigger: arrive
+  chance: 0.12
+  cooldown_days: 700
+  crewman: pious
+  requires: ["!service", "ships >= 1", "year >= 832"]
+  art: open_sea
+  title: A bad day for sailing
+  text: |
+    You mean to sail in the morning, and {man} won't hear of it. He saw a raven fly over the ship from right to left this morning, and a dead seal on the beach, and his dream last night was of his mother, who has been dead ten years. It is not a day to put to sea, he says. Some of the others are looking at the sky, and at the seal, and at you.
+  choices:
+    - id: wait
+      text: Wait a few days. The sea will be there.
+      effects: [ { days: 3 }, { add: { hamingja: 1 } }, { crewman: { loyalty: 1 } } ]
+      result: You wait. Three days later the wind is fair and the raven, if it is the same one, flies left to right. {man} takes his oar singing.
+    - id: overrule
+      text: Tell him the gods favour men who row.
+      effects: [ { crewman: { loyalty: -2 } }, { add: { crew.morale: -1 } } ]
+      result: He rows, because he is your man. He rows like a man rowing to his own funeral, and the bench behind him catches it like a cold.
+    - id: read
+      text: Ask him what would make the day a good one.
+      check: { skill: lore, attr: wit, difficulty: 4 }
+      success:
+        text: There is always something, if you know the old ways. A cup poured to the sea, a ring touched to the stem-post. He does it, gravely, and pronounces the day mended. The men cheer. So, in his way, does he.
+        effects: [ { add: { hamingja: 1 } }, { crewman: { loyalty: 1 } } ]
+      failure:
+        text: Nothing would make the day a good one, he says. Not today. You sail anyway, and he doesn't say another word all day.
+        effects: [ { crewman: { loyalty: -1 } } ]
+
+# ---- dour ----
+- id: cr_warning
+  kind: pool
+  trigger: sea
+  chance: 0.15
+  cooldown_days: 500
+  crewman: dour
+  requires: ["!service", "!fleet", "year >= 832"]
+  art: storm
+  title: The dour man's weather
+  text: |
+    It's a fine day, blue and bright, and {man} is looking at the western sky with his face set like a man at a graveside. "Put in," he says. "Tonight. Anywhere. There's a blow coming that'll take the mast out of her."
+
+    There isn't a cloud anywhere. The steersman snorts. The others look at you.
+  choices:
+    - id: heed
+      text: Put in at the next beach. He's been right before.
+      effects: [ { days: 2 }, { crewman: { loyalty: 2, deed: "{man} saw the storm coming out of a clear sky" } } ]
+      result: The storm comes in at midnight, out of nothing, and blows for two days. You sit it out on a beach with the ship drawn up above the tide, listening to it. Nobody laughs at {man} again. Not about the weather.
+    - id: on
+      text: Sail on. A blue sky is a blue sky.
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: The storm comes in at midnight, as he said, and you meet it with the sail down and the men ready, because he said it, and you ride it out. In the morning {man} says nothing at all. He doesn't need to.
+        effects: [ { crewman: { loyalty: -1 } } ]
+      failure:
+        text: The storm comes in at midnight, as he said, and catches you with the sail up. You lose the yard and nearly the mast, and two men are hurt. {man} bails beside you all night and never once says he told you so. Everyone else says it for him.
+        effects: [ { crewman: { loyalty: -1 } }, { add: { crew.morale: -2, crew.men: -1 } } ]
+
+# ---- steady ----
+- id: cr_settle
+  kind: pool
+  trigger: hall
+  chance: 0.2
+  cooldown_days: 900
+  crewman: steady
+  requires: ["!service", "place == home_fjord", "base != father", "year >= 832"]
+  art: home_fjord
+  title: A farm of his own
+  text: |
+    {man} asks to speak to you, and then stands there turning his cap round and round in his hands. There's a widow on the farm across the valley, it turns out. She has two children and a roof that leaks and a good field nobody's ploughing. He'd like to marry her. He'd like to stop rowing.
+
+    He'd stay on your land, he says. He'd come when the muster calls. But he's done with the sea, if you'll let him be.
+  choices:
+    - id: yes
+      text: Let him go, with your blessing and a cow for the wedding.
+      effects: [ { crewman: { settle: true } }, { add: { honour: 1 } } ]
+      result: The wedding is in the spring, and you give the bride away, since she has nobody else, and he cries, which surprises everyone but you. Every muster after, he is the first man on the landing with his shield.
+    - id: summer
+      text: Ask him for one more summer. You need him.
+      effects: [ { crewman: { loyalty: -1 } } ]
+      result: He gives it to you, because you asked. He rows it well. He looks at the shore a great deal.
+
+# ---- the hird's dead ----
+- id: mourn_hird
+  kind: queued
+  art: hearth_ormr
+  title: A sworn man dead
+  text: |
+    {man} is dead. He swore his oath to you on a ring, and kept it, all the way.
+
+    You sit with him the night before the burning, as a lord should, and the men come one by one to say something, or not to.
+  choices:
+    - id: stone
+      text: Raise a stone for him, with his name cut in it.
+      requires: ["silver >= 24"]
+      effects: [ { add: { silver: -24, crew.morale: 1 } } ]
+      result: The carver cuts it on the headland where the ships come in. "Raised in memory of {man}, who was a good man to his lord." Every man who sails past it knows now what your oath is worth to you.
+    - id: drink
+      text: Drink to him at the benches, and let every man tell one thing about him.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The stories go round until the fire is low. Half of them aren't true. All of them are about {man}.
+    - id: gear
+      text: Give his weapons to the youngest man on the benches.
+      effects: [ { add: { honour: 1 } } ]
+      result: The boy takes {man}'s sword as if it might bite him. He'll carry it well. He'll carry it for years, and every time he draws it somebody will ask whose it was.

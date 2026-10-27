@@ -1,5 +1,6 @@
 // The year at home: spring muster, the autumn share-out and homecoming,
 // the winter hall, and the turn of the year.
+import { crewBynames } from './crewman';
 import { skaldOf, skaldYear } from './skald';
 import { hirdLeaves, hirdRoom } from './hird';
 import { hostageYear } from './hostages';
@@ -445,7 +446,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // the winter's sickness and the winter's bills, and what the district thinks of him (docs/FRAME-HARDSHIP.md)
   const hardLines = turnOfYear(state, content, rng, year, !atHome(state));
   // new men whose loyalty has run out walk before the year's drift; the hostages eat, and their kin pay (docs/FRAME-HIRD-HOSTAGES.md)
-  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng), ...fleetYear(state, content), ...skaldYear(state));
+  hardLines.push(...hirdLeaves(state), ...hostageYear(state, content, rng), ...familyYear(state, content, rng), ...fleetYear(state, content), ...skaldYear(state), ...crewBynames(state));
   // lords, land and rule (docs/FRAME-WORLD.md §C-E): a dead lord, a secret oath come out, the holdings, the seat
   const wintered = state.at;
   hardLines.push(...lordsYear(state, content, rng), ...secretYear(state, content, rng), ...holdingsYear(state, content, rng, wintered), ...ruleYear(state, content, rng, wintered));

@@ -1,5 +1,6 @@
 // The fleet (docs/FRAME-FLEET.md): every ship but the flagship needs a man at her steering-oar; the holds
 // cap what a raid can carry home; storms scatter ships; prizes and secondhand hulls join the fleet.
+import { mournMan } from './crewman';
 import type { ContentBundle } from '../content/schema';
 import type { GameState, Ship } from './state';
 import type { RngCursor } from './rng';
@@ -157,7 +158,7 @@ export function scatter(state: GameState, content: ContentBundle, rng: RngCursor
       (state.standIns ??= {})[man.id] = benchHeir(state, content);
       lines.push(`${man.name} was at her steering-oar.`);
       journal(state, `${man.name} drowned with ${ship.name}.`);
-      if (content.scenes[`mourn_${man.id}`]) state.queue.push({ scene: `mourn_${man.id}`, day: state.day + 1 });
+      mournMan(state, content, man);
     }
     return;
   }

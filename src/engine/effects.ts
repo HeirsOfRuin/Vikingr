@@ -1,4 +1,5 @@
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
+import { crewmanEffect } from './crewman';
 import { hireSkald, loseSkald } from './skald';
 import { effAttr } from './hero';
 import { addRings } from './rings';
@@ -174,6 +175,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('fleet_end' in e) leaveFleet(state, content);
     else if ('skald' in e) hireSkald(state, e.skald);
     else if ('skald_gone' in e) loseSkald(state, e.skald_gone);
+    else if ('crewman' in e) crewmanEffect(state, content, rng, e.crewman);
     else if ('verse' in e) {
       const d = e.verse === 'last' ? [...state.deeds].reverse().find((x) => !x.verse) : composeVerse(state);
       if (d) { d.verse = true; d.told ??= state.day; (state.notes ??= []).push(`The verse: ${d.text}. It will outlive you.`); }

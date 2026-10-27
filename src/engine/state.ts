@@ -362,7 +362,7 @@ export interface GameState {
   deeds: Deed[];
   flags: Record<string, number>;
   seen: Record<string, number>;
-  queue: { scene: string; day: number }[];
+  queue: { scene: string; day: number; man?: string }[];
   known: string[];
   /** Places heard of but not charted: drawn faint, reached only by an expedition. */
   rumoured: string[];
@@ -390,6 +390,8 @@ export interface GameState {
   /** Hostages held at home, and the one a hostage scene is about (docs/FRAME-HIRD-HOSTAGES.md). */
   hostages?: import('./hostages').Hostage[];
   hfocus?: string | null;
+  /** The sworn man the open scene is about (docs/FRAME-CREW.md). */
+  mfocus?: string | null;
   /** The last hostage to leave his hands, for the text of the scene that let them go. */
   hgone?: import('./hostages').Hostage;
   /** The world without him (docs/FRAME-WORLD.md §B): events past, and the news. */

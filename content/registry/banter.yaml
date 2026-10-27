@@ -41,3 +41,59 @@
 - { who: ketill, when: fight, requires: ["year >= 831"], text: "\"You fight like a man with a name now,\" says Ketill, and you can't tell if it's praise." }
 - { who: ulf, when: hall, requires: [flag.married_gyda], text: "Ulf has made up a song about your wedding. Gyda has made him promise never to sing it again. He hums it." }
 - { who: bersi, when: sea, requires: [flag.c_ransomed], text: "Bersi has worked out how much the king of Conaille weighed, and how much silver he was ransomed for, and is now very interested in kings." }
+
+# ---- the hird, by temperament (docs/FRAME-CREW.md): any living sworn man of the kind says it; {man} names him ----
+# steady
+- { who: { temperament: steady }, when: sea, text: "{man} has the oar in front of yours. He hasn't changed his stroke since the headland, and you find you've matched yours to it without meaning to." }
+- { who: { temperament: steady }, when: sea, text: "A squall comes over the bow, and while the rest are swearing {man} has already got the sail half down." }
+- { who: { temperament: steady }, when: fight, text: "{man} is binding a cut on his forearm with his teeth and one hand, and asking who else needs it done." }
+- { who: { temperament: steady }, when: fight, text: "\"Held,\" says {man}, of the wall, as if that were the whole story. For him it is." }
+- { who: { temperament: steady }, when: arrive, text: "{man} checks every rope on the ship before he goes ashore, even the ones he checked at sea." }
+- { who: { temperament: steady }, when: arrive, text: "{man} sets the guard on the ships without being asked, and takes the first watch himself." }
+- { who: { temperament: steady }, when: hall, text: "{man} spends the winter mending: oars, a sea-chest, a child's sledge for somebody's boy. He doesn't talk much. Everyone sits near him anyway." }
+- { who: { temperament: steady }, when: hall, text: "When the ale goes round the third time, {man} puts his hand over his cup. \"Somebody has to know where the axes are,\" he says." }
+# hot
+- { who: { temperament: hot }, when: sea, text: "{man} has been sharpening his axe since dawn. Nobody has asked him why." }
+- { who: { temperament: hot }, when: sea, text: "{man} stands up on his bench to shout at a passing fishing boat, and nearly goes over the side. The fishermen laugh. He sulks until noon." }
+- { who: { temperament: hot }, when: fight, text: "{man} is still shaking when it's over, grinning like a dog. \"Again,\" he says. \"Tell me we're doing that again.\"" }
+- { who: { temperament: hot }, when: fight, text: "{man} went out of the wall twice, and came back twice, and you are not sure which of those things you should shout at him for." }
+- { who: { temperament: hot }, when: arrive, text: "{man} is ashore before the keel touches, and up to his waist in the cold, and swearing at the cold as if it had insulted him." }
+- { who: { temperament: hot }, when: arrive, text: "{man} wants to know who is the best fighter in this place. Nobody will tell him, which is wise." }
+- { who: { temperament: hot }, when: hall, text: "{man} starts a wrestling match at the benches that ends with a table broken. He pays for the table. He does not seem sorry." }
+- { who: { temperament: hot }, when: hall, text: "{man} has a quarrel with a man from the next farm that nobody can remember the start of. You tell him to let it lie. He lets it lie, loudly." }
+# greedy
+- { who: { temperament: greedy }, when: sea, text: "{man} has worked out what the summer will be worth to each man aboard, and tells everyone who will listen, and some who won't." }
+- { who: { temperament: greedy }, when: sea, text: "{man} keeps one hand on his sea-chest even while he rows. Nobody knows what's in it. Everybody can guess." }
+- { who: { temperament: greedy }, when: fight, text: "{man} is going through the dead men's belts before the wounded are seen to. \"They won't spend it,\" he says." }
+- { who: { temperament: greedy }, when: fight, text: "{man} weighs a silver cross on his palm, then bites it, then holds it up to the light, then looks at you to see if you saw." }
+- { who: { temperament: greedy }, when: arrive, text: "{man} goes straight to the market, as if he could smell it from the ship." }
+- { who: { temperament: greedy }, when: arrive, text: "{man} asks what they pay for captives here, and what for wool, and what for amber, before anyone else has their shoes dry." }
+- { who: { temperament: greedy }, when: hall, text: "{man} weighs his share twice, and then a third time when he thinks you aren't looking." }
+- { who: { temperament: greedy }, when: hall, text: "{man} lends silver at the winter benches, at a rate that would shame a Frisian. Half the hall owes him by Yule." }
+# pious
+- { who: { temperament: pious }, when: sea, text: "{man} pours a little ale over the side for Ran before the open water, and won't take the cup back until the sea has had it." }
+- { who: { temperament: pious }, when: sea, text: "{man} has seen two ravens on the masthead, and says it means one thing, and then thinks about it and says it means another." }
+- { who: { temperament: pious }, when: fight, text: "{man} goes among the fallen and closes their eyes, theirs and ours, and says the same short words over each." }
+- { who: { temperament: pious }, when: fight, text: "\"Odin was watching,\" {man} says, wiping his blade. \"You could feel him. Couldn't you feel him?\"" }
+- { who: { temperament: pious }, when: arrive, text: "{man} won't step ashore until he's touched the hammer at his neck and said something under his breath to the land-spirits." }
+- { who: { temperament: pious }, when: arrive, text: "{man} wants to see their church, not to rob it: to see what their god keeps in his house." }
+- { who: { temperament: pious }, when: hall, text: "{man} goes to every blót at the hof, and comes back with the blood still on his face, and sleeps well." }
+- { who: { temperament: pious }, when: hall, text: "{man} carves a little hammer for each man at the benches, out of bone, over the whole winter. Yours is the best one." }
+# ambitious
+- { who: { temperament: ambitious }, when: sea, text: "{man} watches the steersman more than the sea. You know what he's learning. So does the steersman." }
+- { who: { temperament: ambitious }, when: sea, text: "\"When I have my own ship,\" {man} begins, and three men groan before he's finished the sentence." }
+- { who: { temperament: ambitious }, when: fight, text: "{man} made sure you saw him at the front. You did. He makes sure you know you did." }
+- { who: { temperament: ambitious }, when: fight, text: "{man} has a dead man's helmet on already, and it fits him, and he looks like a lord in it, and knows it." }
+- { who: { temperament: ambitious }, when: arrive, text: "{man} finds out who rules here, and who he hates, and who would pay to know it, before you've finished tying up." }
+- { who: { temperament: ambitious }, when: arrive, text: "{man} talks to the shipwrights on the beach half the afternoon, and asks what a karvi costs, as if it were a question for later." }
+- { who: { temperament: ambitious }, when: hall, text: "{man} sits a little nearer the high seat every week of the winter. By Yule he's two places from you." }
+- { who: { temperament: ambitious }, when: hall, text: "{man} has been seen at the jarl's hall, drinking with the jarl's steward. He says it was a social call." }
+# dour
+- { who: { temperament: dour }, when: sea, text: "\"Weather by tonight,\" says {man}, to nobody. There's not a cloud in the sky. By dusk there is." }
+- { who: { temperament: dour }, when: sea, text: "{man} has been counting the days of food left aboard, out loud, every morning since the headland." }
+- { who: { temperament: dour }, when: fight, text: "{man} looks at the field afterwards and says, \"Next time there'll be more of them.\" He is usually right." }
+- { who: { temperament: dour }, when: fight, text: "{man} doesn't cheer with the rest. He counts our dead, and then he counts them again." }
+- { who: { temperament: dour }, when: arrive, text: "{man} looks at the beach, the hills, the smoke, and says, \"I don't like it,\" which he says about every beach." }
+- { who: { temperament: dour }, when: arrive, text: "{man} sleeps aboard, with his shield, while the others go ashore. \"Somebody should,\" he says." }
+- { who: { temperament: dour }, when: hall, text: "{man} says the winter will be long and the spring will be late. It is, and it is. He doesn't gloat, quite." }
+- { who: { temperament: dour }, when: hall, text: "{man} tells a story at the benches that makes the whole hall laugh, and then goes back to looking like a man at a funeral." }

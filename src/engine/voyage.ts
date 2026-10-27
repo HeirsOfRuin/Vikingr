@@ -1,5 +1,6 @@
 // Sailing: the place graph, and legs resolved day by day (wind, provisions,
 // storms, encounters). A voyage stops when something happens and resumes after.
+import { mournMan } from './crewman';
 import { scatter } from './fleet';
 import { benchHeir } from './fights';
 import type { ContentBundle, Leg } from '../content/schema';
@@ -168,6 +169,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
           lines.push(`${m.name} is not among the men pulled from the water.`);
           journal(state, `${m.name} drowned.`);
           (state.standIns ??= {})[m.id] = benchHeir(state, content);
+          mournMan(state, content, m);
         }
       }
       const survive = 0.35 + 0.05 * effAttr(state, content, 'end') + 0.03 * state.hero.skills.seamanship + 0.02 * state.hamingja;

@@ -223,6 +223,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         if ('fight' in e) queue.push(...[e.fight.win, e.fight.lose, e.fight.parted].filter((x): x is string => !!x));
         if ('battle' in e) queue.push(...[e.battle.win, e.battle.lose, e.battle.parted].filter((x): x is string => !!x));
         if ('host' in e) queue.push(...[e.host.win, e.host.lose].filter((x): x is string => !!x));
+        if ('crewman' in e && e.crewman.fights) queue.push(...[e.crewman.fights.win, e.crewman.fights.lose].filter((x): x is string => !!x));
         if ('queue' in e) queue.push(e.queue.scene);
       }
     }
@@ -322,7 +323,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
 
   // banter, fates, boasts
   content.banter.forEach((b, i) => {
-    if (!content.men[b.who]) errors.push(`banter line ${i + 1}: unknown man "${b.who}"`);
+    if (typeof b.who === 'string' && !content.men[b.who]) errors.push(`banter line ${i + 1}: unknown man "${b.who}"`);
+    if (typeof b.who !== 'string' && !b.text.includes('{man}')) errors.push(`banter line ${i + 1}: a temperament line must name its man with {man}`);
     cond(`banter line ${i + 1}`, b.requires);
     text(`banter line ${i + 1}`, b.text);
   });

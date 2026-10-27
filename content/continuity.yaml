@@ -14,5 +14,13 @@ memorial:
   - "isn't here|is not here|not among"
   # a skald's verse of an old deed: the dead man's deed is the subject
   - "makes a verse of it"
+  # the hird's dead, and a holmgang lost (docs/FRAME-CREW.md)
+  - "is dead\\."
+  - "is dead on the cloak"
+  - "carry .* back to the ship"
+  - "in memory of"
+  - "are about "
+  - "sword as if"
+  - "the stories go round"
   # the rites
   - "under [A-Za-z'’]+ tongue"

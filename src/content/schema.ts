@@ -120,6 +120,8 @@ const baseEffect = z.union([
   /** A skald joins his household by name, or leaves it, and why (playtest 8). */
   z.object({ skald: z.string().min(1) }).strict(),
   z.object({ skald_gone: z.string().min(1) }).strict(),
+  /** What a crew scene does to the man it is about (docs/FRAME-CREW.md). */
+  z.object({ crewman: z.object({ loyalty: z.number().int().optional(), leave: z.string().optional(), dies: z.string().optional(), settle: z.literal(true).optional(), deed: z.string().optional(), fights: z.object({ foe: id, win: id.optional(), lose: id.optional() }).strict().optional() }).strict() }).strict(),
   /** The skald makes a verse: of the last deed done, or of the heaviest told deed with none yet. */
   z.object({ verse: z.enum(['last', 'best']) }).strict(),
   // hostages: take one (a rival captain's kin, at sea), and what becomes of the scene's party
@@ -195,6 +197,8 @@ export const scene = z.object({
   cooldown_days: z.number().int().optional(),
   /** A recruiting scene: the man it offers is made from this origin when it opens ({cand}, {cand_desc}). */
   candidate: id.optional(),
+  /** A scene about one sworn man, picked by temperament (docs/FRAME-CREW.md): {man} names him. */
+  crewman: z.enum(['steady', 'hot', 'greedy', 'pious', 'ambitious', 'dour']).optional(),
   /** A hostage scene: which party it is about ({hostage}, {hostage_name}, {hostage_kin}, {hostage_price}). */
   hostage: z.enum(['newest', 'ransom', 'surety', 'broken', 'foster', 'noble', 'political', 'any']).optional(),
   text: z.string(),
@@ -451,7 +455,8 @@ export type BoastDef = z.infer<typeof boastDef>;
 export const fateDef = z.object({ id, chance: z.number().min(0).max(1), desc: z.string() }).strict();
 export type FateDef = z.infer<typeof fateDef>;
 export const banterLine = z.object({
-  who: id,
+  /** A man by id, or any living sworn man of a temperament ({man} names him; docs/FRAME-CREW.md). */
+  who: z.union([id, z.object({ temperament: z.enum(['steady', 'hot', 'greedy', 'pious', 'ambitious', 'dour']) }).strict()]),
   when: z.enum(['sea', 'fight', 'arrive', 'hall']),
   requires: condInput.optional(),
   text: z.string(),
