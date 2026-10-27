@@ -133,5 +133,4 @@
   choices:
     - id: go
       text: Put to sea.
-      effects: [ { set: flag.l_done } ]
       result: The holy island goes down behind you into the evening, low and black, until there is only the beacon still burning on the hill to show where it was.

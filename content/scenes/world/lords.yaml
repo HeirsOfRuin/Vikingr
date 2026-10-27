@@ -145,8 +145,10 @@
     The Airgialla stand at their border and are beaten there, and Turgeis hangs their king's brother from his own gate, and then rides along your line of men and stops at you.
     [elif flag.calling_irish_king]
     The camp on the river burns. The Northmen in it fight like Northmen, which is to say hard and to the end. The Irish cheer you afterwards, the strangest sound you know. The poet is already composing.
-    [else]
+    [elif flag.calling_rorik]
     The Danes in the Rhine mouth are beaten on a sandbank at low water, and the tide comes in over the ones who didn't get back to their ships. Rorik writes to the emperor about it the same evening. You're in the letter, he tells you, in Latin.
+    [else]
+    Your lord's enemies break, and run, and your lord rides along the line afterwards and stops where you are standing.
     [/if]
   choices:
     - id: share

@@ -241,7 +241,6 @@
   choices:
     - id: go
       text: Row on.
-      effects: [ { set: flag.c_done } ]
       result: Behind you, the plain goes dark. Somewhere on it a horn is blowing, over and over, a long way off.
 
 # The ransom (Annals of Ulster: the king was "carried off to the ships"; the rest is the game's).

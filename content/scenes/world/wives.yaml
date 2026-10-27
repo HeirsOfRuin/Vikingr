@@ -363,7 +363,6 @@
         - { wife: Ásta }
         - { clear: flag.betrothed }
         - { clear: flag.asta_betrothed }
-        - { set: flag.wife_asta }
         - { add: { silver: 240 } }
         - { standing: { place: kaupang, n: 3 } }
         - { deed: { type: deed, text: "Married Ásta, the silversmith's widow of Kaupang", weight: 2, witnesses: 30 } }

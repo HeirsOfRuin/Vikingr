@@ -410,7 +410,8 @@ export type UpbringingDef = z.infer<typeof upbringingDef>;
 export const fleetDef = z.object({ id, name: z.string(), leader: z.string(), ships: z.number().int().min(2), until: z.number().int(), desc: z.string() }).strict();
 export type FleetDef = z.infer<typeof fleetDef>;
 
-export const flagDef = z.object({ description: z.string() }).strict();
+/** `saga`: the flag is a choice the Saga tab remembers (its description, told as a line of the saga). */
+export const flagDef = z.object({ description: z.string(), saga: z.boolean().optional() }).strict();
 
 export const ITEM_KINDS = ['weapon', 'shield', 'helmet', 'armour', 'keepsake', 'fitting'] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
@@ -474,7 +475,7 @@ export interface ContentBundle {
   rivals: Record<string, Rival>;
   injuries: Record<string, Injury>;
   deeds: Record<string, DeedType>;
-  flags: Record<string, { description: string }>;
+  flags: Record<string, { description: string; saga?: boolean }>;
   backgrounds: Record<string, Background>;
   scenes: Record<string, Scene>;
   /** Scene ids by chapter folder (830, 831, 833, 841, world, ...). */

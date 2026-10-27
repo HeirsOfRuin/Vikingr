@@ -1,0 +1,36 @@
+# Old choices coming back (the flag audit, October 2026: a choice the game remembers should be remembered by
+# somebody). Each scene here reads a flag that the early story sets and nothing else used to read.
+
+- id: ec_bersi_son
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 20
+  requires: ["year >= 838", "place == home_fjord", "phase == muster", "!service", "!man.bersi.alive", { any: [flag.bersi_silver_sent, flag.bersi_silver_kept] }]
+  art: muster
+  title: Bersi's son
+  text: |
+    A boy comes to the spring muster on foot from the south of the fjord, with a sea-chest on his back that is too big for him and a face you know before you can think where from. He has Bersi's eyes, which never stopped moving, and Bersi's way of looking at a man's purse before his face.
+
+    His name is Bersi Bersason. His mother is dead this winter. He is fifteen, he says, which is a lie by a year at least.
+    [if flag.bersi_silver_sent]
+    "My mother said you sent the silver," he says. "All of it. She said nobody would have known if you hadn't. I'd like an oar."
+    [else]
+    "My mother said my father had silver in his chest when he died," he says. "She said it went in the common heap. I'd like it, or an oar. I'll take the oar."
+    [/if]
+  choices:
+    - id: oar
+      text: Give him his father's oar.
+      effects: [ { recruit: 1 }, { journal: "Bersi's son signed on at the spring muster." } ]
+      result: |
+        [if flag.bersi_silver_sent]He takes the oar as if it might be taken back. By midsummer he has a tally-stick of his own, and he is cutting notches in it.[else]He takes the oar, and counts the benches, and works out the shares before you've cast off. Some things are in the blood.[/if]
+    - id: silver
+      text: Give him the silver his father left, out of your own purse, and the oar.
+      visible_if: flag.bersi_silver_kept
+      requires: ["silver >= 30"]
+      effects: [ { add: { silver: -30, honour: 1 } }, { recruit: 1 }, { journal: "Paid Bersi's son his father's silver, and gave him an oar." } ]
+      result: He weighs it in his hand, the way his father would have, and then puts it in his chest without counting it, which his father never would have. He'll do.
+    - id: home
+      text: Send him home. One Bersi was enough.
+      effects: [ { add: { honour: -1 } } ]
+      result: He goes back down the fjord path with the chest on his back. In the autumn you hear he has signed on with a Kaupang trader, and is doing well, and tells everyone what you said.

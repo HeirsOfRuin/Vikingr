@@ -38,7 +38,6 @@
     - id: sail
       text: Go down to the ship.
       visible_if: "!service"
-      effects: [ { set: flag.sp832_done } ]
       result: |
         The written saga pauses here, at the turn of your third spring. The sea does not: you can sail on, raid, trade and winter as long as you live, and every deed you do will be told.
     - id: launch
@@ -46,7 +45,6 @@
       visible_if: { all: [service, flag.f_building] }
       effects:
           - { if: "flag.irish || item.orlaith_cross", then: [ { ship: { type: karvi, name: "Órlaith", crew: 10 } } ], else: [ { ship: { type: karvi, name: "Leysingr's Oak", crew: 10 } } ] }
-          - { set: flag.sp832_done }
           - { keep_boast: own_ship }
           - { deed: { type: deed, text: "Launched a ship he built with his own hands", weight: 4, witnesses: 100 } }
           - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
@@ -70,7 +68,6 @@
       effects:
           - { ship: { type: karvi, name: "The jarl's old karvi", crew: 12 } }
           - { set: flag.owes_jarl }
-          - { set: flag.sp832_done }
           - { keep_boast: own_ship }
           - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
           - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
@@ -94,7 +91,6 @@
         effects:
           - { ship: { type: karvi, name: "The jarl's old karvi", crew: 12 } }
           - { set: flag.owes_jarl }
-          - { set: flag.sp832_done }
           - { keep_boast: own_ship }
           - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
           - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
@@ -105,7 +101,6 @@
           "Next year," the jarl says. You go back down to your bench.
 
           The written saga pauses here, at the turn of your third spring. The sea does not.
-        effects: [ { set: flag.sp832_done } ]
     - id: buy
       text: Weigh out four pounds for a karvi of your own, owing nobody.
       visible_if: service
@@ -113,7 +108,6 @@
       effects:
           - { add: { silver: -192 } }
           - { ship: { type: karvi, name: Grey Goose, crew: 8 } }
-          - { set: flag.sp832_done }
           - { keep_boast: own_ship }
           - { if: "man.ketill.loyalty >= 4", then: [ { man: { id: ketill, swear: true } } ], else: [ { man: { id: ketill, leave: true } } ] }
           - { if: "man.ulf.loyalty >= 5", then: [ { man: { id: ulf, swear: true } } ], else: [ { man: { id: ulf, leave: true } } ] }
@@ -126,7 +120,6 @@
     - id: bench
       text: Take your oar again.
       visible_if: service
-      effects: [ { set: flag.sp832_done } ]
       result: |
         You find your bench and put your chest under it. It's the same bench. You aren't the same man.
 

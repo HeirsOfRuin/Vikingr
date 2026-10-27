@@ -1,19 +1,18 @@
 placeholder_start: { description: Started from the Phase 1 placeholder (a borrowed karvi) }
 outlawed: { description: Outlawed from the home district }
-leysingi: { description: A freedman's son }
 skald: { description: A skald in your household }
 owes_jarl: { description: Owes the jarl a share of this season's plunder for the loan of a ship }
 # ---- the year 830 (content/scenes/830) ----
 # boyhood
-b_watched_oars: { description: "As a boy, watched the men unload the ship" }
-b_watched_swords: { description: "As a boy, watched the swords" }
-b_heard_stories: { description: "As a boy, listened to the old men's stories" }
+b_watched_oars: { description: "As a boy, watched the men unload the ship", saga: true }
+b_watched_swords: { description: "As a boy, watched the swords", saga: true }
+b_heard_stories: { description: "As a boy, listened to the old men's stories", saga: true }
 b_asgeir_coin: { description: "As a boy, Ásgeir gave him a coin at the scales" }
 b_fought: { description: "Fought Hallbjörn at twelve" }
 b_tricked: { description: "Outwitted Hallbjörn at twelve" }
 b_yielded: { description: "Took Hallbjörn's beating at twelve" }
-b_told: { description: "Told his father about Hallbjörn" }
-b_ormr_worth: { description: "Asked Ormr whether it was worth it" }
+b_told: { description: "Told his father about Hallbjörn", saga: true }
+b_ormr_worth: { description: "Asked Ormr whether it was worth it", saga: true }
 b_ormr_trick: { description: "Ormr taught him to turn a blade on the shield rim" }
 b_ormr_tree: { description: "Asked Ormr about the monks' god on the tree" }
 b_ormr_seax: { description: "Ormr gave him his seax" }
@@ -22,13 +21,13 @@ b_sword: { description: "Took his grandfather's sword without asking" }
 b_gyda_promise: { description: "Made Gyða a promise before he left" }
 b_slipped_away: { description: "Left home before dawn without a word" }
 # the muster and the crossing
-m_prow: { description: "Took a prow bench in the Raven" }
-m_middle: { description: "Took a bench in the middle of the Raven" }
-m_noticed: { description: "Ásgeir noticed him at the loading" }
+m_prow: { description: "Took a prow bench in the Raven", saga: true }
+m_middle: { description: "Took a bench in the middle of the Raven", saga: true }
+m_noticed: { description: "Ásgeir noticed him at the loading", saga: true }
 m_soap: { description: "Dropped the jarl's chest of soap in the fjord" }
 s_seasick: { description: "Was seasick on the first day out" }
 s_saved_ulf: { description: "Saved Ulf at sea" }
-s_caught_bersi: { description: "Caught Bersi cheating at dice" }
+s_caught_bersi: { description: "Caught Bersi cheating at dice", saga: true }
 # Birsay
 o_hearth: { description: "Was sick in Harek's hearth at Birsay" }
 o_kalfr: { description: "Brought Kálfr the skald aboard at Birsay" }
@@ -36,19 +35,19 @@ o_ingibjorg: { description: "Ingibjörg of Birsay tied a red thread on his wrist
 o_listened: { description: "Listened to the old men at Birsay" }
 o_iona: { description: "The Raven goes to Iona before Bangor" }
 o_bangor_first: { description: "The Raven goes straight to Bangor" }
-o_spoke: { description: "Spoke at the ship's council at Birsay" }
+o_spoke: { description: "Spoke at the ship's council at Birsay", saga: true }
 # Iona
-i_straight: { description: "Told Ásgeir to go straight in at Iona" }
+i_straight: { description: "Told Ásgeir to go straight in at Iona", saga: true }
 i_north: { description: "Ásgeir took his advice and landed in the north cove" }
-i_rebuffed: { description: "Ásgeir laughed off his advice at Iona" }
+i_rebuffed: { description: "Ásgeir laughed off his advice at Iona", saga: true }
 i_warned: { description: "Read the bell at Iona as an alarm" }
 i_first: { description: "First through the gate at Iona" }
-i_ketill: { description: "Went through the gate behind Ketill" }
+i_ketill: { description: "Went through the gate behind Ketill", saga: true }
 i_ship: { description: "Stayed with the ship at Iona" }
 i_captives: { description: "Took the young monks of Iona as captives" }
 i_mercy: { description: "Let the old monks of Iona go" }
-i_hid_silver: { description: "Hid a reliquary from the common heap at Iona" }
-i_caught_stealing: { description: "Caught hiding a reliquary at Iona; half shares" }
+i_hid_silver: { description: "Hid a reliquary from the common heap at Iona", saga: true }
+i_caught_stealing: { description: "Caught hiding a reliquary at Iona; half shares", saga: true }
 i_colman_spared: { description: "Gave Colmán back his pages" }
 i_colman_taken: { description: "Took Brother Colmán captive" }
 i_burned_books: { description: "Burned the books of Iona" }
@@ -58,105 +57,103 @@ bg_scouted: { description: "Scouted the Ulster levy by night" }
 bg_seen: { description: "The levy was warned before Bangor" }
 bg_traders: { description: "Colmán talked the Raven up the strand as traders" }
 bg_colman_freed: { description: "Colmán was set free at Bangor" }
-bg_colman_betrayed: { description: "Colmán warned the strand at Bangor" }
+bg_colman_betrayed: { description: "Colmán warned the strand at Bangor", saga: true }
 bg_covered: { description: "Stood at Ásgeir's shoulder at Bangor" }
 bg_front: { description: "Stood in the front rank at Bangor" }
 bg_acclaimed: { description: "The Raven's men chose him on the field at Bangor; he took the prow" }
 bg_steinarr: { description: "Steinarr took the Raven after Bangor" }
 bg_challenged: { description: "Fought Steinarr for the steering-oar" }
-bg_mocked: { description: "Laughed at for asking Ásgeir for a ship" }
+bg_mocked: { description: "Laughed at for asking Ásgeir for a ship", saga: true }
 bg_left: { description: "Has left Bangor for home" }
 bg_ulf_pulled: { description: "Ulf dragged him out of the surf at Bangor" }
 asgeir_patron: { description: "Ásgeir will speak for him to the jarl" }
 jarl_promise: { description: "The jarl said: come back after the second summer" }
 prow_man: { description: "The prow-man of the ship he rows in: first ashore, a share and a half" }
 # home
-h_brother_close: { description: "Embraced Hallbjörn at the homecoming" }
+h_brother_close: { description: "Embraced Hallbjörn at the homecoming", saga: true }
 h_brother_debt: { description: "Knows the farm is in debt to Bárð" }
-h_brother_cold: { description: "Hallbjörn was cold at the homecoming" }
+h_brother_cold: { description: "Hallbjörn was cold at the homecoming", saga: true }
 h_brother_envy: { description: "Hallbjörn envies his silver" }
 h_brother_feud: { description: "Said something to Hallbjörn that can't be taken back" }
 gyda_courting: { description: "Courting Gyða Bárðardóttir" }
 gyda_lost: { description: "Gyða is to marry Hallbjörn" }
-h_captives_sold: { description: "Let the trader have the captives" }
-h_thralls: { description: "Kept the captives as thralls on the farm" }
-colman_sold: { description: "Colmán was sold to the Kaupang trader" }
+h_captives_sold: { description: "Let the trader have the captives", saga: true }
+h_thralls: { description: "Kept the captives as thralls on the farm", saga: true }
+colman_sold: { description: "Colmán was sold to the Kaupang trader", saga: true }
 colman_kept: { description: "Kept Colmán in the household" }
 colman_freed_home: { description: "Paid Colmán's passage to Dublin" }
 ormr_dead: { description: "Ormr One-Hand died in the winter of 830" }
 # Yule and the holmgang
 y_hall: { description: "How loud the Yule hall is (0 to 2)" }
 y_score: { description: "Exchanges won in the Yule flyting" }
-y_won: { description: "Won the Yule flyting" }
-y_jarl_ended: { description: "The jarl ended the flyting" }
-y_challenged: { description: "Challenged Thorgils to the holmgang" }
-y_ketill_peace: { description: "Ketill made Thorgils unsay his words" }
-y_withdrew: { description: "Let the jarl's law settle the holmgang with silver" }
+y_won: { description: "Won the Yule flyting", saga: true }
+y_jarl_ended: { description: "The jarl ended the flyting", saga: true }
+y_challenged: { description: "Challenged Thorgils to the holmgang", saga: true }
+y_ketill_peace: { description: "Ketill made Thorgils unsay his words", saga: true }
+y_withdrew: { description: "Let the jarl's law settle the holmgang with silver", saga: true }
 y_holm_won: { description: "Beat Thorgils on the cloak" }
 y_holm_lost: { description: "Lost to Thorgils on the cloak" }
 y_asked_death: { description: "Asked the völva how he will die" }
-y_paid_volva: { description: "Paid the völva" }
-thorgils_paid: { description: "Paid the Hrappssons for Thorgils's leg" }
+y_paid_volva: { description: "Paid the völva", saga: true }
+thorgils_paid: { description: "Paid the Hrappssons for Thorgils's leg", saga: true }
 thorgils_feud: { description: "Refused the Hrappssons: a feud" }
-thorgils_thing_won: { description: "The Thing said the cloak settled it" }
-thorgils_thing_lost: { description: "The Thing made him pay the Hrappssons" }
-father_paid: { description: "Put a pound and a half in his father's hand" }
+thorgils_thing_won: { description: "The Thing said the cloak settled it", saga: true }
+thorgils_thing_lost: { description: "The Thing made him pay the Hrappssons", saga: true }
+father_paid: { description: "Put a pound and a half in his father's hand", saga: true }
 # the dead
-mourned_ketill: { description: "Said the words over Ketill" }
-mourned_ulf: { description: "Named Ulf over his pyre" }
-mourned_hallvard: { description: "Buried Hallvard with his hammer" }
-hallvard_hammer: { description: "Wears Hallvard's hammer" }
+mourned_ketill: { description: "Said the words over Ketill", saga: true }
+mourned_ulf: { description: "Named Ulf over his pyre", saga: true }
+mourned_hallvard: { description: "Buried Hallvard with his hammer", saga: true }
 bersi_silver_sent: { description: "Sent Bersi's silver to his woman in Hordaland" }
 bersi_silver_kept: { description: "Put Bersi's silver in the common heap" }
 # ---- the year 831 (content/scenes/831) ----
 # spring
 j_commission: { description: "Took the jarl's furs and soapstone to sell at Kaupang" }
 j_commission_done: { description: "Sold the jarl's goods and bought his sword" }
-j_commission_well: { description: "Sold the jarl's goods well" }
-j_commission_failed: { description: "Came home without doing the jarl's errand" }
+j_commission_well: { description: "Sold the jarl's goods well", saga: true }
+j_commission_failed: { description: "Came home without doing the jarl's errand", saga: true }
 j_promised_king: { description: "Promised the jarl the king of Conaille, in his hall" }
-j_promise_kept: { description: "Kept his promise of the king of Conaille" }
-j_promise_broken: { description: "Broke his promise of the king of Conaille" }
-j_trusted: { description: "The jarl trusts him with his goods" }
-j_argued: { description: "Talked his captain round to Lindisfarne" }
+j_promise_kept: { description: "Kept his promise of the king of Conaille", saga: true }
+j_promise_broken: { description: "Broke his promise of the king of Conaille", saga: true }
+j_trusted: { description: "The jarl trusts him with his goods", saga: true }
+j_argued: { description: "Talked his captain round to Lindisfarne", saga: true }
 gyda_price: { description: "Bárð named the bride-price for Gyða" }
 gyda_price_low: { description: "Haggled Bárð down to a pound" }
 gyda_price_high: { description: "Haggled Bárð up to two pounds" }
 gyda_eloped: { description: "Ran off with Gyða without paying Bárð" }
 # the sea
 se_ubbi: { description: "Traded news with Ubbi the Dane at sea" }
-se_shields: { description: "Showed the Danish fleet his shields" }
-se_curragh_taken: { description: "Took three Irishmen from a curragh" }
-se_curragh_spared: { description: "Gave water to the Irishmen in the curragh" }
+se_shields: { description: "Showed the Danish fleet his shields", saga: true }
+se_curragh_taken: { description: "Took three Irishmen from a curragh", saga: true }
+se_curragh_spared: { description: "Gave water to the Irishmen in the curragh", saga: true }
 # Kaupang
 mail: { description: "Owns a mail shirt" }
 frankish_sword: { description: "Owns a Frankish sword with a maker's name in the blade" }
-k_sold_captives: { description: "Sold captives at Kaupang" }
+k_sold_captives: { description: "Sold captives at Kaupang", saga: true }
 k_news: { description: "Heard the news in the Kaupang booths" }
 ubbi_sworn: { description: "Promised Ubbi his ship for Frisia next spring" }
 ubbi_offer: { description: "Ubbi's offer is open" }
 ubbi_refused: { description: "Refused Ubbi: he has a jarl" }
 # Lindisfarne
-l_tide: { description: "Took Lindisfarne on the flood tide" }
+l_tide: { description: "Took Lindisfarne on the flood tide", saga: true }
 l_tribute: { description: "Took tribute from the reeve of Bamburgh instead of raiding" }
-l_cover: { description: "Took the jewelled cover of the Lindisfarne book" }
-l_book: { description: "Took the Lindisfarne book whole, for ransom" }
-l_spared_book: { description: "Left the Lindisfarne book on the altar" }
-l_beaten: { description: "Beaten off at Lindisfarne" }
-l_done: { description: "Left Lindisfarne" }
+l_cover: { description: "Took the jewelled cover of the Lindisfarne book", saga: true }
+l_book: { description: "Took the Lindisfarne book whole, for ransom", saga: true }
+l_spared_book: { description: "Left the Lindisfarne book on the altar", saga: true }
+l_beaten: { description: "Beaten off at Lindisfarne", saga: true }
 # Skye
-sk_valley: { description: "Fought for Kolbeinn over the third valley" }
-sk_recruited: { description: "Signed on Hebridean men at Kolbeinn's" }
-sk_thorunn: { description: "Met Þórunn, Kolbeinn's widowed daughter" }
+sk_valley: { description: "Fought for Kolbeinn over the third valley", saga: true }
+sk_recruited: { description: "Signed on Hebridean men at Kolbeinn's", saga: true }
+sk_thorunn: { description: "Met Þórunn, Kolbeinn's widowed daughter", saga: true }
 sk_thorunn_friend: { description: "Þórunn likes him, a little" }
 sk_land_offer: { description: "Þórunn's land on Skye is there if he comes back" }
-sk_blessed: { description: "The papar blessed his ship" }
-sk_bell: { description: "Took the papar's bell" }
+sk_blessed: { description: "The papar blessed his ship", saga: true }
+sk_bell: { description: "Took the papar's bell", saga: true }
 # Conaille
-c_surprise: { description: "Took Conaille by surprise" }
-c_guest: { description: "Came into Conaille as a guest, and broke guest-right" }
-c_declined: { description: "Turned away from Conaille" }
-c_beaten: { description: "Beaten off at Conaille" }
+c_surprise: { description: "Took Conaille by surprise", saga: true }
+c_guest: { description: "Came into Conaille as a guest, and broke guest-right", saga: true }
+c_declined: { description: "Turned away from Conaille", saga: true }
+c_beaten: { description: "Beaten off at Conaille", saga: true }
 c_king_taken: { description: "Took Máel Brigte of Conaille alive" }
 c_men_took: { description: "The men took the king; he stood back" }
 c_drank: { description: "Drank from the king of Conaille's cup in his hall" }
@@ -164,43 +161,41 @@ c_horn_for_jarl: { description: "Took the king of Conaille's horn for the jarl" 
 c_king_killed: { description: "Killed Máel Brigte in his doorway" }
 c_ulaid_feud: { description: "The Ulaid remember the king in his doorway" }
 c_ransomed: { description: "Ransomed the king of Conaille to Armagh" }
-c_ransom_doubled: { description: "Got a double ransom for the king" }
+c_ransom_doubled: { description: "Got a double ransom for the king", saga: true }
 c_king_kept: { description: "Brought the king of Conaille home as a captive" }
-c_done: { description: "Left Conaille" }
 # Birsay and Iona revisited
 ingibjorg_waiting: { description: "Ingibjörg is waiting for him" }
 ingibjorg_told: { description: "Told Ingibjörg about Gyða" }
 ingibjorg_promised: { description: "Harek will talk to him next summer" }
 ingibjorg_jilted: { description: "Married another while Ingibjörg was promised to him" }
-colman_friend: { description: "Walked unarmed with Colmán on Iona" }
-colman_warned: { description: "Warned Colmán to take the books to Kells" }
-colman_betrayed_831: { description: "Told Colmán it changed nothing" }
+colman_friend: { description: "Walked unarmed with Colmán on Iona", saga: true }
+colman_warned: { description: "Warned Colmán to take the books to Kells", saga: true }
+colman_betrayed_831: { description: "Told Colmán it changed nothing", saga: true }
 # winter 831
 married_gyda: { description: "Married Gyða Bárðardóttir" }
-gyda_one_more_year: { description: "Bárð gave him one more summer to pay" }
-gyda_lost_831: { description: "Bárð gave Gyða to another man" }
-bard_peace: { description: "Made peace with Bárð" }
-own_house: { description: "Built his own house across the fjord" }
+gyda_one_more_year: { description: "Bárð gave him one more summer to pay", saga: true }
+gyda_lost_831: { description: "Bárð gave Gyða to another man", saga: true }
+bard_peace: { description: "Made peace with Bárð", saga: true }
+own_house: { description: "Built his own house across the fjord", saga: true }
 brother_fought: { description: "Fought Hallbjörn at the boundary stone" }
-brother_beaten: { description: "Beat Hallbjörn at the boundary stone" }
-brother_won_stone: { description: "Hallbjörn beat him at the boundary stone" }
-brother_yielded: { description: "Left the boundary stone where Hallbjörn put it" }
-brother_father_ruled: { description: "His father put the boundary stone back" }
-brother_estranged: { description: "He and Hallbjörn are not speaking" }
-brother_ally: { description: "Paid the farm's debt: Hallbjörn is his ally" }
-brother_half: { description: "Paid half the farm's debt" }
-brother_refused: { description: "Refused to pay the farm's debt" }
+brother_beaten: { description: "Beat Hallbjörn at the boundary stone", saga: true }
+brother_won_stone: { description: "Hallbjörn beat him at the boundary stone", saga: true }
+brother_yielded: { description: "Left the boundary stone where Hallbjörn put it", saga: true }
+brother_father_ruled: { description: "His father put the boundary stone back", saga: true }
+brother_estranged: { description: "He and Hallbjörn are not speaking", saga: true }
+brother_ally: { description: "Paid the farm's debt: Hallbjörn is his ally", saga: true }
+brother_half: { description: "Paid half the farm's debt", saga: true }
+brother_refused: { description: "Refused to pay the farm's debt", saga: true }
 hrapp_fought: { description: "Fought Grímr Hrappsson on the cloak" }
 hrapp_ended: { description: "The Hrappsson feud is ended" }
 hrapp_outlawed: { description: "Grímr Hrappsson outlawed for the burning" }
 hrapp_unpunished: { description: "The Thing let the Hrappssons go" }
 hrapp_paid: { description: "Paid the Hrappssons to end it" }
-sp832_done: { description: "Spring 832: the written saga pauses" }
 # ---- the world: discovery and expeditions (content/scenes/world) ----
-ex_double_share: { description: "Promised a double share to keep an expedition going" }
-f_traded: { description: "Traded with Grímr on the Faroes" }
-f_land_claimed: { description: "Set up stones on land in the Faroes" }
-f_heard_snaeland: { description: "Heard of Snæland, beyond the Faroes" }
+ex_double_share: { description: "Promised a double share to keep an expedition going", saga: true }
+f_traded: { description: "Traded with Grímr on the Faroes", saga: true }
+f_land_claimed: { description: "Set up stones on land in the Faroes", saga: true }
+f_heard_snaeland: { description: "Heard of Snæland, beyond the Faroes", saga: true }
 # ---- wives (content/scenes/world/wives.yaml) ----
 betrothed: { description: "Promised to a bride; the wedding is at the next winter nights at home" }
 ingibjorg_betrothed: { description: "Betrothed to Ingibjörg of Birsay" }
@@ -208,19 +203,18 @@ ingibjorg_refused: { description: "Told Harek he would not be back to ask for In
 wife_ingibjorg: { description: "Married Ingibjörg Hareksdóttir" }
 thorunn_betrothed: { description: "Betrothed to Þórunn of Skye" }
 thorunn_refused: { description: "Would not take Þórunn's terms" }
-thorunn_wool: { description: "Got half of Þórunn's wool money in the bargain" }
+thorunn_wool: { description: "Got half of Þórunn's wool money in the bargain", saga: true }
 wife_thorunn: { description: "Married Þórunn Kolbeinsdóttir" }
 asta_met: { description: "Met Ásta, the silversmith's widow at Kaupang" }
 asta_betrothed: { description: "Betrothed to Ásta of Kaupang" }
 asta_refused: { description: "Turned down Ásta's proposition" }
-wife_asta: { description: "Married Ásta the silversmith's widow" }
 # ---- the household (content/scenes/world/winter.yaml) ----
 child_son: { description: "A son born to him" }
 child_daughter: { description: "A daughter born to him" }
-gyda_declined: { description: "Chose not to court Gyða, or withdrew" }
+gyda_declined: { description: "Chose not to court Gyða, or withdrew", saga: true }
 h_jarl_trust: { description: "Jarl Eystein accepted his account of Bangor and trusts him with the Raven" }
-h_jarl_doubt: { description: "Jarl Eystein let him keep the Raven, without trusting him" }
-h_asgeir_widow: { description: "Gave Ásgeir's share to his widow on the landing" }
+h_jarl_doubt: { description: "Jarl Eystein let him keep the Raven, without trusting him", saga: true }
+h_asgeir_widow: { description: "Gave Ásgeir's share to his widow on the landing", saga: true }
 # ---- the Danish and Swedish markets (content/scenes/world/danes.yaml) ----
 ubbi_done: { description: "Raided the Frisian coast with Ubbi" }
 ubbi_broken: { description: "Broke his word to Ubbi at Hedeby" }
@@ -231,89 +225,89 @@ ribe_dorestad: { description: "Heard of Dorestad's empty walls from the Frisians
 birka_ansgar: { description: "Listened to Ansgar the monk at Birka" }
 birka_east: { description: "Heard of the river road east at Birka" }
 # ---- the fleet (content/scenes/world/fleet.yaml) ----
-fl_gave_ship: { description: "Gave a ship to the sworn man who steered her" }
-fl_promised_ship: { description: "Promised a sworn shipmaster his ship after one more summer" }
+fl_gave_ship: { description: "Gave a ship to the sworn man who steered her", saga: true }
+fl_promised_ship: { description: "Promised a sworn shipmaster his ship after one more summer", saga: true }
 # ---- the Frisian Road, 833-835 (content/scenes/833) ----
 fr_frisia: { description: "Went to look at the Frisian coast in 833" }
-fr_west: { description: "Went west to Armagh in 833" }
-fr_jarl: { description: "Sailed where the jarl needed him in 833" }
+fr_west: { description: "Went west to Armagh in 833", saga: true }
+fr_jarl: { description: "Sailed where the jarl needed him in 833", saga: true }
 fr_dorestad_ways: { description: "Knows Dorestad's ways: the ford, the jetties, the watch (Hessel)" }
-wa_looked: { description: "Looked inland from the dyke at Walcheren" }
-ar_tribute: { description: "Took tribute from the comarb of Patrick" }
-ar_bell: { description: "Took the bell-shrine of Patrick" }
-ar_spared_bell: { description: "Left the old monk his bell at Armagh" }
-ar_burned: { description: "Burned the church of Patrick at Armagh" }
-ar_beaten: { description: "Was beaten off Patrick's hill" }
+wa_looked: { description: "Looked inland from the dyke at Walcheren", saga: true }
+ar_tribute: { description: "Took tribute from the comarb of Patrick", saga: true }
+ar_bell: { description: "Took the bell-shrine of Patrick", saga: true }
+ar_spared_bell: { description: "Left the old monk his bell at Armagh", saga: true }
+ar_burned: { description: "Burned the church of Patrick at Armagh", saga: true }
+ar_beaten: { description: "Was beaten off Patrick's hill", saga: true }
 fr_backs_hakon: { description: "Promised Hákon his voice at the thing" }
 fr_backs_eirik: { description: "Told Eiríkr what his brother was saying" }
-fr_neutral: { description: "Stood with neither of the jarl's sons" }
+fr_neutral: { description: "Stood with neither of the jarl's sons", saga: true }
 fr_dorestad_sworn: { description: "Sworn to sail for Dorestad in 834" }
 fr_dorestad_done: { description: "Was at the sack of Dorestad, 834" }
-fr_dorestad_beaten: { description: "Was beaten at Dorestad" }
+fr_dorestad_beaten: { description: "Was beaten at Dorestad", saga: true }
 fr_eystein_dead: { description: "Jarl Eystein is dead" }
 fr_jarl_hakon: { description: "Hákon Eysteinsson is jarl" }
 fr_jarl_eirik: { description: "Eiríkr Eysteinsson is jarl" }
-fr_road_frankia: { description: "Looks to the Frankish rivers after 835" }
-fr_road_ireland: { description: "Looks to Ireland after 835" }
-fr_road_east: { description: "Looks east after 835" }
-fr_road_home: { description: "Looks to his own land and hall after 835" }
-rg_saw_turgeis: { description: "Saw Turgeis's fleet go north" }
-rg_met_turgeis: { description: "Spoke with Turgeis at sea" }
+fr_road_frankia: { description: "Looks to the Frankish rivers after 835", saga: true }
+fr_road_ireland: { description: "Looks to Ireland after 835", saga: true }
+fr_road_east: { description: "Looks east after 835", saga: true }
+fr_road_home: { description: "Looks to his own land and hall after 835", saga: true }
+rg_saw_turgeis: { description: "Saw Turgeis's fleet go north", saga: true }
+rg_met_turgeis: { description: "Spoke with Turgeis at sea", saga: true }
 # ---- hardship (docs/FRAME-HARDSHIP.md) ----
-ha_jarl_refused: { description: "Refused the jarl a ship when he was suspicious" }
-ha_ketill_stayed: { description: "Asked old Ketill for one more summer" }
-ha_ketill_steward: { description: "Made Ketill steward of the farm" }
-ha_sold_dear: { description: "Sold grain dear in a famine" }
+ha_jarl_refused: { description: "Refused the jarl a ship when he was suspicious", saga: true }
+ha_ketill_stayed: { description: "Asked old Ketill for one more summer", saga: true }
+ha_ketill_steward: { description: "Made Ketill steward of the farm", saga: true }
+ha_sold_dear: { description: "Sold grain dear in a famine", saga: true }
 # ---- the freedman's son (content/scenes/830/00-freedman.yaml) ----
-f_held: { description: "Held the strakes for his father at nine" }
-f_mast: { description: "Went up Kol's mast at nine" }
-f_fire: { description: "Sat at the crew's fire and learned the rocks" }
+f_held: { description: "Held the strakes for his father at nine", saga: true }
+f_mast: { description: "Went up Kol's mast at nine", saga: true }
+f_fire: { description: "Sat at the crew's fire and learned the rocks", saga: true }
 f_asgeir: { description: "Carried Ásgeir his supper after the wreck" }
 f_fought_thorgils: { description: "Fought Thorgils at his father's freedom-ale" }
-f_stood_still: { description: "Stood still at the freedom-ale" }
+f_stood_still: { description: "Stood still at the freedom-ale", saga: true }
 f_hrapp_laughed: { description: "Made old Hrapp laugh at Thorgils" }
-f_shamed: { description: "Was laughed at in Hrapp's hall" }
+f_shamed: { description: "Was laughed at in Hrapp's hall", saga: true }
 irish: { description: "Speaks Irish, from his grandmother Órlaith" }
-f_refused_amma: { description: "Refused his grandmother's words" }
-f_bailer: { description: "Went west as the Raven's bailer, on half a share" }
-f_oar: { description: "Asked Ásgeir for an oar and got it" }
-f_father_spoke: { description: "His father asked Ásgeir for him" }
-f_father_close: { description: "Told his father about the strakes" }
-f_paid_due: { description: "Paid his father's harvest-due to Hrapp" }
+f_refused_amma: { description: "Refused his grandmother's words", saga: true }
+f_bailer: { description: "Went west as the Raven's bailer, on half a share", saga: true }
+f_oar: { description: "Asked Ásgeir for an oar and got it", saga: true }
+f_father_spoke: { description: "His father asked Ásgeir for him", saga: true }
+f_father_close: { description: "Told his father about the strakes", saga: true }
+f_paid_due: { description: "Paid his father's harvest-due to Hrapp", saga: true }
 f_building: { description: "Building a karvi with his father, winter 831" }
-f_due_paid: { description: "Paid Hrapp's patron's due on the new ship" }
-f_due_refused: { description: "Refused Hrapp's due on the new ship at the Thing" }
-f_due_thorgils: { description: "Gave Thorgils the new ship's first share" }
-i_colman_irish: { description: "Spoke to Colmán in Irish at Iona" }
-c_interpreter: { description: "Spoke for the ship at Conaille's gate, in Irish" }
+f_due_paid: { description: "Paid Hrapp's patron's due on the new ship", saga: true }
+f_due_refused: { description: "Refused Hrapp's due on the new ship at the Thing", saga: true }
+f_due_thorgils: { description: "Gave Thorgils the new ship's first share", saga: true }
+i_colman_irish: { description: "Spoke to Colmán in Irish at Iona", saga: true }
+c_interpreter: { description: "Spoke for the ship at Conaille's gate, in Irish", saga: true }
 # ---- the outlaw (content/scenes/830/00-outlaw.yaml) ----
-o_hot: { description: "Killed Ozurr in hot blood" }
-o_defence: { description: "Killed Ozurr after he drew on an unarmed man" }
-o_meant: { description: "Killed Ozurr and meant it" }
+o_hot: { description: "Killed Ozurr in hot blood", saga: true }
+o_defence: { description: "Killed Ozurr after he drew on an unarmed man", saga: true }
+o_meant: { description: "Killed Ozurr and meant it", saga: true }
 o_two_winters: { description: "The jarl gave two winters, not three" }
-o_cursed: { description: "Cursed Hrapp across the mound" }
+o_cursed: { description: "Cursed Hrapp across the mound", saga: true }
 o_ketill_asked: { description: "Asked Ketill why he helped" }
-o_faced_kolgrimr: { description: "Called Kolgrímr out at Hjaltland" }
-o_kolgrimr_bought: { description: "Bought Kolgrímr's silence" }
-o_kolgrimr_cowed: { description: "Watched Kolgrímr all the way to Orkney" }
+o_faced_kolgrimr: { description: "Called Kolgrímr out at Hjaltland", saga: true }
+o_kolgrimr_bought: { description: "Bought Kolgrímr's silence", saga: true }
+o_kolgrimr_cowed: { description: "Watched Kolgrímr all the way to Orkney", saga: true }
 o_kolgrimr_told: { description: "Kolgrímr told Orkney what he is" }
-o_kolgrimr_left: { description: "Left Kolgrímr on Hjaltland" }
+o_kolgrimr_left: { description: "Left Kolgrímr on Hjaltland", saga: true }
 o_joined: { description: "Joined the Raven at Birsay" }
-o_steinarr_cold: { description: "Steinarr didn't like the outlaw's tongue" }
-o_sworn_wergild: { description: "Swore at Yule to come home with the wergild" }
+o_steinarr_cold: { description: "Steinarr didn't like the outlaw's tongue", saga: true }
+o_sworn_wergild: { description: "Swore at Yule to come home with the wergild", saga: true }
 o_onund_done: { description: "Önundr has found him" }
 o_onund_dead: { description: "Killed Önundr Hrappsson on the sand" }
 o_onund_waits: { description: "Önundr will be on the landing when he comes home" }
 o_wergild_paid: { description: "Paid Önundr the wergild for Ozurr" }
 o_harek_ship: { description: "Sails Harek's karvi for a quarter" }
 o_peace: { description: "Paid the wergild and the jarl's price: peace with Hrapp's house" }
-o_hunted: { description: "Came home without paying: Hrapp's house hunts him" }
+o_hunted: { description: "Came home without paying: Hrapp's house hunts him", saga: true }
 outlaw_ended: { description: "The outlaw's time is served: he may sail home" }
 hs_we_broke: { description: "The surety's peace was broken by his own raid, not by their kin (docs/FRAME-HIRD-HOSTAGES.md)" }
 # the twelve new places (docs/FRAME-PLACES-2.md); <place>_scouted makes a raid there likelier to catch them asleep
-hladir_friend: { description: "Gave the jarl of Hlaðir a gift worth his hall" }
-halogaland_tale: { description: "Heard the Hálogaland man tell of the far north and the walrus coast" }
-man_harbour: { description: "Sounded the harbour on Man: a winter base in the Irish Sea" }
+hladir_friend: { description: "Gave the jarl of Hlaðir a gift worth his hall", saga: true }
+halogaland_tale: { description: "Heard the Hálogaland man tell of the far north and the walrus coast", saga: true }
+man_harbour: { description: "Sounded the harbour on Man: a winter base in the Irish Sea", saga: true }
 dublin_longphort: { description: "Walked the ridge above the black pool and saw where a ship-fort would stand" }
 gotland_scouted: { description: "Counted Gotland's men and roads" }
 dublin_scouted: { description: "Walked the ground at Duibhlinn" }
@@ -342,7 +336,7 @@ ir_fort_lord: { description: "Holds the high seat of the ship-fort at Duibhlinn"
 cw_liffey_sworn: { description: "Sailed with Turgeis's fleets on the Liffey, 837" }
 cw_armagh_done: { description: "Went to Armagh with the fleet on Lough Neagh" }
 cw_nantes_sworn: { description: "Answered the Vestfold arrow for Nantes, 843" }
-lg_ragnar_friend: { description: "Ragnarr Loðbrók liked him, on a Frisian beach" }
+lg_ragnar_friend: { description: "Ragnarr Loðbrók liked him, on a Frisian beach", saga: true }
 lg_hastein: { description: "Met Hastein at Noirmoutier" }
 oathbreaker: { description: "Times he has been found sworn to two lords" }
 call_harek: { description: "Harek calls for his men this summer" }
@@ -361,12 +355,12 @@ served_harek: { description: "Answered Harek's call since his last grant" }
 served_kolbeinn: { description: "Answered Kolbeinn's call since his last grant" }
 served_horik: { description: "Answered King Horik's call since his last grant" }
 served_turgeis: { description: "Answered Turgeis's call since his last grant" }
-served_irish_king: { description: "Answered the king of Tara's call" }
+served_irish_king: { description: "Answered the king of Tara's call", saga: true }
 served_rorik: { description: "Answered Rorik's call since his last grant" }
-ru_orkney: { description: "Jarl in Orkney" }
+ru_orkney: { description: "Jarl in Orkney", saga: true }
 ru_dublin: { description: "King in Dublin" }
-ru_home: { description: "Jarl in Hordaland" }
-ru_walcheren: { description: "Count of Walcheren" }
+ru_home: { description: "Jarl in Hordaland", saga: true }
+ru_walcheren: { description: "Count of Walcheren", saga: true }
 ru_orkney_lost: { description: "Lost the claim to Orkney, or the seat" }
 ru_dublin_lost: { description: "Lost the claim to Dublin, or the seat" }
 ru_home_lost: { description: "Lost the claim to the jarldom at home, or the seat" }

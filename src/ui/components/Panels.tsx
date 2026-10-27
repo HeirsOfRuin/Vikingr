@@ -1,5 +1,6 @@
 import type { ContentBundle } from '../../content/schema';
 import { goalProgress } from '../../engine/boasts';
+import { remembered } from '../../engine/saga';
 import { freeSworn, hold, MASTER_SHARES, masterOf } from '../../engine/fleet';
 import { captain, favour, favourMuster, favourWord, partner, relWord } from '../../engine/allies';
 import { SKILLS, ATTRS } from '../../content/schema';
@@ -380,12 +381,26 @@ export function SagaPanel({ content, state }: { content: ContentBundle; state: G
           </table>
         ) : <p class="empty">Nothing yet. Nobody sings about a man who stayed home.</p>}
       </div>
+      <RememberedCard content={content} state={state} />
       <div class="card">
         <h3>Journal</h3>
         <div class="log" style={{ maxHeight: 360 }}>
           {[...state.journal].reverse().slice(0, 80).map((j, i) => <p key={i}><span class="muted">{formatDate(j.day)}:</span> {j.text.replace(SETBACK, "").trimStart()}</p>)}
         </div>
       </div>
+    </div>
+  );
+}
+
+/** The choices men remember (the flag audit: a choice the game records is shown, not kept as decoration). */
+function RememberedCard({ content, state }: { content: ContentBundle; state: GameState }) {
+  const lines = remembered(state, content);
+  if (!lines.length) return null;
+  return (
+    <div class="card">
+      <h3>What men remember</h3>
+      <p class="muted small">Not deeds for a skald: the choices people tell each other about, at the fire, when you're not there.</p>
+      <ul class="small">{lines.map((l, i) => <li key={i}>{l}.</li>)}</ul>
     </div>
   );
 }

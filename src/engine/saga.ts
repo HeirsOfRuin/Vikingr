@@ -29,7 +29,17 @@ export function epitaph(state: GameState, content: ContentBundle): string[] {
   else if (d.cause === 'straw') lines.push(`${bearers} up to the mound above the fjord, and the household went into the mound with ${state.base.wife ? `${state.base.wife} beside the grave` : 'his weapons'}.`);
   else if (state.at === 'home_fjord') lines.push(`${bearers} up to a mound above the fjord, with his weapons in his hands, and they drank his funeral ale for three days.`);
   else lines.push(`${bearers} down to the ships, and they buried him on a foreign shore, with his face to the north.`);
+  // the völva at Yule 830 (y_volva): "Not in a bed. Not old. Not soon."
+  if (state.flags.y_asked_death) {
+    const wrong = d.cause === 'straw' ? 'in a bed' : age >= 50 ? 'old' : summers <= 2 ? 'soon' : null;
+    lines.push(`Heiðr the völva had told him: not in a bed, not old, not soon. ${wrong ? `She was wrong about ${wrong === 'in a bed' ? 'the bed' : wrong === 'old' ? 'old' : 'soon'}. Völvas are, sometimes.` : 'She was right, as far as anyone could tell.'}`);
+  }
   const rank = legendTable(state, content).findIndex((r) => r.hero) + 1;
   lines.push(`Fame ${Math.round(livingFame(state))}; lasting fame ${lastingFame(state)}. Among the living legends of his day he stood ${rank === 1 ? 'first' : ordinal(rank)}.`);
   return lines;
+}
+
+/** The choices the saga remembers (flags marked `saga` in the registry), in the order the registry tells them. */
+export function remembered(state: GameState, content: ContentBundle): string[] {
+  return Object.entries(content.flags).filter(([id, f]) => f.saga && state.flags[id]).map(([, f]) => deedLine(f.description));
 }

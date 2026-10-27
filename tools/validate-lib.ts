@@ -1,11 +1,13 @@
 // Content validation: everything the schema cannot see. Broken links, undeclared
 // references, lethal fights without a warning, places off the map, unreachable places.
 import type { ContentBundle, Effect, Scene, Choice } from '../src/content/schema';
-import { validateCond, condPaths } from '../src/engine/conditions';
+import { validateCond, condPaths, compileCond, type Cond } from '../src/engine/conditions';
 import { checkAddPath, checkPath } from '../src/engine/paths';
 import { checkText } from '../src/engine/text';
 import { lonLatToTile, terrainAt, WATER, type MapData } from '../src/engine/mapgrid';
 import { MAKEUP } from '../src/engine/makeup';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 export interface Report {
   errors: string[];
@@ -168,7 +170,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     }
     // a choice open to anyone, or to the captain, or to the oarsman: a scene split between the two needs one of each
     const free = (side: 'service' | '!service' | null) => s.choices.some((c) => c.requires === undefined && (c.visible_if === undefined || (side !== null && c.visible_if === side)));
-    if (!free(null) && !(free('service') && free('!service'))) warnings.push(`scene ${s.id}: every choice has a requirement or a visibility condition; it can dead-end`);
+    if (!free(null) && !(free('service') && free('!service')) && !covers(s.choices)) warnings.push(`scene ${s.id}: every choice has a requirement or a visibility condition; it can dead-end`);
     // at the oar you choose what you do, not what the ship does (docs/FRAME-FLEET-843.md §1): a scene that can fire in
     // another man's ship may not offer an unmarked choice that fights, loads or steers the ship
     const reqText = JSON.stringify(s.requires ?? []);
@@ -231,12 +233,16 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
   for (const id of Object.keys(content.scenes)) if (!reached.has(id)) errors.push(`scene ${id}: unreachable (no start, trigger or link leads to it)`);
 
   // flags (some are set by the engine, not by content: the end of exile, a broken promise at a wedding)
-  const ENGINE_FLAGS = ['outlaw_ended', 'child_son', 'child_daughter', 'era843', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren',
+  const ENGINE_FLAGS = ['outlaw_ended', 'child_son', 'child_daughter', 'era843', 'ingibjorg_jilted', 'oathbreaker', 'ru_orkney', 'ru_dublin', 'ru_home', 'ru_walcheren', 'placeholder_start',
     ...['harek', 'kolbeinn', 'horik', 'turgeis', 'irish_king', 'rorik'].flatMap((l) => [`call_${l}`, `served_${l}`])];
+  const textRead = new Set<string>();
+  const { flags: _f, ...rest } = content;
+  for (const m of JSON.stringify(rest).replace(/"(set|clear)":"flag\.[a-z0-9_]+"/g, '').matchAll(/flag\.([a-z0-9_]+)/g)) textRead.add(m[1]!);
   for (const f of Object.keys(content.flags)) {
     const bgSet = Object.values(content.backgrounds).some((b) => b.flags?.includes(f));
     if (!flagSet.has(f) && !bgSet && !ENGINE_FLAGS.includes(f)) warnings.push(`flag ${f}: declared but never set by content`);
-    if (!flagRead.has(f)) info.push(`flag ${f}: not read by any content condition (the engine may read it)`);
+    // nothing declared is decoration: a flag is read by a condition, a passage of text, the engine, or the saga
+    if (!flagRead.has(f) && !textRead.has(f) && !engineRead(f) && !content.flags[f]!.saga) warnings.push(`flag ${f}: set but never read (by a condition, a text, the engine or the saga)`);
   }
 
   // places and the map
@@ -340,4 +346,48 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     if (r.curve[r.curve.length - 1]![0] >= r.died) errors.push(`rival ${r.id}: curve runs past his death`);
   }
   return { errors, warnings, info };
+}
+
+/** Do the unrequired choices' visibility conditions cover every case? A truth table over their atoms, where a flag or
+ *  `x == v` is one variable and its negation (`!x`, `x != v`) is the same variable flipped. Other comparisons are
+ *  free variables, so the check never claims cover it can't prove. */
+export function covers(choices: Choice[]): boolean {
+  const open = choices.filter((c) => c.requires === undefined);
+  if (open.some((c) => c.visible_if === undefined)) return true;
+  const conds = open.map((c) => compileCond(c.visible_if!));
+  const vars = new Map<string, number>();
+  const key = (c: Cond): [string, boolean] | null => {
+    if (c.t === 'truthy') return [c.path, !c.neg];
+    if (c.t === 'cmp' && (c.op === '==' || c.op === '!=')) return [`${c.path}==${String(c.value)}`, c.op === '=='];
+    if (c.t === 'cmp') return [c.src, true];
+    return null;
+  };
+  const walk = (c: Cond): void => { const k = key(c); if (k) { if (!vars.has(k[0])) vars.set(k[0], vars.size); } else if (c.t === 'not') walk(c.of); else if (c.t === 'all' || c.t === 'any') c.of.forEach(walk); };
+  conds.forEach(walk);
+  if (vars.size > 12) return false;
+  const ev = (c: Cond, bits: number): boolean => {
+    const k = key(c);
+    if (k) return (((bits >> vars.get(k[0])!) & 1) === 1) === k[1];
+    if (c.t === 'not') return !ev(c.of, bits);
+    if (c.t === 'all') return c.of.every((x) => ev(x, bits));
+    if (c.t === 'any') return c.of.some((x) => ev(x, bits));
+    return false;
+  };
+  for (let bits = 0; bits < 1 << vars.size; bits++) if (!conds.some((c) => ev(c, bits))) return false;
+  return true;
+}
+
+/** Flags the engine reads by name (`flags.x`, `flags['x']`) or by a pattern it builds (`${place}_scouted`, `ru_${seat}_lost`). */
+let engineFlags: Set<string> | undefined;
+function engineRead(f: string): boolean {
+  if (!engineFlags) {
+    engineFlags = new Set();
+    // the engine, and the measurement tools (a flag a harness counts is read: harnesses prove progress)
+    for (const dir of [join(process.cwd(), 'src', 'engine'), join(process.cwd(), 'tools')]) {
+      for (const file of readdirSync(dir).filter((x) => x.endsWith('.ts') && x !== 'validate-lib.ts')) {
+        for (const m of readFileSync(join(dir, file), 'utf8').matchAll(/flags(?:\.([a-z0-9_]+)|\['([a-z0-9_]+)'\])|'([a-z0-9_]+)'/g)) engineFlags.add((m[1] ?? m[2] ?? m[3])!);
+      }
+    }
+  }
+  return engineFlags.has(f) || /_scouted$/.test(f) || /^ru_[a-z]+_lost$/.test(f);
 }

@@ -159,6 +159,7 @@
 
 - id: e43_debt
   kind: queued
+  requires: [flag.e43_debt]
   title: Ölvir's silver
   text: |
     [if place == noirmoutier]Ölvir's new ship comes round the point at Noirmoutier in the spring, as he said it would, and Ölvir comes up the beach to find you.[else]Word comes from Ölvir, by a ship from the Loire: he was at Noirmoutier, as he said he would be, and you were not. He will come and find you. He knows where Hordaland is.[/if]

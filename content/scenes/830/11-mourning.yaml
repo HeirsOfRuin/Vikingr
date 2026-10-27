@@ -26,6 +26,11 @@
     Ulf is dead, and the ship is quieter than it has ever been.
 
     He wanted a name so badly. He wanted to be in a verse. You sit with him through the night before the burning, and you keep thinking of things he would have said, and then remembering that he won't.
+    [if flag.bg_ulf_pulled]
+    He dragged you out of the surf at Bangor by your hair, and said "You're welcome," and was sick in the bilge. You never thanked him properly. You'd meant to.
+    [elif flag.s_saved_ulf]
+    You held his arm once, when he wanted to throw a spear at a whale. "I'd have had it," he said. He'd have had you all at the bottom. You'd let him throw it now.
+    [/if]
     [if flag.skald]
     Kálfr sits with you. Toward morning he starts, very quietly, to make something.
     [/if]
@@ -56,7 +61,7 @@
   choices:
     - id: hammer
       text: Wear his hammer.
-      effects: [ { add: { hamingja: 1 } }, { set: flag.hallvard_hammer }, { item: { id: hallvard_hammer } } ]
+      effects: [ { add: { hamingja: 1 } }, { item: { id: hallvard_hammer } } ]
       result: You tie the hammer round your own neck. It is warm from the sun. It stays warm, somehow, all that summer.
     - id: grave
       text: Bury it with him.
