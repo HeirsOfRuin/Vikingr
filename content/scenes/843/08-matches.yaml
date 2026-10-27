@@ -1,0 +1,130 @@
+# Marriage in the Loire years (review §1: 5 lives in 30 married in the 843 start). Two matches besides Aude:
+# a Breton chief's daughter through Count Lambert's war, and Hrói's sister from Vestfold, offered by Hrói if he
+# came home from the south, or by his father if he didn't. History: Lambert of Nantes fought with Nominoë's
+# Bretons against Charles the Bald in the 840s; the Retz country south of the Loire was Breton by 851. Machtierns
+# were the Breton parish chiefs (the Redon cartulary names Iarnhitin among them). A Christian bride's kin would ask
+# a Northman to take the prime-signing, the half-baptism traders took to deal with Christians.
+
+- id: e43_breton_match
+  kind: place
+  trigger: arrive
+  at: [nantes, noirmoutier]
+  once: true
+  weight: 25
+  requires: [{ any: [seen.e43_lambert_won, "standing.nantes >= 3"] }, "year >= 845", "!married", "!flag.betrothed"]
+  art: muster
+  title: The machtiern of Retz
+  text: |
+    A Breton comes down to the shore with four spearmen and a priest, and asks for you by name, which takes some doing in Breton. He is Iarnhitin, machtiern of three parishes in the Retz country across the bay, and he fought beside you [if seen.e43_lambert_won]at the bridge for Count Lambert[else]in the count's quarrels, or near enough[/if]. He is a square, weathered man with a gold cross on his chest and a Frankish sword on his hip, and he gets to the point the way a farmer does.
+
+    He has a daughter, Argantlon, sixteen. He has Franks on one side of him and Northmen on the other, and he has decided he would rather be kin to the Northmen. The priest, standing behind him, has a face like a man eating a sour apple.
+
+    His terms: a bride-price in silver, two pounds, paid to him, and you take the prime-signing from the priest, which is the cross on your forehead and no more. "Your gods are your affair," Iarnhitin says. "But my daughter will not marry a man the bishop can call a heathen to my face."
+  choices:
+    - id: accept
+      text: Take the prime-signing, and pay the bride-price.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { set: flag.betrothed }, { set: flag.e43_argantlon_betrothed }, { standing: { place: nantes, n: 1 } }, { journal: "Betrothed to Argantlon, daughter of Iarnhitin, machtiern of Retz." } ]
+      result: |
+        The priest makes his cross on your forehead with his thumb and a great deal of Latin, and some of your men laugh, and Iarnhitin looks at them until they stop. You see Argantlon once, at a distance, at the church door: dark, small, and looking at you the way you'd look at a horse you weren't sure of. She'll come to you at the winter, her father says, with her dowry. He shakes your hand on it like a man buying land.
+    - id: later
+      text: Tell him you'd take her gladly, but you haven't the silver yet. Ask him to hold the match.
+      requires: ["silver < 96"]
+      effects: [ { set: flag.betrothed }, { set: flag.e43_argantlon_betrothed }, { set: flag.e43_argantlon_owed }, { journal: "Promised to Argantlon of Retz, the bride-price still owed." } ]
+      result: |
+        He thinks about it, rubbing the cross on his chest. "A year," he says. "She'll wait a year, if the silver comes. I've seen how you Northmen make silver." The priest makes his cross on your forehead. Argantlon watches it from the church door, and doesn't smile.
+    - id: no
+      text: Thank him, and say no. You'll not wear a priest's mark for any man's daughter.
+      effects: [ { add: { honour: 1 } } ]
+      result: He takes it well enough. "Then we're still friends, and I'll still sell you bread," he says, and the priest looks like a man who has had a good day.
+
+- id: e43_wed_argantlon
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: ["phase == winter", flag.e43_argantlon_betrothed, "!married", { any: ["!flag.e43_argantlon_owed", "silver >= 96"] }]
+  art: yule_hall
+  title: Argantlon
+  text: |
+    [if flag.e43_argantlon_owed]The silver is in your chest at last, and you send it across the bay with the priest. [/if]She comes [if place == noirmoutier]across the bay in a Breton boat[else]north on a Frisian trader, with her father's steward to see her delivered, sick the whole way[/if], with a chest of linen, a silver cup, two Breton cows, and a little Breton maid who is terrified of everything. The dowry is good: Iarnhitin is a man who pays his debts.
+
+    The wedding is a strange one. A priest says words over you in the morning, and in the evening your men carry the bride-ale round the fire and toast Freyr and Njörðr, and Argantlon sits through both with the same face, missing nothing. When the toasts are done she says something in Breton to her maid, and the maid laughs for the first time since she came.
+  choices:
+    - id: wed
+      text: Ask the maid what she said.
+      effects: [ { if: flag.e43_argantlon_owed, then: [ { add: { silver: -96 } } ] }, { wife: Argantlon }, { add: { silver: 48 } }, { clear: flag.e43_argantlon_owed }, { journal: "Married Argantlon of Retz." } ]
+      result: |
+        The maid won't tell you. Argantlon will, a month later, when she has enough Norse: "I said, the priest's god and your gods agree on one thing. They both drink." She runs the household the Breton way, which means the thralls go to church and the cows have names. Her father's men will fight for you if you ask them, and the Franks across the river have one more reason to leave you alone.
+
+- id: e43_hroi_sister
+  kind: place
+  trigger: arrive
+  at: [noirmoutier, nantes]
+  once: true
+  weight: 25
+  requires: [flag.e43_hroi_back, "year >= 846", "!married", "!flag.betrothed"]
+  art: muster
+  title: Hrói's sister
+  text: |
+    Hrói has been home to Vestfold for a winter, to show his father the eye he lost, and comes back to the Loire in the spring with a new ship, a new cloak, and an idea.
+
+    "My sister," he says, sitting down on your sea-chest without asking. "Ragnhild. Nineteen. My father has turned down three men for her, because one was old and one was poor and one was from Agder. I told him about you." He grins with the half of his face that still works. "I told him you pulled me out of the river. You didn't, but he likes the story. He wants a pound and a half for her, which is cheap, and he wants her married to a man who comes home. So do I. I'm running out of friends."
+  choices:
+    - id: accept
+      text: Shake on it. Pay the mundr to Hrói for his father.
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { set: flag.betrothed }, { set: flag.e43_ragnhild_betrothed }, { journal: "Betrothed to Ragnhild, Hrói's sister, of Vestfold." } ]
+      result: Hrói weighs the silver as if he were a merchant, badly, and then gives up and hugs you, hard enough to hurt. "Brother," he says. "Gods help her. She'll come out on the autumn trader."
+    - id: later
+      text: Shake on it, and tell him the silver comes when you have it.
+      requires: ["silver < 72"]
+      effects: [ { set: flag.betrothed }, { set: flag.e43_ragnhild_betrothed }, { set: flag.e43_ragnhild_owed }, { journal: "Promised to Ragnhild of Vestfold, the mundr still owed." } ]
+      result: "\"He'll wait,\" Hrói says. \"He waited twenty years for me to come to something. He's good at waiting.\""
+    - id: no
+      text: Tell him you're not the marrying kind, not yet.
+      result: Hrói shrugs, and laughs, and says his sister will be relieved. You don't think she will be. Neither does he.
+
+- id: e43_hroi_father_offer
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 25
+  requires: [seen.e43_hroi_father, "year >= 846", "!married", "!flag.betrothed"]
+  art: muster
+  title: A message from Vestfold
+  text: |
+    A Vestfold trader puts in with the spring ships, and the steersman has a message for you that he has learned by heart and says in one breath, looking at the sky: Hrói's father sends greetings to the man who told him about his son. He has a daughter, Ragnhild, nineteen, who has no brother now. He would rather she married a man who stood in the same wall as Hrói than a man who stayed at home. The mundr is a pound and a half. If you will have her, she will come on the autumn ship.
+  choices:
+    - id: accept
+      text: Send the silver back with the steersman.
+      requires: ["silver >= 72"]
+      effects: [ { add: { silver: -72 } }, { set: flag.betrothed }, { set: flag.e43_ragnhild_betrothed }, { journal: "Betrothed to Ragnhild of Vestfold, Hrói's sister." } ]
+      result: The steersman counts it twice, out loud, in front of witnesses, because a dead man's father is trusting him with it. He shakes your hand on the old man's behalf. "He said you'd say yes," he says. "He said his son never had a friend who wasn't a fool."
+    - id: later
+      text: Send word that you'll have her, and the silver will follow.
+      requires: ["silver < 72"]
+      effects: [ { set: flag.betrothed }, { set: flag.e43_ragnhild_betrothed }, { set: flag.e43_ragnhild_owed }, { journal: "Promised to Ragnhild of Vestfold, the mundr still owed." } ]
+      result: The steersman nods, and says the words back to you to be sure he has them, and takes them home to Vestfold.
+    - id: no
+      text: Send your thanks, and say no.
+      result: The steersman nods, as if he had expected it, and takes your thanks home. You think of the old man on the beach with his son's cloak, and wish you'd said it some other way.
+
+- id: e43_wed_ragnhild
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 30
+  requires: ["phase == winter", flag.e43_ragnhild_betrothed, "!married", { any: ["!flag.e43_ragnhild_owed", "silver >= 72"] }]
+  art: yule_hall
+  title: Ragnhild
+  text: |
+    [if flag.e43_ragnhild_owed]The mundr goes north at last, with a Vestfold trader you trust. [/if]Ragnhild comes [if place == home_fjord]up the fjord[else]into the Loire[/if] on the autumn ship with a chest, a loom, a spindle of her mother's, and [if flag.e43_hroi_back]her brother, who has appointed himself to give her away and to drink most of the ale[else]her father's steersman, who gives her away with the old man's words, learned by heart[/if]. She has Hrói's fair hair and none of his laugh. She looks at your ship before she looks at you, and asks how old the strakes are.
+
+    The wedding is a Vestfold wedding, done properly: the bride-ale, the hammer laid in her lap, the walk to the bed with the whole crew singing. She is not shy about any of it.
+  choices:
+    - id: wed
+      text: Tell her the strakes are older than she is, and the ship is sound.
+      effects: [ { if: flag.e43_ragnhild_owed, then: [ { add: { silver: -72 } } ] }, { wife: Ragnhild }, { add: { hamingja: 1 } }, { clear: flag.e43_ragnhild_owed }, { journal: "Married Ragnhild of Vestfold, Hrói's sister." } ]
+      result: |
+        "Good," she says. "So am I." She has run her father's farm since her brother went south, and she runs yours inside a month. [if flag.e43_hroi_back]Hrói says he has never been so frightened of anyone, and he is very happy for you.[else]On the long nights she asks you about her brother, and you tell her, all of it, and she listens the way her father did.[/if]

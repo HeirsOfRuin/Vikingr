@@ -147,7 +147,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       state.base.wife = e.wife;
       // one wife, and every other courtship ends with the wedding (playtest 5: the others' scenes kept coming)
       const promised = !!state.flags.ingibjorg_promised || !!state.flags.ingibjorg_waiting;
-      for (const f of ['betrothed', 'gyda_courting', 'ingibjorg_promised', 'ingibjorg_waiting', 'ingibjorg_betrothed', 'thorunn_betrothed', 'asta_betrothed']) delete state.flags[f];
+      for (const f of ['betrothed', 'gyda_courting', 'ingibjorg_promised', 'ingibjorg_waiting', 'ingibjorg_betrothed', 'thorunn_betrothed', 'asta_betrothed', 'e43_argantlon_betrothed', 'e43_ragnhild_betrothed']) delete state.flags[f];
       if (promised && !e.wife.startsWith('Ingibj')) {
         state.flags.ingibjorg_jilted = 1;
         if (state.places.orkney) state.places.orkney.standing = Math.max(-10, (state.places.orkney.standing ?? 0) - 2);

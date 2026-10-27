@@ -391,3 +391,7 @@ e43_hroi_back: { description: "Hrói came back from the south, one-eyed" }
 e43_aude: { description: "Bought Aude of Nantes out of the captives on Noirmoutier" }
 e43_aude_kept: { description: "Kept Aude in your household instead of taking her father's ransom" }
 e43_aude_home: { description: "Sent Aude home to Nantes" }
+e43_argantlon_betrothed: { description: "Promised to Argantlon, daughter of the machtiern of Retz" }
+e43_argantlon_owed: { description: "The bride-price for Argantlon is still owed" }
+e43_ragnhild_betrothed: { description: "Promised to Ragnhild of Vestfold, Hrói's sister" }
+e43_ragnhild_owed: { description: "The mundr for Ragnhild is still owed" }
