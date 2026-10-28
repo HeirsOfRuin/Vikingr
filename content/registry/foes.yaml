@@ -194,3 +194,12 @@
   leader: "the ealdorman of the Tomsæte"
   doctrine: { hold: 4, missiles: 2, push: 1 }
   desc: The Mercian king's men and his ealdormen's, with the West Saxons' help when they can get it. They would rather besiege you than fight you.
+# The East road (docs/FRAME-PLACES-EAST.md): the horsemen of the steppe at the Dnieper fords.
+- id: steppe_riders
+  name: Steppe horsemen
+  quality: 1
+  resolve: warriors
+  guile: 3
+  leader: "a chief in a felt cap"
+  doctrine: { missiles: 4, give: 2, flank: 2 }
+  desc: Horse-archers from the grasslands, who the Greeks call Turks and the Slavs call Ugri. They never stand to be hit. They shoot, and ride off, and shoot again, and wait at the fords for men carrying ships.

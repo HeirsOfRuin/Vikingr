@@ -109,6 +109,9 @@ It is built as an expedition off the map, like the 844 voyage south: a chain of 
 - The `ru_` legends: Rurik is in the chronicle (862).
 - A sworn man of the ambitious temperament who wants to go. A crew-scene hook already exists for this.
 
+### Built (2026-10-28)
+21 scenes in `world/east.yaml`. Changes from this frame: a fleet can't leave ships at Aldeigjuborg (the door just asks for one light ship); a Swedish convoy at Birka or Gotland takes a first-timer across; ports where an expedition starts now sell 40 days' food. Measured: 6 of 60 843 lives take the road, all come home.
+
 ### Engine work (small)
 - Activate Aldeigjuborg, and add an expedition leg from Birka.
 - The `ship.portable` condition (karvi or smaller, one ship).

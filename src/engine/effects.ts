@@ -4,8 +4,9 @@ import { hireSkald, loseSkald } from './skald';
 import { effAttr } from './hero';
 import { addRings } from './rings';
 import { burn, give, loseShip, recoverHoard, robHoard, shiftEnvy } from './hardship';
-import { dateOf } from './calendar';
-import { SAILING_DOY } from './tuning';
+import { dateOf, dayOf } from './calendar';
+import { SAILING_DOY, WINTER_DOY } from './tuning';
+import { startWinter } from './season';
 import { candidateToCrew, swearCandidate } from './hird';
 import { hostageOp, hostagesOf, makeHostage } from './hostages';
 import { bestAlly, killCaptain, meet, partner, partnerInFight, shiftFavour, shiftRel, swearFelag } from './allies';
@@ -18,7 +19,7 @@ import { addDeed, composeVerse } from './fame';
 import { addWound, heal } from './hero';
 import { addLoyalty, addRecruits, capacity, clampMorale, newMan } from './crew';
 import { startDuel, startBattle } from './fights';
-import { startVoyage } from './voyage';
+import { expeditionRoads, startVoyage } from './voyage';
 import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
@@ -171,6 +172,26 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       if (p?.raid) startBattle(state, content, { foe: p.raid.foe, men: Math.round(p.raid.defenders * HOME_ATTACK), terrain: 'rampart', context: 'scene', place: at!, win: e.home_defence.win, lose: e.home_defence.lose });
     } else if ('fleet' in e) joinFleet(state, content, e.fleet);
     else if ('goods' in e) { const line = stowGoods(state, content, e.goods.id, e.goods.lots); (state.notes ??= []).push(line); journal(state, line); }
+    else if ('hear_of' in e) {
+      if (!state.known.includes(e.hear_of) && !state.rumoured.includes(e.hear_of)) state.rumoured.push(e.hear_of);
+    }
+    else if ('sail_with' in e) {
+      if (state.at && state.at !== e.sail_with && !state.known.includes(e.sail_with)) {
+        if (!state.rumoured.includes(e.sail_with)) state.rumoured.push(e.sail_with);
+        if (expeditionRoads(state, content, state.at).some((r) => r.to === e.sail_with)) {
+          startVoyage(state, content, e.sail_with, false, true);
+          // the Swedes know the water: no uncharted-sea events, no extra storms
+          if (state.voyage) delete state.voyage.expedition;
+        }
+      }
+    }
+    else if ('winter_far' in e) {
+      // the far end of the river road: a winter abroad, begun now however early the scenes ran
+      const d = dateOf(state.day);
+      if (d.doy < 182) state.day = dayOf(d.year, WINTER_DOY);
+      startWinter(state, 2, content, rng);
+      journal(state, 'Wintered at the far end of the East road.');
+    }
     else if ('unload' in e) {
       const c = state.cargo?.[e.unload.id];
       if (c) {

@@ -1,0 +1,430 @@
+# The East road, Austrvegr (docs/FRAME-PLACES-EAST.md, step 2). Off the map, told scene by scene like the 844
+# voyage south: the door at Aldeigjuborg (Staraya Ladoga), then the Dnieper to Miklagarðr or the Volga to the
+# Khazars and the Caspian; a winter at the far end (Kiev or Itil), kept where he stands on the map; and the road
+# home in the spring. Only one light ship goes: the portages are dragged on rollers.
+# Sources, contemporary: the Annals of St-Bertin 839 (envoys of the "Rhos" at Ingelheim, found to be Swedes);
+# Photius's homilies on the Rus attack of 18 June 860; Ibn Khordadbeh, Book of Roads (c. 870), on Rus merchants
+# carrying furs and swords to the Caspian and saying they were Christians to pay the lower tax. Later, used only
+# as the men's stories: the Primary Chronicle (Askold and Dir at Kiev), Constantine VII on the Dnieper rapids.
+# Content line (style guide): captives are people. The route ran on the slave trade; the text says so plainly.
+
+# ---- hooks ----
+- id: ea_hook_trader
+  kind: place
+  trigger: arrive
+  at: [birka, hedeby, gotland, truso, kaupang, ribe]
+  once: true
+  chance: 0.5
+  requires: ["!service", "!known.aldeigjuborg", "year >= 836"]
+  art: muster
+  title: Silver with writing on it
+  text: |
+    A Swede at the market is paying for everything in coins nobody here has seen: thin, bright silver, with no king's head on it, only lines of writing like a row of worms. He has a bag of them. He has had several bags of them.
+
+    He came by the East road, he says. Across the eastern sea to a town on a lake called Aldeigjuborg, and up rivers, and over land with the ship on rollers, and down other rivers, for a summer and a winter, to people who pay for furs and slaves in silver like this, by the sack. He has done it three times. He would not do it a fourth for all the silver in the caliph's mint, he says, and then he orders more ale and tells you how.
+  choices:
+    - id: listen
+      text: Buy him the ale, and get all of it.
+      effects: [ { hear_of: aldeigjuborg }, { know: birka }, { add: { skill.lore: 1 } } ]
+      result: He tells you the road from Birka, across the eastern sea to the lake to the rivers, which river goes to the Greeks and which to the Khazars, where the rapids are, and which of his friends died on which. By the end of the night you could draw it, if anyone in the North could draw. "One ship," he says, as you go. "A small one. You carry her more than she carries you."
+
+- id: ea_hook_rhos
+  kind: place
+  trigger: arrive
+  at: [dorestad, walcheren, hedeby, ribe]
+  once: true
+  chance: 0.5
+  requires: ["!service", "!known.aldeigjuborg", "year >= 839", "year <= 842"]
+  art: muster
+  title: The Rhos
+  text: |
+    The Frisian merchants have a story from the emperor's court at Ingelheim. The Greek emperor sent an embassy to the Franks, and with it came some strange men who said they were the Rhos, and that their king had sent them to the Greeks in friendship, and now they couldn't go home the way they came, because of wild peoples on the road.
+
+    The emperor had them questioned. They turned out to be Swedes. He kept them under guard until he could decide whether they were spies.
+
+    "Swedes," the Frisian says, "who went so far east they came back west by way of the Greek emperor." He shakes his head. "There's a road out there, past the Swedes. Nobody here knows where it goes."
+  choices:
+    - id: ask
+      text: Ask where the Swedes said they started from.
+      effects: [ { hear_of: aldeigjuborg }, { know: birka } ]
+      result: A town on a lake past the eastern sea, he says, called something nobody at Ingelheim could say. Aldeigjuborg, a Swede in the harbour tells you later, laughing. Everyone in Birka knows it.
+
+- id: ea_convoy
+  kind: place
+  trigger: arrive
+  at: [birka, gotland]
+  cooldown_days: 330
+  chance: 0.6
+  weight: 25
+  requires: ["!service", "year >= 836", "month <= 6", "!flag.ea_far_d", "!flag.ea_far_v", rumoured.aldeigjuborg, "!known.aldeigjuborg"]
+  art: muster
+  title: The Swedes going east
+  text: |
+    Six Swedish ships are loading on the beach for the East road: furs going one way for once, swords and salt and wine for the Finns and the Slavs, and men who have done it before standing about looking as if they know something you don't. They're leaving for Aldeigjuborg on the next fair wind. Their leader, a quiet Uppland man with a silver-mounted knife, says a ship that keeps up can sail with them, and pay for the company in silver at the far end.
+  choices:
+    - id: go
+      text: Sail east with them.
+      effects: [ { add: { provisions: 200 } }, { sail_with: aldeigjuborg } ]
+      result: The Swedes know the water. Across the eastern sea, among the skerries of the Finnish shore, up the Neva past the rapids, into the great lake, and on the ninth day a river and a town and a smell of smoke and furs.
+    - id: no
+      text: Wish them luck, and stay.
+      result: They go out on the morning tide, six ships in a line, low in the water. Some of them will come back next year. The Uppland man shrugs. "Next spring, maybe," he says.
+
+# ---- the door ----
+- id: ea_door
+  kind: place
+  trigger: arrive
+  at: [aldeigjuborg]
+  cooldown_days: 300
+  weight: 40
+  requires: ["!service", "!flag.ea_far_d", "!flag.ea_far_v", "month <= 7"]
+  art: muster
+  title: Aldeigjuborg
+  text: |
+    [if seen.ea_door]Aldeigjuborg again: the timber town on the river, the smoke, the Finns with their furs and the Slavs with their honey and the Swedes with their scales, all of them watching to see which way the newcomers go.[else]Aldeigjuborg is a timber town on a river a little way up from a lake as big as a sea, and it is the strangest market you've ever seen. Swedes run it, more or less. Finns come in from the forests with furs, sable and marten and squirrel by the thousand. Slavs come down the river with honey and wax and slaves. Everyone speaks a little of everyone's tongue, and everyone weighs silver, and half the silver has writing on it.
+
+    The river road starts here. Up the Volkhov to a lake, and up the Lovat out of it, and then the ship comes out of the water and goes overland on rollers to the next river, and the river decides where you end up.[/if]
+    [break]
+    Two roads, the Swedes say. South to the Dnieper and down it, past the rapids, to the Black Sea and the Greeks and Miklagarðr, the great city, where the emperor lives. Or east to the Volga and down it, through the Bulghars, to the Khazars' city on the delta, and the sea beyond it, and the caliph's silver.
+
+    Both take a summer to go and a winter at the far end. [if ships.portable]Your ship is light enough to drag. Just.[elif ships > 1]You can't drag a fleet over the portages, the Swedes say, laughing. One light ship. Come back with one.[else]Your ship is too heavy to drag, the Swedes say, looking at her. A karvi or smaller, and one of her. Come back with that.[/if]
+  choices:
+    - id: dnieper
+      text: Take the south road, to the Greeks and Miklagarðr.
+      requires: ["ships.portable"]
+      effects: [ { set: flag.ea_went }, { days_foraged: 30 } ]
+      next: ea_d_portage
+    - id: volga
+      text: Take the east road, down the Volga for the silver.
+      requires: ["ships.portable"]
+      effects: [ { set: flag.ea_went }, { days_foraged: 35 } ]
+      next: ea_v_bulghar
+    - id: trade
+      text: Trade at Aldeigjuborg, and go home before the autumn.
+      effects: [ { add: { skill.trade: 1 } } ]
+      result: The Finns sell furs cheap here, by Northern standards, and the Swedes buy anything from the west. You trade, and listen, and watch the river-boats go south in the morning and the ones coming back, low in the water and short of men.
+
+# ---- the south road: the Dnieper and Miklagarðr ----
+- id: ea_d_portage
+  kind: spine
+  art: open_sea
+  title: The ship on rollers
+  text: |
+    Up the Volkhov, across the lake the Slavs call Ilmen, up the Lovat until it gets too shallow to row, and then the ship comes out of the water.
+
+    You cut logs for rollers. You unload everything, and carry it, and then forty men put their shoulders to the strakes and push her uphill through a forest, a log's length at a time, with the rollers from the back carried round to the front, all day, for days. The Slav villages along the drag sell you food, and help, for a price, and watch to see who dies.
+  choices:
+    - id: push
+      text: Put your own shoulder to the strakes, with the men.
+      check: { skill: seamanship, attr: end, difficulty: 5 }
+      success:
+        text: Eight days of it. By the end your shoulders are raw meat and you could carry an ox. She goes back into the water at the Dnieper's head on a cold morning and floats, and nobody says anything, because nobody has the breath.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: Eleven days. On the eighth she slips on a slope and comes back down the rollers and takes a man's legs with her. You leave him with a Slav village, with silver, and don't expect to see him again.
+        effects: [ { add: { crew.men: -2, crew.morale: -1 } } ]
+      next: ea_d_kiev
+    - id: hire
+      text: Pay the Slavs to do the hauling.
+      requires: ["silver >= 30"]
+      effects: [ { add: { silver: -30 } } ]
+      result: The village headman brings forty men and a team of oxen and a song that goes with the work, and the ship goes over the hill like a cart. Your men walk beside her and watch. Some of them feel they're missing something. The rest are glad.
+      next: ea_d_kiev
+
+- id: ea_d_kiev
+  kind: spine
+  art: home_fjord
+  title: Kiev
+  text: |
+    Down the Dnieper for weeks, a river so wide you lose the far bank in the haze, through forest and then out of it, until the hills come up on the right bank and there's a town on them: Kiev, wooden walls on a bluff over the river, and a market at the water.
+    [if year >= 860]Two Swedes hold it, the men on the quay tell you: Askold and Dir, who came down the river with their crews and found nobody minding the hill. They take tribute from the Slavs now, as the Khazars did, and they are gathering ships. A great many ships.[else]The Slavs here pay tribute to the Khazars, a sword's worth of furs from every hearth, and don't love them for it. A Northman with a good ship is welcome. A Northman who stays too long is watched.[/if]
+  choices:
+    - id: trade
+      text: Trade your northern goods for the road south.
+      effects: [ { days_foraged: 15 }, { add: { silver: 60, skill.trade: 1 } } ]
+      result: Swords and walrus ivory go for a great deal on the Kiev quay. You come away with silver, and honey, and a Slav pilot who swears he knows the rapids, and smells of fish and lies.
+      next: ea_d_rapids
+    - id: hire
+      text: Take on Swedes who've come this far and lost their own ship.
+      effects: [ { days_foraged: 15 }, { recruit: 4 } ]
+      result: There's always somebody on the Kiev quay whose ship went down at the rapids, with nothing but his sword and the story. You take four. They know the river. They tell you which places to fear, and they're right about all of them.
+      next: ea_d_rapids
+
+- id: ea_d_rapids
+  kind: spine
+  art: open_sea
+  title: The rapids
+  text: |
+    Below Kiev the Dnieper goes through a country of rock, and for a long stretch it falls, one rapid after another, white water between granite teeth that would open a ship like a mussel. The men who have been before name each one as you come to it, and the names are a warning: Don't Sleep, the Island, the Roarer, the Seething One. At some you can wade her through, with men in the water to their chests feeling for the rocks with their feet. At the worst, she comes out of the water again.
+    [if man.hallvard.alive]Hallvard throws a silver ring into the first one, very quickly, when he thinks nobody is looking.[/if]
+  choices:
+    - id: wade
+      text: Wade her through the ones you can, and carry her round the rest.
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: Seven rapids. You take them slowly, a man's length at a time, and lose a cask and an oar and nobody's life. Below the last one the river opens out again, wide and slow and brown, and everyone sits down in the bottom of the boat and laughs.
+        effects: [ { days_foraged: 12 }, { deed: { type: deed, text: "Took a ship down the Dnieper rapids", weight: 2, witnesses: 40 } } ]
+      failure:
+        text: At the fourth one the current takes the stern and slams her onto a rock, and three men go into the white water and only one comes out. She's holed. You patch her on the bank with a cloak and pitch and go on, short of men and long of faces.
+        effects: [ { days_foraged: 15 }, { add: { crew.men: -3, crew.morale: -1 } }, { lose_cargo: 1 } ]
+      next: ea_d_ford
+
+- id: ea_d_ford
+  kind: spine
+  art: bangor_field
+  title: The ford
+  text: |
+    Below the rapids there's a ford where the steppe road crosses the river, and everyone going down the Dnieper has to come ashore there to dry out and mend and rest. Everyone knows it. So do the horsemen.
+
+    They come out of the long grass at dusk, fifty or sixty of them on small shaggy horses, with bows. They never come close. They ride along the bank and shoot, and ride away, and come back.
+  choices:
+    - id: wall
+      text: Shields up on the bank, and make them come to you.
+      danger: true
+      effects: [ { battle: { foe: steppe_riders, terrain: field, men: 20, ratio: 0.8, win: ea_d_sea, lose: ea_d_sea } } ]
+    - id: river
+      text: Push off into the stream, and row through the night.
+      effects: [ { add: { crew.men: -2 } }, { days_foraged: 5 } ]
+      result: They follow along the bank, shooting, until it's too dark to see the river. You lose two men to arrows in the dark, and nobody sleeps, and in the morning the steppe is empty to the edge of the world.
+      next: ea_d_sea
+
+- id: ea_d_sea
+  kind: spine
+  art: open_sea
+  title: The Black Sea
+  text: |
+    The river opens into a lagoon, and the lagoon into a sea, and the sea is warm, and nobody has been told about that. You go along the western shore from island to river-mouth, past Greek towns with stone walls, and the water gets bluer and the towns get bigger.
+    [if year == 860]In the river-mouths there are other ships: Rus ships, from Kiev, a great many of them, all going the same way. Askold and Dir are going to Miklagarðr, they say. Not to trade.[else]Then one morning there is a city across the water that you mistake for a range of hills, until you see the domes.[/if]
+  choices:
+    - id: on
+      text: Go on to the city.
+      effects: [ { days_foraged: 15 } ]
+      result: "[if year == 860]Two hundred ships, the Greeks will say afterwards. It feels like more.[else]Miklagarðr. The great city. Nobody you know has ever seen anything like it, and nobody will believe you when you tell them.[/if]"
+      next: ea_d_city
+
+- id: ea_d_city
+  kind: spine
+  art: muster
+  title: Miklagarðr
+  text: |
+    [if year == 860]The emperor is away with his army, fighting the Arabs in the east, and the Rus come up the strait to the walls of Miklagarðr in two hundred ships on a June evening, and the city doesn't believe it until the smoke goes up from the suburbs.
+
+    Outside the walls there are villas, and gardens, and monasteries on the islands in the sea of Marmara, and nobody has thought to defend any of it, because nobody has ever come. The walls themselves are higher than any you've seen, three of them, one behind another, and the Greeks are on them, praying.[else]The city is too big to understand. Walls, three rows of them, higher than a ship's mast, running out of sight. Domes. A church with a roof like a sky. A harbour with a chain across it. More people in one market than in the whole of Norway.
+
+    The Greeks put foreign merchants in a quarter outside the walls, count them, write their names down, and let them into the city by one gate, fifty at a time, unarmed, with an official to watch them. You've never been watched so carefully by so many people.[/if]
+  choices:
+    - id: suburbs
+      text: Go ashore with the Rus, into the suburbs.
+      visible_if: "year == 860"
+      danger: true
+      effects: [ { host: { title: "The suburbs of Miklagarðr", foe: frankish_levy, terrain: field, men: 20, ratio: 0.9, wings: [ { name: "Askold's Rus", men: 400, quality: 1.0, foe_men: 300 } ], role: wing, win: ea_d_860, lose: ea_d_860 } } ]
+    - id: hold
+      text: Stay with the ships, and watch the walls.
+      visible_if: "year == 860"
+      effects: [ { add: { honour: 1 } } ]
+      result: You watch it from the water for days. The smoke from the villas and the screaming from the islands, and the Greeks on the walls with their icons, and then one night a storm out of nowhere that scatters half the Rus fleet. The Greeks will say it was the Virgin's robe, dipped in the sea. You saw the clouds come. You don't know what you saw.
+      next: ea_d_back
+    - id: trade
+      text: Trade in the merchants' quarter, under the Greeks' eye.
+      visible_if: "year != 860"
+      effects: [ { add: { silver: 260, skill.trade: 1 } }, { goods: { id: silk, lots: 2 } }, { days_foraged: 20 } ]
+      result: The Greeks pay for furs and wax and slaves in gold and silver and silk, and they write it all down, and tax it, and smile. You come away with silk that would buy a farm in Hordaland, and the feeling of having been very politely robbed, and a story nobody at home will believe.
+      next: ea_d_back
+    - id: sword
+      text: Spend the summer's silver on a Greek sword and a Greek mail-shirt.
+      visible_if: "year != 860"
+      requires: ["silver >= 120"]
+      effects: [ { add: { silver: -120 } }, { item: { id: frankish_sword, equip: true } }, { days_foraged: 20 }, { deed: { type: deed, text: "Bought a sword in Miklagarðr", weight: 2, witnesses: 60 } } ]
+      result: The swordsmith's shop is in a street of nothing but swordsmiths, and he has never sold to a Northman before and charges you double for it. The blade is better than anything in the North. The scabbard alone has more silver on it than your father's farm.
+      next: ea_d_back
+
+- id: ea_d_860
+  kind: spine
+  art: bangor_field
+  title: The eighteenth of June
+  text: |
+    The suburbs are rich and undefended and full of people who never imagined this could happen to them. For two days the Rus take everything outside the walls. The villas, the gardens, the monasteries on the islands: the old patriarch's own house on one of them, where the monks didn't run fast enough.
+
+    Then a storm comes out of a clear sky and wrecks the fleet on the shore, and the Greeks on the walls say it's the Virgin's robe, which the patriarch dipped in the sea. The Rus go home with what they can carry. It's a great deal.
+  choices:
+    - id: home
+      text: Get your ship off the beach and north, with the rest.
+      effects: [ { add: { loot: 480, honour: -1 } }, { goods: { id: silk, lots: 2 } }, { captives: 4 }, { deed: { type: raid, text: "Was at the walls of Miklagarðr with the Rus in 860", weight: 5, witnesses: 2000 } } ]
+      result: The Greek patriarch preaches a sermon about you, you hear later, about a people from the north, obscure and of no account, who came out of nowhere like a wave and like a wave are gone. He's not wrong about the wave.
+      next: ea_d_back
+
+- id: ea_d_back
+  kind: spine
+  art: home_fjord
+  title: North to Kiev
+  text: |
+    You go back up the Dnieper while the summer lasts, and it doesn't last long enough. Up the rapids is worse than down; you carry her round all of them. By the time you see the hills of Kiev again the leaves are turning, and the river will be ice in a month. Nobody goes north over the portages in the winter.
+  choices:
+    - id: winter
+      text: Haul her up at Kiev for the winter.
+      effects: [ { set: flag.ea_far_d }, { winter_far: true } ]
+      result: You find a house in the lower town by the river, and buy firewood at a price that would be robbery anywhere else, and settle in for a winter longer and colder than any in Norway.
+
+# ---- the east road: the Volga, the Khazars and the Caspian ----
+- id: ea_v_bulghar
+  kind: spine
+  art: home_fjord
+  title: Bulghar
+  text: |
+    Up rivers and over a portage and onto the Volga, and down it for a month through forests where the Finnish peoples come out to trade furs on the bank and won't come closer than a spear's throw. Then the forest thins, and the river is a mile wide, and there's a town of the Bulghars where the Kama comes in from the north: wooden houses, felt tents, horses, and a market that never closes.
+
+    Everyone here wants furs, and everyone has silver. The Bulghars buy for the Khazars, and the Khazars buy for the caliph, and every hand the furs pass through, the price goes up.
+  choices:
+    - id: furs
+      text: Sell your furs here, and buy more for the south.
+      visible_if: "goods.furs > 0"
+      effects: [ { unload: { id: furs, lots: 2 } }, { add: { silver: 140 } }, { days_foraged: 15 } ]
+      result: The Bulghar merchants pay by weight, in the caliph's silver, and haggle like Frisians, and give honest measure, which Frisians don't. You sell half the furs and keep the rest for the south, where they're worth more.
+      next: ea_v_itil
+    - id: captives
+      text: Sell your captives in the Bulghar market.
+      visible_if: "captives > 0"
+      effects: [ { sell_captives: 6 }, { days_foraged: 15 } ]
+      result: The slave market is the biggest thing in Bulghar, bigger than the furs. Men and women from every forest and river in the north stand in rows. Yours stand with them. A Khazar buyer looks at their teeth and pays in silver and they go south on his boat, and you don't see them again, and you try not to look at the one who looks back.
+      next: ea_v_itil
+    - id: on
+      text: Keep your goods for the Khazars, and go on down the river.
+      effects: [ { days_foraged: 10 } ]
+      result: The Bulghars think you a fool, and say so. The river goes on south, wider and slower, out of the forest and into grass.
+      next: ea_v_itil
+
+- id: ea_v_itil
+  kind: spine
+  art: muster
+  title: The Khazars' city
+  text: |
+    At the end of the Volga, where it breaks up into a hundred channels before the sea, the Khazars' king has his city: Itil, two towns on two banks of the river, one of brick for the king and his court and one of felt and timber for everybody else. Jews and Muslims and Christians and men who worship the sky, each with their own judges, all of them buying and selling.
+
+    The king's officers take a tenth of everything that comes down the river. Everything. They count your men, and your oars, and your bales, and write it down in a script you can't read.
+  choices:
+    - id: pay
+      text: Pay the king's tenth, and trade in the open market.
+      effects: [ { add: { silver: 200, skill.trade: 1 } }, { days_foraged: 15 } ]
+      result: The tenth hurts. The market makes up for it. Furs sell here for three times what they fetch in Birka, and swords for four, and the Khazars pay in silver as fast as you can weigh it.
+      next: ea_v_sea
+    - id: hide
+      text: Land half the goods in the reeds before the customs-house.
+      check: { skill: cunning, attr: wit, difficulty: 7 }
+      success:
+        text: The reed-beds go on for days, and nobody watches all of them. You bring half the cargo in by night in small boats, and pay the tenth on the rest, and the king's officer smiles at your honesty.
+        effects: [ { add: { silver: 260 } }, { days_foraged: 15 } ]
+      failure:
+        text: The king's officers watch more of the reed-beds than you thought. They take the hidden goods and the tenth on the rest and a fine for the trouble, and they take your name, and write it down, and that frightens you more than the fine.
+        effects: [ { add: { silver: 60 } }, { lose_cargo: 2 }, { days_foraged: 15 } ]
+      next: ea_v_sea
+
+- id: ea_v_sea
+  kind: spine
+  art: open_sea
+  title: The sea of the Khazars
+  text: |
+    South of Itil there's a sea with no other shore in sight, and it's salt, and there's no way out of it to anywhere. On its far southern coast, eight days' sail, the caliph's country begins: a port called Jurjan, and from there the merchants' camels go on to Baghdad.
+
+    The Rus who've been tell you a thing about the caliph's tax-men. They take a poll-tax from unbelievers, but a lighter one from Christians, because Christians have a book. So every Rus merchant who lands at Jurjan says he's a Christian.
+  choices:
+    - id: christian
+      text: Go to Jurjan, and say you're a Christian like everyone else.
+      effects: [ { add: { silver: 360, hamingja: -1 } }, { goods: { id: silk, lots: 3 } }, { days_foraged: 25 } ]
+      result: The tax-man asks your god's name, and you say Christ, and he writes it down and doesn't look up. The merchants of Jurjan buy everything you have left, at prices that would make a Birka man weep, and you come away with silk and silver and a camel-driver's directions to Baghdad, which you don't take. Your men tease you about Christ for the rest of the voyage.
+      next: ea_v_back
+    - id: honest
+      text: Go to Jurjan, and pay the heathen's tax.
+      effects: [ { add: { silver: 300, honour: 1 } }, { goods: { id: silk, lots: 3 } }, { days_foraged: 25 } ]
+      result: The tax-man looks up at that, for the first time all day, and takes the higher rate, and something like respect. You pay more than every other Rus in Jurjan. You're the only one who doesn't have to remember a lie.
+      next: ea_v_back
+    - id: shore
+      text: Raid the shore of the sea instead, where the emir's men are thin.
+      danger: true
+      effects: [ { days_foraged: 20 }, { battle: { foe: moorish_host, terrain: beach, men: 20, ratio: 1.0, raid: true, win: ea_v_raided, lose: ea_v_back } } ]
+
+- id: ea_v_raided
+  kind: spine
+  art: bangor_field
+  title: The south shore
+  text: |
+    The towns on the south shore of the sea have never seen a Northman. The first one doesn't fight. The second one does, and then wishes it hadn't.
+  choices:
+    - id: back
+      text: Load what you've taken, and go north before the emir's army comes.
+      effects: [ { add: { loot: 360, honour: -1 } }, { captives: 3 }, { deed: { type: raid, text: "Raided the south shore of the Caspian", weight: 3, witnesses: 300 } } ]
+      result: You go north up the sea with the ship low in the water. The Khazars at the river-mouth look at your cargo and say nothing, and take their tenth, and say nothing again. The emir will remember. So, in time, will a great many Rus who come after you.
+      next: ea_v_back
+
+- id: ea_v_back
+  kind: spine
+  art: home_fjord
+  title: Itil in the winter
+  text: |
+    It's autumn by the time you're back at the Volga's mouth, and the river north will be ice before you're halfway up it. The Rus winter at Itil, in the felt town on the west bank, and so do you.
+  choices:
+    - id: winter
+      text: Haul her up at Itil for the winter.
+      effects: [ { set: flag.ea_far_v }, { winter_far: true } ]
+      result: The steppe winter is colder than any in Norway, with a wind that comes from nowhere and goes nowhere and never stops. You rent a felt house from a Jewish merchant who sells you everything you need at a price he says is a favour.
+
+# ---- the far winter, and the road home ----
+- id: ea_winter_d
+  kind: phase
+  trigger: hall
+  once: false
+  cooldown_days: 200
+  weight: 50
+  requires: [flag.ea_far_d]
+  art: yule_hall
+  title: A winter at Kiev
+  text: |
+    The Dnieper freezes from bank to bank, and the Kievans drive sledges on it, and the market moves onto the ice. The Swedes on the hill go round the Slav villages in the winter collecting tribute, furs and honey and wax, and ask if you'd like to come.
+  choices:
+    - id: tribute
+      text: Ride out with them on the tribute-round.
+      effects: [ { goods: { id: furs, lots: 3 } }, { add: { skill.weapons: 1 } } ]
+      result: Village after village in the snow, each one waiting with its furs laid out, each one hating you exactly as much as the last. Nobody fights. The furs are very good. You're paid in furs, and you take them home.
+    - id: wait
+      text: Stay by the fire, and learn the Slavs' tongue.
+      effects: [ { add: { skill.lore: 1, skill.speech: 1 } } ]
+      result: By spring you can buy and sell and swear in Slavic, and a widow on your street has taught you to cook a thing with beets that you'll miss for the rest of your life.
+
+- id: ea_winter_v
+  kind: phase
+  trigger: hall
+  once: false
+  cooldown_days: 200
+  weight: 50
+  requires: [flag.ea_far_v]
+  art: yule_hall
+  title: A winter at Itil
+  text: |
+    The Khazars' king goes out on the steppe for the winter with his court, like a herdsman following grass, and the city empties and fills with merchants and traders' boats frozen in the channels. There are men here from everywhere: Arabs, Persians, Greeks, Jews from Baghdad, a man from somewhere east of the east who sells silk and doesn't say where it comes from.
+  choices:
+    - id: trade
+      text: Trade the winter through.
+      effects: [ { add: { silver: 80, skill.trade: 1 } } ]
+      result: By spring you've bought and sold your way through half the merchants in Itil, and you know the worth of everything from a Frankish sword to a Chinese silk, and you've been cheated by experts, and once or twice cheated them back.
+    - id: listen
+      text: Sit with the Jewish merchants, and hear about the world.
+      effects: [ { add: { skill.lore: 2 } } ]
+      result: They have been to places that aren't anywhere you know. Baghdad, and India, and the land the silk comes from. They draw it for you with a stick in the ashes. The world, it turns out, is much bigger than the North, and mostly doesn't know the North is there.
+
+- id: ea_spring
+  kind: phase
+  trigger: phase_start
+  weight: 80
+  cooldown_days: 200
+  requires: ["!service", { any: [flag.ea_far_d, flag.ea_far_v] }, "place == aldeigjuborg"]
+  art: muster
+  title: The road north
+  text: |
+    In the spring the ice goes out of the river with a noise like a battle, and you put her back in the water and start north.
+    [if flag.ea_far_d]Up the Dnieper, over the long portage again, down the Lovat to the lake. The Slav villages along the drag remember you and charge more.[else]Up the Volga against the spring flood, past the Bulghars, through the forest, over the portage, and down to the lake.[/if]
+
+    It takes until the summer. When you come down the Volkhov at last and see Aldeigjuborg's smoke on the river, half the men weep, and the other half pretend they're not.
+  choices:
+    - id: home
+      text: Count what's left of the crew, and what's left in the hold.
+      effects: [ { days_foraged: 60 }, { add: { crew.men: -3 } }, { clear: flag.ea_far_d }, { clear: flag.ea_far_v }, { deed: { type: deed, text: "Went the East road and came back", weight: 4, witnesses: 200 } } ]
+      result: Fewer men than went. More silver than any of them has ever seen. Home is two weeks' sail across the eastern sea, and they've been away for over a year, and some of them have wives who've given up. You'll find out which.

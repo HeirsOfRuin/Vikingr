@@ -139,7 +139,7 @@ function victual(state: GameState, content: ContentBundle): string | null {
     payShip(state, pay);
     state.provisions += rc.cost ? Math.round((rc.need * pay) / rc.cost) : 0;
     state.day += 1;
-    return `${dayWord(state)}: food bought at ${content.places[state.at]!.name} for ${RESUPPLY_DAYS} days, ${formatSilver(pay)}.`;
+    return `${dayWord(state)}: food bought at ${content.places[state.at]!.name} for ${rc.days} days, ${formatSilver(pay)}.`;
   }
   return state.provisions < mouths(state) * 2 ? 'The food is nearly gone, and nobody on this shore will sell you more.' : null;
 }

@@ -38,6 +38,8 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   'at.standing': (s, c) => (s.at ? standing(s, c, s.at) : 0),
   background: (s) => s.hero.background,
   ships: (s) => s.ships.length,
+  /** One ship, light enough to drag on rollers between the Russian rivers (docs/FRAME-PLACES-EAST.md). */
+  'ships.portable': (s) => s.ships.length === 1 && ['faering', 'karvi'].includes(s.ships[0]!.type),
   'crew.men': (s) => s.crew.men,
   'crew.morale': (s) => s.crew.morale,
   'crew.quality': (s) => s.crew.quality,
@@ -147,6 +149,7 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     case 'skill': return state.hero.skills[a as Skill];
     case 'wound': return state.hero.wounds.some((w) => w.id === a);
     case 'known': return state.known.includes(a!);
+    case 'rumoured': return state.rumoured.includes(a!);
     case 'fate': return state.fates[a!] ?? 0;
     case 'standing': return standing(state, content, a!);
     case 'norse': return !!state.places[a!]?.norse;
@@ -206,7 +209,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'attr': return (ATTRS as readonly string[]).includes(a!) && !b ? null : `unknown attribute "${a}"`;
     case 'skill': return (SKILLS as readonly string[]).includes(a!) && !b ? null : `unknown skill "${a}"`;
     case 'wound': return content.injuries[a!] ? null : `unknown injury "${a}"`;
-    case 'known': return content.places[a!] ? null : `unknown place "${a}"`;
+    case 'known': case 'rumoured': return content.places[a!] ? null : `unknown place "${a}"`;
     case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn', 'master'].includes(b!) ? null : `bad sworn-man path "${path}"`;
     case 'item': return content.items[a!] && !b ? null : `unknown item "${a}"`;
     case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;

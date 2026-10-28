@@ -422,3 +422,7 @@ gall_friend: { description: "Swapped men in friendship with Caittil of the Gall-
 skellig_saved: { description: "Brought a Skellig monk through a fever", saga: true }
 is_bounds_shared: { description: "Shared the meadow with his neighbour in Breiðafjörðr" }
 is_feud: { description: "Feuding with his neighbour in Breiðafjörðr" }
+# the East road (docs/FRAME-PLACES-EAST.md, step 2)
+ea_went: { description: "Went down the river road east from Aldeigjuborg", saga: true }
+ea_far_d: { description: "Wintering at Kiev, on the Dnieper road" }
+ea_far_v: { description: "Wintering at Itil, on the Volga road" }

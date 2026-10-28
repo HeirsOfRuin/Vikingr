@@ -19,6 +19,7 @@ import { armCost } from '../src/engine/items';
 import { LATE_SEASON_DOY, WINTER_ABROAD_DOY } from '../src/engine/tuning';
 import { holdingAt } from '../src/engine/land';
 import { SEAT_DEF } from '../src/engine/rule';
+import { getValue } from '../src/engine/paths';
 import { armyCamp } from '../src/engine/sailfleet';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
@@ -83,6 +84,9 @@ export class Bot {
     return this.policy === 'reckless' ? 'front' : this.policy === 'coward' ? 'rear' : 'wall';
   }
 
+  private east = new Set<number>();
+  private eastBound = 0;
+  private eastDone = false;
   choose(state: GameState, content: ContentBundle): Action | null {
     const opts = listActions(state, content);
     // shopping and listening are deliberate choices below, never a fallback
@@ -265,6 +269,27 @@ export class Bot {
       if (h) return h;
     }
     this.visited.add(at);
+    // the East road (docs/FRAME-PLACES-EAST.md): now and then a raider or a careful trader goes east from Birka
+    if ((this.policy === 'raider' || this.policy === 'coward') && doy < 200 && !this.east.has(year) && (at === 'birka' || at === 'gotland')) {
+      this.east.add(year);
+      const exo = opts.find((o) => o.action.t === 'expedition' && (o.action as { to: string }).to === 'aldeigjuborg');
+      if (exo && !exo.enabled) {
+        // food and a sound hull for open water first, then go
+        this.east.delete(year);
+        const fix = pick((a) => a.t === 'resupply') ?? pick((a) => a.t === 'refit');
+        if (fix) return fix;
+      } else if (exo && this.rng.float() < 0.6) return exo.action;
+    }
+    // heard of the East road, with one light ship: once a life, go and look (docs/FRAME-PLACES-EAST.md)
+    if (!this.eastDone && doy < 150 && state.rumoured.includes('aldeigjuborg') && state.known.includes('birka') && getValue(state, content, 'ships.portable') && (this.policy === 'raider' || this.policy === 'coward')) {
+      this.eastDone = true;
+      if (this.rng.float() < 0.5) this.eastBound = year;
+    }
+    if (this.eastBound === year && at !== 'birka' && doy < 200) {
+      const hop = nextHop(state, content, at, 'birka');
+      const go = hop ? pick((a) => a.t === 'sail' && a.to === hop) : undefined;
+      if (go) return go;
+    }
     // standing orders (docs/FRAME-PACING.md): carry on, or plan the summer
     if (BOT_OPTS.cruise) {
       const on = pick((a) => a.t === 'cruise_on');

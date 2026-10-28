@@ -662,7 +662,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them`));
         } else {
           const rc = resupplyCost(state, content, at);
-          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${RESUPPLY_DAYS} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${rc.days} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
           if (content.places[at]!.market || norseHeld(state, at)) out.push(...shopOption(state, content));
           out.push(...tradeOption(state, content));
           const year = dateOf(state.day).year;

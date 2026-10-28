@@ -6,7 +6,7 @@ import type { GameState } from './state';
 import { journal } from './journal';
 import { standingFloor } from './lords';
 import { aliveMen, capacity, mouths, purse } from './crew';
-import { PROVISION_ORTUG_PER, SIGN_ON_GIFT } from './tuning';
+import { EXPEDITION, PROVISION_ORTUG_PER, SIGN_ON_GIFT } from './tuning';
 
 export const STANDING_MIN = -10;
 export const STANDING_MAX = 10;
@@ -169,12 +169,14 @@ export function landingFoe(content: ContentBundle, id: string): { foe: string; m
   return { foe: p.raid?.foe ?? LANDING_FOE[p.people], men: Math.max(10, Math.round((p.raid?.defenders ?? 14) * 0.8)) };
 }
 
-/** Food to last RESUPPLY_DAYS, at this port's price. null: they won't sell. */
-export function resupplyCost(state: GameState, content: ContentBundle, id: string): { need: number; cost: number } | null {
+/** Food to last RESUPPLY_DAYS (more where an expedition starts), at this port's price. null: they won't sell. */
+export function resupplyCost(state: GameState, content: ContentBundle, id: string): { need: number; cost: number; days: number } | null {
   const mult = RESUPPLY_PRICE[tierAt(state, content, id)];
   if (mult === null) return null;
-  const need = Math.max(0, mouths(state) * RESUPPLY_DAYS - state.provisions);
-  return { need, cost: Math.ceil((need / PROVISION_ORTUG_PER) * mult) };
+  // a port where an expedition road starts sells enough for the open water (the East road: Birka to Aldeigjuborg)
+  const days = content.legs.some((l) => l.expedition && (l.a === id || l.b === id)) ? Math.max(RESUPPLY_DAYS, EXPEDITION.foodDays) : RESUPPLY_DAYS;
+  const need = Math.max(0, mouths(state) * days - state.provisions);
+  return { need, cost: Math.ceil((need / PROVISION_ORTUG_PER) * mult), days };
 }
 
 /** Men he can hire here now: willing, with benches for them, and with the sign-on gift in his purse. */

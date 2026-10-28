@@ -117,6 +117,12 @@ const baseEffect = z.union([
   /** He buys land where he stands, as the Land action does, if he can (docs/FRAME-FLEET-843.md §3). */
   z.object({ buy_land: z.literal(true) }).strict(),
   z.object({ fleet_end: z.literal(true) }).strict(),
+  /** Word of a far place: it goes on his rumoured list, so an expedition can be mounted to it (docs/FRAME-PLACES-EAST.md). */
+  z.object({ hear_of: id }).strict(),
+  /** He sails for a far place with men who know the water: an expedition road, as an ordinary passage. */
+  z.object({ sail_with: id }).strict(),
+  /** The winter at the far end of the East road (Kiev, Itil): a winter abroad, kept where he stands on the map. */
+  z.object({ winter_far: z.literal(true) }).strict(),
   /** Lots of one good taken out of the hold: sold, seized or lost (the thin places, docs/FRAME-PLACES-EAST.md). */
   z.object({ unload: z.object({ id, lots: z.number().int().min(1) }).strict() }).strict(),
   /** The army's winter camp moves: the captain he rows for winters there from now on (docs/FRAME-865.md). */

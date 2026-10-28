@@ -157,7 +157,7 @@ places:
   - { id: uppsala, name: "Uppsala", lon: 17.63, lat: 59.9, people: swedish, kind: hall, region: Svealand, desc: "The great temple and the mounds of old kings.", rumour: "The Swedes' great temple, he says, a day inland from Birka: a hall roofed with gold, and three great mounds of the old kings, and a grove where they hang the sacrifices every ninth year, men and horses and dogs together.", standing: 0, active: true, tells: [birka] }
   - { id: gotland, name: "Gotland", lon: 18.3, lat: 57.64, people: swedish, kind: island, region: The Baltic, desc: "A rich island in the middle of the eastern sea.", rumour: "A rich island in the middle of the eastern sea, he says, where every farmer buries his silver in the floor and the traders come from every shore of the Baltic.", standing: 0, active: true, market: true, tells: [truso, birka], trade: { cheap: [wool, furs], dear: [salt, wine, glass, whetstones] }, raid: { wealth: 1300, defenders: 55, foe: gotlanders, terrain: field } }
   - { id: truso, name: "Truso", lon: 19.4, lat: 54.12, people: baltic, kind: market, region: The Baltic, desc: "A market on the amber coast.", rumour: "An amber market at the mouth of a river on the far side of the eastern sea, he says, among people who speak no tongue anyone in Hedeby knows, and sell amber by the sack.", standing: 0, active: true, market: true, tells: [gotland], rumours: [aldeigjuborg], trade: { cheap: [amber, furs], dear: [salt, wine, whetstones, glass] } }
-  - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves." }
+  - { id: aldeigjuborg, name: "Aldeigjuborg", lon: 32.3, lat: 60.0, people: rus, kind: market, region: Garðaríki, desc: "Staraya Ladoga, the door to the river road east.", rumour: "A Swedish town at the door of the river road east, where you drag your ship overland between rivers and come out, months later, among people who pay in silver for furs and slaves.", active: true, market: true, standing: 2, from: 836, trade: { cheap: [furs, hides, amber], dear: [wine, glass, salt, whetstones, wool] } }
   - { id: faroes, name: "Færeyjar", lon: -6.8, lat: 62.0, people: norse, kind: island, standing: 1, active: true, rumours: [island], region: The Atlantic, desc: "The Faroes. Sheep islands at the edge of the known sea.", rumour: "Sheep islands, he says, three days north-west of Hjaltland over open sea, where the Irish hermits went to be alone with their god, and a man from Agder is said to have taken land. Birds so thick on the cliffs they darken the sky.", trade: { cheap: [wool, down, oil], dear: [grain, salt, whetstones] } }
   # Iceland (docs/FRAME-LINEAGE.md E). The dates follow the Landnámabók tradition: Naddoddr and Garðarr in the 860s,
   # Flóki's winter, Ingólfr at Reykjarvík in 874, the land-taking from about 870.
@@ -240,6 +240,9 @@ legs:
   - { a: home_fjord, b: hladir, days: 5, kind: coastal }
   - { a: birka, b: uppsala, days: 1, kind: river }
   - { a: birka, b: gotland, days: 3, kind: open }
+  # the East road's door (docs/FRAME-PLACES-EAST.md): across the eastern sea and up the Neva to the lake
+  - { a: birka, b: aldeigjuborg, days: 8, kind: open, expedition: true }
+  - { a: gotland, b: aldeigjuborg, days: 9, kind: open, expedition: true }
   - { a: hedeby, b: gotland, days: 5, kind: open }
   - { a: gotland, b: truso, days: 3, kind: open }
   - { a: hedeby, b: truso, days: 6, kind: coastal }
