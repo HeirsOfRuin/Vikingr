@@ -85,9 +85,11 @@ export function stow(state: GameState, content: ContentBundle, n: number): numbe
 }
 
 function hiredName(state: GameState, content: ContentBundle): string {
-  const taken = new Set([...state.men.map((m) => m.name), ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...Object.values(state.standIns ?? {})]);
+  const taken = new Set([...state.men.map((m) => m.name), ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...Object.values(state.standIns ?? {}), ...(state.usedNames ?? [])]);
   const free = content.names.filter((n) => !taken.has(n));
-  return free[(state.day * 11 + state.ships.length * 5) % Math.max(1, free.length)] ?? 'Hrolf';
+  const name = free[(state.day * 11 + state.ships.length * 5) % Math.max(1, free.length)] ?? 'Hrolf';
+  (state.usedNames ??= []).push(name);
+  return name;
 }
 
 /** A ship joins the fleet. The flagship needs no master; any other gets a hired steersman, and a scene lets him choose. */

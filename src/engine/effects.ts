@@ -79,7 +79,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         state.men.push(newMan(content, e.man.id));
         journal(state, `${content.men[e.man.id]!.name} gave you his oath.`);
       } else if (m && e.man.leave) {
-        state.men = state.men.filter((x) => x !== m);
+        state.men = state.men.filter((x) => x !== m); (state.usedNames ??= []).push(m.name);
         journal(state, `${m.name} left your service.`);
       }
       if (m && e.man.loyalty) addLoyalty(m, e.man.loyalty);
@@ -276,7 +276,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const total = capacity(state, content);
         state.crew.men = Math.max(0, state.crew.men - Math.round((state.crew.men * cap) / Math.max(1, total)));
         state.ships.splice(state.ships.indexOf(ship), 1);
-        state.men = state.men.filter((x) => x !== m);
+        state.men = state.men.filter((x) => x !== m); (state.usedNames ??= []).push(m.name);
         journal(state, `Gave ${ship.name} to ${m.name}, and he sailed her away as his own.`);
       }
     } else if ('keep_captives' in e) {

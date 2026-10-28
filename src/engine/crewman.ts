@@ -87,7 +87,7 @@ export function crewmanEffect(state: GameState, content: ContentBundle, rng: Rng
     journal(state, `${m.name} ${e.dies}.`);
   }
   if (e.leave || e.settle) {
-    state.men = state.men.filter((x) => x !== m);
+    state.men = state.men.filter((x) => x !== m); (state.usedNames ??= []).push(m.name);
     journal(state, e.settle ? `${m.name} left the benches to farm your land.` : `${m.name} ${e.leave}.`);
     // a man settled on his lord's land answers the muster at home
     if (e.settle) state.musterPool += CREW.settleMuster;

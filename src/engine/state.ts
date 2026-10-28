@@ -327,6 +327,8 @@ export interface GameState {
   honour: number;
   /** A fallen sworn man's id → the oarsman who took his bench (scenes written before the death name him instead). */
   standIns?: Record<string, string>;
+  /** Every name given to a generated man or a hired steersman in this life: none is given twice (the continuity check). */
+  usedNames?: string[];
   /** Goods aboard: lots, and what they cost him (docs/FRAME-TRADE-ALLIES.md). */
   cargo?: Record<string, { lots: number; cost: number }>;
   /** The year's trade news: one good dear or cheap everywhere. */

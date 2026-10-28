@@ -179,7 +179,7 @@ export function shareOut(state: GameState, content: ContentBundle, how: ShareHow
   }
   for (const m of aliveMen(state)) {
     if (m.loyalty <= 1) {
-      state.men = state.men.filter((x) => x !== m);
+      state.men = state.men.filter((x) => x !== m); (state.usedNames ??= []).push(m.name);
       lines.push(`${m.name} takes back his oath and goes to find another lord.`);
       journal(state, `${m.name} left your service.`);
     }

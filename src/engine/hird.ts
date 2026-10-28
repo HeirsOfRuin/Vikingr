@@ -37,7 +37,7 @@ export function makeCandidate(state: GameState, content: ContentBundle, origin: 
   const o = content.recruits[origin];
   if (!o) throw new Error(`unknown recruit origin ${origin}`);
   const rng = new RngCursor(seedRng((state.seed ^ hash(`${origin}:${state.day}:${state.men.length}`)) >>> 0));
-  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0], ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...npcNames(content)]);
+  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0], ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...npcNames(content), ...(state.usedNames ?? [])]);
   const pool = (o.names === 'norse' ? content.names : o.names).filter((n) => !taken.has(n));
   // the man who took a fallen sworn man's bench already has a name in the scenes: he keeps it
   const heir = origin === 'heir' ? state.men.filter((m) => !m.alive && m.sworn && state.standIns?.[m.id]).sort((a, b) => (b.diedOn ?? 0) - (a.diedOn ?? 0)).map((m) => state.standIns![m.id]!).find((n) => !state.men.some((x) => x.name === n)) : undefined;
@@ -92,7 +92,7 @@ export function hirdLeaves(state: GameState): string[] {
   for (const m of aliveMen(state)) {
     if (!m.origin || !m.sworn || m.loyalty > HIRD.leaveAt) continue;
     if (state.ships.some((s) => s.master === `man:${m.id}`)) continue; // a master who walks takes the ship: fleet.ts deals with him
-    state.men = state.men.filter((x) => x !== m);
+    state.men = state.men.filter((x) => x !== m); (state.usedNames ??= []).push(m.name);
     journal(state, `${m.name} went off to find a better lord.`);
     lines.push(`${m.name} comes to you at the turn of the year and gives you back his oath, which is more than most would do. He has found a lord who gives more, or says he has. He is gone by the morning.`);
   }
