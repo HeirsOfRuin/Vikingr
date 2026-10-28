@@ -40,7 +40,7 @@ export function makeCandidate(state: GameState, content: ContentBundle, origin: 
   const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0], ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...npcNames(content), ...(state.usedNames ?? [])]);
   const pool = (o.names === 'norse' ? content.names : o.names).filter((n) => !taken.has(n));
   // the man who took a fallen sworn man's bench already has a name in the scenes: he keeps it
-  const heir = origin === 'heir' ? state.men.filter((m) => !m.alive && m.sworn && state.standIns?.[m.id]).sort((a, b) => (b.diedOn ?? 0) - (a.diedOn ?? 0)).map((m) => state.standIns![m.id]!).find((n) => !state.men.some((x) => x.name === n)) : undefined;
+  const heir = origin === 'heir' ? state.men.filter((m) => !m.alive && m.sworn && state.standIns?.[m.id]).sort((a, b) => (b.diedOn ?? 0) - (a.diedOn ?? 0)).map((m) => state.standIns![m.id]!).find((n) => !state.men.some((x) => x.name === n) && !state.ships.some((sh) => sh.master?.split(':')[1] === n)) : undefined;
   const name = heir ?? (pool.length ? pool[rng.int(pool.length)]! : 'Grim');
   const between = ([a, b]: [number, number]) => a + rng.int(b - a + 1);
   const temperament = o.temperaments[rng.int(o.temperaments.length)]!;
