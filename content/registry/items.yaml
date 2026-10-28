@@ -32,3 +32,4 @@
 - { id: caulking, name: "New strakes and caulking", kind: fitting, price: 60, sold: [shipwright], desc: "Rotten planks replaced, every seam tarred and stuffed with wool. Storms do her less harm." }
 - { id: carved_prow, name: "A carved prow", kind: fitting, price: 120, sold: [shipwright], desc: "A dragon's head for her stem, painted, with red eyes. Men who see it coming lose heart before the first blow." }
 - { id: shield_rack, name: "A shield-rack along the rail", kind: fitting, price: 48, sold: [shipwright], desc: "Shields hung ready along both sides. In a fight at sea, she is a wall before the men stand up." }
+- { id: carved_stone, name: "A carved stone", kind: keepsake, desc: "Pictish red sandstone, cut for your father: a ship with too many oars, and knotwork that never ends." }

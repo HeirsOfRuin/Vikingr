@@ -1,0 +1,858 @@
+# The thin places (docs/FRAME-PLACES-EAST.md, step 1). Eleven places had one scene, their first landfall, and then
+# nothing of their own. Each gets a return that remembers the first visit, and a scene with something at stake.
+# Return scenes wait a year after the first (yearsince), so they come on a later voyage, not the same evening.
+
+# ---- Alt Clut: the rock on the Clyde ----
+# AU 870: Amlaíb and Ímar besieged Ail Cluaithe for four months; it fell when the well inside failed. They took
+# 200 ships of captives back to Dublin in 871.
+- id: pl4_alt_clut_siege
+  kind: place
+  trigger: arrive
+  at: [alt_clut, dublin, man, whithorn]
+  once: true
+  weight: 30
+  requires: ["!service", "year == 870"]
+  art: muster
+  title: The siege of the rock
+  text: |
+    Olaf and Ívarr of Dublin have brought every ship in the Irish Sea up the Clyde, and they are sitting under the rock of the Britons with a ditch round it, waiting. The king of Strathclyde is on the top with his household and his gold and his priests, and he isn't coming down.
+
+    [if place == alt_clut]Olaf's man meets you on the shore before your keel is dry.[else]Olaf's man finds you on the beach, recruiting.[/if] "Four months, it might take," he says. "Or one, if somebody knew where the Britons get their water."
+    [if flag.alt_clut_scouted]You do. The king's man told you, proud as a cock: a well on the rock that has never failed.[/if]
+  choices:
+    - id: well
+      text: Tell Olaf where the well is.
+      visible_if: flag.alt_clut_scouted
+      effects: [ { add: { loot: 180, honour: -1 } }, { standing: { place: alt_clut, n: -4 } }, { know: alt_clut }, { deed: { type: deed, text: "Showed Olaf of Dublin the well at Alt Clut", weight: 3, witnesses: 400 } } ]
+      result: |
+        They dig a mine under the rock to the well, and foul it, and in a month the Britons are drinking their own horses' blood, and then they come down. Olaf gives you a share of the king's gold and doesn't ask how you knew. The ships that go back to Dublin in the spring are so full of Britons that men stand at the oars because there's nowhere to sit.
+    - id: join
+      text: Join the siege, and take your share of whatever comes down.
+      danger: true
+      effects: [ { know: alt_clut }, { host: { title: "Under the rock", foe: strathclyde_men, terrain: rampart, men: 30, ratio: 1.0, wings: [ { name: "Olaf's Dubliners", men: 300, quality: 1.1, foe_men: 260 } ], role: wing, win: pl4_alt_clut_fell } } ]
+    - id: warn
+      text: Send a boy up the rock by night, to warn the king about his well.
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: The boy comes back at dawn with a gold ring and no words. The siege goes on four months anyway; a warned king can't conjure water. But when the rock falls, a Briton finds you in the camp and says the king's son is alive because of you, and is in Galloway, and remembers.
+        effects: [ { add: { honour: 2 } }, { standing: { people: briton, n: 2 } }, { ring: { metal: gold, n: 1 } } ]
+      failure:
+        text: Olaf's men catch the boy on the slope. They don't catch you, quite. You sail that night, before anybody asks whose boy he was.
+        effects: [ { add: { honour: 1 } }, { standing: { place: dublin, n: -2 } } ]
+
+- id: pl4_alt_clut_fell
+  kind: spine
+  art: bangor_field
+  title: The rock falls
+  text: |
+    It takes four months, in the end, and it isn't the fighting that does it. The well on the top fails in the summer heat, and the Britons come down the steps one morning with their hands empty, the king first.
+
+    The fleet goes back to Dublin with two hundred ships of captives. Olaf counts them on the shore like cattle.
+  choices:
+    - id: share
+      text: Take your share of the rock.
+      effects: [ { add: { loot: 120 } }, { captives: 6 }, { deed: { type: battle_won, text: "Was at the taking of Alt Clut with Olaf and Ívarr", weight: 3, witnesses: 400 } } ]
+      result: Your share is a heap of Strathclyde silver and six Britons who stare at the sea. One of them, a boy, asks you in good Irish where they are going. You tell him. He doesn't ask again.
+
+- id: pl4_alt_clut_hostage
+  kind: place
+  trigger: arrive
+  at: [alt_clut]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_alt_clut, "yearsince.pl_alt_clut >= 1", "year != 870"]
+  art: muster
+  title: The king's son
+  text: |
+    The king of Strathclyde's steward comes down from the rock with an offer, which is not the same as a welcome. The river above the rock belongs to the king, he says, and so do the fords, and the cattle, and the people who would sell you food. All of it is open to you, for a summer. For a pledge.
+
+    The pledge is a man. One of yours, to sit in the king's hall on the rock until you're gone from his river. The king, the steward says, would send one of his own sons the other way, to sit in your ship.
+  choices:
+    - id: swap
+      text: Agree. Leave a sworn man on the rock, and take the king's son aboard.
+      effects: [ { standing: { place: alt_clut, n: 3 } }, { add: { provisions: 100, silver: 30 } }, { set: flag.alt_clut_pledge } ]
+      result: The king's son is fourteen and sulks for a week and then learns to row. Your man on the rock eats better than he has in years and comes down at the end of the summer fat and in love with a laundress. Nobody dies. It's the strangest summer you've had.
+    - id: no
+      text: Tell the steward your men don't sit in other men's halls.
+      effects: [ { standing: { place: alt_clut, n: -1 } } ]
+      result: The steward bows and goes back up the rock. The fords stay shut, and the cattle stay in the hills, and the river is a long way to row for nothing.
+
+# ---- Tarbat: the Pictish shore ----
+- id: pl4_tarbat_riders
+  kind: place
+  trigger: arrive
+  at: [tarbat]
+  once: true
+  weight: 25
+  requires: ["!service", seen.pl_tarbat, "yearsince.pl_tarbat >= 1"]
+  art: bangor_field
+  title: The horsemen
+  text: |
+    They come along the shore at a canter before you've got the ship's legs under her: twenty Pictish horsemen with small round shields and long spears, and a mormaer in a red cloak in the middle of them. Somebody told them about the Northman who rode round their country last year and looked at everything.
+    [if flag.tarbat_scouted]You know where they'll come from, because your guide showed you. You've drawn the ship up where the dunes slow a horse.[else]They come out of the dunes, from the one direction you didn't look.[/if]
+  choices:
+    - id: wall
+      text: Shields up on the sand. Let them come.
+      danger: true
+      effects: [ { battle: { foe: pictish_host, terrain: beach, men: 20, ratio: 0.8 } } ]
+    - id: parley
+      text: Walk out alone and ask the mormaer what he wants.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: He wants to know why you came back. You tell him about the stones. He looks at you a long while and laughs, and says a man who sails across the sea to look at stones is either a fool or a priest, and you don't look like a priest. He sells you a fair price of cattle and rides off.
+        effects: [ { add: { provisions: 80 } }, { standing: { place: tarbat, n: 2 } } ]
+      failure:
+        text: He doesn't want to talk. A spear comes past your ear as you turn to walk back, close enough to feel. You run the last of it. Your men are already pushing the ship off.
+        effects: [ { add: { honour: -1 } } ]
+
+- id: pl4_tarbat_stone
+  kind: place
+  trigger: arrive
+  at: [tarbat]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_tarbat, "yearsince.pl_tarbat >= 2"]
+  art: muster
+  title: A stone for your father
+  text: |
+    The carvers at the monastery work in an open shed by the shore, three of them, cutting knotwork into red sandstone with iron points and wooden mallets. The patterns go round and round and never end. [if flag.tarbat_stones]You stood in front of their tallest stone once and couldn't read it. You still can't.[/if]
+
+    The master carver sees you looking. Through a monk with some Norse, he says he could cut a stone for anyone, for silver. Even a heathen. Even with a heathen's beasts on it.
+  choices:
+    - id: buy
+      text: Pay him to cut a stone for your father, with a ship on it.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48, hamingja: 1 } }, { item: { id: carved_stone } }, { deed: { type: deed, text: "Had a Pictish carver cut a memorial stone for his father", weight: 2, witnesses: 30 } } ]
+      result: It takes him the whole of your stay. The ship on it has too many oars and a beast's head at each end, and the knotwork round the edge goes round and round and never ends. It's the best thing you've ever owned. It'll take six men to lift.
+    - id: leave
+      text: Thank him, and go.
+      result: He goes back to his knotwork. The mallet sounds follow you down to the ship.
+
+# ---- Whithorn ----
+- id: pl4_whithorn_door
+  kind: place
+  trigger: arrive
+  at: [whithorn]
+  once: true
+  weight: 25
+  requires: ["!service", flag.whithorn_scouted, "yearsince.pl_whithorn >= 1"]
+  art: celtic_monastery
+  title: The moved door
+  text: |
+    The treasury door you saw on your last visit isn't there. There's a wall where it was, new, with the mortar still pale. The bishop has heard about Northmen who ask too many questions.
+
+    A pilgrim on the road, a lame Irishman going home from the shrine, watches you looking at the wall. "Moved it under the floor of the old church," he says, in Irish, not looking at you. "I helped carry it. They paid me in prayers."
+  choices:
+    - id: pay
+      text: Pay him in silver, and take what's under the floor.
+      effects: [ { add: { silver: -6, loot: 140, honour: -1 } }, { standing: { place: whithorn, n: -4 } }, { raided: { place: whithorn } } ]
+      result: It's under the third flagstone from the altar, in a lead box, exactly where he said. The bishop watches from his door and doesn't come out. The pilgrim is gone before you're back at the ship, with the silver and your secret, and you hope he gets home.
+    - id: leave
+      text: Give the Irishman a coin for the road, and leave the floor alone.
+      effects: [ { add: { honour: 1 } }, { standing: { place: whithorn, n: 1 } } ]
+      result: He bites the coin, and blesses you, and limps off west. The bishop, who has been watching from his door, sends you down a cask of ale that evening, without a word.
+
+- id: pl4_whithorn_gall
+  kind: place
+  trigger: arrive
+  at: [whithorn]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_whithorn, "year >= 850"]
+  art: muster
+  title: The Gall-Gáedil
+  text: |
+    There's a ship on the beach at Whithorn that's neither Norse nor Irish, and both: Norse lines, Irish paint, and a crew who shout at each other in both tongues and a third made of the two. The Irish call them the Gall-Gáedil, the foreign Gaels. Their mothers were Irish and their fathers were Northmen, or the other way round, and the Irish say they're worse than either.
+
+    Their captain, a big red man called Caittil, wants to know if you'd go raiding with him. "Half the Irish think we're Northmen," he says, "and half the Northmen think we're Irish. Between us we can lie to everyone."
+  choices:
+    - id: yes
+      text: Swap men with him, two for two, as a pledge of friendship.
+      effects: [ { recruit: 2 }, { add: { skill.speech: 1 } }, { standing: { people: gael, n: 1 } }, { set: flag.gall_friend } ]
+      result: Two of his come aboard, cousins, who speak Irish and Norse and lie fluently in both. They are the best thieves you've ever had and the worst oarsmen. Caittil gets two of yours, and teaches them to swear in Irish.
+    - id: no
+      text: Tell him you'd rather know who you're fighting beside.
+      result: Caittil laughs and says nobody ever knows that, and goes back to his ship. The Irish annals will be full of him in a year or two.
+
+# ---- Sceilig Mhichíl ----
+- id: pl4_skellig_sick
+  kind: place
+  trigger: arrive
+  at: [skellig]
+  once: true
+  weight: 25
+  requires: ["!service", flag.skellig_climbed, "yearsince.pl_skellig >= 1"]
+  art: celtic_monastery
+  title: The cistern
+  text: |
+    A monk is waiting at the landing, which they never do. He remembers you: the Northman who climbed and didn't take anything. One of the six old men is dying at the top, he says, of a fever they can't break, and the mainland won't send a boat in this swell, and you came once.
+  choices:
+    - id: climb
+      text: Climb with what you have. Wine, honey, dry wool.
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: You go up the six hundred steps with a wineskin round your neck. You sit with the old man two nights, and keep him warm, and get wine and honey into him, and on the third morning the fever breaks. The monks don't thank you; they pray for you, which takes longer. Your men say it's the strangest raid they've ever been on.
+        effects: [ { add: { hamingja: 2, honour: 1 } }, { standing: { people: gael, n: 1 } }, { set: flag.skellig_saved } ]
+      failure:
+        text: You go up, and sit with him, and he dies on the second night anyway, with his hand on your arm. The monks bury him in the little graveyard on the ledge. They bless you as you go. You're not sure for what.
+        effects: [ { add: { hamingja: 1 } } ]
+    - id: no
+      text: Tell him the swell's too much, and go.
+      result: He nods, as if he'd expected it, and goes back up the steps. You don't look back at the rock. Your men do.
+
+- id: pl4_skellig_storm
+  kind: place
+  trigger: arrive
+  at: [skellig]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_skellig, "yearsince.pl_skellig >= 2"]
+  art: celtic_monastery
+  title: Weatherbound
+  text: |
+    A gale comes in from the west while you're lying in the lee of the rock, and there's nowhere to run to. You get the ship into the little cove under the landing and the men up onto the ledges, and for six days the Atlantic tries to take the rock and doesn't.
+
+    The monks feed you. They have almost nothing, and they give you half of it: seabirds' eggs, dried fish, a kind of bread that tastes of smoke.
+  choices:
+    - id: pay
+      text: When the weather breaks, leave them silver for what you ate.
+      effects: [ { add: { silver: -24, honour: 1 } }, { standing: { people: gael, n: 1 } } ]
+      result: They don't want it. You leave it in the cistern-house anyway, under a stone, where they'll find it after you've gone. It will buy them the winter's grain, and a book.
+    - id: go
+      text: Thank them, and go the moment the sea allows.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The men go down the steps singing, for no reason except that they're alive. The monks watch you go from the ledges, six small black figures, and then the rock is behind you and the sea is just the sea.
+
+# ---- Apurcrossan ----
+- id: pl4_applecross_cattle
+  kind: place
+  trigger: arrive
+  at: [applecross]
+  once: true
+  weight: 25
+  requires: ["!service", seen.pl_applecross, "yearsince.pl_applecross >= 1", "!flag.applecross_robbed"]
+  art: celtic_monastery
+  title: The saint's cattle
+  text: |
+    The monks come down to the shore again, and this time they don't bring bread. Men from the hills came over the pass at the new moon and took the monastery's cattle, forty head, inside the sanctuary crosses, and the curse hasn't stopped them.
+    [if flag.applecross_kept]"You kept the saint's peace," the old monk says. "They didn't."[else]"You're Northmen," the old monk says, as if that settles something. "You go where the curse doesn't."[/if]
+  choices:
+    - id: fetch
+      text: Go up the pass with your men and bring the cattle back.
+      danger: true
+      effects: [ { battle: { foe: island_men, terrain: woods, men: 16, ratio: 0.9, win: pl4_applecross_back } } ]
+    - id: no
+      text: Tell him it's not your saint and not your cattle.
+      result: The old monk nods. They'll go hungry this winter, and pray, and in the spring the men from the hills will come back for the sheep.
+
+- id: pl4_applecross_back
+  kind: spine
+  art: celtic_monastery
+  title: Forty head
+  text: |
+    You bring them down the pass at dawn, forty head and a bull that doesn't want to come, with the men from the hills shouting from the ridge and not following.
+  choices:
+    - id: give
+      text: Give them all back to the monks.
+      effects: [ { add: { hamingja: 1, honour: 1 } }, { standing: { people: gael, n: 2 } } ]
+      result: The monks count them, all forty, and then the old monk blesses you, properly, with the bell. Your men say it's the first time they've stolen cattle and given them back. Some of them are still thinking about it at sea.
+    - id: tithe
+      text: Give them back, less ten for the trouble.
+      effects: [ { add: { provisions: 120 } }, { standing: { place: applecross, n: 1 } } ]
+      result: The old monk counts thirty, and looks at you, and doesn't argue. The ten taste very good. Some of your men say they taste a little of curse.
+
+- id: pl4_applecross_poet
+  kind: place
+  trigger: arrive
+  at: [applecross, skye]
+  once: true
+  weight: 15
+  requires: ["!service", seen.pl_applecross, "fame.living >= 40"]
+  art: muster
+  title: A Gaelic poet
+  text: |
+    A thin man in a good cloak with nothing in it is waiting on the shore with a harp in a bag. He is a poet, he says, of the old Irish kind, trained twelve years, who knows three hundred and fifty stories, and the king who kept him is dead, and the new one prefers a harper who doesn't talk.
+
+    He has heard of you. He would make poems for you, in Irish, which nobody you know could understand, for his food and a cloak.
+  choices:
+    - id: keep
+      text: Take him into your household.
+      effects: [ { add: { silver: -12 } }, { standing: { people: gael, n: 2 } }, { deed: { type: deed, text: "Kept a Gaelic poet in his household", weight: 2, witnesses: 60 } } ]
+      result: He makes a poem about you the first night, very long, and very beautiful, your Irish oarsmen say. They won't tell you what's in it. In the Irish ports the next summer, men who never heard of you before know your name and laugh when they hear it.
+    - id: no
+      text: Give him a meal, and send him on.
+      result: He eats, and thanks you in verse, and goes up the coast to the next hall. You wonder, later, what he says about you there.
+
+# ---- Truso and the amber coast ----
+- id: pl4_truso_kin
+  kind: place
+  trigger: arrive
+  at: [truso]
+  once: true
+  weight: 25
+  requires: ["!service", flag.truso_rode, "yearsince.pl_truso >= 1"]
+  art: muster
+  title: The dead man's heap
+  text: |
+    The dead man's kin have been waiting a year for you. The heap you rode for was the third heap, and the third heap, it turns out, was meant for the dead man's sister's son, who fell off his horse a furlong from it because somebody's foreign horse barged him. They want it back. Or its worth. Or the foreigner's head, the youngest suggests.
+  choices:
+    - id: pay
+      text: Pay them its worth, and drink with them.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { standing: { place: truso, n: 3 } } ]
+      result: They take the silver and give you mare's milk, and by the end of the night the sister's son has his arm round your neck and is explaining the race to you again, with a stick in the sand, as if you hadn't been there.
+    - id: race
+      text: Offer to race him for it again, here and now.
+      check: { skill: cunning, attr: agi, difficulty: 6 }
+      success:
+        text: You win again, by a neck, and the Este roar, and the sister's son throws his hat on the ground and then laughs. You give him the heap's worth anyway. They talk about you on the amber coast for years.
+        effects: [ { add: { silver: -24 } }, { standing: { place: truso, n: 4 } }, { deed: { type: deed, text: "Raced the Este twice for a dead man's silver, and won both times", weight: 1 } } ]
+      failure:
+        text: He wins by three lengths, and the Este roar, and you pay up and laugh, and they decide you're all right for a foreigner.
+        effects: [ { add: { silver: -48 } }, { standing: { place: truso, n: 2 } } ]
+    - id: go
+      text: Push off before the youngest gets his way.
+      effects: [ { standing: { place: truso, n: -3 } } ]
+      result: You push off with half the amber coast shouting at you from the jetties. You won't be buying amber here again for a while.
+
+- id: pl4_truso_toll
+  kind: place
+  trigger: arrive
+  at: [truso, hedeby]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_truso, "goods.amber > 0"]
+  art: muster
+  title: The king's toll on amber
+  text: |
+    The Danish king's toll-men at Hedeby take a tenth of every cargo that comes through the wall, and they know what amber looks like. An Este trader you met at Truso has a better idea: a creek south of the wall, a cart at night, and a Frisian who buys without asking whose king is owed what.
+  choices:
+    - id: creek
+      text: Take the amber in by the creek, at night.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: The cart is where he said, and the Frisian pays in good Frankish coin, and the king's toll-men are asleep on the wall above you the whole time. You do it twice more that summer.
+        effects: [ { add: { silver: 60 } }, { unload: { id: amber, lots: 1 } } ]
+      failure:
+        text: The king's men are waiting at the creek, because the Frisian sold you first. You lose the amber, and the Frisian's price, and a good deal of standing in Hedeby.
+        effects: [ { unload: { id: amber, lots: 1 } }, { standing: { place: hedeby, n: -3 } } ]
+    - id: honest
+      text: Pay the toll like an honest man.
+      result: The toll-man weighs it twice, takes his tenth, and looks at you with something like respect. Honest men are rare at Hedeby. They're also poorer.
+
+# ---- Sheppey ----
+# ASC 855: the heathen men first stayed the winter on Sheppey.
+- id: pl4_sheppey_abbess
+  kind: place
+  trigger: arrive
+  at: [sheppey]
+  once: true
+  weight: 25
+  requires: ["!service", seen.pl_sheppey, "yearsince.pl_sheppey >= 1"]
+  art: muster
+  title: The abbess sends
+  text: |
+    [if flag.sheppey_bread]The reeve meets you on the beach, the same frightened man with the same spear, and this time he's glad to see you.[else]The reeve meets you on the beach, the same frightened man with a better spear. He's not glad to see you. He's desperate.[/if]
+
+    Danes came in the spring, two ships, and took the minster's cattle and the abbess's nephew and said they'd be back at harvest for the silver. The abbess has sent the reeve to the beach every day since, to watch for any ship that might be better than Danes.
+    [if flag.sheppey_robbed]"She says you robbed her once," the reeve says, "honestly, in daylight. She says that's more than the Danes did."[/if]
+  choices:
+    - id: wait
+      text: Wait for the Danes at harvest, on the beach.
+      danger: true
+      effects: [ { battle: { foe: danish_raiders, terrain: beach, men: 30, ratio: 1.0, win: pl4_sheppey_thanks } } ]
+    - id: price
+      text: Name a price for it first.
+      danger: true
+      effects: [ { add: { silver: 72, honour: -1 } }, { battle: { foe: danish_raiders, terrain: beach, men: 30, ratio: 1.0 } } ]
+    - id: no
+      text: Tell the reeve the abbess must look after her own.
+      result: The reeve nods and goes back up the hill. At harvest, you hear later, the Danes came back and took the silver and the bell, and the abbess stood at the gate and watched them do it.
+
+- id: pl4_sheppey_thanks
+  kind: spine
+  art: muster
+  title: The abbess's nephew
+  text: |
+    The Danes go back to their ships with fewer men than they came with, and leave the abbess's nephew on the beach, tied, because he's slowing them down. He's eleven, and furious, and wants a sword.
+  choices:
+    - id: back
+      text: Walk him up the hill to his aunt.
+      effects: [ { add: { honour: 2 } }, { standing: { place: sheppey, n: 4 } }, { standing: { people: english, n: 1 } }, { deed: { type: battle_won, text: "Beat off the Danes from the minster on Sheppey", weight: 2, witnesses: 60 } } ]
+      result: The abbess meets you at the gate. She takes the boy, and looks at you for a long moment, and says in careful Norse that she has been learning, "Thank you. Now go away." You go. The ale she sends down to the beach is the best in Kent.
+
+- id: pl4_sheppey_winter
+  kind: place
+  trigger: arrive
+  at: [sheppey]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_sheppey, "year >= 851"]
+  art: yule_hall
+  title: A winter in the Thames
+  text: |
+    There are Danish ships hauled up on the marsh on the far side of the island, and turf houses going up behind a ditch. They mean to winter here, in the mouth of the Thames, in England, instead of going home. Nobody has done it before. In the spring they'll be first up the river, before the English have their boots on.
+
+    Their leader, a shrewd Dane with a missing ear, offers you a place inside the ditch.
+  choices:
+    - id: stay
+      text: Haul up with them and winter on Sheppey.
+      effects: [ { longphort: sheppey }, { add: { skill.cunning: 1 } } ]
+      result: The marsh is cold and wet and the English on the mainland watch you all winter from their beacon. In the spring you're first up the Thames, as the Dane promised, and the market at Lundenwic has hardly opened its shutters.
+    - id: no
+      text: Thank him, and go home for the winter like a sensible man.
+      result: The Dane shrugs. "Sensible men stay poor," he says. In the spring his ships are the first up the Thames.
+
+# ---- Jarrow ----
+- id: pl4_jarrow_books
+  kind: place
+  trigger: arrive
+  at: [jarrow]
+  once: true
+  weight: 25
+  requires: ["!service", seen.pl_jarrow, "yearsince.pl_jarrow >= 1"]
+  art: celtic_monastery
+  title: The road to the books
+  text: |
+    The library has gone. The monks have carried the wise man's books inland, the prior tells you, somewhere safe from the sea, and he says it to your face with some satisfaction.
+    [if flag.jarrow_books]You think of the books you saw last time, the wise man's hand in the margins. You would have liked to see them again.[/if]
+
+    That night a lay brother comes to your fire, a young man with a cough, who carried the books on the cart. He'll tell you the road for a pound of silver. He wants to go to Frisia and be a merchant, and never see a book again.
+  choices:
+    - id: buy
+      text: Pay him, and go and find the books.
+      effects: [ { add: { silver: -48, loot: 160, honour: -1 } }, { standing: { place: jarrow, n: -4 } }, { standing: { people: english, n: -1 } } ]
+      result: The books are in a stone church a day's walk up the Tyne, with an old priest who doesn't fight. The covers alone, silver and garnet, are worth more than your ship. The pages you leave in a heap on the church floor. The old priest is still kneeling over them when you go.
+    - id: ship
+      text: Give him passage to Frisia instead, and leave the books where they are.
+      effects: [ { add: { honour: 1 } }, { recruit: 1 } ]
+      result: He rows to Frisia with you, badly, coughing, and gets off at Dorestad with a borrowed knife and a lot of plans. The books stay up the Tyne. In a hundred years men will still be copying them.
+    - id: no
+      text: Send him away.
+      result: He goes back to the monastery in the dark. In the morning the prior is very cheerful.
+
+- id: pl4_jarrow_tide
+  kind: place
+  trigger: arrive
+  at: [jarrow]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_jarrow, "yearsince.pl_jarrow >= 2"]
+  art: bangor_field
+  title: Low water on the Tyne
+  text: |
+    The Tyne is a different river at low water: a channel a ship's width across, between mudflats a man sinks to his knees in. You've misjudged it. The ship grounds a bowshot from the monastery, and the tide's still going out.
+    [if flag.jarrow_scouted]You knew the tides here. You wrote them down. You read them wrong.[/if]
+
+    The Northumbrian reeve has been waiting for exactly this. His men come out along the flats on boards, with spears.
+  choices:
+    - id: fight
+      text: Over the side, onto the mud, and meet them.
+      danger: true
+      effects: [ { battle: { foe: northumbrian_levy, terrain: ford, men: 24, ratio: 0.9 } } ]
+    - id: wait
+      text: Stay aboard behind the shields, and wait for the flood.
+      check: { skill: shield, attr: end, difficulty: 6 }
+      success:
+        text: A whole tide behind the shields, with spears and stones coming in over the strakes. Then the flood lifts her, and you row out past the reeve's men standing in the water to their waists, shouting. Two of yours have holes in them. All of them are alive.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: A whole tide behind the shields, and the reeve's men get a fire-arrow into the sail. You row out on the flood with half a sail and four men fewer.
+        effects: [ { add: { crew.men: -4, crew.morale: -1 } } ]
+
+# ---- Streoneshalh ----
+- id: pl4_whitby_dream
+  kind: place
+  trigger: arrive
+  at: [whitby]
+  once: true
+  weight: 25
+  requires: ["!service", seen.pl_whitby, "yearsince.pl_whitby >= 1"]
+  art: celtic_monastery
+  title: The nun's dream
+  text: |
+    An old nun comes down the cliff path alone, with a stick, and stops in front of you on the shingle. She has seen your ship before, she says, through the reeve's son who has some Norse: in a dream, last winter, burning on the sea at night, with you at the steering-oar.
+    [if flag.whitby_song]"You're the one who asked to hear the cowherd's song," she says. "I sang it to you. That's why I came down."[elif flag.whitby_paid]"You're the one who made the abbess pay for her roof," she says. "That's why I came down."[/if]
+  choices:
+    - id: ask
+      text: Ask her what else she saw.
+      effects: [ { add: { hamingja: -1, skill.lore: 1 } } ]
+      result: She tells you, in English, and the reeve's son won't translate the end of it. He goes white and walks off down the shingle. The old nun climbs back up the path. You sail that evening, and you watch the sea all night, and nothing burns.
+    - id: gift
+      text: Give her silver for her prayers, against the dream.
+      effects: [ { add: { silver: -12, hamingja: 1 } } ]
+      result: She takes it, and looks at it, and gives it back. "It's not that kind of dream," she says, through the boy. Then she blesses you anyway, and goes back up the cliff.
+    - id: laugh
+      text: Laugh, and tell her every ship burns in the end.
+      result: She nods, as if that was the right answer, and goes back up the cliff. Your men are quiet for a day.
+
+- id: pl4_whitby_kings
+  kind: place
+  trigger: arrive
+  at: [whitby, york]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_whitby, "year >= 840", "year <= 866"]
+  art: muster
+  title: Two kings of Northumbria
+  text: |
+    The Northumbrians have two men calling themselves king this year, which is about the usual number. One of them holds the coast. The other holds a hall inland and wants forty men carried up the coast by sea, at night, to land behind his rival's back.
+
+    His thegn has silver, and a map scratched on a board, and a face that says he doesn't like asking heathens for anything.
+  choices:
+    - id: carry
+      text: Carry his men, for his silver.
+      effects: [ { add: { silver: 96 } }, { standing: { place: york, n: 1 } }, { standing: { place: whitby, n: -1 } } ]
+      result: You land them on the beach below the rival's hall at dawn, and row off before you find out how it goes. In the autumn you hear the rival is dead and the thegn's lord is king, for now. Northumbrian kings are mostly for now.
+    - id: sell
+      text: Take his silver, and then sell his plan to the other king.
+      check: { skill: cunning, attr: wit, difficulty: 7 }
+      success:
+        text: Both kings pay you. Neither one finds out. You have never been paid twice for one night's rowing before.
+        effects: [ { add: { silver: 160, honour: -2 } } ]
+      failure:
+        text: The other king's men take the silver, and then try to take you. You get away with the ship and not much else, and two Northumbrian kings who'd both like your head.
+        effects: [ { add: { honour: -2 } }, { standing: { place: york, n: -3 } }, { standing: { place: whitby, n: -3 } } ]
+    - id: no
+      text: Tell the thegn you don't fight in other men's feuds.
+      result: He rolls up his map, very slowly, and leaves. You've no doubt he'll find someone who does.
+
+# ---- Saint-Denis ----
+# AB 858: Louis, abbot of Saint-Denis, and his brother Gauzlin were captured by the Seine Danes; the ransom was 686
+# pounds of gold and 3,250 of silver, raised from the churches of the kingdom.
+- id: pl4_saint_denis_fair
+  kind: place
+  trigger: arrive
+  at: [saint_denis]
+  once: true
+  weight: 25
+  requires: ["!service", flag.saint_denis_scouted, "yearsince.pl_saint_denis >= 1"]
+  art: muster
+  title: The abbey's toll
+  text: |
+    The fair is on again, and the abbey's toll-men remember you from last year: the Northman who came as a trader. This year they want double. Northmen pay double, they say. It's a new rule. The abbot made it after the last time the Northmen came as something other than traders.
+  choices:
+    - id: pay
+      text: Pay double, and trade anyway.
+      effects: [ { add: { silver: -24, skill.trade: 1 } }, { goods: { id: wine, lots: 3 } } ]
+      result: You pay, and buy wine, and sell furs at a price that makes the double toll look cheap. The toll-men watch you all day. The merchants don't care what you are.
+    - id: cheat
+      text: Come in by the river gate, with the wine-carts, and pay nothing.
+      check: { skill: cunning, attr: agi, difficulty: 5 }
+      success:
+        text: Nobody looks under a wine-cart. You trade all day, and leave the same way, and the toll-men count Northmen at the main gate till dark and never find one.
+        effects: [ { goods: { id: wine, lots: 3 } }, { add: { silver: 12 } } ]
+      failure:
+        text: The toll-men look under the wine-cart. You leave the fair by the main gate, faster than you came, with your goods still in the abbey's cellar.
+        effects: [ { standing: { place: saint_denis, n: -2 } } ]
+
+- id: pl4_saint_denis_ransom
+  kind: place
+  trigger: arrive
+  at: [saint_denis, paris, rouen]
+  once: true
+  weight: 30
+  requires: ["!service", "year >= 857", "year <= 859"]
+  art: muster
+  title: The abbot's ransom
+  text: |
+    The Seine Danes have taken the abbot of Saint-Denis. Not raided his abbey: taken the man himself, Louis, the king's own cousin, and his brother with him, off a road in the night. They're holding them on an island in the river and asking a price that nobody can say without laughing.
+
+    Six hundred and eighty-six pounds of gold. Three thousand two hundred and fifty of silver. The Frankish king is stripping the altars of every church in his kingdom to pay it.
+
+    The Danes need ships to guard the island while the silver comes in. [if fame.living >= 60]They've asked for you by name.[else]They're asking any crew that comes up the river.[/if]
+  choices:
+    - id: guard
+      text: Guard the island, for a share of the ransom.
+      effects: [ { add: { loot: 240 } }, { standing: { people: frankish, n: -2 } }, { deed: { type: deed, text: "Guarded the abbot of Saint-Denis for his ransom", weight: 3, witnesses: 300 } } ]
+      result: |
+        It comes in all summer, by the cartload, under guard: crosses cut up for the weight, chalices hammered flat, the gold off the altar of every church from Rouen to Reims. The abbot sits on the island and watches it come, and doesn't eat much. Your share is a fraction of a fraction. It is the most silver you have ever seen.
+    - id: talk
+      text: Go and look at the abbot.
+      effects: [ { add: { skill.lore: 1 } } ]
+      result: He's a thin, clever man of fifty, with ink on his fingers, who asks you in careful Latin, through a priest, what you think he's worth. You say you don't know. He says, "Neither does the king. We are both finding out."
+    - id: go
+      text: Leave the Seine to the Danes this summer.
+      result: You go back down the river. The carts of silver go up it all summer, past you, under guard.
+
+# ---- Breiðafjörðr ----
+- id: pl4_breidafjordr_bounds
+  kind: place
+  trigger: arrive
+  at: [breidafjordr]
+  once: true
+  weight: 25
+  requires: ["!service", seen.is_first_winter, "yearsince.is_first_winter >= 1"]
+  art: home_fjord
+  title: Where your land ends
+  text: |
+    The man who took the land next to yours, across the river, comes over with his sons and a long stick, and walks the bank with you, looking for the stone the two of you set up in the first spring. It isn't there. He thinks you moved it. You think the river did.
+
+    In Norway the thing would settle it. There isn't a thing here yet. There's him, and you, and the sons, and the stick.
+  choices:
+    - id: share
+      text: Set a new stone halfway, and share the meadow.
+      effects: [ { add: { honour: 1 } }, { set: flag.is_bounds_shared } ]
+      result: You set it together, and drink on it, and his sons help your men with the hay. In ten years the river moves again. By then you're kin by marriage, and nobody cares.
+    - id: hold
+      text: Put the stone back where you remember it, and tell him to fight you if he disagrees.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: He looks at you, and at your men, and decides the meadow isn't worth it. He goes home. He doesn't come over again for a year. When he does, he brings a cheese, and doesn't mention the stone.
+        effects: [ { add: { provisions: 40 } } ]
+      failure:
+        text: His eldest son hits you with the stick. It ends with two broken heads and a feud the whole fjord takes sides in, and in the spring men are already calling it the meadow-killing, though nobody's died yet.
+        effects: [ { injury: cracked_ribs }, { set: flag.is_feud } ]
+
+- id: pl4_breidafjordr_whale
+  kind: place
+  trigger: arrive
+  at: [breidafjordr, island]
+  once: true
+  weight: 20
+  requires: ["!service", seen.is_first_winter]
+  art: home_fjord
+  title: The whale
+  text: |
+    A whale comes ashore in the spring storms, on the strand between your land and your neighbour's, a great grey hill of meat and oil and bone. It is the richest thing either of you has seen since you came here. It is lying exactly on the line.
+    [if flag.is_feud]Your neighbour's sons are already on it with knives, and looking at you.[elif flag.is_bounds_shared]Your neighbour is already walking over with his sons and his knives, and waving.[/if]
+  choices:
+    - id: halve
+      text: Cut it down the middle, one half each.
+      effects: [ { goods: { id: oil, lots: 3 } }, { add: { provisions: 100 } }, { clear: flag.is_feud } ]
+      result: It takes four days and every man and woman on both farms. By the end you all stink the same and nobody can remember who started the feud. The oil lights both halls all winter.
+    - id: claim
+      text: Claim it all. It came ashore on your stretch.
+      check: { skill: speech, attr: pre, difficulty: 6 }
+      success:
+        text: Your neighbour argues, and gives way, and cuts a single steak off the tail for his trouble. You render it all. It's a fortune in oil, and a neighbour who'll remember.
+        effects: [ { goods: { id: oil, lots: 6 } }, { add: { provisions: 150 } } ]
+      failure:
+        text: It ends with spears on the strand, over a dead whale, while the gulls eat it from the other end. You get a third of it in the end. Everyone in the fjord hears why.
+        effects: [ { goods: { id: oil, lots: 2 } }, { add: { honour: -1 } }, { set: flag.is_feud } ]
+
+# ---- the places with two scenes: a third, that remembers ----
+- id: pl4_gotland
+  kind: place
+  trigger: arrive
+  at: [gotland]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_gotland, "yearsince.pl_gotland >= 1"]
+  art: muster
+  title: The hoard in the byre
+  text: |
+    A Gotland farmer you traded with last time takes you to his byre, shuts the door, and digs up a pot from under the floor. It's full of silver: coins with writing like worms on them, from the far side of the world, from the caliph's mints, hundreds of them. His grandfather buried it. His father added to it. He adds to it every year.
+
+    He wants to sell you a little of it, quietly, for Norse goods. He doesn't trust the Gotland markets. Everyone there knows what everyone has.
+  choices:
+    - id: buy
+      text: Trade him your goods for the silver, by weight.
+      requires: ["cargo.lots > 0"]
+      effects: [ { lose_cargo: 2 }, { add: { silver: 90, skill.trade: 1 } } ]
+      result: He weighs the coins on his own scales, and nicks every one with his knife to show you it's good right through. You'll learn later that the silver came from the east, by the river road, up from the Caspian. You only learn it because you ask.
+    - id: ask
+      text: Ask him where the coins come from.
+      effects: [ { add: { skill.lore: 1 } }, { know: birka } ]
+      result: From the east, he says. Up the rivers, from the Rus, who get them from the Bulghars, who get them from the Khazars, who get them from the caliph, for furs and slaves. Every coin in the pot has been further than any man on Gotland. He puts the pot back under the floor.
+
+- id: pl4_faroes
+  kind: place
+  trigger: arrive
+  at: [faroes]
+  once: true
+  weight: 20
+  requires: ["!service", seen.f_landfall, "yearsince.f_landfall >= 1"]
+  art: home_fjord
+  title: The grind
+  text: |
+    You come into the sound on the morning the whales come in: a school of pilot whales, hundreds, driven into the bay by every boat on the islands, the men shouting and beating the water with stones on ropes. When they reach the shallows the killing starts, and the sea turns red to the far shore.
+
+    Everyone on the islands has a share by an old reckoning: the men in the boats, the farm that owns the beach, the poor, the church that isn't there yet. A Faroe man shouts at you to bring your boats in. It's the law. Every boat that helps has a share.
+  choices:
+    - id: help
+      text: Get your boats in, and help.
+      effects: [ { add: { provisions: 200 } }, { goods: { id: oil, lots: 2 } }, { standing: { place: faroes, n: 3 } } ]
+      result: By evening you're red to the shoulders and so is everyone else, and the Faroe men are cutting your share out with the rest by the old reckoning, and it's a great deal of whale. You eat whale until you can't look at it, all the way home.
+    - id: watch
+      text: Watch from the ship.
+      result: The Faroe men look at you sideways for the rest of your stay. A man who watches the grind and doesn't help is a strange man, on the islands.
+
+- id: pl4_clonmacnoise
+  kind: place
+  trigger: arrive
+  at: [clonmacnoise]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_clonmacnoise, "yearsince.pl_clonmacnoise >= 1"]
+  art: celtic_monastery
+  title: The school of Ciarán
+  text: |
+    Clonmacnoise is a town as much as a monastery: students from every kingdom in Ireland, and from Britain and Frankia, studying in the shadow of the round tower. One of them, a sharp-faced Saxon boy, wants to buy his way home: his family's in East Anglia, and he's heard Northmen sail there.
+  choices:
+    - id: take
+      text: Take him home to East Anglia, for whatever he can pay.
+      effects: [ { add: { silver: 24 } }, { know: gipeswic }, { standing: { place: clonmacnoise, n: 1 } } ]
+      result: He pays in a silver book-clasp he certainly didn't own, and talks the whole voyage in four languages, and gets off at Gipeswic without saying goodbye. A year later you hear he's a bishop's clerk, and writes letters about Northmen.
+    - id: sell
+      text: Take him aboard, and sell him at Dublin.
+      effects: [ { captives: 1 }, { add: { honour: -2 } }, { standing: { place: clonmacnoise, n: -3 } } ]
+      result: He works out what's happening somewhere off the Irish coast, and stops talking, and doesn't start again.
+
+- id: pl4_hamwic
+  kind: place
+  trigger: arrive
+  at: [hamwic]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_hamwic, "yearsince.pl_hamwic >= 1"]
+  art: muster
+  title: The king's reeve at Hamwic
+  text: |
+    The West Saxon king's reeve at Hamwic has noticed you, which is his job. He invites you to his hall, gives you good ale, and asks, as if it were small talk, whether you'd consider keeping other Northmen off this coast. The king pays well, he says. The king is tired of paying the other way.
+  choices:
+    - id: yes
+      text: Take the king's silver, and watch the coast for a summer.
+      effects: [ { add: { silver: 72 } }, { standing: { place: hamwic, n: 3 } }, { standing: { people: english, n: 1 } } ]
+      result: You watch the coast. Twice you see Danish sails and twice they see yours on the reeve's beach and keep going. The reeve pays on the nail. The Danes, when they hear, call you the king's dog. You've been called worse for less.
+    - id: no
+      text: Tell him you don't keep wolves off sheep you might want yourself.
+      result: He laughs, and pours more ale, and says he expected as much. He watches you go with the face of a man adding up a sum.
+
+- id: pl4_cork
+  kind: place
+  trigger: arrive
+  at: [cork]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_cork, "yearsince.pl_cork >= 1"]
+  art: celtic_monastery
+  title: The marsh channels
+  text: |
+    The channels through the marsh at Corcach shift every winter, and a man from the monastery's fishing weirs offers to pilot you through them. For a price. Or he'll pilot you somewhere else entirely, to the Northmen's camp on the far side of the marsh, who'd pay him more for a ship full of men who don't know the channels.
+  choices:
+    - id: pay
+      text: Pay him well, and watch him closely.
+      effects: [ { add: { silver: -12, skill.seamanship: 1 } } ]
+      result: He takes you through, honestly, because you paid him more than the Northmen would, and because one of your men sat behind him the whole way with a knife. You learn the channels. They'll be different next year.
+    - id: own
+      text: Find your own way through.
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: You find it, by sounding with an oar every ship's length, and the fishing-weir man watches you do it from his boat with an expression of real disappointment.
+        effects: [ { add: { skill.seamanship: 1 } } ]
+      failure:
+        text: You go aground on a mudbank, and the Corcach Northmen come out in boats to see who's stuck. It costs you a pound to get off it again without a fight.
+        effects: [ { add: { silver: -48 } } ]
+
+- id: pl4_jumieges
+  kind: place
+  trigger: arrive
+  at: [jumieges, fontenelle]
+  once: true
+  weight: 20
+  requires: ["!service", { any: [seen.pl_jumieges, seen.pl_fontenelle] }, "year >= 845"]
+  art: celtic_monastery
+  title: The empty abbey
+  text: |
+    The monks have gone. They took their saint's bones and their books in carts, inland, years ago, and left the abbey to the river and the Northmen. The great church is still standing, roofless, with grass on the altar and a Danish crew's washing hung between the pillars.
+
+    The Danes are wintering in it. They offer you the nave, and a cask of the monks' wine they found in the cellars, and a share of the work: the farms round about are still paying the abbey's rents, and now they pay them to the Danes.
+  choices:
+    - id: stay
+      text: Take the nave, and a share of the rents.
+      effects: [ { add: { silver: 48 } }, { longphort: jumieges } ]
+      result: The farmers come in with their rents at Martinmas, as they always have, and pay you instead of the cellarer, and look at the grass on the altar, and say nothing. It's the easiest silver you've ever taken.
+    - id: no
+      text: Drink their wine, and go back to the river.
+      result: The Danes are good company, and the monks' wine is very good indeed. You leave in the morning with a headache and the feeling of having seen something end.
+
+- id: pl4_fontenelle
+  kind: place
+  trigger: arrive
+  at: [fontenelle]
+  once: true
+  weight: 20
+  requires: ["!service", seen.pl_fontenelle, "yearsince.pl_fontenelle >= 1", "year <= 851"]
+  art: celtic_monastery
+  title: The monks pay to stay
+  text: |
+    The monks of Fontenelle haven't run, yet. Their abbot comes down to the river with a chest and a proposal: a payment each summer, from the abbey to whatever Northman protects it from the other Northmen. Nobody has thought of it before. He has drawn up a document, in Latin, which he would like you to sign.
+  choices:
+    - id: sign
+      text: Make your mark on it.
+      effects: [ { add: { silver: 60 } }, { standing: { place: fontenelle, n: 3 } } ]
+      result: You make a ship on the parchment, since you can't write. The abbot writes your name beside it, spelled wrong. It holds two summers. In 852 the Danes burn Fontenelle anyway, and the document with it.
+    - id: take
+      text: Take the chest, and tell him to keep his parchment.
+      effects: [ { add: { loot: 90, honour: -1 } }, { standing: { place: fontenelle, n: -4 } } ]
+      result: He gives you the chest. He keeps the parchment. He goes up the hill to the abbey, and the next spring the monks are gone, saint and all.
+
+# ---- hooks: why a life goes there (docs/FRAME-PLACES-EAST.md, "Hooks") ----
+- id: pl4_hook_alt_clut
+  kind: place
+  trigger: arrive
+  at: [iona, man, whithorn, dublin]
+  once: true
+  chance: 0.4
+  requires: ["!service", "!known.alt_clut", "year >= 832"]
+  art: muster
+  title: The rock on the Clyde
+  text: |
+    A Briton in the harbour, a trader in hides who has lost a finger to frost, talks about home over the ale: a rock in the Clyde, two peaks, with a king on top who thinks no one can touch him. He has a well up there that has never failed. He has a treasury, too, full of everything the Britons have taken from the Picts and the English for three hundred years.
+  choices:
+    - id: listen
+      text: Ask him the way up the Clyde.
+      effects: [ { know: alt_clut } ]
+      result: He draws it in the spilled ale on the table, the firth and the river and the rock, and wipes it out with his sleeve before anyone else can see.
+
+- id: pl4_hook_tarbat
+  kind: place
+  trigger: arrive
+  at: [orkney, shetland, skye]
+  once: true
+  chance: 0.4
+  requires: ["!service", "!known.tarbat", "year >= 832"]
+  art: muster
+  title: The carved stones
+  text: |
+    An Orkney man who went south along the Pictish coast last summer tells it at the fire: a monastery on a headland in the Moray Firth, with stones carved so fine you'd swear the beasts on them move, and silverwork in the church that the Picts make better than anyone. And horsemen, he says, a great many horsemen. That's why he came back.
+  choices:
+    - id: listen
+      text: Ask him how far south.
+      effects: [ { know: tarbat } ]
+      result: Three days, with a fair wind, he says. And don't land where the dunes are flat. That's where the horses come from.
+
+- id: pl4_hook_skellig
+  kind: place
+  trigger: arrive
+  at: [cork, dublin, conaille]
+  once: true
+  chance: 0.4
+  requires: ["!service", "!known.skellig", "year >= 832"]
+  art: celtic_monastery
+  title: The monks on the rock
+  text: |
+    An Irish fisherman mending nets on the quay tells you about the rock of Michael, off the far end of Munster: six old men living on a ledge in the Atlantic, six hundred steps above the sea, praying for the whole world. A Northman took their abbot once and starved him for a ransom that never came. "Nothing up there to take," the fisherman says. "That's the thing. Nothing at all."
+  choices:
+    - id: listen
+      text: Ask him where it lies.
+      effects: [ { know: skellig } ]
+      result: South and west, past the last headland of Munster, where the land stops. You'll see it from the mainland, he says. Everybody does. Hardly anybody goes.
+
+- id: pl4_hook_saint_denis
+  kind: place
+  trigger: arrive
+  at: [rouen, paris, jumieges]
+  once: true
+  chance: 0.5
+  requires: ["!service", "!known.saint_denis", "year >= 841"]
+  art: muster
+  title: The fair at Saint-Denis
+  text: |
+    A Frisian wine merchant on the river is going up to the fair at Saint-Denis, the richest fair in Frankia, in the abbey of the saint who walked six miles with his own head in his hands. Anyone can trade there, he says, if they pay the abbey's toll. Even a Northman. Especially a Northman with furs.
+  choices:
+    - id: listen
+      text: Ask him the road.
+      effects: [ { know: saint_denis } ]
+      result: Up the river past Paris, he says, a morning's walk north of the city. Follow the carts. He looks at your sword. Leave that in the ship, he says, if you want to come back.

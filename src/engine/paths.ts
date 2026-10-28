@@ -139,6 +139,8 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
   switch (ns) {
     case 'flag': return state.flags[a!] ?? 0;
     case 'seen': return state.seen[a!] !== undefined;
+    /** Lots of one good in the hold or the sea-chest: "goods.amber > 0". */
+    case 'goods': return state.cargo?.[a!]?.lots ?? 0;
     /** Years since a scene was seen (99 if never): "yearsince.k_ubbi >= 1" is next year or later. */
     case 'yearsince': return state.seen[a!] !== undefined ? dateOf(state.day).year - dateOf(state.seen[a!]!).year : 99;
     case 'attr': return effAttr(state, content, a as Attr);
@@ -200,6 +202,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
   switch (ns) {
     case 'flag': return content.flags[a!] ? null : `undeclared flag "${a}" (declare it in content/registry/flags.yaml)`;
     case 'seen': case 'yearsince': return content.scenes[a!] ? null : `"${path}": no scene "${a}"`;
+    case 'goods': return content.goods[a!] && !b ? null : `unknown good "${a}"`;
     case 'attr': return (ATTRS as readonly string[]).includes(a!) && !b ? null : `unknown attribute "${a}"`;
     case 'skill': return (SKILLS as readonly string[]).includes(a!) && !b ? null : `unknown skill "${a}"`;
     case 'wound': return content.injuries[a!] ? null : `unknown injury "${a}"`;

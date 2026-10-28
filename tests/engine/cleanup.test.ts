@@ -41,3 +41,16 @@ describe('the cleanup', () => {
     expect(s.flags.betrothed).toBeUndefined();
   });
 });
+
+describe('the thin places', () => {
+  it('goods can be read by kind and taken out of the hold', () => {
+    const s = sandboxGame(3);
+    applyEffects(s, content, new RngCursor(seedRng(1)), [{ goods: { id: 'amber', lots: 2 } }]);
+    const had = s.cargo?.amber?.lots ?? 0;
+    expect(had).toBeGreaterThan(0);
+    applyEffects(s, content, new RngCursor(seedRng(1)), [{ unload: { id: 'amber', lots: 1 } }]);
+    expect(s.cargo?.amber?.lots ?? 0).toBe(had - 1);
+    applyEffects(s, content, new RngCursor(seedRng(1)), [{ unload: { id: 'amber', lots: 9 } }]);
+    expect(s.cargo?.amber).toBeUndefined();
+  });
+});

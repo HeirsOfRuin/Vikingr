@@ -406,3 +406,19 @@ ga_landed: { description: "Was given land in the Vale of York by Hálfdan" }
 ga_sold_claim: { description: "Sold his claim to land in Northumbria to a Dane from Jutland", saga: true }
 ga_baptised: { description: "Was baptized at Aller with Guthrum", saga: true }
 ga_refused_aller: { description: "Refused the baptism at Aller, and went to the new army on the Thames", saga: true }
+# the thin places (docs/FRAME-PLACES-EAST.md, step 1): what the first landfall left behind
+truso_rode: { description: "Rode for a dead man's silver at Truso, and took a heap" }
+sheppey_bread: { description: "Took the abbess's bread on Sheppey, and went" }
+sheppey_robbed: { description: "Took the minster's silver on Sheppey" }
+jarrow_books: { description: "Saw Bede's books at Jarrow" }
+whitby_song: { description: "Heard the cowherd's song at Streoneshalh" }
+whitby_paid: { description: "Made the minster at Streoneshalh pay for its roof" }
+applecross_kept: { description: "Kept the saint's peace at Apurcrossan" }
+applecross_robbed: { description: "Robbed the sanctuary at Apurcrossan" }
+tarbat_stones: { description: "Stood in front of the Pictish stones at Tarbat" }
+skellig_climbed: { description: "Climbed the six hundred steps of the Skellig" }
+alt_clut_pledge: { description: "Swapped a sworn man for the king of Strathclyde's son, for a summer", saga: true }
+gall_friend: { description: "Swapped men in friendship with Caittil of the Gall-Gáedil", saga: true }
+skellig_saved: { description: "Brought a Skellig monk through a fever", saga: true }
+is_bounds_shared: { description: "Shared the meadow with his neighbour in Breiðafjörðr" }
+is_feud: { description: "Feuding with his neighbour in Breiðafjörðr" }

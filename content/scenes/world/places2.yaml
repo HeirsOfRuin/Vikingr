@@ -123,7 +123,7 @@
       check: { skill: cunning, attr: agi, difficulty: 6 }
       success:
         text: You don't win the big heap. Nobody from outside ever does. But you get the third, a pile of cloth and a silver cup and a sword with its edge gone, and the Este cheer you as if you'd won, because you rode like a madman and didn't fall off.
-        effects: [ { add: { silver: 48 } }, { standing: { place: truso, n: 2 } }, { deed: { type: deed, text: "Rode for a dead man's silver at Truso, and took a heap", weight: 1 } } ]
+        effects: [ { add: { silver: 48 } }, { standing: { place: truso, n: 2 } }, { deed: { type: deed, text: "Rode for a dead man's silver at Truso, and took a heap", weight: 1 } }, { set: flag.truso_rode } ]
       failure:
         text: The horse knows the road better than you do, and doesn't like you, and puts you into a ditch halfway along it. You come back on foot, covered in mud, with your ribs on fire. The Este are delighted.
         effects: [ { injury: cracked_ribs }, { standing: { place: truso, n: 1 } } ]
@@ -281,11 +281,11 @@
   choices:
     - id: bread
       text: Take the bread, thank her, and go.
-      effects: [ { add: { provisions: 60, honour: 1 } }, { standing: { place: sheppey, n: 3 } } ]
+      effects: [ { add: { provisions: 60, honour: 1 } }, { standing: { place: sheppey, n: 3 } }, { set: flag.sheppey_bread } ]
       result: The abbess watches you go from the beach. You think she might be praying for you. It's hard to tell, with Christians, whether that's a kindness or a threat.
     - id: silver
       text: Thank her for the bread. Then ask for the church's silver as well.
-      effects: [ { add: { loot: 80, honour: -1 } }, { standing: { place: sheppey, n: -3 } } ]
+      effects: [ { add: { loot: 80, honour: -1 } }, { standing: { place: sheppey, n: -3 } }, { set: flag.sheppey_robbed } ]
       result: She gives it you. She doesn't argue, because she can count your men. But she looks at you as she hands it over, and says something in English, quietly, that makes the reeve go white.
     - id: warn
       text: Laugh, and tell her you'll be back for the rest.

@@ -171,6 +171,15 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       if (p?.raid) startBattle(state, content, { foe: p.raid.foe, men: Math.round(p.raid.defenders * HOME_ATTACK), terrain: 'rampart', context: 'scene', place: at!, win: e.home_defence.win, lose: e.home_defence.lose });
     } else if ('fleet' in e) joinFleet(state, content, e.fleet);
     else if ('goods' in e) { const line = stowGoods(state, content, e.goods.id, e.goods.lots); (state.notes ??= []).push(line); journal(state, line); }
+    else if ('unload' in e) {
+      const c = state.cargo?.[e.unload.id];
+      if (c) {
+        const n = Math.min(c.lots, e.unload.lots);
+        c.cost -= (c.cost / c.lots) * n;
+        c.lots -= n;
+        if (c.lots <= 0) delete state.cargo![e.unload.id];
+      }
+    }
     else if ('buy_land' in e) { if (state.at && !buyBlock(state, content, state.at)) buyLand(state, content, state.at); }
     else if ('fleet_end' in e) leaveFleet(state, content);
     else if ('skald' in e) hireSkald(state, e.skald);

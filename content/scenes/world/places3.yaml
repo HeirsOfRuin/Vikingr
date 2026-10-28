@@ -18,7 +18,7 @@
   choices:
     - id: books
       text: Ask to see the books of the wise man who lived here.
-      effects: [ { add: { skill.lore: 1 } } ]
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.jarrow_books } ]
       result: |
         An old monk shows you a book, in a room so quiet you can hear your own heart. Bede, he says. He wrote down everything that ever happened to the English, and worked out when Easter falls, and how the tides move with the moon. You ask what use that is. He says: you came up the river on the flood, didn't you? You did.
     - id: count
@@ -44,12 +44,12 @@
   choices:
     - id: song
       text: Listen to the cowherd's song, all of it.
-      effects: [ { add: { skill.lore: 1, skill.speech: 1 } } ]
+      effects: [ { add: { skill.lore: 1, skill.speech: 1 } }, { set: flag.whitby_song } ]
       result: |
         It's about the making of the world: heaven as a roof over the children of men. It isn't so different from what a skald might sing about Ymir and the gods. You find yourself saying it over on the voyage south. Your steersman asks what it is, and you can't quite explain.
     - id: silver
       text: Tell the nun the minster can pay to keep its roof.
-      effects: [ { add: { loot: 40, honour: -1 } }, { standing: { place: whitby, n: -2 } } ]
+      effects: [ { add: { loot: 40, honour: -1 } }, { standing: { place: whitby, n: -2 } }, { set: flag.whitby_paid } ]
       result: The abbess pays without argument, in old coins with English kings on them, and watches you all the way down the cliff path. They will remember your face here. Nuns, you find, have long memories.
     - id: go
       text: Water the ships at the river, and go.
@@ -135,12 +135,12 @@
   choices:
     - id: respect
       text: Water the ships, and leave the sanctuary as you found it.
-      effects: [ { add: { hamingja: 1, honour: 1 } }, { standing: { people: gael, n: 1 } } ]
+      effects: [ { add: { hamingja: 1, honour: 1 } }, { standing: { people: gael, n: 1 } }, { set: flag.applecross_kept } ]
       result: |
         The monks bring you fish and bread down to the shore without being asked, and stand watching you eat it. An old one blesses your ship as you go. [if man.hallvard.alive]Hallvard spits over the side, to be on the safe side. Then he touches the prow, to be on the other safe side.[else]Your steersman spits over the side, to be on the safe side. Then he touches the prow, to be on the other safe side.[/if]
     - id: take
       text: A curse is a word. Take what they have.
-      effects: [ { add: { loot: 60 } }, { standing: { place: applecross, n: -4 } }, { standing: { people: gael, n: -1 } } ]
+      effects: [ { add: { loot: 60 } }, { standing: { place: applecross, n: -4 } }, { standing: { people: gael, n: -1 } }, { set: flag.applecross_robbed } ]
       result: |
         They have very little: a silver-bound book, a bell, a chalice that is mostly bronze. You take it. On the way out of the bay the wind dies, and you row for a day with the stone cross watching you over your shoulder the whole way.
     - id: ask
@@ -178,7 +178,7 @@
         text: Your guide takes you a long way round, very slowly, to see a great many cows. Later, you realise that was the point.
     - id: stones
       text: Stand in front of the tallest stone, and try to read it.
-      effects: [ { add: { skill.lore: 1 } } ]
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.tarbat_stones } ]
       result: |
         The beasts look back at you. A monk tells you the Picts were carving these before they were Christians, and carved crosses on them after, and kept the beasts. You think of the stones at home, with their ships and their serpents, and wonder if your grandsons will carve crosses on them.
 
@@ -389,7 +389,7 @@
       success:
         text: |
           The landing is a single rock with the swell lifting and dropping the boat six feet at a time. You jump. You climb. At the top there are six old men, a garden the size of a cloak, and the whole Atlantic. One of them offers you water from a stone cistern. There is nothing to take. You understand, suddenly, why they're here. You don't share it with your men on the way down.
-        effects: [ { add: { hamingja: 1, skill.lore: 1 } }, { deed: { type: deed, text: "Climbed the six hundred steps of the Skellig", weight: 1 } } ]
+        effects: [ { add: { hamingja: 1, skill.lore: 1 } }, { deed: { type: deed, text: "Climbed the six hundred steps of the Skellig", weight: 1 } }, { set: flag.skellig_climbed } ]
       failure:
         text: The swell at the landing is too much. You try three times and nearly lose the boat on the third, and the monks watch you from the steps, unmoving, until you give up and row back.
     - id: look

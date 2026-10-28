@@ -117,6 +117,8 @@ const baseEffect = z.union([
   /** He buys land where he stands, as the Land action does, if he can (docs/FRAME-FLEET-843.md §3). */
   z.object({ buy_land: z.literal(true) }).strict(),
   z.object({ fleet_end: z.literal(true) }).strict(),
+  /** Lots of one good taken out of the hold: sold, seized or lost (the thin places, docs/FRAME-PLACES-EAST.md). */
+  z.object({ unload: z.object({ id, lots: z.number().int().min(1) }).strict() }).strict(),
   /** The army's winter camp moves: the captain he rows for winters there from now on (docs/FRAME-865.md). */
   z.object({ camp: id }).strict(),
   /** A skald joins his household by name, or leaves it, and why (playtest 8). */
