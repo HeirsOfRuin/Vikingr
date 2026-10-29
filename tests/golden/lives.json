@@ -1,0 +1,492 @@
+[
+ {
+  "key": "830 younger_son raider seed 101",
+  "years": [
+   {
+    "y": 830,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 36,
+    "fame": 0,
+    "scenes": 1
+   },
+   {
+    "y": 831,
+    "at": "home_fjord",
+    "silver": 17,
+    "men": 27,
+    "fame": 5,
+    "scenes": 32
+   },
+   {
+    "y": 832,
+    "at": "home_fjord",
+    "silver": 105,
+    "men": 18,
+    "fame": 15,
+    "scenes": 49
+   },
+   {
+    "y": 833,
+    "at": "home_fjord",
+    "silver": 174,
+    "men": 0,
+    "fame": 41,
+    "scenes": 84
+   },
+   {
+    "y": 834,
+    "at": "home_fjord",
+    "silver": 104,
+    "men": 2,
+    "fame": 78,
+    "scenes": 104
+   },
+   {
+    "y": 835,
+    "at": "home_fjord",
+    "silver": 140,
+    "men": 4,
+    "fame": 104,
+    "scenes": 125
+   },
+   {
+    "y": 836,
+    "at": "home_fjord",
+    "silver": 285,
+    "men": 9,
+    "fame": 125,
+    "scenes": 134
+   },
+   {
+    "y": 837,
+    "at": "home_fjord",
+    "silver": 267,
+    "men": 2,
+    "fame": 158,
+    "scenes": 142
+   }
+  ]
+ },
+ {
+  "key": "830 outlaw coward seed 102",
+  "years": [
+   {
+    "y": 830,
+    "at": "home_fjord",
+    "silver": 12,
+    "men": 8,
+    "fame": 0,
+    "scenes": 1
+   },
+   {
+    "y": 831,
+    "at": "orkney",
+    "silver": 10,
+    "men": 30,
+    "fame": 5,
+    "scenes": 18
+   },
+   {
+    "y": 831,
+    "at": "conaille",
+    "silver": 0,
+    "men": 0,
+    "fame": 5,
+    "scenes": 27,
+    "dead": "battle"
+   }
+  ]
+ },
+ {
+  "key": "830 freedman reckless seed 103",
+  "years": [
+   {
+    "y": 830,
+    "at": "home_fjord",
+    "silver": 18,
+    "men": 36,
+    "fame": 0,
+    "scenes": 1
+   },
+   {
+    "y": 831,
+    "at": "home_fjord",
+    "silver": 47,
+    "men": 29,
+    "fame": 18,
+    "scenes": 25
+   },
+   {
+    "y": 832,
+    "at": "home_fjord",
+    "silver": 55,
+    "men": 26,
+    "fame": 29,
+    "scenes": 42
+   },
+   {
+    "y": 833,
+    "at": "home_fjord",
+    "silver": 31,
+    "men": 26,
+    "fame": 32,
+    "scenes": 49
+   },
+   {
+    "y": 833,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 0,
+    "fame": 42,
+    "scenes": 53,
+    "dead": "battle"
+   }
+  ]
+ },
+ {
+  "key": "843 younger_son raider seed 104",
+  "years": [
+   {
+    "y": 843,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 36,
+    "fame": 0,
+    "scenes": 134
+   },
+   {
+    "y": 844,
+    "at": "noirmoutier",
+    "silver": 9,
+    "men": 30,
+    "fame": 0,
+    "scenes": 150
+   },
+   {
+    "y": 845,
+    "at": "home_fjord",
+    "silver": 294,
+    "men": 24,
+    "fame": 49,
+    "scenes": 188
+   },
+   {
+    "y": 846,
+    "at": "home_fjord",
+    "silver": 366,
+    "men": 29,
+    "fame": 106,
+    "scenes": 216
+   },
+   {
+    "y": 847,
+    "at": "home_fjord",
+    "silver": 324,
+    "men": 1,
+    "fame": 127,
+    "scenes": 232
+   },
+   {
+    "y": 848,
+    "at": "home_fjord",
+    "silver": 172,
+    "men": 2,
+    "fame": 145,
+    "scenes": 242
+   },
+   {
+    "y": 849,
+    "at": "home_fjord",
+    "silver": 189,
+    "men": 12,
+    "fame": 164,
+    "scenes": 245
+   },
+   {
+    "y": 850,
+    "at": "home_fjord",
+    "silver": 297,
+    "men": 28,
+    "fame": 181,
+    "scenes": 250
+   }
+  ]
+ },
+ {
+  "key": "843 freedman coward seed 105",
+  "years": [
+   {
+    "y": 843,
+    "at": "home_fjord",
+    "silver": 18,
+    "men": 36,
+    "fame": 0,
+    "scenes": 134
+   },
+   {
+    "y": 844,
+    "at": "noirmoutier",
+    "silver": 107,
+    "men": 30,
+    "fame": 0,
+    "scenes": 150
+   },
+   {
+    "y": 845,
+    "at": "home_fjord",
+    "silver": 294,
+    "men": 0,
+    "fame": 28,
+    "scenes": 189
+   },
+   {
+    "y": 846,
+    "at": "home_fjord",
+    "silver": 72,
+    "men": 13,
+    "fame": 43,
+    "scenes": 203
+   },
+   {
+    "y": 847,
+    "at": "home_fjord",
+    "silver": 192,
+    "men": 10,
+    "fame": 54,
+    "scenes": 223
+   },
+   {
+    "y": 848,
+    "at": "home_fjord",
+    "silver": 18,
+    "men": 6,
+    "fame": 81,
+    "scenes": 241
+   },
+   {
+    "y": 849,
+    "at": "home_fjord",
+    "silver": 193,
+    "men": 10,
+    "fame": 110,
+    "scenes": 254
+   },
+   {
+    "y": 850,
+    "at": "home_fjord",
+    "silver": 152,
+    "men": 13,
+    "fame": 129,
+    "scenes": 260
+   }
+  ]
+ },
+ {
+  "key": "865 outlaw raider seed 106",
+  "years": [
+   {
+    "y": 865,
+    "at": "karmoy",
+    "silver": 12,
+    "men": 8,
+    "fame": 0,
+    "scenes": 197
+   },
+   {
+    "y": 866,
+    "at": "gipeswic",
+    "silver": 12,
+    "men": 30,
+    "fame": 0,
+    "scenes": 207
+   },
+   {
+    "y": 867,
+    "at": "york",
+    "silver": 15,
+    "men": 30,
+    "fame": 5,
+    "scenes": 211
+   },
+   {
+    "y": 868,
+    "at": "nottingham",
+    "silver": 55,
+    "men": 20,
+    "fame": 8,
+    "scenes": 216
+   },
+   {
+    "y": 869,
+    "at": "york",
+    "silver": 7,
+    "men": 26,
+    "fame": 10,
+    "scenes": 219
+   },
+   {
+    "y": 870,
+    "at": "thetford",
+    "silver": 31,
+    "men": 26,
+    "fame": 13,
+    "scenes": 224
+   },
+   {
+    "y": 871,
+    "at": "reading",
+    "silver": 31,
+    "men": 9,
+    "fame": 13,
+    "scenes": 230
+   },
+   {
+    "y": 872,
+    "at": "london",
+    "silver": 91,
+    "men": 23,
+    "fame": 12,
+    "scenes": 233
+   }
+  ]
+ },
+ {
+  "key": "865 younger_son homebody seed 107",
+  "years": [
+   {
+    "y": 865,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 36,
+    "fame": 0,
+    "scenes": 197
+   },
+   {
+    "y": 866,
+    "at": "gipeswic",
+    "silver": 0,
+    "men": 30,
+    "fame": 0,
+    "scenes": 206
+   },
+   {
+    "y": 867,
+    "at": "york",
+    "silver": 3,
+    "men": 29,
+    "fame": 3,
+    "scenes": 210
+   },
+   {
+    "y": 868,
+    "at": "nottingham",
+    "silver": 43,
+    "men": 28,
+    "fame": 6,
+    "scenes": 214
+   },
+   {
+    "y": 869,
+    "at": "york",
+    "silver": 43,
+    "men": 28,
+    "fame": 5,
+    "scenes": 216
+   },
+   {
+    "y": 870,
+    "at": "thetford",
+    "silver": 43,
+    "men": 28,
+    "fame": 7,
+    "scenes": 219
+   },
+   {
+    "y": 871,
+    "at": "reading",
+    "silver": 19,
+    "men": 12,
+    "fame": 10,
+    "scenes": 225
+   },
+   {
+    "y": 872,
+    "at": "london",
+    "silver": 79,
+    "men": 26,
+    "fame": 11,
+    "scenes": 227
+   }
+  ]
+ },
+ {
+  "key": "830 younger_son homebody seed 108",
+  "years": [
+   {
+    "y": 830,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 36,
+    "fame": 0,
+    "scenes": 1
+   },
+   {
+    "y": 831,
+    "at": "home_fjord",
+    "silver": 18,
+    "men": 31,
+    "fame": 2,
+    "scenes": 28
+   },
+   {
+    "y": 832,
+    "at": "home_fjord",
+    "silver": 46,
+    "men": 19,
+    "fame": 12,
+    "scenes": 44
+   },
+   {
+    "y": 833,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 12,
+    "fame": 10,
+    "scenes": 48
+   },
+   {
+    "y": 834,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 6,
+    "fame": 10,
+    "scenes": 53
+   },
+   {
+    "y": 835,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 14,
+    "fame": 8,
+    "scenes": 57
+   },
+   {
+    "y": 836,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 8,
+    "fame": 8,
+    "scenes": 60
+   },
+   {
+    "y": 837,
+    "at": "home_fjord",
+    "silver": 0,
+    "men": 5,
+    "fame": 6,
+    "scenes": 60
+   }
+  ]
+ }
+]

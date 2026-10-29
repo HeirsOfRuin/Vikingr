@@ -47,5 +47,8 @@ Josh approved this on 2026-10-29.
 - the full run, about 20–30 minutes;
 - a fast mode, about 3 minutes, which joins `npm run check`.
 
+## Built (2026-10-29)
+All three phases. `npm run gauntlet` (checks 1-5, 7, 8 and the playtest script; `--fast` in `npm run check`), `npm run gauntlet:phone` (check 6), `npm run gauntlet:report` (the page); `npm run gauntlet:all` runs them in order.
+
 ## Limits
 It cannot judge fun, pacing or writing. Those stay with the human playtest; the report's playtest script points that playtest at the riskiest places.

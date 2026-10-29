@@ -16,7 +16,9 @@ import { Coverage, Explorer } from './explorer';
 import { checkPromises } from './promises';
 import { fightChoices, trial, healthy, open as choiceOpen, type FightResult } from './fairness';
 import { livingFame } from '../../src/engine/fame';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { golden } from './golden';
 
 const args = process.argv.slice(2);
 const arg = (k: string, d: number) => { const i = args.indexOf(`--${k}`); return i >= 0 ? Number(args[i + 1]) : d; };
@@ -47,6 +49,20 @@ const SNAPS = FAST ? 1 : 3, TRIALS = FAST ? 8 : 30;
 // the persona dashboard: what each way of playing made of a life
 interface Tally { lives: number; years: number; died: number; wealth: number; fame: number; married: number; hall: number; ships: number; scenes: number; east: number }
 const tally = new Map<string, Tally>();
+// the phone sweep (check 6): a few states of every kind of screen, to load into the real build
+const screens = new Map<string, GameState[]>();
+const screenKind = (x: GameState) => (x.pending ? (x.pending.t === 'scene' ? 'scene' : x.pending.t) : x.voyage ? 'voyage' : `place-${x.phase}`);
+// the playtest script: scenes in recently changed content, where a life first met them
+const changedScenes = recentlyChanged();
+const watch = new Map<string, { state: GameState; life: Life }>();
+function recentlyChanged(): Set<string> {
+  try {
+    const files = execSync('git diff --name-only HEAD~15 -- content/scenes', { encoding: 'utf8' }).split('\n').filter((f) => f.endsWith('.yaml'));
+    const ids = new Set<string>();
+    for (const f of files) for (const m of readFileSync(join(import.meta.dirname, '..', '..', f), 'utf8').matchAll(/^- id: ([a-z0-9_]+)$/gm)) ids.add(m[1]!);
+    return ids;
+  } catch { return new Set(); }
+}
 const t0 = Date.now();
 
 function where(s: GameState): string {
@@ -95,6 +111,13 @@ for (let n = 0; n < LIVES; n++) {
     try { next = act(content, state, a); } catch (e) { note({ rule: 'action failed', severity: 'error', detail: `${a.t}: ${(e as Error).message}` }, life, step, state, state); break; }
     prev = state; state = next; step++; steps++;
     for (const p of checkStep(prev, state, content)) note(p, life, step, state, prev);
+    {
+      const k = screenKind(state);
+      const list = screens.get(k) ?? [];
+      const want = k === 'scene' ? 8 : 2;
+      if (list.length < want && (k !== 'scene' || (content.scenes[(state.pending as { id: string }).id]?.text.length ?? 0) > 900 || content.scenes[(state.pending as { id: string }).id]!.choices.length >= 4) && !list.some((x) => x.seed === state.seed)) { list.push(structuredClone(state)); screens.set(k, list); }
+    }
+    if (state.pending?.t === 'scene' && prev.pending !== state.pending && changedScenes.has(state.pending.id) && !watch.has(state.pending.id)) watch.set(state.pending.id, { state: structuredClone(prev), life });
     if (state.pending?.t === 'scene' && prev.pending !== state.pending) {
       const id = state.pending.id;
       const list = fightStarts.get(id) ?? [];
@@ -122,6 +145,20 @@ for (let n = 0; n < LIVES; n++) {
 
 // save codes for the examples: paste one into the game's Load box to stand where it happened
 for (const list of findings.values()) for (const f of list) { if (f.before) f.code = await encodeSaveCode(toSave(f.before, content)); delete f.before; }
+
+// screens for the phone sweep (npm run gauntlet:phone loads them into the real build)
+const SCREENS = join(OUT, 'screens');
+rmSync(SCREENS, { recursive: true, force: true });
+mkdirSync(SCREENS, { recursive: true });
+let nScreens = 0;
+for (const [k, list] of screens) list.forEach((st, i) => { writeFileSync(join(SCREENS, `${k}-${i}.json`), JSON.stringify(toSave(st, content))); nScreens++; });
+
+// golden lives: fixed lives replayed, compared year by year with the stored baseline
+const gold = FAST ? null : golden(content, args.includes('--update-golden'));
+
+// the playtest script: recently written scenes that lives met least, with a code to stand where one opened
+const script = [...watch.entries()].map(([id, w]) => ({ id, seen: seenScenes.get(id) ?? 0, life: w.life, state: w.state })).sort((a, b) => a.seen - b.seen).slice(0, 6);
+const scriptCodes = await Promise.all(script.map(async (x) => ({ id: x.id, title: content.scenes[x.id]?.title ?? x.id, seen: x.seen, era: x.life.era, code: await encodeSaveCode(toSave(x.state, content)) })));
 
 // the promise checker: what the words say against what the effects do, over all the content
 const broken = checkPromises(content);
@@ -175,16 +212,20 @@ for (const f of lopsided.sort((a, b) => a.won / a.fought - b.won / b.fought)) li
 lines.push('', '| fight | won | of | died |', '|---|---|---|---|', ...fairness.sort((a, b) => a.won / a.fought - b.won / b.fought).map((f) => `| ${f.scene}/${f.choice} | ${Math.round((100 * f.won) / f.fought)}% | ${f.fought} | ${f.died} |`), '');
 lines.push(`## Ways of playing`, '', '| style | lives | years | died % | silver+hoard | fame | married % | hall % | ships | scenes | East road % |', '|---|---|---|---|---|---|---|---|---|---|---|', ...Object.entries(dash).map(([k, d]) => `| ${k} | ${d.lives} | ${d.years} | ${d.died} | ${d.wealth} | ${d.fame} | ${d.married} | ${d.hall} | ${d.ships} | ${d.scenes} | ${d.east} |`), '');
 lines.push(last ? (moved.length ? `Moved since the last run: ${moved.join('; ')}.` : 'Nothing moved by more than a quarter since the last run.') : 'No earlier run to compare with.', '');
+if (gold) lines.push(`## Golden lives`, '', gold.baseline ? (gold.changed.length ? `${gold.changed.length} of ${gold.total} fixed lives changed since the baseline:` : `All ${gold.total} fixed lives play out as in the baseline.`) : `Baseline written (${gold.total} lives).`, ...gold.changed.map((c) => `- ${c}`), '');
+lines.push(`## Playtest script`, '', ...scriptCodes.map((x, i) => `${i + 1}. ${x.title} (${x.id}, ${x.era}), seen in ${x.seen} of ${LIVES} lives. Save code in report.json.`), '');
 lines.push(`## Coverage`, '', `${all.length - never.length} of ${all.length} scenes seen (${Math.round((100 * (all.length - never.length)) / all.length)}%). Explorer choices tried: ${cov.choices.size}.`, '');
 lines.push(`Never seen, by group: ${[...byFile.entries()].sort((a, b) => b[1].length - a[1].length).map(([k, v]) => `${k} ${v.length}`).join(', ')}`, '');
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'report.md'), lines.join('\n'));
 writeFileSync(lastFile, JSON.stringify(dash, null, 1));
-writeFileSync(join(OUT, 'report.json'), JSON.stringify({ lives: LIVES, years, steps, secs, counts: Object.fromEntries(counts), findings: Object.fromEntries(findings), promises: broken, fairness, dashboard: dash, moved, never: never.map((s) => ({ id: s.id, requires: s.requires ?? null, trigger: s.trigger ?? null, at: s.at ?? null })) }, null, 1));
+writeFileSync(join(OUT, 'report.json'), JSON.stringify({ lives: LIVES, years, steps, secs, counts: Object.fromEntries(counts), findings: Object.fromEntries(findings), promises: broken, fairness, dashboard: dash, moved, golden: gold, playtest: scriptCodes, screens: nScreens, never: never.map((s) => ({ id: s.id, requires: s.requires ?? null, trigger: s.trigger ?? null, at: s.at ?? null })) }, null, 1));
 console.log(lines.slice(0, 6).join('\n'));
 for (const [rule, list] of findings) console.log(`  ${list[0]!.severity === 'error' ? 'ERROR ' : list[0]!.severity.padEnd(6)} ${rule}: ${counts.get(rule)} (e.g. ${list[0]!.detail}; ${list[0]!.where}, ${list[0]!.date})`);
 console.log(`promises: ${broken.length} broken; fights: ${fairness.length} tried, ${lopsided.length} lopsided${lopsided.length ? ` (${lopsided.slice(0, 4).map((f) => `${f.scene}/${f.choice} ${Math.round((100 * f.won) / f.fought)}%`).join(', ')})` : ''}`);
 if (moved.length) console.log(`moved since last run: ${moved.join('; ')}`);
+if (gold) console.log(`golden lives: ${gold.baseline ? `${gold.changed.length} of ${gold.total} changed` : 'baseline written'}`);
+console.log(`screens saved for the phone sweep: ${nScreens}; playtest script: ${scriptCodes.length} scenes`);
 console.log(`coverage: ${all.length - never.length}/${all.length} scenes; report in ${relative(process.cwd(), OUT)}/report.md`);
 process.exit(errors.length || broken.length ? 1 : 0);

@@ -50,7 +50,7 @@ p { margin: 0 0 0.85em; }
 .topbar .stat { flex: 0 0 auto; }
 .topbar .stat.silver { color: var(--ochre); }
 .topbar .untold { color: var(--granite-500); }
-.iconbtn { margin-left: auto; flex: 0 0 auto; width: 40px; height: 32px; display: grid; place-content: center; gap: 4px; background: none; border: 0; cursor: pointer; padding: 0; }
+.iconbtn { margin: -6px -2px -6px auto; flex: 0 0 auto; width: 44px; height: 44px; display: grid; place-content: center; gap: 4px; background: none; border: 0; cursor: pointer; padding: 0; } /* 44px: a thumb-sized target (the gauntlet phone sweep) */
 .iconbtn i { display: block; width: 22px; height: 2px; background: var(--iron); }
 .iconbtn:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
 main { flex: 1; padding: 0 var(--gutter) 108px; display: flex; flex-direction: column; }
