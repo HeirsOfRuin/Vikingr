@@ -20,17 +20,17 @@ import { formatSilver, plural } from './format';
 import { journal } from './journal';
 import { trigger } from './director';
 import { BASE, FARM_PRICE, feastMult, hallActionsFor, HALL_PRICE, hallPrice, takeWinterYield } from './base';
-import { driftStanding } from './standing';
+import { driftStanding, tierAt } from './standing';
 import { hearNews } from './chronicle';
 import { atLordSeat, lordMen, lordName, lordsYear, lordTenth, secretYear } from './lords';
 import { holdingAt, holdingsYear } from './land';
 import { ruleYear, SEAT_DEF } from './rule';
 import { familyYear, winterBirth } from './family';
 import {
-  HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
+  BEACH_WINTER, HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
 } from './tuning';
 import { atHome, settledAbroad, settledMuster, SETTLE } from './settle';
-import { fleetYear } from './sailfleet';
+import { armyCamp, fleetYear } from './sailfleet';
 
 export const JARL_CUT = 0.25;
 export const PROVISION_DAYS = 40;
@@ -416,6 +416,20 @@ export function winterHere(state: GameState, content?: ContentBundle, rng?: RngC
   // his own land abroad, or his lord's hall: a winter as at home (docs/FRAME-WORLD.md §C-D)
   const own = holdingAt(state, state.at) ?? (state.rule && SEAT_DEF[state.rule.seat].place === state.at ? true : undefined);
   const seat = content ? atLordSeat(state, content) : false;
+  // at another man's oar, abroad when the sea closed: the captain winters where he is, and so does his crew
+  if (state.service) {
+    startWinter(state, 2, content, rng);
+    return [`${state.service.captain} hauls the ship up where she is and finds the crew a roof for the winter. The sea is closed until spring.`];
+  }
+  // nobody will take him in, and the sea is closed: the winter under the ships on the beach
+  const roofless = !own && !seat && content && state.at && armyCamp(state) !== state.at && ['hostile', 'unfriendly'].includes(tierAt(state, content, state.at));
+  if (roofless) {
+    startWinter(state, 1, content, rng);
+    const lost = Math.round(state.crew.men * BEACH_WINTER.lost);
+    state.crew.men -= lost;
+    state.crew.morale = Math.max(0, state.crew.morale - BEACH_WINTER.morale);
+    return [`Nobody at ${content!.places[state.at!]!.name} will give you a roof, and the sea is closed. You haul the ships up the beach and turn them over, and the men live under the hulls all winter, with a ditch round them and a fire that never goes out.${lost ? ` ${plural(lost, 'man', 'men')} don't see the spring.` : ''}`];
+  }
   startWinter(state, own || seat ? HALL_ACTIONS : 2, content, rng);
   if (own && content && state.rule && SEAT_DEF[state.rule.seat].place === state.at) return [`You winter in your own high seat at ${content.places[state.at!]!.name}, and your people see you there, which is the point.`];
   if (own && content) return [`You haul the ships up on your own shore at ${content.places[state.at!]!.name}, and winter under your own roof.`];

@@ -46,3 +46,23 @@ describe('the East road', () => {
     expect(dateOf(s.day).year).toBe(850);
   });
 });
+
+describe('the closed sea', () => {
+  it('from December no ship puts out, and a man can always winter where he is', () => {
+    const s = atTheDoor();
+    s.pending = null; s.day = dayOf(850, 340); s.at = 'york'; s.places.york!.standing = -8;
+    const opts = listActions(s, content);
+    expect(opts.filter((o) => o.action.t === 'sail').every((o) => !o.enabled)).toBe(true);
+    const w = opts.find((o) => o.action.t === 'winter_here');
+    expect(w?.enabled).toBe(true);
+    const men = s.crew.men;
+    const t = act(content, s, { t: 'winter_here' });
+    expect(t.phase).toBe('winter');
+    expect(t.crew.men).toBeLessThan(men);
+  });
+  it('in March the sea is open again', () => {
+    const s = atTheDoor();
+    s.pending = null; s.day = dayOf(851, 70); s.at = 'birka';
+    expect(listActions(s, content).some((o) => o.action.t === 'sail' && o.enabled)).toBe(true);
+  });
+});

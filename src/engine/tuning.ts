@@ -14,6 +14,13 @@ export const FORCE_RETURN_DOY = 288; // 15 October: at home on or after this, th
 export const WINTER_DOY = 304; // 1 November
 /** Abroad, he may haul up and winter from 1 October (playtest 5: "should be available in October"). */
 export const WINTER_ABROAD_DOY = 273;
+/** The sea is closed from 1 December to the end of February: no ship puts out (Josh, 2026-10-29). */
+export const SEA_CLOSED_FROM_DOY = 335;
+export function seaClosed(doy: number): boolean {
+  return doy >= SEA_CLOSED_FROM_DOY || doy < 59;
+}
+/** Wintering under the ships on a hostile beach: what it costs. */
+export const BEACH_WINTER = { morale: 2, lost: 0.1 } as const;
 /** Where another man's ship goes when no scene has said otherwise. */
 export const SERVICE_ROUTE = ['orkney', 'iona', 'bangor'] as const;
 export const HALL_ACTIONS = 5;

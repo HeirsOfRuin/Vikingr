@@ -49,7 +49,7 @@ import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
 import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
-import { BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
+import { seaClosed, BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 import { startInEra } from './era';
 import { armyCamp } from './sailfleet';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
@@ -616,7 +616,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         if (dest && dest !== at) out.push(opt('Sail', { t: 'follow' }, `Row on with ${svc.captain}`, true, undefined, `Bound for ${content.places[dest]?.name ?? dest}`));
         else if (at !== shome) out.push(opt('Sail', { t: 'follow' }, shome === 'home_fjord' ? `Row home with ${svc.captain}` : `Row to ${content.places[shome]!.name} with ${svc.captain}`, true, undefined, `Bound for ${content.places[shome]!.name}`));
         else out.push(opt('Season', { t: 'end_season' }, 'Haul up the ship for the winter'));
-        return out;
+        if (seaClosed(doy) && at !== shome) out.push(opt('Season', { t: 'winter_here' }, `Winter here with ${svc.captain}`, true, undefined, 'The sea is closed until spring'));
+        return closeTheSea(out, doy);
       }
       // a-viking along a coast on standing orders (docs/FRAME-PACING.md)
       if (state.cruise) {
@@ -703,10 +704,22 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (at === homeOf(state)) {
         out.push(...homeActions(state, content));
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
-      } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, armyCamp(state) === at || (tier !== 'hostile' && tier !== 'unfriendly'), 'Nobody here will give you a roof.'));
-      return out;
+      } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) {
+        const roof = armyCamp(state) === at || (tier !== 'hostile' && tier !== 'unfriendly');
+        // with the sea closed, a man winters where he is: under his ships on the beach, if nobody will take him in
+        if (!roof && seaClosed(doy)) out.push(opt('Season', { t: 'winter_here' }, `Winter under your ships on the beach at ${place.name}`, true, undefined, 'Nobody here will give you a roof, and the sea is closed. Cold, hungry, and some men will not see the spring'));
+        else out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, roof, 'Nobody here will give you a roof.'));
+      }
+      return closeTheSea(out, doy);
     }
   }
+}
+
+/** From 1 December to the end of February no ship puts out (Josh, 2026-10-29): every road off the beach is shut. */
+const SEA_ACTIONS = new Set(['sail', 'course', 'expedition', 'cruise_plan', 'cruise_on', 'passage_home', 'follow', 'harek']);
+function closeTheSea(out: ActionOption[], doy: number): ActionOption[] {
+  if (!seaClosed(doy)) return out;
+  return out.map((o) => (SEA_ACTIONS.has(o.action.t) ? { ...o, enabled: false, reason: 'The sea is closed until spring.' } : o));
 }
 
 /** Lords (docs/FRAME-WORLD.md §C): his oath offered at a lord's own hall; an oath given back. */

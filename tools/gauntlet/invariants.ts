@@ -5,6 +5,7 @@ import type { GameState } from '../../src/engine/state';
 import { dateOf } from '../../src/engine/calendar';
 import { renderText } from '../../src/engine/text';
 import { test } from '../../src/engine/conditions';
+import { seaClosed } from '../../src/engine/tuning';
 
 export type Severity = 'error' | 'season' | 'text';
 export interface Problem { rule: string; severity: Severity; detail: string }
@@ -65,7 +66,8 @@ export function checkStep(prev: GameState | null, s: GameState, content: Content
   // the calendar
   const { doy } = dateOf(s.day);
   if (s.phase === 'winter' && doy >= 120 && doy < 243) season('winter in summer', `phase winter on day ${doy}`);
-  if (s.phase === 'sailing' && (doy < 59 || doy > 335)) season('sailing in the closed season', `${s.voyage ? 'at sea' : `ashore at ${s.at}`} on day ${doy}`);
+  // the sea is closed from December to the end of February: no ship may put out (a voyage under way may finish)
+  if (prev && prev.at && !prev.voyage && s.voyage && seaClosed(dateOf(prev.day).doy)) err('put to sea in the closed season', `from ${prev.at} on day ${dateOf(prev.day).doy}`);
   if (s.phase === 'muster' && doy > 150) season('muster after May', `phase muster on day ${doy} at ${s.at}`);
   return out;
 }
