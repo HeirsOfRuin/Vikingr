@@ -259,7 +259,12 @@ export function hostageYear(state: GameState, content: ContentBundle, rng: RngCu
   if (!all.length) return [];
   const lines: string[] = [];
   const keep = all.reduce((n, h) => n + h.n, 0) * HOSTAGE.keep;
-  state.silver -= keep;
+  // paid from the purse, then the hoard; what can't be paid, the hostages go without (the gauntlet: silver went below zero)
+  const fromPurse = Math.min(keep, Math.max(0, state.silver));
+  state.silver -= fromPurse;
+  const fromHoard = Math.min(keep - fromPurse, Math.max(0, state.base.hoard));
+  state.base.hoard -= fromHoard;
+  const short = keep - fromPurse - fromHoard;
   let tribute = 0;
   for (const h of all) {
     if (h.state !== 'surety') continue;
@@ -273,7 +278,7 @@ export function hostageYear(state: GameState, content: ContentBundle, rng: RngCu
     tribute += t;
   }
   state.silver += tribute;
-  lines.push(`Your hostages, ${plural(all.reduce((n, h) => n + h.n, 0), 'mouth')}, cost ${formatSilver(keep)} in food and guarding this winter.${tribute ? ` Their kin's tribute comes in: ${formatSilver(tribute)}.` : ''}`);
+  lines.push(`Your hostages, ${plural(all.reduce((n, h) => n + h.n, 0), 'mouth')}, cost ${formatSilver(keep)} in food and guarding this winter.${short > 0 ? ` You were ${formatSilver(short)} short, and they went hungry for it.` : ''}${tribute ? ` Their kin's tribute comes in: ${formatSilver(tribute)}.` : ''}`);
   for (const h of all) if (h.captain) shiftRel(state, content, h.captain, -1);
   return lines;
 }

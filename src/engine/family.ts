@@ -3,6 +3,7 @@
 // them) or sail at his father's side; a daughter can be married into an alliance. When he dies and a son lives, the
 // saga can go on as the son: the years pass until the boy is sixteen, the world goes on in the chronicle, and he
 // inherits what is left.
+import { benchHeir } from './fights';
 import type { Attr, ContentBundle, UpbringingDef } from '../content/schema';
 import { ATTRS, SKILLS } from '../content/schema';
 import type { Ancestor, Child, GameState, SwornMan } from './state';
@@ -333,7 +334,7 @@ export function goOnAs(state: GameState, content: ContentBundle, rng: RngCursor,
     if (y === dead.year) continue;
     // home: his mother keeps the farm; the hoard is spent on it; the old men drift away; the ships rot
     state.base.hoard = Math.round(state.base.hoard * (1 - FAMILY.hoardSpent));
-    for (const m of oldMen) if (m.alive && rng.float() < FAMILY.menGo) { m.alive = false; m.diedOn = state.day; }
+    for (const m of oldMen) if (m.alive && rng.float() < FAMILY.menGo) { m.alive = false; m.diedOn = state.day; (state.standIns ??= {})[m.id] = benchHeir(state, content); }
     for (const ps of Object.values(state.places)) ps.defence = 1 + (ps.defence - 1) * 0.6;
     for (const [pid, ps] of Object.entries(state.places)) { const base = content.places[pid]?.raid?.wealth ?? 0; ps.wealth = Math.min(base, Math.round(ps.wealth + base * 0.15)); }
   }

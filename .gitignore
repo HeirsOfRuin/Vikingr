@@ -11,3 +11,4 @@ dist-artifact-build
 # scratch scripts: tools/_*.mts or *.tmp.* never get committed
 tools/_*
 *.tmp.*
+gauntlet-out/

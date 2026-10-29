@@ -104,7 +104,12 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('queue' in e) state.queue.push({ scene: e.queue.scene, day: state.day + e.queue.days });
     else if ('know' in e) { if (!state.known.includes(e.know)) state.known.push(e.know); }
     else if ('journal' in e) journal(state, e.journal);
-    else if ('days' in e) { state.day += e.days; heal(state, content, e.days); }
+    else if ('days' in e) {
+      state.day += e.days;
+      heal(state, content, e.days);
+      // months gone by in a scene carry him out of the spring muster (the gauntlet: muster phase in June)
+      if (state.phase === 'muster' && dateOf(state.day).doy >= SAILING_DOY) state.phase = 'sailing';
+    }
     else if ('days_foraged' in e) { state.day += e.days_foraged; state.fedTo = state.day; heal(state, content, e.days_foraged); }
     else if ('nickname' in e) {
       state.hero.nickname = e.nickname;

@@ -293,8 +293,9 @@ export function rollSickness(state: GameState, content: ContentBundle, rng: RngC
     journal(state, `${man.name} died of the coughing sickness.`);
     mournMan(state, content, man);
   }
-  setback(state, 'sickness', `The coughing sickness went through the winter quarters: ${plural(dead, 'man', 'men')} died${names.length ? `, and ${names.join(' and ')}` : ''}.`);
-  lines.push(`The coughing sickness came in the dark of the winter, the way it does where men sleep close. It took ${plural(dead, 'man', 'men')}${names.length ? `, and ${names.join(' and ')}, who had stood in every wall you ever stood in, and died coughing in the straw` : ''}.`);
+  // nobody died of it: no card (the gauntlet: "It took 0 men.")
+  if (dead > 0 || names.length) setback(state, 'sickness', `The coughing sickness went through the winter quarters: ${plural(dead, 'man', 'men')} died${names.length ? `, and ${names.join(' and ')}` : ''}.`);
+  if (dead > 0 || names.length) lines.push(`The coughing sickness came in the dark of the winter, the way it does where men sleep close. It took ${plural(dead, 'man', 'men')}${names.length ? `, and ${names.join(' and ')}, who had stood in every wall you ever stood in, and died coughing in the straw` : ''}.`);
   if (rng.float() < DISASTER.sickHero && content.injuries.winter_cough) {
     addWound(state, content, 'winter_cough', 'the winter sickness');
     lines.push('You had it too. You lived. You are still coughing.');

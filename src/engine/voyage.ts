@@ -14,7 +14,7 @@ import { effAttr, heal, kill, learn } from './hero';
 import { addDeed } from './fame';
 import { trigger } from './director';
 import { journal } from './journal';
-import { formatSilver, plural } from './format';
+import { capitalise, formatSilver, plural } from './format';
 import { FLEET, fleetName } from './sailfleet';
 
 export interface Route {
@@ -159,7 +159,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
     const drowned = Math.round(aboard * 0.7);
     lostMen += drowned;
     state.ships.splice(i, 1);
-    lines.push(`${ship.name} breaks up. ${plural(drowned, 'man', 'men')} go down with her.`);
+    lines.push(`${capitalise(ship.name)} breaks up. ${drowned ? `${plural(drowned, 'man', 'men')} go down with her.` : 'Her men are hauled aboard the other ships, every one.'}`);
     journal(state, `${ship.name} was lost in a storm.`);
     if (i === 0) {
       for (const m of aliveMen(state)) {

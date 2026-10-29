@@ -6,6 +6,7 @@ import type { RngCursor } from './rng';
 import { addLoyalty } from './crew';
 import { journal } from './journal';
 import { addDeed } from './fame';
+import { benchHeir } from './fights';
 
 export const TEMPERAMENTS = ['steady', 'hot', 'greedy', 'pious', 'ambitious', 'dour'] as const;
 export type Temperament = (typeof TEMPERAMENTS)[number];
@@ -77,6 +78,7 @@ export function crewmanEffect(state: GameState, content: ContentBundle, rng: Rng
     } else {
       m.alive = false;
       m.diedOn = state.day;
+      (state.standIns ??= {})[m.id] = benchHeir(state, content);
       journal(state, `${m.name} was killed on the holmgang cloak.`);
       if (e.fights.lose) state.queue.push({ scene: e.fights.lose, day: state.day, man: m.id });
     }
@@ -84,6 +86,7 @@ export function crewmanEffect(state: GameState, content: ContentBundle, rng: Rng
   if (e.dies) {
     m.alive = false;
     m.diedOn = state.day;
+    (state.standIns ??= {})[m.id] = benchHeir(state, content);
     journal(state, `${m.name} ${e.dies}.`);
   }
   if (e.leave || e.settle) {

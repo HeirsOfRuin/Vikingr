@@ -276,7 +276,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   const ownShare = b.allyMen ? (b.us.start - b.allyMen) / b.us.start : 1;
   const crewLost = Math.max(0, Math.round(b.lost * ownShare) - namedLost.length);
   state.crew.men = Math.max(0, state.crew.men - crewLost);
-  lines.push(`You lost ${plural(crewLost, 'man', 'men')}${namedLost.length ? ' and ' + plural(namedLost.length, 'sworn man', 'sworn men') : ''}. They lost ${b.killed}.`);
+  lines.push(`${crewLost || namedLost.length ? `You lost ${crewLost ? plural(crewLost, 'man', 'men') : ''}${crewLost && namedLost.length ? ' and ' : ''}${namedLost.length ? plural(namedLost.length, 'sworn man', 'sworn men') : ''}.` : 'You lost no one.'} ${b.killed ? `They lost ${b.killed}.` : 'They lost no one.'}`);
   if (won) state.crew.quality = Math.min(2.5, state.crew.quality + 0.08);
   // a won field is stripped: helmets and mail off the dead
   if (won && !state.service) state.crew.gear = Math.min(GEAR_MAX, state.crew.gear + 0.05);

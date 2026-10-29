@@ -239,7 +239,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
   }
   if (how === 'mean') state.honour = Math.max(-10, state.honour - 1);
   lines.push(pot > 0
-    ? `Of the ${formatSilver(pot)} left, you keep ${formatSilver(keep)}, a ${how === 'generous' ? 'generous' : how === 'mean' ? 'mean' : 'fair'} captain's part (${Math.round(LEADER_SHARE[how] * 100)}%). The other ${plural(heads, 'man', 'men')} take about ${formatSilver(each)} each.`
+    ? `Of the ${formatSilver(pot)} left, you keep ${formatSilver(keep)}, a ${how === 'generous' ? 'generous' : how === 'mean' ? 'mean' : 'fair'} captain's part (${Math.round(LEADER_SHARE[how] * 100)}%). ${heads ? `The other ${plural(heads, 'man', 'men')} take about ${formatSilver(each)} each.` : 'There is nobody else to share it with.'}`
     : 'There is nothing to share. The men go home with what they left with.');
   clampMorale(state);
   journal(state, `The share-out: you kept ${formatSilver(keep)}.`);
@@ -529,7 +529,7 @@ export function chapterCard(state: GameState, content: ContentBundle, year: numb
   const sworn = aliveMen(state).filter((m) => m.sworn);
   const bench = aliveMen(state).filter((m) => !m.sworn);
   if (state.service) lines.push(`An oarsman in ${state.service.captain}'s ship.`);
-  else if (state.ships.length) lines.push(`Master of ${state.ships.map((s) => `${s.name} (${content.ships[s.type]?.name.toLowerCase()})`).join(', ')}, with ${plural(state.crew.men, 'man', 'men')} at the oars.`);
+  else if (state.ships.length) lines.push(`Master of ${state.ships.map((s) => `${s.name} (${content.ships[s.type]?.name.toLowerCase()})`).join(', ')}${state.crew.men ? `, with ${plural(state.crew.men, 'man', 'men')} at the oars` : ', with nobody at the oars yet: the men went home for the winter'}.`);
   else lines.push('No ship, and no bench in anyone else\'s.');
   if (sworn.length) lines.push(`Sworn to you: ${sworn.map((m) => m.nickname ? `${m.name} ${m.nickname}` : m.name).join(', ')}.`);
   if (bench.length) lines.push(`Bench-mates who have not sworn: ${bench.map((m) => m.name).join(', ')}.`);
