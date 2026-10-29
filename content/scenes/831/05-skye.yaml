@@ -1,4 +1,5 @@
 # Skye (docs/FRAME-831.md §1): a settler's steading. Men for hire, an offer of land, and the papar.
+# Fight fairness: a feud's whole valley turns out, sized from your crew.
 - id: sk_kolbeinn
   kind: place
   trigger: arrive
@@ -22,7 +23,7 @@
       danger: true
       effects:
         - { set: flag.sk_valley }
-        - { battle: { foe: island_men, men: 12, terrain: field, win: sk_valley_won, lose: sk_valley_lost, parted: sk_valley_lost } }
+        - { battle: { foe: pictish_host, men: 14, ratio: 0.7, terrain: field, win: sk_valley_won, lose: sk_valley_lost, parted: sk_valley_lost } }
       result: |
         [if service]
         {captain} takes Kolbeinn's silver, and the Raven's men go up the third valley in the morning mist with their shields on their backs.

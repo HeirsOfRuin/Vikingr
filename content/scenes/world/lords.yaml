@@ -45,6 +45,7 @@
       effects: [ { lord: { id: kolbeinn, call: refuse } } ]
       result: Kolbeinn's steward writes your answer down in two languages. Neither of them makes it sound any better.
 
+# Fight fairness: a Frankish count on his own border turns out his whole county.
 - id: lo_call_horik
   kind: phase
   trigger: phase_start
@@ -60,7 +61,7 @@
     - id: answer
       text: Hedeby, in ten days.
       danger: true
-      effects: [ { lord: { id: horik, call: answer } }, { set: flag.calling_horik }, { days: 16 }, { host: { title: "The count's men on the border", foe: frisian_levy, terrain: field, men: 40, wings: [ { name: "The king's hird", men: 120, quality: 1.5, foe_men: 80 }, { name: "The hersirs' ships", men: 80, foe_men: 60 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
+      effects: [ { lord: { id: horik, call: answer } }, { set: flag.calling_horik }, { days: 16 }, { host: { title: "The count's men on the border", foe: frisian_levy, terrain: field, men: 40, wings: [ { name: "The king's hird", men: 120, quality: 1.25, foe_men: 110 }, { name: "The hersirs' ships", men: 80, foe_men: 80 } ], role: wing, win: lo_call_won, lose: lo_call_lost } } ]
     - id: refuse
       text: Send back the arrow, unbroken.
       effects: [ { lord: { id: horik, call: refuse } } ]

@@ -213,6 +213,7 @@
       effects: [ { days: 3 } ]
       result: Three days in a cove that smells of seaweed, eating dried fish and listening to the sea beat on Stad. Then the wind drops, and you round it in an afternoon, and nobody admits they were glad you waited.
 
+# Fight fairness: the Baltic shore-folk come out in many small boats, more men than you, poorly armed.
 - id: rg_baltic
   kind: pool
   trigger: sea
@@ -229,7 +230,7 @@
     - id: fight
       text: Turn on the nearest boat before the others close.
       danger: true
-      effects: [ { battle: { foe: island_men, men: 24, terrain: ship } } ]
+      effects: [ { battle: { foe: island_men, men: 24, ratio: 1.3, terrain: ship } } ]
       result: You put the helm over and go straight at them, and they come in from every side at once, which is what they wanted.
     - id: run
       text: Crack on sail and run for open water.

@@ -340,7 +340,7 @@
     - id: shore
       text: Raid the shore of the sea instead, where the emir's men are thin.
       danger: true
-      effects: [ { days_foraged: 20 }, { battle: { foe: moorish_host, terrain: beach, men: 20, ratio: 1.0, raid: true, win: ea_v_raided, lose: ea_v_back } } ]
+      effects: [ { days_foraged: 20 }, { battle: { foe: moorish_host, terrain: beach, men: 14, ratio: 0.6, raid: true, win: ea_v_raided, lose: ea_v_back } } ]
 
 - id: ea_v_raided
   kind: spine

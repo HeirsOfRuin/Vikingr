@@ -58,6 +58,7 @@
       effects: [ { add: { loot: 130 } } ]
       result: They watch you unload them in silence. When you cast them off, their skipper calls something across the water in Frisian. Somebody says it was a blessing. Nobody believes him.
 
+# Fight fairness: a rival crew only lays alongside a ship it thinks it can take: about your own size.
 - id: g_sea_rivals
   kind: pool
   trigger: sea
@@ -78,18 +79,18 @@
       text: Turn and meet them.
       visible_if: "!service"
       danger: true
-      effects: [ { battle: { foe: rival_crew, men: 22, terrain: ship, win: g_sea_rivals_won } } ]
+      effects: [ { battle: { foe: rival_crew, men: 22, ratio: 1.0, terrain: ship, win: g_sea_rivals_won } } ]
     # at the oar: {captain} turns to meet them; where you stand is yours to choose
     - id: rail
       text: Take your shield up to the rail with the prow-men, where they'll board.
       visible_if: service
       danger: true
-      effects: [ { position: front }, { battle: { foe: rival_crew, men: 22, terrain: ship, win: g_sea_rivals_won } } ]
+      effects: [ { position: front }, { battle: { foe: rival_crew, men: 22, ratio: 1.0, terrain: ship, win: g_sea_rivals_won } } ]
     - id: bench
       text: Get your shield up on your bench, and do what {captain} tells you.
       visible_if: service
       danger: true
-      effects: [ { position: wall }, { battle: { foe: rival_crew, men: 22, terrain: ship, win: g_sea_rivals_won } } ]
+      effects: [ { position: wall }, { battle: { foe: rival_crew, men: 22, ratio: 1.0, terrain: ship, win: g_sea_rivals_won } } ]
     - id: count
       text: "Count her oars, and tell {captain}: she's bigger than she looks. Run."
       visible_if: service
@@ -102,7 +103,7 @@
       failure:
         text: |
           "She's no bigger than us," {captain} says, "and I'm not running from a ship I can count." You count again. He was right, near enough. You fight.
-        effects: [ { battle: { foe: rival_crew, men: 22, terrain: ship, win: g_sea_rivals_won } } ]
+        effects: [ { battle: { foe: rival_crew, men: 22, ratio: 1.0, terrain: ship, win: g_sea_rivals_won } } ]
     - id: run
       text: Crowd on sail and run for it.
       visible_if: "!service"

@@ -1,5 +1,6 @@
 # Conaille (docs/FRAME-831.md §1). The Annals of Ulster, 831: "The first plundering of Conaille by the
 # heathens; and its king, Máel Brigte, and his brother Canannán were taken prisoner and carried off to the ships."
+# Fight fairness (the gauntlet, 2026-10-29): the king's men are sized from your crew, so a big crew no longer walks it. AU 831: the Norse won at Conaille; the Irish made them pay for it.
 - id: c_approach
   kind: place
   trigger: arrive
@@ -39,7 +40,7 @@
 
           By the time you reach the fort, the gate is shut, and the king's household is out in front of it in a line, and the king himself is in the middle in a red cloak with a sword like a church door.
         effects:
-          - { battle: { foe: conaille_men, men: 24, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+          - { battle: { foe: conaille_men, men: 24, ratio: 0.85, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
     - id: trade
       text: Go in openly, as traders, with an interpreter. Kings like Frankish wine.
       oar: true
@@ -72,13 +73,13 @@
 
           They come out to meet you before the shadows have moved, all of them.
         effects:
-          - { battle: { foe: conaille_men, men: 26, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+          - { battle: { foe: conaille_men, men: 26, ratio: 0.9, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
     - id: straight
       text: Straight up from the beach. Let him see you coming.
       oar: true
       danger: true
       effects:
-        - { battle: { foe: conaille_men, men: 22, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
+        - { battle: { foe: conaille_men, men: 22, ratio: 0.95, terrain: field, win: c_hall, lose: c_beaten, parted: c_beaten } }
       result: |
         You go up the hill from the beach in a wall, with the sun behind you and the gate in front, and the three dead men watching you come.
 

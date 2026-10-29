@@ -128,6 +128,7 @@
       text: Row on. The sea has its own.
       result: The wreckage drops astern. By evening nobody mentions it, and by the next morning you can't remember the colour of the dead man's hair.
 
+# Fight fairness: the ship astern is a crew like the Raven's.
 - id: s_sail
   kind: pool
   trigger: sea
@@ -147,7 +148,7 @@
       text: Take your shield to the rail.
       oar: true
       danger: true
-      effects: [ { battle: { foe: rival_crew, men: 26, terrain: ship } } ]
+      effects: [ { battle: { foe: rival_crew, men: 26, ratio: 0.95, terrain: ship } } ]
       result: The two ships come together with a crash that throws men off their feet, and then there are grappling hooks, and then there is nothing but the rail and the man on the other side of it.
     - id: sail
       text: Help get more sail on her. Outrun them.

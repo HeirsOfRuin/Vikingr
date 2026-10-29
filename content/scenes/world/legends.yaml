@@ -230,6 +230,7 @@
         "Many do," the poet says. "They just don't tell each other." He bows, a little, and goes.
 
 # ---- the fleets on the Liffey and the Boyne, 837 ----
+# Fight fairness (the gauntlet, 2026-10-29): AU 837, the Norse beat the Uí Néill at Inber na mBárc; the Irish won other fights that year.
 - id: cw_837
   kind: place
   trigger: arrive
@@ -258,7 +259,7 @@
         - { set: flag.cw_liffey_sworn }
         - { lord: { id: turgeis, fav: 1 } }
         - { days: 6 }
-        - { host: { title: "The plain of the Liffey", foe: leinster_men, terrain: field, men: 40, wings: [ { name: "Turgeis's Norse", men: 120, quality: 1.3, foe_men: 80 }, { name: "The Boyne fleet", men: 80, foe_men: 60 } ], role: wing, win: cw_837_won, lose: cw_837_lost } }
+        - { host: { title: "The plain of the Liffey", foe: leinster_men, terrain: field, men: 40, wings: [ { name: "Turgeis's Norse", men: 120, quality: 1.2, foe_men: 95 }, { name: "The Boyne fleet", men: 80, foe_men: 70 } ], role: wing, win: cw_837_won, lose: cw_837_lost } }
       result: You row up the Liffey under a sky black with other men's smoke. On the fourth day the king of Leinster comes to meet you at a ford, with every man he has.
     - id: sell
       text: Sell them food and ale, at a river's prices.
