@@ -159,7 +159,7 @@
       text: Trade with him, carefully, and drink with him after.
       check: { skill: trade, attr: wit, difficulty: 5 }
       success:
-        text: You trade, and it's close, and at the end of it he laughs and admits you've beaten him by five coins. He respects that more than anything you could have said.
+        text: You trade, and it's close, and at the end of it he laughs and admits you've beaten him by half a pound. He respects that more than anything you could have said.
         effects: [ { ally: { id: sigtrygg, meet: true, rel: 3 } }, { add: { silver: 24 } } ]
       failure:
         text: You trade, and he wins, and is gracious about it, and you can't work out until you're out of the harbour exactly how.

@@ -161,7 +161,7 @@
       danger: true
       effects: [ { set: flag.o_faced_kolgrimr }, { fight: { foe: beach_brawler, kind: duel, lethal: false, win: o_passage_won, lose: o_passage_lost } } ]
     - id: buy
-      text: Buy his silence. Twelve coins and a promise.
+      text: Buy his silence. Sixty coins and a promise.
       requires: ["silver >= 12"]
       effects: [ { add: { silver: -12 } }, { set: flag.o_kolgrimr_bought }, &west { join_ship: { captain: Þórir, ship_name: "Þórir's knarr", type: knarr, crew: 8, home: orkney, route: [orkney] } } ]
       result: |

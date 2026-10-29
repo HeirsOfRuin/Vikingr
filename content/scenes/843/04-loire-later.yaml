@@ -79,7 +79,7 @@
       check: { skill: trade, attr: pre, difficulty: 6 }
       success:
         text: Lambert looks at you a long time. "You've learned," he says, and agrees. You go up the river at the head of his Bretons with a better bargain than any captain in the Loire.
-        effects: [ { add: { silver: 48 } }, { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, ratio: 1.0, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
+        effects: [ { add: { silver: 96 } }, { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, ratio: 1.0, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
       failure:
         text: "\"I'll find someone cheaper,\" Lambert says. He does. The other captain comes back down the river in a month with a ship full of the count's furniture."
     - id: no
@@ -99,7 +99,7 @@
     - id: take
       text: Take the silver, and the count's hall.
       effects: [ { add: { loot: 240 } }, { standing: { place: nantes, n: 3 } }, { deed: { type: battle_won, text: "Took the bridge at Nantes for Count Lambert", weight: 4, witnesses: 400 } } ]
-      result: A pound for the ship, and the count's hall stripped to the walls, and Lambert's thanks, which are worth exactly what you think they are.
+      result: Five pounds for the ship, and the count's hall stripped to the walls, and Lambert's thanks, which are worth exactly what you think they are.
 
 - id: e43_island_house
   kind: phase

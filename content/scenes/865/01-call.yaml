@@ -107,7 +107,7 @@
     - id: trade
       text: Trade what the army doesn't need with the East Angles across the ditch.
       oar: true
-      effects: [ { add: { silver: 18, skill.trade: 1 } } ]
+      effects: [ { add: { silver: 36, skill.trade: 1 } } ]
       result: The East Angles will buy anything that comes back over the ditch, including their own cloaks. You learn a little English, all of it about prices. By Yule you have three-quarters of a pound and a name among the camp's thieves as a fair man, which in that company is a kind of insult.
     - id: listen
       text: Sit with the Danes and learn who the sons of Ragnarr are.

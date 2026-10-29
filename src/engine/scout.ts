@@ -88,7 +88,7 @@ export function scoutPlace(state: GameState, content: ContentBundle, rng: RngCur
   lines.push(`Your men go up in the dark and come back before dawn, wet to the waist and pleased with themselves. They counted the houses, the boats, the spears by the doors and the men on the walls.`);
   lines.push(`${foe.name}: ${RESOLVE_WORDS[foeResolve(content, foe.id)]}.${foe.leader ? ` ${foe.leader.charAt(0).toUpperCase()}${foe.leader.slice(1)} holds them together.` : ''}`);
   if (ps.scout.picked) lines.push('And they have heard of you. Some of the men on the walls are picked men, brought in because your name came ahead of you.');
-  lines.push(`Catch them asleep, and about ${odds.asleep} will stand against you. If they see your sails, about ${odds.awake}. You have ${plural(ours, 'man', 'men')}.`);
+  lines.push(`Catch them asleep, and about ${odds.asleep} will stand against you. If they see your sails, about ${odds.awake}. ${ours ? `You have ${plural(ours, 'man', 'men')}.` : 'You have nobody at the oars to take against them.'}`);
   lines.push(`Your chance of catching them asleep: about ${Math.round(odds.p * 10)} in 10.`);
   lines.push(wealthWords(state, content, id));
   if (ps.defence > 1.15) lines.push('They are still on edge from the last raid. There are more men on the walls than a place this size should keep.');

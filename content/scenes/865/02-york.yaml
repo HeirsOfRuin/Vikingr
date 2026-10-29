@@ -53,7 +53,7 @@
       text: Take the merchants' quarter by the river, before the others think of it.
       oar: true
       effects: [ { add: { loot: 80 } }, { goods: { id: wool, lots: 4 } }, { longphort: york }, { add: { skill.trade: 1 } } ]
-      result: The Frisian merchants by the Ouse have seen this before. They stand in their doorways with their scales out and offer to sell you their own stock at a fair price, and you take the stock and leave the scales, and one of them thanks you for it.
+      result: The Frisian merchants by the Ouse have seen this before. They stand in their doorways with their scales out and offer to sell you their own stock at a fair price, and you take the stock, bales of good Northumbrian wool, and leave the scales, and one of them thanks you for it.
     - id: gate
       text: Hold the north gate, in case the Northumbrians come home.
       oar: true

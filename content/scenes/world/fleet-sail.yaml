@@ -201,10 +201,10 @@
       requires: ["silver >= 12"]
       check: { skill: cunning, attr: wit, difficulty: 5 }
       success:
-        text: You notice on the third throw what he's doing with the dice, and on the fourth you do it back. He laughs, and pays, and the men around the fire laugh with him. You don't play him again.
-        effects: [ { add: { silver: 30 } } ]
+        text: You notice on the third throw what he's doing with the dice, and on the fourth you do it back. He laughs, and pays you half a pound, and the men around the fire laugh with him. You don't play him again.
+        effects: [ { add: { silver: 24 } } ]
       failure:
-        text: He takes a pound off you before you notice what he's doing with the dice, and by then it would be a killing to say so.
+        text: He takes half a pound off you before you notice what he's doing with the dice, and by then it would be a killing to say so.
         effects: [ { add: { silver: -24 } } ]
     - id: call
       text: Call him a cheat in front of the fire.

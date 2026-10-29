@@ -13,6 +13,10 @@ import { encodeSaveCode, decodeSaveCode } from '../../src/engine/savecode';
 import type { GameState } from '../../src/engine/state';
 import { checkStep, type Problem } from './invariants';
 import { Coverage, Explorer } from './explorer';
+import { checkPromises } from './promises';
+import { fightChoices, trial, healthy, open as choiceOpen, type FightResult } from './fairness';
+import { livingFame } from '../../src/engine/fame';
+import { existsSync, readFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 const arg = (k: string, d: number) => { const i = args.indexOf(`--${k}`); return i >= 0 ? Number(args[i + 1]) : d; };
@@ -37,6 +41,12 @@ const counts = new Map<string, number>();
 const seenScenes = new Map<string, number>();
 const firstSeen = new Map<string, Life>();
 let steps = 0, years = 0, deaths = 0;
+// fights met, with the state each was met in (a few lives each), for the fairness trials
+const fightStarts = new Map<string, GameState[]>();
+const SNAPS = FAST ? 1 : 3, TRIALS = FAST ? 8 : 30;
+// the persona dashboard: what each way of playing made of a life
+interface Tally { lives: number; years: number; died: number; wealth: number; fame: number; married: number; hall: number; ships: number; scenes: number; east: number }
+const tally = new Map<string, Tally>();
 const t0 = Date.now();
 
 function where(s: GameState): string {
@@ -85,6 +95,11 @@ for (let n = 0; n < LIVES; n++) {
     try { next = act(content, state, a); } catch (e) { note({ rule: 'action failed', severity: 'error', detail: `${a.t}: ${(e as Error).message}` }, life, step, state, state); break; }
     prev = state; state = next; step++; steps++;
     for (const p of checkStep(prev, state, content)) note(p, life, step, state, prev);
+    if (state.pending?.t === 'scene' && prev.pending !== state.pending) {
+      const id = state.pending.id;
+      const list = fightStarts.get(id) ?? [];
+      if (list.length < SNAPS && healthy(state) && fightChoices(content, id).length && !list.some((x) => x.seed === state.seed)) { list.push(structuredClone(state)); fightStarts.set(id, list); }
+    }
     if (state.day === prev.day) { if (++still > 300) { note({ rule: 'softlock', severity: 'error', detail: `300 actions without time passing on ${where(state)}` }, life, step, state, prev); break; } } else still = 0;
     if (step % ROUNDTRIP_EVERY === 0) { const d = roundTrip(state); if (d) note({ rule: 'save does not round-trip', severity: 'error', detail: d }, life, step, state, null); }
   }
@@ -97,11 +112,38 @@ for (let n = 0; n < LIVES; n++) {
   for (const id of Object.keys(state.seen)) if (!past.has(id) && content.scenes[id]) { seenScenes.set(id, (seenScenes.get(id) ?? 0) + 1); if (!firstSeen.has(id)) firstSeen.set(id, life); }
   years += dateOf(state.day).year - startYear;
   if (state.death) deaths++;
+  const tl = tally.get(life.style) ?? { lives: 0, years: 0, died: 0, wealth: 0, fame: 0, married: 0, hall: 0, ships: 0, scenes: 0, east: 0 };
+  tl.lives++; tl.years += dateOf(state.day).year - startYear; if (state.death) tl.died++;
+  tl.wealth += state.silver + state.base.hoard; tl.fame += livingFame(state); if (state.base.wife) tl.married++; if (state.base.level === 'hall') tl.hall++;
+  tl.ships += state.ships.length; tl.scenes += Object.keys(state.seen).filter((id) => !past.has(id)).length; if (state.flags.ea_went) tl.east++;
+  tally.set(life.style, tl);
   if ((n + 1) % 10 === 0) process.stdout.write(`  ${n + 1}/${LIVES} lives, ${steps} actions\n`);
 }
 
 // save codes for the examples: paste one into the game's Load box to stand where it happened
 for (const list of findings.values()) for (const f of list) { if (f.before) f.code = await encodeSaveCode(toSave(f.before, content)); delete f.before; }
+
+// the promise checker: what the words say against what the effects do, over all the content
+const broken = checkPromises(content);
+for (const b of broken) { counts.set(`promise: ${b.rule}`, (counts.get(`promise: ${b.rule}`) ?? 0) + 1); }
+
+// fight fairness: each fight met, fought again from where it was met
+const fairness: FightResult[] = [];
+for (const [id, starts] of fightStarts) for (const ch of fightChoices(content, id)) {
+  const sum: FightResult = { scene: id, choice: ch, fought: 0, won: 0, died: 0 };
+  for (const st of starts) if (choiceOpen(content, st, ch)) { const r = trial(content, st, ch, TRIALS); sum.fought += r.fought; sum.won += r.won; sum.died += r.died; for (const [k, v] of Object.entries(r.how ?? {})) (sum.how ??= {})[k] = (sum.how[k] ?? 0) + v; if (process.env.GAUNTLET_DUMP === id) writeFileSync(join(OUT, `snap-${id}.json`), JSON.stringify(st)); }
+  if (sum.fought) fairness.push(sum);
+}
+const MIN_FOUGHT = FAST ? 6 : 20;
+const lopsided = fairness.filter((f) => f.fought >= MIN_FOUGHT && (f.won / f.fought < 0.1 || f.won / f.fought > 0.95));
+const fightsInContent = Object.keys(content.scenes).filter((id) => fightChoices(content, id).length).length;
+
+// the persona dashboard, and how it moved since the last run
+const dash = Object.fromEntries([...tally].map(([k, t]) => [k, { lives: t.lives, years: +(t.years / t.lives).toFixed(1), died: Math.round((100 * t.died) / t.lives), wealth: Math.round(t.wealth / t.lives), fame: Math.round(t.fame / t.lives), married: Math.round((100 * t.married) / t.lives), hall: Math.round((100 * t.hall) / t.lives), ships: +(t.ships / t.lives).toFixed(1), scenes: Math.round(t.scenes / t.lives), east: Math.round((100 * t.east) / t.lives) }]));
+const lastFile = join(OUT, FAST ? 'dashboard-fast.json' : 'dashboard.json');
+const last = existsSync(lastFile) ? JSON.parse(readFileSync(lastFile, 'utf8')) as typeof dash : null;
+const moved: string[] = [];
+if (last) for (const [k, now] of Object.entries(dash)) { const was = last[k]; if (!was) continue; for (const m of ['died', 'wealth', 'fame', 'scenes'] as const) { const a = was[m], b = now[m]; if (Math.abs(b - a) > Math.max(5, 0.25 * Math.abs(a))) moved.push(`${k} ${m}: ${a} to ${b}`); } }
 
 // coverage: what no life reached, and what it was waiting for
 const all = Object.values(content.scenes).filter((s) => !s.placeholder && !s.id.startsWith('p1_'));
@@ -124,13 +166,25 @@ for (const [rule, list] of findings) {
   for (const f of list) lines.push(`- ${f.detail}. Life ${f.life.n} (${f.life.era}, ${f.life.bg}, ${f.life.style}, seed ${f.life.seed}), action ${f.step}, ${f.date}, ${f.where}.`, `  - Save code (just before): \`${f.code?.slice(0, 40)}…\` (full code in report.json)`);
   lines.push('');
 }
+lines.push(`## Promises (text against effects): ${broken.length ? `${broken.length} broken` : 'all kept'}`, '');
+for (const b of broken) lines.push(`- ${b.scene}/${b.choice} (${b.rule}): ${b.detail}`);
+if (broken.length) lines.push('');
+lines.push(`## Fight fairness: ${fairness.length} fights tried from where lives met them with a crew of fighting size (of ${fightsInContent} scenes with a fight), ${TRIALS} times each start`, '');
+lines.push(lopsided.length ? `Lopsided (won under 10% or over 95%), for a person to judge:` : 'None lopsided.', '');
+for (const f of lopsided.sort((a, b) => a.won / a.fought - b.won / b.fought)) lines.push(`- ${f.scene}/${f.choice}: won ${f.won} of ${f.fought} (${Math.round((100 * f.won) / f.fought)}%), died in ${f.died}`);
+lines.push('', '| fight | won | of | died |', '|---|---|---|---|', ...fairness.sort((a, b) => a.won / a.fought - b.won / b.fought).map((f) => `| ${f.scene}/${f.choice} | ${Math.round((100 * f.won) / f.fought)}% | ${f.fought} | ${f.died} |`), '');
+lines.push(`## Ways of playing`, '', '| style | lives | years | died % | silver+hoard | fame | married % | hall % | ships | scenes | East road % |', '|---|---|---|---|---|---|---|---|---|---|---|', ...Object.entries(dash).map(([k, d]) => `| ${k} | ${d.lives} | ${d.years} | ${d.died} | ${d.wealth} | ${d.fame} | ${d.married} | ${d.hall} | ${d.ships} | ${d.scenes} | ${d.east} |`), '');
+lines.push(last ? (moved.length ? `Moved since the last run: ${moved.join('; ')}.` : 'Nothing moved by more than a quarter since the last run.') : 'No earlier run to compare with.', '');
 lines.push(`## Coverage`, '', `${all.length - never.length} of ${all.length} scenes seen (${Math.round((100 * (all.length - never.length)) / all.length)}%). Explorer choices tried: ${cov.choices.size}.`, '');
 lines.push(`Never seen, by group: ${[...byFile.entries()].sort((a, b) => b[1].length - a[1].length).map(([k, v]) => `${k} ${v.length}`).join(', ')}`, '');
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'report.md'), lines.join('\n'));
-writeFileSync(join(OUT, 'report.json'), JSON.stringify({ lives: LIVES, years, steps, secs, counts: Object.fromEntries(counts), findings: Object.fromEntries(findings), never: never.map((s) => ({ id: s.id, requires: s.requires ?? null, trigger: s.trigger ?? null, at: s.at ?? null })) }, null, 1));
+writeFileSync(lastFile, JSON.stringify(dash, null, 1));
+writeFileSync(join(OUT, 'report.json'), JSON.stringify({ lives: LIVES, years, steps, secs, counts: Object.fromEntries(counts), findings: Object.fromEntries(findings), promises: broken, fairness, dashboard: dash, moved, never: never.map((s) => ({ id: s.id, requires: s.requires ?? null, trigger: s.trigger ?? null, at: s.at ?? null })) }, null, 1));
 console.log(lines.slice(0, 6).join('\n'));
 for (const [rule, list] of findings) console.log(`  ${list[0]!.severity === 'error' ? 'ERROR ' : list[0]!.severity.padEnd(6)} ${rule}: ${counts.get(rule)} (e.g. ${list[0]!.detail}; ${list[0]!.where}, ${list[0]!.date})`);
+console.log(`promises: ${broken.length} broken; fights: ${fairness.length} tried, ${lopsided.length} lopsided${lopsided.length ? ` (${lopsided.slice(0, 4).map((f) => `${f.scene}/${f.choice} ${Math.round((100 * f.won) / f.fought)}%`).join(', ')})` : ''}`);
+if (moved.length) console.log(`moved since last run: ${moved.join('; ')}`);
 console.log(`coverage: ${all.length - never.length}/${all.length} scenes; report in ${relative(process.cwd(), OUT)}/report.md`);
-process.exit(errors.length ? 1 : 0);
+process.exit(errors.length || broken.length ? 1 : 0);

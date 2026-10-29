@@ -250,7 +250,7 @@
     - id: home
       text: Get your ship off the beach and north, with the rest.
       effects: [ { add: { loot: 480, honour: -1 } }, { goods: { id: silk, lots: 2 } }, { captives: 4 }, { deed: { type: raid, text: "Was at the walls of Miklagarðr with the Rus in 860", weight: 5, witnesses: 2000 } } ]
-      result: The Greek patriarch preaches a sermon about you, you hear later, about a people from the north, obscure and of no account, who came out of nowhere like a wave and like a wave are gone. He's not wrong about the wave.
+      result: The Greek patriarch preaches a sermon about you, you hear later, about a people from the north, obscure and of no account, who came out of nowhere like a wave and like a wave are gone. He's not wrong about the wave. The silk in your hold, two bolts of it, came off a dead man's back in a villa garden.
       next: ea_d_back
 
 - id: ea_d_back
@@ -335,7 +335,7 @@
     - id: honest
       text: Go to Jurjan, and pay the heathen's tax.
       effects: [ { add: { silver: 300, honour: 1 } }, { goods: { id: silk, lots: 3 } }, { days_foraged: 25 } ]
-      result: The tax-man looks up at that, for the first time all day, and takes the higher rate, and something like respect. You pay more than every other Rus in Jurjan. You're the only one who doesn't have to remember a lie.
+      result: The tax-man looks up at that, for the first time all day, and takes the higher rate, and something like respect. You pay more than every other Rus in Jurjan. You're the only one who doesn't have to remember a lie. Three bolts of Jurjan silk go into the hold, rolled in oiled leather.
       next: ea_v_back
     - id: shore
       text: Raid the shore of the sea instead, where the emir's men are thin.
