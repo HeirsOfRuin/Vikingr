@@ -20,6 +20,7 @@ import { addWound, heal } from './hero';
 import { addLoyalty, addRecruits, capacity, clampMorale, newMan } from './crew';
 import { startDuel, startBattle } from './fights';
 import { expeditionRoads, startVoyage } from './voyage';
+import { landPath } from './march';
 import { startPlunder } from './plunder';
 import { test } from './conditions';
 import { journal } from './journal';
@@ -179,6 +180,10 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('goods' in e) { const line = stowGoods(state, content, e.goods.id, e.goods.lots); (state.notes ??= []).push(line); journal(state, line); }
     else if ('hear_of' in e) {
       if (!state.known.includes(e.hear_of) && !state.rumoured.includes(e.hear_of)) state.rumoured.push(e.hear_of);
+    }
+    else if ('march' in e) {
+      // the move itself is the next action, so the place's arrival scene fires after this one is read
+      if (state.at && state.at !== e.march && landPath(content, state.at, e.march)) state.marchTo = e.march;
     }
     else if ('sail_with' in e) {
       if (state.at && state.at !== e.sail_with && !state.known.includes(e.sail_with)) {

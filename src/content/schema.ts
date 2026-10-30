@@ -119,6 +119,8 @@ const baseEffect = z.union([
   z.object({ fleet_end: z.literal(true) }).strict(),
   /** Word of a far place: it goes on his rumoured list, so an expedition can be mounted to it (docs/FRAME-PLACES-EAST.md). */
   z.object({ hear_of: id }).strict(),
+  /** He marches overland, by roads and river valleys (src/engine/march.ts). */
+  z.object({ march: id }).strict(),
   /** He sails for a far place with men who know the water: an expedition road, as an ordinary passage. */
   z.object({ sail_with: id }).strict(),
   /** The winter at the far end of the East road (Kiev, Itil): a winter abroad, kept where he stands on the map. */
@@ -252,7 +254,7 @@ export const place = z.object({
 export type Place = z.infer<typeof place>;
 
 /** expedition: uncharted water; sailed only as an expedition until the far end is charted. */
-export const leg = z.object({ a: id, b: id, days: z.number().min(0.5), kind: z.enum(['coastal', 'open', 'river']), expedition: z.boolean().optional() }).strict();
+export const leg = z.object({ a: id, b: id, days: z.number().min(0.5), kind: z.enum(['coastal', 'open', 'river', 'land']), expedition: z.boolean().optional() }).strict();
 export type Leg = z.infer<typeof leg>;
 
 export const shipType = z.object({ id, name: z.string(), oars: z.number().int(), crew: z.number().int(), cargo: z.number().int(), speed: z.number(), cost: z.number().int(), desc: z.string() }).strict();

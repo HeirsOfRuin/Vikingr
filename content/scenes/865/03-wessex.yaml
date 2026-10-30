@@ -20,7 +20,7 @@
   choices:
     - id: ride
       text: Go south with the army.
-      effects: [ { route: [thetford] }, { camp: thetford }, { know: thetford } ]
+      effects: [ { route: [thetford] }, { camp: thetford }, { know: thetford }, { march: thetford } ]
       result: "[if flag.ga_rider]You ride, and keep up, and the Danes have stopped laughing at you. [/if]The East Angles see the army coming and pull their cattle into the woods. It doesn't help them."
 
 - id: e69_edmund

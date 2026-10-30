@@ -38,7 +38,7 @@ export const COINS_PER_POUND = ORTUG_PER_POUND * COINS_PER_ORTUG;
 // ---- sailing ----
 /** Daily storm chance by month (Jan..Dec). */
 export const STORM_BY_MONTH = [0.18, 0.16, 0.08, 0.04, 0.012, 0.008, 0.01, 0.018, 0.04, 0.09, 0.15, 0.18] as const;
-export const STORM_LEG_MULT = { coastal: 0.8, open: 1.5, river: 0.2 } as const;
+export const STORM_LEG_MULT = { coastal: 0.8, open: 1.5, river: 0.2, land: 0 } as const;
 export const WIND = {
   states: ['fair', 'slack', 'foul', 'gale'] as const,
   weights: [0.45, 0.3, 0.2, 0.05],

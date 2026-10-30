@@ -71,8 +71,8 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
         sceneRef(where, e.battle.parted);
         lethal = true;
       } else if ('queue' in e) sceneRef(where, e.queue.scene);
-      else if ('know' in e || 'camp' in e || 'hear_of' in e || 'sail_with' in e) {
-        const pid = 'know' in e ? e.know : 'camp' in e ? e.camp : 'hear_of' in e ? e.hear_of : e.sail_with;
+      else if ('know' in e || 'camp' in e || 'hear_of' in e || 'sail_with' in e || 'march' in e) {
+        const pid = 'know' in e ? e.know : 'camp' in e ? e.camp : 'hear_of' in e ? e.hear_of : 'sail_with' in e ? e.sail_with : e.march;
         if (!content.places[pid]) errors.push(`${where}: unknown place "${pid}"`);
       } else if ('boast' in e || 'keep_boast' in e) {
         const b = 'boast' in e ? e.boast : e.keep_boast;

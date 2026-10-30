@@ -22,8 +22,8 @@
     - id: horse
       text: Ride north with the army.
       visible_if: flag.ga_rider
-      effects: [ { route: [york] }, { camp: york }, { add: { skill.cunning: 1 } } ]
-      result: Six days on the old Roman road, through a country that empties ahead of you like a pond with the plug pulled. You see more of England in a week than most Englishmen see in their lives, and none of it sees you, because it has all gone into the woods.
+      effects: [ { route: [york] }, { camp: york }, { march: york }, { add: { skill.cunning: 1 } } ]
+      result: A week on the old Roman road, through a country that empties ahead of you like a pond with the plug pulled. You see more of England in a week than most Englishmen see in their lives, and none of it sees you, because it has all gone into the woods.
     - id: ship
       text: Go round by sea in the Elk.
       effects: [ { route: [york] }, { camp: york } ]

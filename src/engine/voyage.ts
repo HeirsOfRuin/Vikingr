@@ -28,8 +28,9 @@ const AVG_PROGRESS = WIND.states.reduce((s, w, i) => s + WIND.progress[w] * WIND
 /** Legs out of a place to places that are on the map in this phase and known to the hero (or to anyone: any). */
 export function routes(state: GameState, content: ContentBundle, from: string, any = false): Route[] {
   const speed = fleetSpeed(state, content);
+  if (state.inland) return [];
   return content.legs
-    .filter((l) => l.a === from || l.b === from)
+    .filter((l) => (l.a === from || l.b === from) && l.kind !== 'land')
     .map((leg) => ({ leg, to: leg.a === from ? leg.b : leg.a }))
     // uncharted water is sailed only as an expedition, until the far end is charted; a rumour of a place on a
     // known sea road is enough to find it
@@ -96,7 +97,7 @@ export function nextHop(content: ContentBundle, from: string, to: string, avoid?
     const cur = q.shift()!;
     for (const l of content.legs) {
       const nb = l.a === cur ? l.b : l.b === cur ? l.a : null;
-      if (!nb || l.expedition || seen.has(nb) || !content.places[nb]?.active || nb === avoid) continue;
+      if (!nb || l.expedition || l.kind === 'land' || seen.has(nb) || !content.places[nb]?.active || nb === avoid) continue;
       seen.add(nb);
       prev[nb] = cur;
       q.push(nb);
@@ -112,6 +113,7 @@ export function nextHop(content: ContentBundle, from: string, to: string, avoid?
  *  destination is reached hop by hop: this leg goes to the next place on the road. */
 export function startVoyage(state: GameState, content: ContentBundle, to: string, any = false, expedition = false): void {
   const from = state.at!;
+  delete state.marchTo;
   if (any) {
     // an outlaw's captain goes round Hordaland, not through it
     const hop = nextHop(content, from, to, exiled(state) ? 'home_fjord' : undefined);

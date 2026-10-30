@@ -21,6 +21,7 @@ import { holdingAt } from '../src/engine/land';
 import { SEAT_DEF } from '../src/engine/rule';
 import { getValue } from '../src/engine/paths';
 import { armyCamp } from '../src/engine/sailfleet';
+import { landPath } from '../src/engine/march';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
 export const BOT_OPTS = { scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false, /** Take land and settle on it (docs/FRAME-LINEAGE.md C, E): off in the check, on in measure:lineage. */ settle: false };
@@ -238,11 +239,21 @@ export class Bot {
     return h('train')!;
   }
 
+  /** The first step of the road to `to`, if there is one and no sea road. */
+  walk(state: GameState, content: ContentBundle, pick: (p: (a: Action) => boolean) => Action | undefined, from: string, to: string): Action | undefined {
+    const lp = landPath(content, from, to);
+    return lp ? pick((a) => a.t === 'march' && a.to === lp.path[0]) : undefined;
+  }
+
   place(state: GameState, content: ContentBundle, opts: ActionOption[]): Action {
     const pick = (pred: (a: Action) => boolean) => find(opts, pred)?.action;
     const at = state.at!;
     const doy = dateOf(state.day).doy;
     // at another man's oar the captain decides: follow him, and haul up when he does
+    // the road the story set him on, and the way back to ships left hauled up inland (src/engine/march.ts)
+    const road = pick((a) => a.t === 'march' && a.to === state.marchTo);
+    if (road) return road;
+    if (state.inland && !state.service) { const back = this.walk(state, content, pick, state.at!, state.inland); if (back) return back; }
     if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? fallback(opts);
     // the bold take the skald to sea; the careful leave him at the jarl's benches (playtest 8)
     { const want = this.policy === 'raider' || this.policy === 'reckless'; const sa = pick((a) => a.t === 'skald_aboard' && a.on === want); if (sa) return sa; }
@@ -362,6 +373,8 @@ export class Bot {
     const hop = nextHop(state, content, at, target);
     const sail = hop ? pick((a) => a.t === 'sail' && a.to === hop) : undefined;
     if (sail) return sail;
+    const walk = hop ? undefined : this.walk(state, content, pick, at, target);
+    if (walk) return walk;
     return pick((a) => a.t === 'passage_home') ?? pick((a) => a.t === 'winter_here') ?? pick((a) => a.t === 'rest') ?? fallback(opts);
   }
 }

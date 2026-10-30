@@ -262,12 +262,16 @@ legs:
   - { a: jarrow, b: whitby, days: 1.5, kind: coastal }
   - { a: whitby, b: york, days: 2, kind: coastal }
   - { a: gipeswic, b: sheppey, days: 1.5, kind: coastal }
-  - { a: gipeswic, b: thetford, days: 2, kind: river }
+  # the roads: Roman roads and old ways inland, walked or ridden, never sailed (src/engine/march.ts)
+  - { a: gipeswic, b: thetford, days: 2, kind: land }
+  - { a: thetford, b: york, days: 5, kind: land }
+  - { a: thetford, b: nottingham, days: 5, kind: land }
+  - { a: gipeswic, b: london, days: 4, kind: land }
   - { a: york, b: nottingham, days: 3, kind: river }
   - { a: nottingham, b: repton, days: 1, kind: river }
   - { a: london, b: reading, days: 2, kind: river }
-  - { a: reading, b: chippenham, days: 3, kind: river }
-  - { a: hamwic, b: chippenham, days: 3, kind: river }
+  - { a: reading, b: chippenham, days: 3, kind: land }
+  - { a: hamwic, b: chippenham, days: 3, kind: land }
   - { a: walcheren, b: gipeswic, days: 2, kind: open }
   - { a: sheppey, b: hamwic, days: 3, kind: coastal }
   - { a: hamwic, b: rouen, days: 2.5, kind: open }

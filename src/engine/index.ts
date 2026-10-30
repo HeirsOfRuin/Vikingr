@@ -37,7 +37,7 @@ import { finishBattle, finishDuel, freshScout, startBattle, startRaid, surpriseC
 import { breakBoast, goalMet, keepBoast } from './boasts';
 import { BASE, canBuildHall, FARM_PRICE, hangable, hangTrophy, hallPrice, keepCaptives, newBase, thrallRoom, canRaiseFrame, HALL_PRICE } from './base';
 import { armCost, buy, DEFAULT_KIT, equip, forSale, GEAR_MAX, gearWord, giveItem, type Shop, spareKit, sellValue, sellItem, giveKitTo, itemName } from './items';
-import { eatAshore, expeditionRoads, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
+import { eatAshore, expeditionRoads, nextHop, routes, runVoyage, startVoyage, exiled, serviceHome } from './voyage';
 import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
   borrowShip, BUILD_TYPES, winterWork, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
@@ -52,12 +52,14 @@ import { heal } from './hero';
 import { seaClosed, BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 import { startInEra } from './era';
 import { armyCamp } from './sailfleet';
+import { landPath, landRoads, march, marchBlock } from './march';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
 
 export type Action =
   | { t: 'choose'; id: string }
   | { t: 'continue' }
   | { t: 'sail'; to: string }
+  | { t: 'march'; to: string }
   | { t: 'voyage_on' }
   | { t: 'raid' }
   | { t: 'scout' }
@@ -613,11 +615,13 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         const svc = state.service;
         const dest = svc.route[0];
         const shome = serviceHome(state);
-        if (dest && dest !== at) out.push(opt('Sail', { t: 'follow' }, `Row on with ${svc.captain}`, true, undefined, `Bound for ${content.places[dest]?.name ?? dest}`));
+        const mt = marchOption(state, content, `${svc.captain} brings the ship round by water`);
+        if (mt) out.push(mt);
+        else if (dest && dest !== at) out.push(opt('Sail', { t: 'follow' }, `Row on with ${svc.captain}`, true, undefined, `Bound for ${content.places[dest]?.name ?? dest}`));
         else if (at !== shome) out.push(opt('Sail', { t: 'follow' }, shome === 'home_fjord' ? `Row home with ${svc.captain}` : `Row to ${content.places[shome]!.name} with ${svc.captain}`, true, undefined, `Bound for ${content.places[shome]!.name}`));
         else out.push(opt('Season', { t: 'end_season' }, 'Haul up the ship for the winter'));
         if (seaClosed(doy) && at !== shome) out.push(opt('Season', { t: 'winter_here' }, `Winter here with ${svc.captain}`, true, undefined, 'The sea is closed until spring'));
-        return closeTheSea(out, doy);
+        return closeTheSea(out, doy, state.inland, content);
       }
       // a-viking along a coast on standing orders (docs/FRAME-PACING.md)
       if (state.cruise) {
@@ -643,6 +647,15 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       // an outlaw castaway can't go home: a trader takes him west, to the one hall that will have him
       else if (at !== 'orkney' && exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage to Orkney on a trader' : 'Work your passage to Orkney on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
       else if (at === 'orkney' && exiled(state) && !state.service) out.push(opt('Sail', { t: 'harek' }, "Go to Harek's hall, and ask for a bench", true, undefined, 'Another summer at his oar'));
+      // the roads inland (src/engine/march.ts)
+      const mt = marchOption(state, content, state.ships.length ? (armyCamp(state) ? 'the ships come round by water with the army' : 'the ships stay hauled up here') : 'on foot');
+      if (mt) out.push(mt);
+      for (const r of landRoads(state, content, at)) {
+        if (r.to === state.marchTo) continue;
+        const mb = marchBlock(state);
+        const ships = state.ships.length ? (armyCamp(state) ? 'the ships come round by water with the army' : state.inland === r.to ? 'back to your ships' : state.inland ? `the ships stay hauled up at ${content.places[state.inland]!.name}` : 'the ships stay hauled up here') : 'on foot';
+        out.push(opt('March', { t: 'march', to: r.to }, `${state.flags.ga_rider ? 'Ride' : 'March'} overland to ${content.places[r.to]!.name}`, !mb, mb ?? undefined, `About ${plural(r.days, 'day')} on the road; ${ships}`));
+      }
       if (place.raid && !norseHeld(state, at) && at !== homeOf(state)) {
         const done = state.seasonRaids.includes(at);
         // what the scouts saw rides on the raid button while it holds (docs/FRAME-WORLD.md §A)
@@ -710,14 +723,24 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         if (!roof && seaClosed(doy)) out.push(opt('Season', { t: 'winter_here' }, `Winter under your ships on the beach at ${place.name}`, true, undefined, 'Nobody here will give you a roof, and the sea is closed. Cold, hungry, and some men will not see the spring'));
         else out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, roof, 'Nobody here will give you a roof.'));
       }
-      return closeTheSea(out, doy);
+      return closeTheSea(out, doy, state.inland, content);
     }
   }
 }
 
 /** From 1 December to the end of February no ship puts out (Josh, 2026-10-29): every road off the beach is shut. */
 const SEA_ACTIONS = new Set(['sail', 'course', 'expedition', 'cruise_plan', 'cruise_on', 'passage_home', 'follow', 'harek']);
-function closeTheSea(out: ActionOption[], doy: number): ActionOption[] {
+/** The road the story set him on, as the first thing to do (the `march` effect, src/engine/march.ts). */
+function marchOption(state: GameState, content: ContentBundle, ships: string): ActionOption | null {
+  const to = state.marchTo;
+  if (!to || !state.at || to === state.at) return null;
+  const lp = landPath(content, state.at, to);
+  if (!lp) return null;
+  return opt('March', { t: 'march', to }, `${state.flags.ga_rider ? 'Ride' : 'March'} to ${content.places[to]!.name} with the army`, true, undefined, `About ${plural(lp.days, 'day')} by road; ${ships}`);
+}
+
+function closeTheSea(out: ActionOption[], doy: number, inland?: string, content?: ContentBundle): ActionOption[] {
+  if (inland && content) out = out.map((o) => (SEA_ACTIONS.has(o.action.t) ? { ...o, enabled: false, reason: `Your ships are hauled up at ${content.places[inland]?.name ?? inland}: march back to them.` } : o));
   if (!seaClosed(doy)) return out;
   return out.map((o) => (SEA_ACTIONS.has(o.action.t) ? { ...o, enabled: false, reason: 'The sea is closed until spring.' } : o));
 }
@@ -894,11 +917,19 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       reportAfter('At sea', sailCourse(state, content, rng));
       break;
     }
+    case 'march':
+      report('On the road', march(state, content, rng, action.to));
+      break;
     case 'sail':
     case 'follow':
     case 'voyage_on': {
       if (action.t === 'sail') { delete state.course; startVoyage(state, content, action.to); }
-      if (action.t === 'follow') startVoyage(state, content, state.service?.route[0] ?? serviceHome(state), true);
+      if (action.t === 'follow') {
+        const dest = state.service?.route[0] ?? serviceHome(state);
+        // the army rides: no sea road there, but a land one (src/engine/march.ts)
+        if (!nextHop(content, state.at!, dest) && landPath(content, state.at!, dest)) { report('On the road', march(state, content, rng, dest)); break; }
+        startVoyage(state, content, dest, true);
+      }
       const r = runVoyage(state, content, rng);
       // a leg of a course, interrupted and finished: the course goes on unless something else has the stage
       if (action.t === 'voyage_on' && r.arrived && state.course && !state.pending) r.lines.push(...sailCourse(state, content, rng));

@@ -5,6 +5,7 @@ import type { ContentBundle } from '../../content/schema';
 import type { GameState } from '../../engine/state';
 import { lonLatToTile, type MapData } from '../../engine/mapgrid';
 import { routes } from '../../engine/voyage';
+import { landRoads } from '../../engine/march';
 import { alongPath, legKey } from '../../engine/seaway';
 import seaRoutes from '../../content/routes.json';
 import { formatDate } from '../../engine/calendar';
@@ -79,7 +80,7 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
   const places = Object.values(content.places).filter((p) => known.has(p.id) || rumoured.has(p.id));
   const legs = content.legs.filter((l) => known.has(l.a) && known.has(l.b));
   const fleet = fleetAt(state, content);
-  const reachable = state.at ? routes(state, content, state.at).map((r) => r.to) : [];
+  const reachable = state.at ? [...routes(state, content, state.at).map((r) => r.to), ...landRoads(state, content, state.at).map((r) => r.to)] : [];
   const visits = (id: string) => state.journal.filter((j) => j.text.includes(content.places[id]!.name)).map((j) => formatDate(j.day));
 
   const onDown = (e: PointerEvent) => {
@@ -109,11 +110,12 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
           <svg width={map.cols * PX} height={map.rows * PX}>
             {legs.map((l) => {
               const a = content.places[l.a]!, b = content.places[l.b]!;
-              const path = legPath(content, l.a, l.b);
+              const road = l.kind === 'land';
+              const path = road ? null : legPath(content, l.a, l.b);
               const pts = path ?? [...lonLatToTile(a.lon, a.lat), ...lonLatToTile(b.lon, b.lat)];
               let d = '';
               for (let i = 0; i < pts.length; i += 2) d += `${i ? 'L' : 'M'}${(pts[i]! * PX).toFixed(1)} ${(pts[i + 1]! * PX).toFixed(1)}`;
-              return <path key={l.a + l.b} d={d} fill="none" stroke="#b5ac97" stroke-opacity="0.5" stroke-width={1.2 / scale} stroke-linejoin="round" stroke-dasharray={`${4 / scale} ${4 / scale}`} />;
+              return <path key={l.a + l.b} d={d} fill="none" stroke={road ? '#a07a4a' : '#b5ac97'} stroke-opacity={road ? 0.75 : 0.5} stroke-width={(road ? 1.6 : 1.2) / scale} stroke-linejoin="round" stroke-dasharray={road ? `${1 / scale} ${3 / scale}` : `${4 / scale} ${4 / scale}`} stroke-linecap="round" />;
             })}
             {places.map((p) => {
               const [x, y] = lonLatToTile(p.lon, p.lat);
@@ -167,7 +169,7 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
               {visits(pickedPlace.id).length > 0 && <p class="muted small sans">You were here: {visits(pickedPlace.id).join(', ')}</p>}
               {onAct && (() => {
                 // a course for this place, if one can be set from where he is (docs/FRAME-PACING.md)
-                const o = listActions(state, content).find((x) => (x.action.t === 'course' || x.action.t === 'sail') && (x.action as { to: string }).to === pickedPlace.id);
+                const o = listActions(state, content).find((x) => (x.action.t === 'course' || x.action.t === 'sail' || x.action.t === 'march') && (x.action as { to: string }).to === pickedPlace.id);
                 return o ? <Actions options={[{ ...o, group: '' }]} onAct={onAct} /> : null;
               })()}
               </>)}

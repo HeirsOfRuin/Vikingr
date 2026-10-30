@@ -31,6 +31,6 @@ describe('sea routes', () => {
 
   it('every leg has a route, built from the current content', () => {
     const r = (routes as { routes: Record<string, number[]> }).routes;
-    for (const l of content.legs) expect(r[`${l.a}|${l.b}`]?.length).toBeGreaterThanOrEqual(4);
+    for (const l of content.legs.filter((x) => x.kind !== 'land')) expect(r[`${l.a}|${l.b}`]?.length).toBeGreaterThanOrEqual(4);
   });
 });

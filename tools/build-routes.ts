@@ -20,6 +20,7 @@ export function buildRoutes(bundle: ContentBundle): { routes: Record<string, num
   const g = seaGrid(map);
   const routes: Record<string, number[]> = {};
   for (const l of bundle.legs) {
+    if (l.kind === 'land') continue; // a road is drawn straight
     const a = bundle.places[l.a]!, b = bundle.places[l.b]!;
     routes[legKey(l.a, l.b)] = seaRoute(g, lonLatToTile(a.lon, a.lat), lonLatToTile(b.lon, b.lat));
   }

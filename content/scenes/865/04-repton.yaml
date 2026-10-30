@@ -101,7 +101,7 @@
       result: Hálfdan claps you on the shoulder hard enough to hurt and says he'll find you a farm with a river on it. He says it to everyone. He might even mean it.
     - id: guthrum
       text: Go south with Guthrum, for Wessex.
-      effects: [ { set: flag.ga_guthrum }, { route: [thetford] }, { camp: thetford } ]
+      effects: [ { set: flag.ga_guthrum }, { route: [thetford] }, { camp: thetford }, { march: thetford } ]
       result: Guthrum is a broad, slow-speaking Dane with a patient face, nothing like the sons of Ragnarr. He looks at you a long time before he says anything. "Good," he says. "Alfred has learned. So must we."
     - id: home
       text: Neither. Take your silver and go home to Hordaland.

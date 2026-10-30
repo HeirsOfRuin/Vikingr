@@ -156,7 +156,7 @@ export interface Deed {
 export interface Voyage {
   from: string;
   to: string;
-  kind: 'coastal' | 'open' | 'river';
+  kind: 'coastal' | 'open' | 'river' | 'land';
   total: number; // leg length in fair-wind days
   progress: number;
   daysAtSea: number;
@@ -329,6 +329,10 @@ export interface GameState {
   standIns?: Record<string, string>;
   /** Every name given to a generated man or a hired steersman in this life: none is given twice (the continuity check). */
   usedNames?: string[];
+  /** Marched inland from where the ships are hauled up (src/engine/march.ts): he must march back to them to sail. */
+  inland?: string;
+  /** A road the story has set him on (the `march` effect): the next move goes overland to here. */
+  marchTo?: string;
   /** Goods aboard: lots, and what they cost him (docs/FRAME-TRADE-ALLIES.md). */
   cargo?: Record<string, { lots: number; cost: number }>;
   /** The year's trade news: one good dear or cheap everywhere. */
