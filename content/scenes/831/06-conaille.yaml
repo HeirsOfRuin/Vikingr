@@ -6,6 +6,7 @@
   trigger: arrive
   at: [conaille]
   once: true
+  art: town_rise
   title: Dundalk Bay
   text: |
     The bay is wide and shallow and brown with the outflow of three rivers, and the plain behind it is the flattest land you have seen since you left home: cattle country, green to the mountains, with smoke from a dozen farms going straight up into a still morning.

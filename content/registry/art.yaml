@@ -48,3 +48,24 @@
   fx:
     - { kind: water, rect: [70, 112, 330, 48] }
     - { kind: birds, rect: [90, 8, 300, 50], count: 3 }
+# Josh's panoramas, 2026-10-30, sliced into the band and snapped to the master palette (tools/art.ts).
+- id: sail_home
+  title: A ship coming home at sunset
+  fx:
+    - { kind: water, rect: [0, 128, 400, 32] }
+    - { kind: birds, rect: [260, 6, 130, 40], count: 2 }
+- id: shore_wait
+  title: A woman and her daughter waving from the shore below the steading
+  fx:
+    - { kind: smoke, at: [40, 18], spread: 4, rate: 0.2 }
+    - { kind: smoke, at: [205, 12], spread: 4, rate: 0.2 }
+- id: shield_wall
+  title: The wall, under a horse banner
+- id: town_rise
+  title: Men running at a walled town with a church on its rise
+  fx:
+    - { kind: smoke, at: [196, 60], spread: 4, rate: 0.25 }
+- id: storm_ship
+  title: A longship in a storm
+  fx:
+    - { kind: water, rect: [0, 120, 400, 40] }

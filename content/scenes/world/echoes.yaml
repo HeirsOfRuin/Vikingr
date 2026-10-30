@@ -7,7 +7,7 @@
   once: true
   weight: 20
   requires: ["year >= 838", "place == home_fjord", "phase == muster", "!service", "!man.bersi.alive", { any: [flag.bersi_silver_sent, flag.bersi_silver_kept] }]
-  art: muster
+  art: shore_wait
   title: Bersi's son
   text: |
     A boy comes to the spring muster on foot from the south of the fjord, with a sea-chest on his back that is too big for him and a face you know before you can think where from. He has Bersi's eyes, which never stopped moving, and Bersi's way of looking at a man's purse before his face.

@@ -30,7 +30,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 869"]
-  art: bangor_field
+  art: town_rise
   title: King Edmund
   text: |
     Edmund of the East Angles comes out to fight, which nobody expected of a king who had paid so nicely. He has his thegns and the levy of two shires, and they stand on the frozen field outside Thetford and are beaten in a morning, and the king is taken in a church a day later, sitting by the altar, waiting.
@@ -83,7 +83,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "winter == 870", "place == reading"]
-  art: bangor_field
+  art: shield_wall
   title: Ashdown
   text: |
     In the dead of the winter the army goes out of Reading onto the downs to bring the West Saxons to a fight, and the West Saxons come. The army splits in two on the ridge: the kings in one wall, under Bagsecg and Hálfdan, and the jarls in the other.

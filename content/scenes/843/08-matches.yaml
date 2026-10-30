@@ -91,7 +91,7 @@
   once: true
   weight: 25
   requires: [seen.e43_hroi_father, "year >= 846", "!married", "!flag.betrothed"]
-  art: muster
+  art: shore_wait
   title: A message from Vestfold
   text: |
     A Vestfold trader puts in with the spring ships, and the steersman has a message for you that he has learned by heart and says in one breath, looking at the sky: Hrói's father sends greetings to the man who told him about his son. He has a daughter, Ragnhild, nineteen, who has no brother now. He would rather she married a man who stood in the same wall as Hrói than a man who stayed at home. The mundr is a pound and a half. If you will have her, she will come on the autumn ship.
@@ -116,7 +116,7 @@
   once: true
   weight: 30
   requires: ["phase == winter", flag.e43_ragnhild_betrothed, "!married", { any: ["!flag.e43_ragnhild_owed", "silver >= 72"] }]
-  art: yule_hall
+  art: shore_wait
   title: Ragnhild
   text: |
     [if flag.e43_ragnhild_owed]The mundr goes north at last, with a Vestfold trader you trust. [/if]Ragnhild comes [if place == home_fjord]up the fjord[else]into the Loire[/if] on the autumn ship with a chest, a loom, a spindle of her mother's, and [if flag.e43_hroi_back]her brother, who has appointed himself to give her away and to drink most of the ale[else]her father's steersman, who gives her away with the old man's words, learned by heart[/if]. She has Hrói's fair hair and none of his laugh. She looks at your ship before she looks at you, and asks how old the strakes are.

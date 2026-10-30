@@ -238,7 +238,7 @@
   once: true
   weight: 15
   requires: ["year == 837", "month >= 4", "month <= 8", "!service", "ships >= 1"]
-  art: muster
+  art: shield_wall
   title: Sixty ships on the Liffey
   text: |
     The sea off the Liffey mouth is full of sails. Sixty ships, the fishermen say, in the Liffey, and another sixty on the Boyne to the north, and the whole of the plains between them burning, field by field, as far inland as a man can ride in a day.

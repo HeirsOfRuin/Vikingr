@@ -34,7 +34,7 @@
 
 - id: e65_call
   kind: spine
-  art: muster
+  art: sail_home
   when: Spring, 865
   title: The sons of Ragnarr
   text: |

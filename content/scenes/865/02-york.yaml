@@ -36,7 +36,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 866"]
-  art: celtic_monastery
+  art: town_rise
   title: All Saints' Day
   text: |
     The army comes to York on the English feast of All Saints, and York, which has Roman walls and a minster and a king's hall and four thousand people, opens like a door. There is nobody on the walls. The Northumbrians are off fighting each other somewhere to the north, and the people who are left are at mass.
@@ -66,7 +66,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 867", "place == york"]
-  art: bangor_field
+  art: shield_wall
   title: The two kings
   text: |
     In the spring the two kings of Northumbria stop fighting each other, which nobody expected, and come for York together, which everyone should have.

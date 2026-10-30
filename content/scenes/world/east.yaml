@@ -152,7 +152,7 @@
 
 - id: ea_d_rapids
   kind: spine
-  art: open_sea
+  art: storm_ship
   title: The rapids
   text: |
     Below Kiev the Dnieper goes through a country of rock, and for a long stretch it falls, one rapid after another, white water between granite teeth that would open a ship like a mussel. The men who have been before name each one as you come to it, and the names are a warning: Don't Sleep, the Island, the Roarer, the Seething One. At some you can wade her through, with men in the water to their chests feeling for the rocks with their feet. At the worst, she comes out of the water again.
@@ -416,7 +416,7 @@
   weight: 80
   cooldown_days: 200
   requires: ["!service", { any: [flag.ea_far_d, flag.ea_far_v] }, "place == aldeigjuborg"]
-  art: muster
+  art: sail_home
   title: The road north
   text: |
     In the spring the ice goes out of the river with a noise like a battle, and you put her back in the water and start north.

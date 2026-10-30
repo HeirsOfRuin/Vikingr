@@ -52,6 +52,7 @@
   cooldown_days: 30
   weight: 6
   requires: [flag.call_horik, "place != sea", "!service", "month <= 7"]
+  art: shield_wall
   title: The king's war-arrow
   text: |
     The arrow comes from Hedeby with one of Horik's hersirs, in a ship with a gilt vane, and he doesn't get out of it to deliver it. He doesn't need to.

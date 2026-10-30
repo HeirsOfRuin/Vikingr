@@ -12,7 +12,7 @@
   once: true
   weight: 30
   requires: ["!service", "year == 870"]
-  art: muster
+  art: town_rise
   title: The siege of the rock
   text: |
     Olaf and Ívarr of Dublin have brought every ship in the Irish Sea up the Clyde, and they are sitting under the rock of the Britons with a ditch round it, waiting. The king of Strathclyde is on the top with his household and his gold and his priests, and he isn't coming down.
@@ -85,7 +85,7 @@
   once: true
   weight: 25
   requires: ["!service", seen.pl_tarbat, "yearsince.pl_tarbat >= 1"]
-  art: bangor_field
+  art: shield_wall
   title: The horsemen
   text: |
     They come along the shore at a canter before you've got the ship's legs under her: twenty Pictish horsemen with small round shields and long spears, and a mormaer in a red cloak in the middle of them. Somebody told them about the Northman who rode round their country last year and looked at everything.
@@ -207,7 +207,7 @@
   once: true
   weight: 20
   requires: ["!service", seen.pl_skellig, "yearsince.pl_skellig >= 2"]
-  art: celtic_monastery
+  art: storm_ship
   title: Weatherbound
   text: |
     A gale comes in from the west while you're lying in the lee of the rock, and there's nowhere to run to. You get the ship into the little cove under the landing and the men up onto the ledges, and for six days the Atlantic tries to take the rock and doesn't.
@@ -388,7 +388,7 @@
   once: true
   weight: 20
   requires: ["!service", seen.pl_sheppey, "year >= 851"]
-  art: yule_hall
+  art: sail_home
   title: A winter in the Thames
   text: |
     There are Danish ships hauled up on the marsh on the far side of the island, and turf houses going up behind a ditch. They mean to winter here, in the mouth of the Thames, in England, instead of going home. Nobody has done it before. In the spring they'll be first up the river, before the English have their boots on.

@@ -36,7 +36,7 @@
   once: true
   weight: 30
   requires: [flag.ga_landed, "winter >= 876", "!married", "!flag.betrothed"]
-  art: hearth_ormr
+  art: shore_wait
   title: The thegn's widow
   text: |
     The hall at the ford has a woman in it. Her husband was the thegn of the place and died in the lanes of York nine years ago, and she has held it since, through the Danes and the English king the Danes chose and the Danes again. Her name is Eadgyth. She is thirty, with two children and a steward who is afraid of her, and she has been running your mill since before you knew you had one.
@@ -93,7 +93,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, flag.ga_guthrum, "year >= 876", "year <= 877", "place == thetford"]
-  art: muster
+  art: storm_ship
   title: Swanage
   text: |
     Guthrum gets past Alfred in the night, the whole army on horseback, and rides across Wessex to the sea at Wareham, and the ships come round to meet it. Alfred catches up and makes peace and takes oaths on the army's holy ring, and Guthrum's men break the oaths the same week and ride to Exeter. The ships go round by sea to meet them.
@@ -122,7 +122,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, flag.ga_guthrum, "winter >= 877", "place == chippenham"]
-  art: yule_hall
+  art: town_rise
   title: Twelfth Night
   text: |
     At midwinter Guthrum does what nobody does: he marches in the snow. The army comes over the downs on the English Twelfth Night and into Chippenham, the king's own hall, while the king's household is drunk at the feast.
@@ -146,7 +146,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, flag.ga_guthrum, "year == 878", "place == chippenham"]
-  art: bangor_field
+  art: shield_wall
   title: Edington
   text: |
     In the spring the king comes out of the marshes. He has been sending messengers all winter, by night, through a country full of Danes, and in May the men of three shires meet him at a stone in the woods, and the next day he is at Edington, on the downs, with an army that has been told it is the last one Wessex will ever have.
