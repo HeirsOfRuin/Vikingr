@@ -81,3 +81,38 @@ Josh agreed the order on 2026-10-28 (the thin places, then the East road, then t
 - Mapping the Mediterranean.
 - Björn's later life.
 - Sicily, Alexandria and other legends that grew around the voyage later.
+
+## Built (2026-11-07)
+Josh: "begin working on the Mediterranean voyage" (2026-11-07). 28 scenes in `content/scenes/world/med.yaml`.
+- **Hooks:** word reaches a captain wintering anywhere in 858 (`mh_word`), or on the strand at a western port in spring 859 (`mh_word_spring`).
+- **The fleet:** the council on Noirmoutier or at Nantes in spring 859 (`mh_council`, fleet `med859`). Then, off the map:
+  1. the Galician strand (Count Pedro);
+  2. the Green Island and its mosque;
+  3. Nekor and its captives, with the emir's man buying back the women of the ruling house;
+  4. the Balearics;
+  5. the first winter in the Camargue (marsh fever; the Frankish envoys);
+  6. up the Rhône and Count Gerard above Valence;
+  7. the first leave window;
+  8. Pisa and Luna, told as the men told it;
+  9. the second winter, with the second leave window;
+  10. the strait;
+  11. Pamplona and King García's seventy thousand;
+  12. home with twenty ships.
+- **Changes from this frame:**
+  - Home comes in autumn 861, so the voyage is two winters away as the rules say. The sources disagree between 861 and 862, and on whether Pamplona came on the way out or the way home.
+  - Men from lost crews join the survivors' benches at each winter camp and after the strait, as they did.
+  - A drawn fight in the strait means the ships got through (`parted` is now allowed on host fights).
+  - A far winter is no longer a winter at home, even when he set out from his own island: no births, no house fires (`flags._far`).
+- **Measured** (`npx tsx tools/measure-med.ts`, 200 captains, half with two ships, staying with the fleet at both windows):
+
+| Target | Frame | Measured |
+|---|---|---|
+| Pay | 2–3 good raiding summers (10–20 pounds) | 19 pounds 130 coins for those who come home; 14 pounds for those who leave at a window |
+| A ship lost (two-ship captains) | About half | 41% |
+| Crew lost by those who come home | (none set) | 62%; 49% for those who leave early |
+| The strait | 25–45% | 27% get through standing to fight (won or both drew off); 86% of those who run and are caught get through |
+| Above Valence | 25–45%, leaning against | 28% |
+| The Galician strand | Leaning against | 32% won |
+| Coast raids (Algeciras, Luna, Pamplona) | Leaning the fleet's way | 76–88% |
+| Reach (60 bot lives, 843 start) | At least 5 | 14 |
+| **Death** | **20–30%** | **3%. Missed.** The combat engine rarely kills a captain in a host fight, even in the front rank. The cost of the voyage shows up as men and ships, not the hero's life. Raising it means making hosts deadlier everywhere, which is a combat-wide decision for Josh. |

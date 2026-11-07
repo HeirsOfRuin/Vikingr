@@ -199,8 +199,9 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       // the far end of the river road: a winter abroad, begun now however early the scenes ran
       const d = dateOf(state.day);
       if (d.doy < 182) state.day = dayOf(d.year, WINTER_DOY);
+      state.flags._far = 1;
       startWinter(state, 2, content, rng);
-      journal(state, 'Wintered at the far end of the East road.');
+      journal(state, typeof e.winter_far === 'string' ? e.winter_far : 'Wintered at the far end of the East road.');
     }
     else if ('unload' in e) {
       const c = state.cargo?.[e.unload.id];
@@ -267,7 +268,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
         const pf = partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
         return { name: pid ? `${content.captains[pid]!.name}'s men` : w.name, men: pf.men, quality: 1, foe_men: w.foe_men };
       });
-      startHost(state, content, { title: h.title, foe: h.foe, terrain: h.terrain, context: h.raid ? 'raid' : 'scene', place: h.raid ? state.at : null, foeMen: foesFor(state, h.men, h.ratio), wings, role: h.role, reserve: h.reserve, win: h.win, lose: h.lose });
+      startHost(state, content, { title: h.title, foe: h.foe, terrain: h.terrain, context: h.raid ? 'raid' : 'scene', place: h.raid ? state.at : null, foeMen: foesFor(state, h.men, h.ratio), wings, role: h.role, reserve: h.reserve, win: h.win, lose: h.lose, parted: h.parted });
     } else if ('favour' in e) {
       shiftFavour(state, e.favour);
     } else if ('lord' in e) {

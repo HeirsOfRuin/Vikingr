@@ -101,6 +101,8 @@ export class Bot {
         // a lord who wants men takes the oath when he can (docs/FRAME-HIRD-HOSTAGES.md)
         const id = state.pending!.t === 'scene' ? state.pending!.id : '';
         if (id.startsWith('hi_') && this.policy !== 'homebody') { const sw = pick((a) => a.t === 'choose' && a.id === 'swear'); if (sw) return sw; }
+        // the Middle Sea (docs/FRAME-MED.md): the bold put their ships in Hastein's fleet
+        if (id === 'mh_council' && (this.policy === 'raider' || this.policy === 'reckless')) { const go = pick((a) => a.t === 'choose' && a.id === 'go'); if (go) return go; }
         // a single combat on offer: anyone but a reckless man listens to the men's reckoning (docs/FRAME-DUEL-3.md)
         // and turns down a fight they say he'd lose
         const grim = (o: ActionOption) => /he'd (kill|likely beat|beat) you/.test(o.hint ?? '');
@@ -280,6 +282,12 @@ export class Bot {
       if (h) return h;
     }
     this.visited.add(at);
+    // the Middle Sea (docs/FRAME-MED.md): a captain who has heard of Hastein's fleet goes to the Loire for the spring of 859
+    if (year === 859 && dateOf(state.day).doy < 170 && state.flags.mh_heard && !state.seen.mh_council && state.ships.length && state.known.includes('noirmoutier') && this.policy !== 'homebody' && this.policy !== 'coward' && at !== 'noirmoutier') {
+      const hop = nextHop(state, content, at, 'noirmoutier');
+      const go = hop ? pick((a) => a.t === 'sail' && a.to === hop) : undefined;
+      if (go) return go;
+    }
     // the East road (docs/FRAME-PLACES-EAST.md): now and then a raider or a careful trader goes east from Birka
     if ((this.policy === 'raider' || this.policy === 'coward') && doy < 200 && !this.east.has(year) && (at === 'birka' || at === 'gotland')) {
       this.east.add(year);

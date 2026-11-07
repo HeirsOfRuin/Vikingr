@@ -79,7 +79,7 @@ const baseEffect = z.union([
     title: z.string(), foe: id, terrain: z.enum(TERRAINS), men: z.number().int().min(1), ratio: z.number().positive().optional(),
     wings: z.array(z.object({ name: z.string(), men: z.number().int().min(0).optional(), ally: z.boolean().optional(), foe_men: z.number().int().min(1), quality: z.number().optional() }).strict()).min(1).max(2),
     role: z.enum(['man', 'wing', 'host']).optional(), reserve: z.object({ us: z.number().int().min(0), them: z.number().int().min(0) }).strict().optional(),
-    raid: z.boolean().optional(), win: id.optional(), lose: id.optional(),
+    raid: z.boolean().optional(), win: id.optional(), lose: id.optional(), parted: id.optional(),
   }).strict() }).strict(),
   z.object({ spread: z.object({ from: id, n: z.number().int(), church: z.boolean().optional() }).strict() }).strict(),
   z.object({ raided: z.object({ place: id, burned: z.boolean().optional(), captives: z.boolean().optional(), failed: z.boolean().optional() }).strict() }).strict(),
@@ -124,7 +124,7 @@ const baseEffect = z.union([
   /** He sails for a far place with men who know the water: an expedition road, as an ordinary passage. */
   z.object({ sail_with: id }).strict(),
   /** The winter at the far end of the East road (Kiev, Itil): a winter abroad, kept where he stands on the map. */
-  z.object({ winter_far: z.literal(true) }).strict(),
+  z.object({ winter_far: z.union([z.literal(true), z.string()]) }).strict(),
   /** Lots of one good taken out of the hold: sold, seized or lost (the thin places, docs/FRAME-PLACES-EAST.md). */
   z.object({ unload: z.object({ id, lots: z.number().int().min(1) }).strict() }).strict(),
   /** The army's winter camp moves: the captain he rows for winters there from now on (docs/FRAME-865.md). */

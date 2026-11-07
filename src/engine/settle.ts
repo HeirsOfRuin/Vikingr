@@ -42,7 +42,8 @@ export function homeOf(state: GameState): string {
 }
 
 export function atHome(state: GameState): boolean {
-  return state.at === homeOf(state);
+  // a winter at the far end of a voyage off the map is kept where he set out from, but it is not a winter at home
+  return state.at === homeOf(state) && !state.flags._far;
 }
 
 /** Settled abroad: home is not Hordaland. */

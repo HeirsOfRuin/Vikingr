@@ -203,3 +203,52 @@
   leader: "a chief in a felt cap"
   doctrine: { missiles: 4, give: 2, flank: 2 }
   desc: Horse-archers from the grasslands, who the Greeks call Turks and the Slavs call Ugri. They never stand to be hit. They shoot, and ride off, and shoot again, and wait at the fords for men carrying ships.
+# The Middle Sea, 859-861 (docs/FRAME-MED.md).
+- id: galician_levy
+  name: Count Pedro's men
+  quality: 1
+  resolve: warriors
+  guile: 2
+  leader: "Count Pedro"
+  doctrine: { hold: 3, push: 1, flank: 2, missiles: 2 }
+  desc: "King Ordoño's count on the Galician coast and the men of his valleys: they beat the Northmen off this shore fifteen years ago, and they have been waiting for them to come back."
+- id: andalusi_town
+  name: The town's guard
+  quality: 1
+  resolve: levy
+  guile: 1
+  leader: "the governor's officer"
+  doctrine: { hold: 3, push: 1, flank: 1, missiles: 3 }
+  desc: "The garrison of a port town of al-Andalus and the men of its streets: archers on the walls, spearmen in the gates, more of them all day as word gets round."
+- id: gerard_host
+  name: Count Gerard's host
+  quality: 2
+  resolve: hird
+  guile: 2
+  leader: "Count Gerard"
+  doctrine: { hold: 2, push: 2, flank: 3, missiles: 1 }
+  desc: "The count of Vienne's household and the levy of the Rhône valley: mailed horsemen, a count who knows the river, and the whole country behind him, angry."
+- id: emir_fleet
+  name: The emir's fleet
+  quality: 2
+  resolve: hird
+  guile: 2
+  leader: "the emir's admiral"
+  doctrine: { hold: 2, push: 2, flank: 2, missiles: 3 }
+  desc: "Muhammad of Córdoba's war-galleys: big ships, many oars, archers on raised decks, and pots of fire to throw. They have had two years to get ready for you."
+- id: navarrese_levy
+  name: King García's men
+  quality: 1
+  resolve: warriors
+  guile: 1
+  leader: "King García"
+  doctrine: { hold: 3, push: 2, flank: 1, missiles: 1 }
+  desc: "The Basque hill-men of Pamplona and their king's household: light-armed, fast on their own ground, slow to believe anyone would come this far up their rivers."
+- id: luna_guard
+  name: The bishop's men
+  quality: 1
+  resolve: levy
+  guile: 1
+  leader: "the bishop's reeve"
+  doctrine: { hold: 3, push: 1, flank: 1, missiles: 1 }
+  desc: "The bishop of Luna's household and the townsmen who were in the cathedral for the funeral: brave, angry, and armed with whatever was to hand."

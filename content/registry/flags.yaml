@@ -426,3 +426,14 @@ is_feud: { description: "Feuding with his neighbour in Breiðafjörðr" }
 ea_went: { description: "Went down the river road east from Aldeigjuborg", saga: true }
 ea_far_d: { description: "Wintering at Kiev, on the Dnieper road" }
 ea_far_v: { description: "Wintering at Itil, on the Volga road" }
+# ---- the Middle Sea, 859-861 (content/scenes/world/med.yaml) ----
+mh_heard: { description: "Heard that Hastein and Björn were gathering a fleet for the south" }
+mh_bound: { description: "Promised his ship to Hastein's fleet for the spring of 859" }
+mh_went: { description: "Sailed with Hastein and Björn into the Middle Sea", saga: true }
+mh_captives_north: { description: "Kept the captives from Nekor, to sell in the north", saga: true }
+mh_far1: { description: "Wintering in the Camargue, 859-860" }
+mh_far2: { description: "Wintering a second time in the Camargue, 860-861" }
+mh_gerard_warned: { description: "The Frankish envoys went home unpaid, and Count Gerard was ready" }
+mh_river_known: { description: "Learned the Rhône from the envoys' boatmen" }
+mh_left: { description: "Left Hastein's fleet early, and came home alone", saga: true }
+mh_warned_luna: { description: "Warned the bishop of Luna", saga: true }

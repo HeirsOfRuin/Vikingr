@@ -51,10 +51,11 @@ export function startHost(
   content: ContentBundle,
   opts: {
     title: string; foe: string; terrain: BattleState['terrain']; context: BattleState['context']; place: string | null;
-    foeMen: number; wings: HostWingSpec[]; role?: HostRole; reserve?: { us: number; them: number }; win?: string; lose?: string;
+    foeMen: number; wings: HostWingSpec[]; role?: HostRole; reserve?: { us: number; them: number }; win?: string; lose?: string; parted?: string;
   },
 ): void {
   startBattle(state, content, { foe: opts.foe, men: opts.foeMen, terrain: opts.terrain, context: opts.context, place: opts.place, win: opts.win, lose: opts.lose, noAlly: true });
+  if (opts.parted && state.pending?.t === 'battle') state.pending.battle.parted = opts.parted;
   const b = (state.pending as { battle: BattleState }).battle;
   const foe = content.foes[opts.foe]!;
   const role: HostRole = opts.role ?? (state.service ? 'man' : 'wing');

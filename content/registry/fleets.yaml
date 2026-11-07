@@ -38,3 +38,9 @@
   ships: 140
   until: 878
   desc: Not a fleet but an army, the English call it, the micel here, under Ívarr and Hálfdan and Ubbi. Danes mostly, and anyone else who comes. It winters where it likes.
+- id: med859
+  name: the fleet of Hastein and Björn
+  leader: Hastein and Björn
+  ships: 62
+  until: 861
+  desc: Sixty-two ships out of the Loire, bound past Spain and through the strait into the Middle Sea, where no Northman has been. Two winters away, if they come back at all (docs/FRAME-MED.md).

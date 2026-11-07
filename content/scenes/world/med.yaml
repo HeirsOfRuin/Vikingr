@@ -1,0 +1,613 @@
+# The Middle Sea, 859-861 (docs/FRAME-MED.md): sixty-two ships out of the Loire under Hastein and Björn, past Spain and
+# through the strait, two winters away. Told off the map, scene by scene, like the voyage south of 844; the winters are
+# kept where he set out from (winter_far), and the story takes up again in the spring.
+#
+# Sources, close to the time: the Annals of St-Bertin, 859-861 (the fleet past Spain; the winter in the Camargue; the Rhône
+# raided as far as Valence; the turn to Italy and Pisa). Ibn Idhari and Ibn Hayyan, from the Córdoba records (the sixty-two
+# ships; two taken off the Algarve with their gold and captives; Algeciras and its great mosque burned; Nekor plundered for
+# eight days and the women of its ruling house ransomed by the emir; the Balearics; the emir's fleet in the strait on the
+# way home; King García Íñiguez of Pamplona taken and ransomed for seventy thousand dinars, dated 859 or 861 by different
+# writers). The Chronicle of Alfonso III (Count Pedro beats them off the Galician coast). Ibn Idhari: about forty ships lost.
+# Late, and told only as the men's stories: Dudo of Saint-Quentin (c. 1015) on Hastein taking Luna for Rome by playing dead;
+# the Irish Fragmentary Annals on the "blue men" brought captive to Ireland.
+# Content lines (style guide): the people of Algeciras and Nekor are people. Captives are people; the text says what
+# taking them means. The mosque burns because it did, told plainly, never as spectacle.
+
+# ---- the word ----
+- id: mh_word
+  kind: phase
+  trigger: hall
+  once: true
+  weight: 40
+  requires: ["winter == 858", "!service", "ships >= 1", "!flag.mh_heard"]
+  art: hearth_ormr
+  when: Winter, 858
+  title: Word from the Loire
+  text: |
+    A trader up from the south sits at your fire with his boots steaming and tells it as news, though by the way he tells it he has told it in every hall from here to the Loire.
+
+    Hastein is gathering ships on the monks' island. Hastein, the Loire captain, the one who took Bordeaux at night, who is getting on now and laughs more than a man with his name ought to. And with him a young one called Björn, a big quiet man who says he is Ragnarr's son, and nobody has yet been brave enough to ask his mother.
+    [break]
+    "South," the trader says. "Past the Moors' country, and through the strait at the end of the world, into a sea nobody's been on. Sixty ships, they want. They say Hastein means to take Rome." He drinks. "They say a lot of things, on the island."
+  choices:
+    - id: go
+      text: Send word that you'll be on the island by spring.
+      effects: [ { set: flag.mh_heard }, { set: flag.mh_bound }, { know: noirmoutier } ]
+      result: The trader takes your word south with him, and a ring for carrying it. Over the rest of the winter the men talk of nothing else, and the ones who were going to stay at home find reasons not to.
+    - id: later
+      text: Think about it. Spring is a long way off.
+      effects: [ { set: flag.mh_heard }, { know: noirmoutier } ]
+      result: You think about it. So does every man on your benches, out loud, all winter.
+
+- id: mh_word_spring
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year == 859", "month <= 4", "!service", "ships >= 1", "!flag.mh_heard"]
+  at: [dublin, linn_duachaill, walcheren, rouen, hamwic, bordeaux, nantes, noirmoutier, man, cork]
+  art: shore_wait
+  when: Spring, 859
+  title: Hastein's arrow
+  text: |
+    On the strand there's a man going from ship to ship with a split arrow in his belt and the same speech in his mouth. Hastein and Björn are gathering on the Loire. Sixty ships, for the south, for the strait, for a sea nobody has sailed. They go when the wind comes round, before midsummer.
+
+    "Rome," he says, when somebody asks where. "Or somewhere like it."
+  choices:
+    - id: go
+      text: Tell him you're coming.
+      effects: [ { set: flag.mh_heard }, { set: flag.mh_bound }, { know: noirmoutier } ]
+      result: He cuts a notch in the arrow for your ship, and moves on down the strand. You have until midsummer to be on the island.
+    - id: no
+      text: Let him go on down the strand.
+      effects: [ { set: flag.mh_heard }, { know: noirmoutier } ]
+      result: He goes on down the strand. You watch the arrow go from ship to ship, and count the notches.
+
+# ---- the council ----
+- id: mh_council
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 60
+  requires: ["year == 859", "month <= 6", "!service", "ships >= 1", "place == noirmoutier || place == nantes"]
+  art: muster
+  when: Spring, 859
+  title: Sixty-two ships
+  text: |
+    The fleet lies along the island's beach from one end to the other, and still there are ships coming in: Loire men, Danes off the Seine, Irish Northmen, a crew of Swedes who have been everywhere and seem to have liked none of it. Somebody counts sixty-two and stops.
+
+    Hastein holds his council on the monks' old threshing-floor. He is grey now, and broad, and he laughs at everything, which makes the young captains nervous, because they can't tell what he's laughing at. Björn stands behind him, a head taller than anyone on the island, and says nothing, and watches everyone.
+    [break]
+    [if flag.sf_went]"You," Hastein says, finding you in the crowd. "You were at Ishbiliya, with the fleet of forty-four. You've seen the strait." The captains turn to look at you. Fifteen years ago there was nobody alive who had seen it.[/if][if !flag.sf_went]"We go south," Hastein says, "past the Moors, through the strait, and east, until we find something worth the trouble. Two winters, maybe three. Who's coming?"[/if]
+
+    [if flag.mh_bound]Hastein finds your ship's notch on his arrow with his thumb, and nods to you across the floor: a man who keeps his word about spring.[/if]
+
+    [if flag.e43_hroi && !flag.sf_hroi_dead]Hrói is here, grey in the beard now, with three ships of his own and a dragon on each prow, painted no better than the first one.[/if]
+  choices:
+    - id: go
+      text: Put your ship in the fleet.
+      danger: true
+      effects: [ { fleet: med859 }, { set: flag.mh_went }, { if: flag.sf_went, then: [ { add: { honour: 1 } } ] } ]
+      next: mh_galicia
+    - id: stay
+      text: Stay on the Loire. Two winters is a long time to be gone.
+      result: |
+        You watch them go out past the island at the turn of the tide, sixty-two sails in a line that takes all morning to pass the point, and then the sea is empty, and the Loire is very quiet. The men who stayed don't talk about it. They don't need to; everyone knows what they're thinking.
+
+# ---- 859: the coasts of Spain ----
+- id: mh_galicia
+  kind: spine
+  art: open_sea
+  when: Summer, 859
+  title: The Galician strand
+  text: |
+    South past the Basques, and west along the green mountains of the Christians' country, the fleet puts in to a bay on the Galician coast for water and cattle. Hastein is ashore before the keels are, sniffing the wind like a dog.
+
+    The people here have seen Northmen before. They have had fifteen years to think about it. There's a count on the hill above the bay, Count Pedro, King Ordoño's man, with every man of the valleys behind him, and his banners are already coming down to the strand.
+    [break]
+    "Well," Björn says. It's the first word anyone has heard him say all voyage.
+  choices:
+    - id: land
+      text: Land with Björn's crews and fight for the strand.
+      danger: true
+      effects: [ { host: { title: "The Galician strand", foe: galician_levy, terrain: beach, men: 30, ratio: 1.0, wings: [ { name: "Björn's crews", men: 420, quality: 0.9, foe_men: 470 } ], role: wing, win: mh_galicia_held, lose: mh_galicia_lost } } ]
+    - id: sail
+      text: Stay in the ships. There's a whole coast south of this one.
+      effects: [ { days_foraged: 20 }, { add: { honour: -1 } } ]
+      result: You lie off and watch. The crews that land are on the beach until evening, and come back to the ships fewer, with a few cattle and no silver. Count Pedro's banners are still on the hill when the fleet goes south. "Next time," Hastein says, and laughs, and nobody else does.
+      next: mh_algeciras
+    - id: night
+      text: Take your men round the headland at night for the cattle.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: You come at the count's herds from the landward side while his men watch the sea, and drive forty beasts down to a cove a mile from the fleet. By morning they're salt beef in the casks. Hastein hears of it and sends you a cup of wine, which is his way.
+        effects: [ { days_foraged: 20 }, { add: { provisions: 200, crew.morale: 1 } } ]
+        next: mh_algeciras
+      failure:
+        text: The count's herdsmen have dogs. You come back to the ships at a run in the grey before dawn, three men short and with nothing to show for it.
+        effects: [ { days_foraged: 20 }, { add: { crew.men: -2, crew.morale: -1 } } ]
+        next: mh_algeciras
+
+- id: mh_galicia_held
+  kind: spine
+  art: shield_wall
+  title: The strand held
+  text: |
+    You hold your part of the strand. Count Pedro's men come at you twice and go back up the hill twice, leaving their dead on the sand among the kelp. But along the bay the other crews have had a worse day: two ships burning in the shallows where the Galicians got among them with torches, and Björn walking along the waterline with his axe over his shoulder, counting.
+
+    By evening the fleet has its water and a few cattle and no silver. The count's banners are still on the hill.
+  choices:
+    - id: on
+      text: South.
+      effects: [ { days_foraged: 20 }, { add: { provisions: 120 } }, { deed: { type: battle_won, text: "Held the strand against Count Pedro on the Galician coast", weight: 2, witnesses: 400 } } ]
+      next: mh_algeciras
+
+- id: mh_galicia_lost
+  kind: spine
+  art: shield_wall
+  title: Back into the sea
+  text: |
+    Count Pedro's men push you back into the surf. You get your ship off with men hanging over her sides and spears coming after them, and lie off in the bay while the Galicians burn the ships that were slow, and the men in them.
+
+    "Fifteen years they've waited for us," Hastein says, at the council that night, almost admiring. "I'd have waited too."
+  choices:
+    - id: on
+      text: South, and lick the wounds on the way.
+      effects: [ { days_foraged: 20 }, { add: { crew.morale: -1 } } ]
+      next: mh_algeciras
+
+- id: mh_algeciras
+  kind: spine
+  art: town_rise
+  when: Summer, 859
+  title: The Green Island
+  text: |
+    South along the long coast of the Moors' country, the fleet loses two ships off the Algarve to the emir's galleys, with their gold and their captives in them, and learns that this sea has a navy. Then the strait: a gap between two continents, with a mountain on each side and a current that pulls the whole fleet through it like a hand.
+
+    Inside, on the north shore, a town on a green island: al-Jazira al-Khadra, the pilot says. Walls, a harbour, white houses, and over all of it the dome of the great mosque, the one they call the mosque of the banners, with the sun on it.
+    [break]
+    The town shuts its gates. The gates are not good enough. By noon the fleet is in the streets, and the people of the Green Island are running for the hills with what they can carry, and some of them are not fast enough.
+  choices:
+    - id: mosque
+      text: Go up to the great mosque with Björn's men.
+      effects: [ { days_foraged: 15 }, { add: { loot: 320 } }, { deed: { type: raid, text: "Was at the burning of the great mosque at the Green Island", weight: 3, witnesses: 2000 } } ]
+      result: |
+        The doors are oak, bound with bronze, and they take a long time to break. Inside it is cool and dim and very large, a forest of pillars striped red and white, mats on the floor, lamps of brass on chains. There is less silver than the men hoped and more than they can carry. Then somebody brings fire.
+
+        From the ships that night you can see it burning, the dome falling in at last with a noise like surf. Years later a Moor in a port will tell you, with a look you don't forget, that they rebuilt it, and made its new doors from the timbers of your fleet's wrecked ships.
+      next: mh_nekor
+    - id: town
+      text: Keep to the merchants' quarter, where the silver is.
+      danger: true
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: While the others go for the mosque you go for the counting-houses by the harbour, and find a merchant who has not run, because he could not leave his strongroom. He opens it himself, quickly, to save his hands. Silver, coin with writing on it, a bolt of silk the colour of blood.
+        effects: [ { days_foraged: 15 }, { add: { loot: 380 } }, { goods: { id: silk, lots: 2 } } ]
+        next: mh_nekor
+      failure:
+        text: The merchants' quarter has a wall of its own and men on it, the governor's men, with bows. You lose men in a street too narrow to raise a shield in, and come back to the ships with what the others missed, which is not much.
+        effects: [ { days_foraged: 15 }, { battle: { foe: andalusi_town, terrain: rampart, men: 20, ratio: 0.7, raid: true, win: mh_nekor, lose: mh_nekor } } ]
+    - id: ships
+      text: Keep your men in the ships and the harbour.
+      effects: [ { days_foraged: 15 }, { add: { loot: 120 } } ]
+      result: You take the ships in the harbour instead, and what's in them, and keep your men out of the streets. The men grumble all evening, watching the smoke over the town. In the morning three crews that went into the streets are short of men, and yours isn't.
+      next: mh_nekor
+
+- id: mh_nekor
+  kind: spine
+  art: shore_wait
+  when: Autumn, 859
+  title: Nekor
+  text: |
+    Across the strait, on the African shore, there is a small emirate in the mountains of the Rif with a port and a river and a city called Nekor, and its ruler has never in his life had a reason to build a wall facing the sea. The fleet stays eight days.
+
+    At the end of the eight days there are captives on the beach, a great many, sitting in rows in the sun with their hands tied: townspeople, farmers from the river, a few of the ruler's own household, and men and women darker than anyone in the fleet has seen, from somewhere south of the mountains, who don't speak the language of the others either. Nobody can talk to them. A Dane tries Frisian on them, loudly.
+    [break]
+    On the ninth day a boat comes over from Spain under a white cloth: a man from the emir at Córdoba, with silver, to buy back the women of Nekor's ruling house. The emir is no friend to this ruler. He is buying them anyway.
+  choices:
+    - id: sell
+      text: Sell him back every captive you hold, and the rest at his price.
+      effects: [ { add: { silver: 96, hamingja: 1 } } ]
+      result: The emir's man pays in good silver, weighed on his own scales, which are honest. Your captives walk up the beach to their own people. One of the old men stops at the top of the shingle and looks back at you, for a while, as if he were learning your face.
+      next: mh_balearics
+    - id: north
+      text: Keep yours. They'll fetch more in the north.
+      effects: [ { captives: 6 }, { set: flag.mh_captives_north } ]
+      result: |
+        You keep them. They go down into the hold with the others, and the fleet sails, and on the shore behind you a woman walks along the waterline with the ships, keeping pace with them, until the beach runs out.
+
+        In the hold the dark-skinned men from the south sit together and don't look at anyone. They'll be sold in Dublin, in the end, or in Hedeby, and the Irish who buy them will call them blue men, and write it down.
+      next: mh_balearics
+    - id: food
+      text: Take no captives. Take food and water, and go.
+      effects: [ { add: { provisions: 150 } } ]
+      result: You fill the casks from the river and take what grain the town had left, and leave the captive-dealing to the others. It's a long way to anywhere you could sell a man, and the men eat.
+      next: mh_balearics
+
+- id: mh_balearics
+  kind: spine
+  art: open_sea
+  when: Autumn, 859
+  title: The islands
+  text: |
+    East, along the Spanish coast, past a country of orange earth and white villages, and out across open water to a string of islands lying in a sea so clear you can see the anchor on the bottom. The islanders keep goats and vines and a few towns, and the emir's tax-men, and they have had no warning at all.
+
+    The leaves are turning. Hastein wants to be somewhere he can winter before the storms.
+  choices:
+    - id: raid
+      text: Raid the biggest island with Björn.
+      check: { skill: command, attr: str, difficulty: 5 }
+      success:
+        text: The island's town opens its gate after one rush, and the fleet stays four days. Silver from the tax-men's chests, wine, and oil in jars so big two men can barely lift them.
+        effects: [ { days_foraged: 25 }, { add: { loot: 220 } }, { goods: { id: wine, lots: 2 } } ]
+        next: mh_camargue
+      failure:
+        text: The islanders take to a fortress on a crag and roll stones down on anyone who comes up the track. You lose men on the track for nothing and take what's in the villages instead.
+        effects: [ { days_foraged: 25 }, { add: { loot: 90, crew.men: -1 } } ]
+        next: mh_camargue
+    - id: water
+      text: Water and rest the men, and go on.
+      effects: [ { days_foraged: 20 }, { add: { provisions: 100 } } ]
+      result: You lie in a cove for three days with your men asleep on the warm rocks, and fill the casks from a spring, and go on. The ones who raided come back with wine, and give you some, which is decent of them.
+      next: mh_camargue
+
+# ---- the first winter ----
+- id: mh_camargue
+  kind: spine
+  art: shore_wait
+  when: Late autumn, 859
+  title: The Camargue
+  text: |
+    North-east, along a coast of salt lagoons and pink birds standing in the shallows on one leg, to the mouth of a great river that comes out of Frankia in a dozen arms through the marshes. Between the arms, an island of reeds and wild horses and nothing else: the Camargue.
+
+    "Here," Hastein says. The fleet hauls up on the island, sixty ships less the ones that are gone, and digs a ditch, and builds huts of reeds and driftwood, and settles down to wait for spring in a country where nobody knows its name.
+  choices:
+    - id: winter
+      text: Dig in for the winter.
+      effects: [ { days_foraged: 20 }, { add: { crew.men: 4 } }, { set: flag.mh_far1 }, { winter_far: "Wintered in the Camargue with Hastein's fleet." } ]
+      result: The marsh is cold and wet and full of things that bite, and the horses are wild, and the river is full of fish. You have wintered in worse places, though not many. Four men from a crew whose ship was lost off the Algarve come to your fire one night with their sea-chests, and ask for benches. You give them benches.
+
+- id: mh_fever
+  kind: pool
+  trigger: hall
+  once: true
+  weight: 30
+  requires: ["!service", flag.mh_far1, "winter == 859"]
+  art: hearth_ormr
+  title: Marsh fever
+  text: |
+    It comes out of the marsh with the fogs, in the dark of the year: a fever that shakes a man until his teeth rattle, then leaves him for two days, then comes back. In the huts on the island men lie in rows under their cloaks. Some of them get up again.
+
+    One of your men, a strong one, is shaking so hard he can't hold the cup you give him.
+  choices:
+    - id: tend
+      text: Sit with your sick, and make them eat.
+      check: { skill: lore, attr: end, difficulty: 4 }
+      success:
+        text: You make them eat, and drink boiled water, and keep them out of the fog, and you lose nobody of yours where other crews lose five. The men notice. Men always notice who sat with them.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: You sit with them, and it catches you too. You lie in the reeds for a month seeing things, and wake thin, to find two of your men buried on the dunes.
+        effects: [ { add: { crew.men: -2 } } ]
+    - id: move
+      text: Move your crew to the dunes, out of the marsh fogs.
+      effects: [ { add: { crew.men: -1 } } ]
+      result: The dunes are dry and the wind is cruel, and the fever comes less, and the men curse you all winter for the cold. One of them dies anyway.
+
+- id: mh_envoys
+  kind: pool
+  trigger: hall
+  once: true
+  weight: 25
+  requires: ["!service", flag.mh_far1, "winter == 859"]
+  art: town_rise
+  title: Envoys
+  text: |
+    Men come down the river in a barge with a cross on its prow: a Frankish count's envoys, with a priest to speak Norse for them, badly. Their lord would like to know how long the Northmen intend to stay on his island, and what it would cost for the answer to be "not long".
+
+    Hastein receives them sitting on an upturned boat, with Björn behind him, and makes them wait while he finishes his fish.
+  choices:
+    - id: price
+      text: Tell Hastein to name a price, and a high one.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: Hastein names a price so large the priest has to say it twice to the count's men. They go back up the river white-faced, and come back in a month with half of it, and Hastein takes it and laughs and stays anyway. A share comes to you, for the advice.
+        effects: [ { add: { silver: 48 } } ]
+      failure:
+        text: Hastein names a price. The envoys go back up the river and don't come back. Next spring you'll find out why.
+        effects: [ { set: flag.mh_gerard_warned } ]
+    - id: listen
+      text: Listen, and learn what you can about the river.
+      effects: [ { set: flag.mh_river_known }, { add: { skill.lore: 1 } } ]
+      result: While Hastein and the envoys bargain, you sit with their boatmen and share your ale. By evening you know the name of every town up the river, and that the count at Vienne, Gerard, is a hard man who has been waiting all winter for an excuse.
+
+# ---- 860: the Rhône, and Italy ----
+- id: mh_rhone
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 100
+  requires: ["!service", flag.mh_far1, "year == 860"]
+  art: iona_burning
+  when: Spring, 860
+  title: Up the Rhône
+  text: |
+    In the spring the fleet goes up the river. Arles first, the old Roman town, with its stone theatre that the people have filled with houses; then Nîmes, inland, over a country of olive trees; then on up the Rhône past towns and abbeys and villages, the river getting faster and the hills higher, until a place called Valence, which burns like the others.
+
+    Then, above Valence, the hills on both banks fill up with men. Count Gerard of Vienne has come down the river with his whole country behind him.
+    [if flag.mh_river_known]You know his name, and you know the river. You know where it narrows.[/if]
+  choices:
+    - id: fight
+      text: Stand with Björn and fight for the river.
+      danger: true
+      effects:
+        - { clear: flag.mh_far1 }
+        - { if: flag.mh_gerard_warned, then: [ { host: { title: "Above Valence", foe: gerard_host, terrain: field, men: 36, ratio: 1.1, wings: [ { name: "Björn's crews", men: 400, quality: 0.9, foe_men: 470 } ], role: wing, win: mh_rhone_held, lose: mh_rhone_broken } } ], else: [ { host: { title: "Above Valence", foe: gerard_host, terrain: field, men: 34, ratio: 0.85, wings: [ { name: "Björn's crews", men: 420, quality: 0.9, foe_men: 380 } ], role: wing, win: mh_rhone_held, lose: mh_rhone_broken } } ] }
+    - id: back
+      text: Get your ship back down the river before the count closes it.
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: You turn your ship in the current before the others have understood what the hills mean, and go down past Valence with the river doing the rowing for you. You're at the island with your plunder when the rest come down, beaten and short of men, and some of them look at you in a way you'd rather they didn't.
+        effects: [ { clear: flag.mh_far1 }, { days_foraged: 30 }, { add: { loot: 160, honour: -1 } } ]
+        next: mh_parting
+      failure:
+        text: The count's men are at the narrows before you are. You go down the river past them under a rain of spears and stones from both banks, with your men flat in the bilge, and come out at the bottom with less than you went up with.
+        effects: [ { clear: flag.mh_far1 }, { days_foraged: 30 }, { add: { loot: 60, crew.men: -2, crew.morale: -1 } } ]
+        next: mh_parting
+
+- id: mh_rhone_held
+  kind: spine
+  art: shield_wall
+  title: Above Valence
+  text: |
+    The wall holds. Gerard's horsemen ride at it and turn away, and ride at it again, and leave men and horses in front of it, and in the evening the count draws off up the hill to wait for more. He doesn't need to win; it's his river. The fleet goes back down it in the night, loaded to the gunwales with the plunder of three towns.
+  choices:
+    - id: on
+      text: Down to the sea.
+      effects: [ { days_foraged: 30 }, { add: { loot: 300 } }, { deed: { type: battle_won, text: "Held the wall above Valence against Count Gerard", weight: 4, witnesses: 1000 } } ]
+      next: mh_parting
+
+- id: mh_rhone_broken
+  kind: spine
+  art: shield_wall
+  title: The count's river
+  text: |
+    The wall breaks, and it is a long way to the ships. Gerard's horsemen ride down the men who run and the men who don't, and the river behind you is full of men trying to swim in mail. You get to the water. You get your ship off. A good many crews don't.
+
+    The fleet goes down the Rhône in the dark with what it took from Arles and Nîmes and Valence, which is a great deal, and not enough.
+  choices:
+    - id: on
+      text: Down to the sea.
+      effects: [ { days_foraged: 30 }, { add: { loot: 150, crew.men: -2, crew.morale: -2 } } ]
+      next: mh_parting
+
+- id: mh_parting
+  kind: spine
+  art: shore_wait
+  when: Summer, 860
+  title: The ships that go home
+  text: |
+    On the island, after the Rhône, the fleet holds a council, and it is not a short one. Some of the captains have had enough: they have silver, and they have buried men, and the strait is a long way behind them. They'll go home now, together, while the summer lasts.
+
+    Hastein lets them talk. Then he stands up and says that east of here there is a country called Italy, and in it a city called Rome, where the Pope sits on more gold than every king in Frankia together, and he for one has not come all this way to look at marshes.
+    [break]
+    Björn says nothing. He doesn't need to; everyone can see he's going.
+  choices:
+    - id: on
+      text: Go east with Hastein.
+      danger: true
+      next: mh_luna
+    - id: home
+      text: Go home with the others while the summer lasts.
+      effects: [ { set: flag.mh_left } ]
+      next: mh_home_early
+
+- id: mh_luna
+  kind: spine
+  art: town_rise
+  when: Summer, 860
+  title: Rome
+  text: |
+    East along a coast of mountains that come straight down to the sea, the fleet takes a town called Pisa at the mouth of a river, quickly, and goes on. Then, a little further, a white city with walls and towers and a cathedral, and Hastein standing in the bow saying "Rome" to himself, softly, the way another man would say a woman's name.
+
+    The walls are too good to storm. Hastein thinks about it for two days. On the third he sends a priest from Pisa up to the gate: the great chief of the Northmen is dying, he has seen the error of his ways, he wishes to be baptised and to be buried in a Christian church. The bishop, after some thought, agrees.
+    [break]
+    The next day Hastein is baptised, looking very ill. The day after, he dies. His men, weeping loudly, ask to carry his body into the cathedral for burial, with forty mourners.
+  choices:
+    - id: bier
+      text: Be one of the forty mourners, with a sword under your cloak.
+      danger: true
+      check: { skill: cunning, attr: agi, difficulty: 6 }
+      success:
+        text: |
+          The bishop is in the middle of the mass for the dead when Hastein sits up in his coffin with a sword in his hand. After that it's quick, and ugly, and you don't look at the altar afterwards. The forty hold the doors until the fleet comes up through the open gate.
+
+          The city is called Luna. It is not Rome. When Hastein finds this out, at dinner, he laughs until he cries, and then he stops laughing and goes outside, and nobody follows him.
+        effects: [ { days_foraged: 40 }, { add: { loot: 420 } }, { deed: { type: deed, text: "Carried Hastein's coffin into Luna, and held the doors", weight: 6, witnesses: 2000 } } ]
+        next: mh_winter2
+      failure:
+        text: A townsman sees the edge of a sword under a mourner's cloak, and shouts, and the bishop's men are on you in the nave before Hastein has got the lid off. You fight your way back to the doors over the benches, and the fleet comes up through the gate behind you, and the city falls anyway, but you are bleeding when it does.
+        effects: [ { days_foraged: 40 }, { battle: { foe: luna_guard, terrain: rampart, men: 12, ratio: 0.5, win: mh_winter2, lose: mh_winter2 } } ]
+    - id: gate
+      text: Wait at the gate with the fleet, and go in when it opens.
+      effects: [ { days_foraged: 40 }, { add: { loot: 300 } } ]
+      result: |
+        The gate opens. You go in with the fleet, and the city is yours for a week. Its name is Luna, it turns out. It is not Rome.
+
+        Hastein, when he finds out, laughs until he has to sit down. Later the men will tell it in every hall in the north, and add a little each time, and some of what they add will be true.
+      next: mh_winter2
+    - id: warn
+      text: Send a Pisan boy up to the bishop with a warning.
+      effects: [ { days_foraged: 40 }, { add: { loot: 120, hamingja: 1 } }, { set: flag.mh_warned_luna } ]
+      result: |
+        The boy goes up to the gate with your words in his ear, running. The trick works anyway: the bishop is in the cathedral when Hastein sits up in his coffin, because a bishop has to be. But his household is not, nor the cathedral's silver, nor the town's children, who are up the mountain by evening with the nuns.
+
+        The fleet finds less in Luna than it hoped. You find you mind that less than you'd have thought.
+      next: mh_winter2
+
+# ---- the second winter ----
+- id: mh_winter2
+  kind: spine
+  art: shore_wait
+  when: Autumn, 860
+  title: The second winter
+  text: |
+    Back west along the coast in the autumn, heavy with Italy, to the island in the Camargue, where the reed huts are still standing and the wild horses have eaten the thatch. The fleet is smaller than it was. Some of the ships went home after the Rhône; some went down off Italy in a storm; some are just gone.
+
+    "One more winter," Hastein says. "Then home, through the strait, rich." He says it the way a man says a thing he has said to himself many times.
+  choices:
+    - id: stay
+      text: Winter on the island with the fleet.
+      effects: [ { add: { crew.men: 5 } }, { set: flag.mh_far2 }, { winter_far: "Wintered a second time in the Camargue, with what was left of the fleet." } ]
+      result: You haul up and dig in again. Five men off a ship that broke her back on the Italian rocks take benches with you, which makes the reckoning of shares easier for everyone. The second winter is easier than the first, because you know where the fevers come from. It's harder in every other way.
+    - id: home
+      text: Take your ship home now, before the winter storms.
+      effects: [ { set: flag.mh_left } ]
+      next: mh_home_early
+
+# ---- 861: the strait, Pamplona, home ----
+- id: mh_strait
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 100
+  requires: ["!service", flag.mh_far2, "year == 861"]
+  art: storm_ship
+  when: Spring, 861
+  title: The strait
+  text: |
+    West, the whole long way back along the coasts you plundered, with the people of every town watching you pass from their walls. Then the strait again, the mountain on each side, the current running against you now, and the fleet crawling into it at the speed of a walking man.
+
+    They're waiting. The emir has had two years to think about you. His galleys come out from behind the African mountain in a line that stretches from one shore halfway to the other: big ships, many oars, archers on raised decks, and men with pots of fire.
+    [break]
+    "Well," Björn says again.
+  choices:
+    - id: fight
+      text: Lash the ships together and fight it out.
+      danger: true
+      effects: [ { clear: flag.mh_far2 }, { host: { title: "The strait", foe: emir_fleet, terrain: ship, men: 34, ratio: 0.9, wings: [ { name: "Hastein's ships", men: 380, quality: 0.85, foe_men: 410 } ], role: wing, win: mh_strait_through, lose: mh_strait_burned, parted: mh_strait_through } } ]
+    - id: run
+      text: Hug the African shore and run for the ocean.
+      danger: true
+      check: { skill: seamanship, attr: wit, difficulty: 6 }
+      success:
+        text: You take your ship in close under the African cliffs, where the galleys can't come at you abreast, and row until your men are weeping, and come out into the ocean with the fleet's fight going on behind you and the smoke of it lying on the water for a day's sail. Not everyone you knew comes out after you.
+        effects: [ { clear: flag.mh_far2 }, { days_foraged: 10 }, { add: { crew.morale: -1, honour: -1 } } ]
+        next: mh_pamplona
+      failure:
+        text: Two galleys see you go and come after you, and they are faster than any ship with thirty oars.
+        effects: [ { clear: flag.mh_far2 }, { battle: { foe: emir_fleet, terrain: ship, men: 30, ratio: 0.85, win: mh_strait_through, lose: mh_strait_burned, parted: mh_strait_through } } ]
+
+- id: mh_strait_through
+  kind: spine
+  art: storm_ship
+  title: Through
+  text: |
+    You come through. The galleys break off at the strait's mouth as the evening comes on, and the fleet comes out into the grey ocean in ones and twos and lies there waiting for the rest, and the rest don't come. Somebody counts. Somebody stops counting.
+
+    You pull men out of the water all evening, men from ships that aren't there any more, and put them on your benches. That night nobody sings, and nobody sleeps, and in the morning there's a burned spar floating past with a dragon's head on it.
+  choices:
+    - id: on
+      text: North.
+      effects: [ { days_foraged: 15 }, { add: { crew.men: 3, crew.morale: -1 } }, { deed: { type: battle_won, text: "Fought through the emir's fleet in the strait", weight: 6, witnesses: 2000 } } ]
+      next: mh_pamplona
+
+- id: mh_strait_burned
+  kind: spine
+  art: storm_ship
+  title: Fire on the strait
+  text: |
+    The fire-pots come over in a shower, and where they land the pitch on the hulls catches, and the tarred ropes, and the sails. The fleet comes apart. Ships burn to the waterline with their men going over the side in mail; ships are rammed and taken; ships run every way at once. Yours gets out, somehow, into the ocean, smaller than it went in.
+
+    Of all the ships that came out of the Loire, there will be about twenty left when the count is made.
+  choices:
+    - id: on
+      text: North, with what's left.
+      effects: [ { days_foraged: 15 }, { lose_ship: wreck }, { add: { crew.men: -3, crew.morale: -2 } }, { lose_cargo: 2 } ]
+      next: mh_pamplona
+
+- id: mh_pamplona
+  kind: spine
+  art: muster
+  when: Summer, 861
+  title: The king of Pamplona
+  text: |
+    You'd think a fleet that had lost two ships in three would go home. Hastein doesn't think so. Up the coast of the Christians' country there's a river, the Ebro, and up the river and over the hills there's a small kingdom of Basques, with a king called García who has never once in his life been afraid of the sea.
+
+    The raid goes up the river with the fittest men of every crew, and over the hills on stolen horses, fast.
+  choices:
+    - id: ride
+      text: Ride with the raid for Pamplona.
+      danger: true
+      effects: [ { battle: { foe: navarrese_levy, terrain: field, men: 18, ratio: 0.55, win: mh_ransom, lose: mh_ransom } } ]
+    - id: ships
+      text: Hold the ships at the river mouth.
+      effects: [ { days_foraged: 20 } ]
+      result: You hold the ships, and wait, and fish, and wait. On the twelfth day the raid comes back down the river with a man in a good cloak sitting very straight in the middle of it, with his hands tied.
+      next: mh_ransom
+
+- id: mh_ransom
+  kind: spine
+  art: muster
+  title: Seventy thousand
+  text: |
+    King García Íñiguez of Pamplona sits on a rock by the river among his captors, eating bread, and treats with them as if he were in his own hall. He has a son, he says, and a kingdom, and they will pay. How much?
+
+    The Moors' word for their gold coin is dinar. Hastein says a number of them that sounds like a joke. The king says it back, slowly, to be sure he has heard it. Seventy thousand. Then, because he is a king, he nods.
+    [break]
+    It takes all summer to come. Some of it comes as the king's children, held as surety until the rest arrives. When it is shared out by the river, the ships that bled at the strait want more than the ships that ran.
+  choices:
+    - id: share
+      text: Take your ship's share, and say nothing.
+      effects: [ { days_foraged: 40 }, { add: { silver: 192 } } ]
+      result: Your share is gold, more of it than you've ever held, in coins with writing on them. The men keep taking them out to look at them. You make them stop; there are Basques in the hills who can see a glint of gold at a mile.
+      next: mh_home
+    - id: argue
+      text: Speak for the ships that bled at the strait.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: You stand up at the share-out and say it plainly, and the crews that fought behind you roar, and Hastein, who knows when a fleet is listening to someone else, gives way with a laugh. The fighting ships take a double share. Yours is one of them.
+        effects: [ { days_foraged: 40 }, { add: { silver: 288, honour: 1 } } ]
+        next: mh_home
+      failure:
+        text: You say it plainly. Björn looks at you for a long moment, and then says that every ship that came out of the strait fought, and that's the end of it. You get your share like everyone else, and a reputation for saying too much.
+        effects: [ { days_foraged: 40 }, { add: { silver: 192 } } ]
+        next: mh_home
+
+- id: mh_home
+  kind: spine
+  art: sail_home
+  when: Autumn, 861
+  title: Twenty ships
+  text: |
+    North up the long coast, past the Christians' green mountains and Count Pedro's hills, past the Basques and the mouth of the Garonne, and into the Loire on a falling tide on a grey day in autumn: twenty ships, or near it, out of sixty-two.
+
+    The people on the island come down to the beach to count them in, and keep looking past the last one for the others.
+    [break]
+    [if flag.mh_captives_north]The captives from Nekor come up out of your hold blinking, after two years, into the northern rain. You'll sell them in Dublin, where the slave market is. That is what they were taken for.[/if]
+  choices:
+    - id: home
+      text: Haul up on the island, and drink to the ones in the strait.
+      effects: [ { days_foraged: 30 }, { fleet_end: true }, { deed: { type: deed, text: "Sailed with Hastein and Björn through the strait into the Middle Sea, and came home", weight: 10, witnesses: 3000 } } ]
+      result: |
+        That winter every hall on the Loire wants you at its fire, to tell it: the Green Island, the eight days at Nekor, the coffin at Luna, the king on the rock eating bread. You tell it, and it gets better every time.
+
+        You don't tell the strait. When somebody asks, you say the emir had some ships, and drink, and somebody else changes the subject.
+
+- id: mh_home_early
+  kind: spine
+  art: sail_home
+  title: Home alone
+  text: |
+    You go west with the ships that have had enough, back the whole long way along the coasts you plundered on the way out, with every town watching you pass. The strait is the worst of it: the current against you, and the emir's galleys out of their harbours like wasps from a kicked nest.
+  choices:
+    - id: run
+      text: Run the strait by night, and pray to whoever's listening.
+      danger: true
+      check: { skill: seamanship, attr: wit, difficulty: 5 }
+      success:
+        text: You go through on a moonless night with the oars muffled, close under the cliffs, and come out into the ocean at dawn with nothing behind you but water. The rest is only the long coast north, and the Loire, and the island, where you are the first home and have to tell it to everyone.
+        effects: [ { days_foraged: 50 }, { fleet_end: true }, { deed: { type: deed, text: "Sailed into the Middle Sea with Hastein and Björn, and came home through the strait", weight: 6, witnesses: 1000 } } ]
+      failure:
+        text: The galleys find you at dawn in the strait's mouth. You get through with the ships that are fast enough, and leave the ones that aren't, and come home up the long coast with half your plunder in the sea and men missing from the benches.
+        effects: [ { days_foraged: 50 }, { fleet_end: true }, { lose_cargo: 2 }, { add: { crew.men: -5, crew.morale: -2 } }, { deed: { type: deed, text: "Sailed into the Middle Sea with Hastein and Björn, and came home through the strait", weight: 5, witnesses: 1000 } } ]

@@ -526,6 +526,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   lines.push(...hardLines);
   state.seasonRaids = [];
   state.phase = atHome(state) ? 'muster' : 'sailing';
+  delete state.flags._far;
   lines.push(...chapterCard(state, content, year));
   // whatever news never reached him in a port reaches him over the winter (docs/FRAME-WORLD.md §B)
   const news = hearNews(state, true);
