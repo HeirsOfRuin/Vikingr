@@ -35,6 +35,7 @@ import { nameChild } from './family';
 import { loseHome } from './settle';
 import { buyBlock, buyLand, claimBlock, claimLand } from './land';
 import { joinFleet, leaveFleet, moveFleet } from './sailfleet';
+import { endOwnFleet, OWN, ownFleet, sendArrow, shiftCohesion } from './ownfleet';
 import { stowGoods } from './trade';
 /** They come back for a home fort in force: its people, and their neighbours. */
 const HOME_ATTACK = 1.4;
@@ -182,6 +183,16 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       if (!state.known.includes(e.hear_of) && !state.rumoured.includes(e.hear_of)) state.rumoured.push(e.hear_of);
     }
     else if ('fleet_to' in e) moveFleet(state, e.fleet_to, 'bound');
+    else if ('war_arrow' in e) sendArrow(state, e.war_arrow === 'any' ? null : e.war_arrow);
+    else if ('own_fleet' in e) {
+      const f = ownFleet(state);
+      if (f) {
+        if (e.own_fleet.cohesion) shiftCohesion(state, e.own_fleet.cohesion);
+        if (e.own_fleet.ships) { f.ships = Math.max(0, f.ships + e.own_fleet.ships); f.men = Math.min(f.men, f.ships * OWN.menPerShip); }
+        if (e.own_fleet.winter) f.winter = true;
+        if (e.own_fleet.end || f.ships <= 0) (state.notes ??= []).push(...endOwnFleet(state, content));
+      }
+    }
     else if ('march' in e) {
       // the move itself is the next action, so the place's arrival scene fires after this one is read
       if (state.at && state.at !== e.march && landPath(content, state.at, e.march)) state.marchTo = e.march;

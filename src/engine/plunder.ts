@@ -1,5 +1,7 @@
 // Plunder against the alarm (DESIGN §11.3, step 3). After the assault, each round takes more,
 // and the countryside wakes. Leave in time, or lose what you are carrying getting back to the ships.
+import { earn } from './hardship';
+import { ownFleetPlunder } from './ownfleet';
 import { strandRaided } from './strand';
 import { mouths } from './crew';
 /** A raid on an unnamed place on the shore is a smaller deed than a named one (base raid weight is 3). */
@@ -151,6 +153,10 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
     ps.defence = Math.min(3, ps.defence * (p.burned ? 1.8 : 1.5));
     if (p.burned) ps.wealth = Math.round(ps.wealth * 0.5);
   }
+  // his fleet's crews take their own, and he takes a leader's share of it (docs/FRAME-FLEETS-REALMS.md, Part C)
+  const fl = state.service ? { extra: 0, line: null } : ownFleetPlunder(state, taken);
+  // the leader's share is his own: it goes in his purse, not the crew's heap
+  if (fl.line) { state.silver += fl.extra; earn(state, fl.extra); journal(state, `Took a leader's share from the fleet: ${formatSilver(fl.extra)}.`); lines.push(fl.line); }
   const left = stow(state, content, taken);
   if (left) {
     taken -= left;

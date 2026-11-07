@@ -143,7 +143,7 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
             })}
             {(() => {
               // the army he is sworn to: a banner at its camp, so he can find it when he is away from it
-              const camp = state.fleet?.camp ? content.places[state.fleet.camp] : undefined;
+              const camp = state.fleet?.camp && !state.fleet.own ? content.places[state.fleet.camp] : undefined;
               if (!camp) return null;
               const [cx, cy] = lonLatToTile(camp.lon, camp.lat);
               const x = cx * PX, y = cy * PX, u = 1 / scale;

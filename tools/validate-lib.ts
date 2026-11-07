@@ -212,7 +212,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     // hostages (src/engine/hostages.ts, plunder.ts): taken in a raid; a broken peace
     'hs_taken', 'hs_broken', 'hi_heir',
     // lords and rule (docs/FRAME-WORLD.md): found with two lords; a rival for the seat; the legends' years
-    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'rl_york_archbishop', 'rl_york_rising', 'rl_york_coin', 'rl_ea_edmund', 'rl_ea_border', 'rl_nt_ceolwulf', 'rl_nt_boroughs', 'rl_lo_bretons', 'rl_lo_monks', 'rl_is_poet', 'rl_is_dublin', 'rl_fr_emperor', 'rl_fr_dikes', 'rl_ld_hall', 'rl_ld_neighbours', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'e65_boyhood', 'is_landnam', 'sk_verse',
+    'lo_cast_out', 'ru_challenge', 'ru_danes', 'ru_rorik', 'of_arrow', 'of_answer', 'rl_york_archbishop', 'rl_york_rising', 'rl_york_coin', 'rl_ea_edmund', 'rl_ea_border', 'rl_nt_ceolwulf', 'rl_nt_boroughs', 'rl_lo_bretons', 'rl_lo_monks', 'rl_is_poet', 'rl_is_dublin', 'rl_fr_emperor', 'rl_fr_dikes', 'rl_ld_hall', 'rl_ld_neighbours', 'g_w_son', 'g_w_daughter', 'fa_birth', 'fa_child_dies', 'fa_mound', 'st_fort_attack', 'st_fort_held', 'st_fort_lost', 'e43_boyhood', 'e65_boyhood', 'is_landnam', 'sk_verse',
   ];
   while (queue.length) {
     const id = queue.pop()!;

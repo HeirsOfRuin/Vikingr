@@ -209,6 +209,34 @@ Several ships with shipmasters, sworn partners whose ships sail beside you, host
 - **Rare.** 2–6 lives in 60 raise a fleet; this is late-game.
 - **Rewarding, but not a sure thing.** A fleet summer pays 3–5 good raiding summers if it holds together, and breaks up early about a third of the time.
 
+### Built (2026-11-07)
+- **The war-arrow** goes out from the winter hall (`src/engine/ownfleet.ts`, `content/scenes/world/ownfleet.yaml`). It needs:
+  - a name of 350 or more;
+  - a hall of your own or a high seat (as framed);
+  - two ships of your own;
+  - no other fleet.
+- **The arrow can name a place** (Jórvík, Lundenwic, Paris, Dorestad, Hamwic) or none.
+- **Ships answer in the spring:** one for every 45 fame, plus 3 for a seat and 2 for a sworn partner, up to 12, with 30 men each.
+- **In the fleet:**
+  - Its crews stand in his line in every fight, as cohesion lets them. Their losses are their own.
+  - They take their own plunder, and his leader's share of it (40%) goes into his purse.
+  - A town can be sent to for tribute once a year (about 30% of its wealth, scaled by how far the fleet outnumbers its men). His share is 40%.
+  - Cohesion (0–10) rises with fights won, plunder and tribute, and falls with fights lost and weeks idle at anchor. Below 2.5 a captain may take his ship home each week.
+  - The fleet breaks up when he hauls up at the season's end, unless he asked it to winter with him.
+- **Scenes:**
+  - the arrow, and the arrow answered;
+  - the captains' council;
+  - two crews' quarrel;
+  - the leader's share;
+  - the man who wants your place;
+  - envoys from a town;
+  - the fleet that won't go home.
+- **Measured** (60 bot lives, raider and reckless, the three eras, 20 years each):
+  - 9 lives raised 22 fleets of 11 ships on average, against the 2–6 target. These are long-lived, famous bots; the threshold went from 120 to 350, with a hall or seat and two ships.
+  - A fleet summer kept him 23.4 pounds against 6.5 for an ordinary summer: 3.6 times, inside the 3–5 target.
+  - Fleets sent home early by his own choice: about 1 in 6, under the third targeted.
+  - Towns made to pay: 61.
+
 ---
 
 ## Size and order

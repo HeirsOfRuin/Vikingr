@@ -1,0 +1,207 @@
+# A fleet of your own (docs/FRAME-FLEETS-REALMS.md, Part C): the war-arrow, the captains who answer it, and what it takes to
+# keep them. The engine is src/engine/ownfleet.ts: the fleet's men stand in his line, its crews take their own plunder and
+# he takes a leader's share, idle weeks and lost fights wear its cohesion down, and below a point captains go home.
+
+- id: of_arrow
+  kind: queued
+  art: hearth_ormr
+  title: The war-arrow
+  text: |
+    You have the arrow made in the old way: a split shaft, a knot of cord, a mark cut in it that is yours. It will go from hall to hall over the winter, carried by men on your silver, and every captain who gets it will know what it means. Come in the spring, with your ships, and follow me.
+
+    Who comes depends on your name. Where you send them depends on you.
+    [break]
+    About {arrow_ships} ships would answer it now, the men round your fire reckon.
+  choices:
+    - id: york
+      text: Name Jórvík on the arrow.
+      visible_if: known.york
+      effects: [ { war_arrow: york } ]
+      result: Jórvík. Every captain who hears it will know what it means, and the ones who want it most will come first.
+    - id: london
+      text: Name Lundenwic on the arrow.
+      visible_if: known.london
+      effects: [ { war_arrow: london } ]
+      result: Lundenwic, the market on the Thames, with the Mercian king's reeve and his tolls. The traders on the arrow's road will hear of it before the captains do.
+    - id: paris
+      text: Name Paris on the arrow.
+      visible_if: known.paris
+      effects: [ { war_arrow: paris } ]
+      result: Paris. Ragnarr got seven thousand pounds there. The captains will come for the name alone.
+    - id: dorestad
+      text: Name Dorestad on the arrow.
+      visible_if: known.dorestad
+      effects: [ { war_arrow: dorestad } ]
+      result: Dorestad, what is left of it. Somebody always rebuilds it, and somebody always comes back.
+    - id: hamwic
+      text: Name Hamwic on the arrow.
+      visible_if: known.hamwic
+      effects: [ { war_arrow: hamwic } ]
+      result: Hamwic, the West Saxon king's market, with the king's own country behind it. A bold name for an arrow.
+    - id: any
+      text: Name no place. Wherever the summer takes us.
+      effects: [ { war_arrow: any } ]
+      result: No place on the arrow, only your mark. The captains who come for that are coming for you.
+    - id: not
+      text: Put the arrow away. Not this winter.
+      result: The arrow goes back on its peg. Your men look at it all winter.
+
+- id: of_answer
+  kind: queued
+  art: muster
+  title: The arrow answered
+  text: |
+    They come in over a fortnight in the spring, ship by ship: men you know and men you only know of, Danes and Rogalanders and men from the Irish forts, each with a crew behind him and a look that says he is waiting to see what you are worth.
+
+    {own_ships} ships beside your own. {own_men} men. [if own.named]The arrow named {own_target}, and they have come for it.[else]The arrow named no place, and they have come for you.[/if]
+  choices:
+    - id: feast
+      text: Feast the captains before you sail.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { own_fleet: { cohesion: 1 } } ]
+      result: A pound of silver in ale and meat, and the captains drink to your name and to each other's, and the ones who came in doubt go to their ships less doubtful.
+    - id: sail
+      text: Tell them where, and sail.
+      result: You tell them where. Nobody argues, yet. A fleet starts arguing on the second day.
+
+- id: of_council
+  kind: pool
+  trigger: arrive
+  chance: 0.3
+  cooldown_days: 60
+  requires: [ownfleet, "own.ships >= 2", "!service"]
+  art: muster
+  title: The captains' council
+  text: |
+    The captains come to your ship in the evening, together, which is never good. They have been talking. There's a richer place a few days off, they say, one that nobody has touched this summer, and they'd like to know why you're not taking them there.
+  choices:
+    - id: hold
+      text: Hold to your plan, and tell them why.
+      check: { skill: command, attr: pre, difficulty: 5 }
+      success:
+        text: You tell them why, plainly, and the plainness does it. They go back to their ships grumbling, the way men grumble when they've been told the truth and know it.
+        effects: [ { own_fleet: { cohesion: 1 } }, { add: { honour: 1 } } ]
+      failure:
+        text: You tell them, and they don't believe you, and they go back to their ships saying so to their crews.
+        effects: [ { own_fleet: { cohesion: -1 } } ]
+    - id: give
+      text: Give them their way, this once.
+      effects: [ { own_fleet: { cohesion: 1 } }, { add: { honour: -1 } } ]
+      result: They take it as their due. The fleet is happier for a week. You notice that they come to your ship together more often after that.
+
+- id: of_quarrel
+  kind: pool
+  trigger: arrive
+  chance: 0.25
+  cooldown_days: 90
+  requires: [ownfleet, "own.ships >= 3", "!service"]
+  art: shore_wait
+  title: Two crews
+  text: |
+    Two of your captains' crews fought on the beach last night over a share of somebody's cloth, and a man is dead, and both captains have come to you to judge it, each with forty men behind him.
+  choices:
+    - id: judge
+      text: Judge it by the law, and make the killer's captain pay.
+      check: { skill: speech, attr: wit, difficulty: 5 }
+      success:
+        text: You judge it by the law, with witnesses, and set the price, and the killer's captain pays it in front of everyone with his jaw set. Both crews go back to their ships. The law held.
+        effects: [ { own_fleet: { cohesion: 1 } }, { add: { honour: 1 } } ]
+      failure:
+        text: You judge it, and one side calls it unjust, loudly, and the next morning that captain's ship is gone.
+        effects: [ { own_fleet: { ships: -1, cohesion: -1 } } ]
+    - id: pay
+      text: Pay the dead man's price yourself, to end it.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { own_fleet: { cohesion: 1 } } ]
+      result: You pay it out of your own chest. Both captains are satisfied, and both of them think a little less of you for it.
+
+- id: of_share
+  kind: pool
+  trigger: arrive
+  chance: 0.3
+  cooldown_days: 120
+  requires: [ownfleet, "loot >= 300", "!service"]
+  art: muster
+  title: The leader's share
+  text: |
+    The heap from the summer so far is on the beach, and the captains are standing round it, and one of them asks the question they have all been waiting to ask: what does the man who sent the arrow take?
+  choices:
+    - id: double
+      text: A leader's share. Twice any other captain's.
+      effects: [ { add: { loot: 60 } }, { own_fleet: { cohesion: -2 } } ]
+      result: It's the custom, and they know it, and they don't like it. They watch your men carry it to your ship. Two of them don't speak to you for a week.
+    - id: even
+      text: The same as any captain. You came for more than silver.
+      effects: [ { own_fleet: { cohesion: 2 } }, { add: { honour: 1 } } ]
+      result: There's a silence, and then a roar. The story goes round the fleet by nightfall, and round every hall on the coast by Yule.
+
+- id: of_rival
+  kind: pool
+  trigger: arrive
+  chance: 0.2
+  cooldown_days: 365
+  requires: [ownfleet, "own.ships >= 5", "!service"]
+  art: shield_wall
+  title: The man who wants your place
+  text: |
+    Hallsteinn, who brought three ships and a great many opinions, has decided he would lead this fleet better than you do, and has been saying so at the other captains' fires. Tonight he says it at yours.
+  choices:
+    - id: face
+      text: Face him down in front of the fleet.
+      check: { skill: command, attr: pre, difficulty: 6 }
+      success:
+        text: You stand up, and say his name, and wait. The fire goes quiet. He looks round for the men who agreed with him at their own fires, and finds them looking at their boots. He sits down.
+        effects: [ { own_fleet: { cohesion: 2 } }, { add: { honour: 1 } } ]
+      failure:
+        text: He doesn't sit down. He laughs, and goes back to his ships, and in the morning his three ships are gone.
+        effects: [ { own_fleet: { ships: -3, cohesion: -1 } } ]
+    - id: buy
+      text: Give him something to keep him.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { own_fleet: { cohesion: -1 } } ]
+      result: Two pounds of silver and the first pick of the next town. He takes it, and stays, and goes on saying it at other men's fires, only more quietly.
+
+- id: of_envoys
+  kind: pool
+  trigger: arrive
+  chance: 0.35
+  cooldown_days: 120
+  requires: [ownfleet, "own.ships >= 4", "at.standing <= -1", "!service"]
+  art: town_rise
+  title: Envoys from the town
+  text: |
+    Before your keels are on the beach, a boat comes out from the town with a priest and two old men in it, holding up a green branch. The lord of this place has seen your sails, they say, and counted them, and would rather pay you than fight you. They have brought the first of the silver to show they mean it.
+  choices:
+    - id: take
+      text: Take what they offer, and leave the town alone.
+      effects: [ { add: { silver: 96 } }, { own_fleet: { cohesion: 1 } }, { standing: { n: 1 } } ]
+      result: Two pounds in the boat, and more coming, they swear, if you lie off the town and touch nothing. You lie off it. The captains grumble that the town has more. It does. It also has a wall.
+    - id: refuse
+      text: Send them back. You'll take it yourselves.
+      effects: [ { own_fleet: { cohesion: 1 } } ]
+      result: You send them back. The captains cheer, and the boat goes back to the town much faster than it came out.
+
+- id: of_winter
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 300
+  weight: 40
+  requires: [ownfleet, "month >= 9", "phase != winter", "!service"]
+  art: shore_wait
+  title: The fleet that won't go home
+  text: |
+    The nights are drawing in, and the captains have been talking among themselves again. Some want to go home with what they have. Others want to winter together, somewhere with a ditch round it, and go on in the spring. They want to know what you mean to do.
+    [break]
+    {own_ships} ships still with you.
+  choices:
+    - id: winter
+      text: Winter together, and go on in the spring.
+      effects: [ { own_fleet: { winter: true, cohesion: -1 } } ]
+      result: The ones who want to go home go, and the rest dig in with you. A fleet that winters together is an army. Every king within a month's ride will hear that you have one.
+    - id: home
+      text: Thank them, and let them go home rich.
+      effects: [ { own_fleet: { end: true } }, { add: { honour: 1 } } ]
+      result: You thank them at a feast on the beach, captain by captain, and they go home with your name in their mouths. Next winter, if you send the arrow, more of them will come.
+    - id: later
+      text: Let them decide at the year's end.
+      result: You say you'll talk of it at the year's end. The captains look at each other. That's an answer too.

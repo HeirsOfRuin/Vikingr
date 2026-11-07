@@ -8,6 +8,8 @@ import { dateOf, dayOf } from './calendar';
 import { test } from './conditions';
 import { journal } from './journal';
 import { livingFame } from './fame';
+import { endOwnFleet } from './ownfleet';
+import { plural } from './format';
 
 export const FLEET = {
   /** A fleet sails at the pace of its slower ships. */
@@ -34,6 +36,8 @@ export interface FleetState {
   moved?: number;
   /** A captain who has taken his ships off from the fleet on his own account (playtest 2026-11-07). */
   away?: boolean;
+  /** His own fleet: the ships that answered his war-arrow (src/engine/ownfleet.ts). */
+  own?: import('./ownfleet').OwnFleet;
 }
 
 /** The stage of the fleet's course it should be at today, from its timetable (the latest begun whose condition holds). */
@@ -101,7 +105,7 @@ export function armyCamp(state: GameState): string | undefined {
 /** The fleet is bound somewhere, and he is with it and not there yet: he follows it, or leaves it. */
 export function fleetBound(state: GameState): string | null {
   const f = state.fleet;
-  if (!f || state.service || f.away || f.posture !== 'bound' || !f.camp || state.at === f.camp) return null;
+  if (!f || state.service || f.away || f.own || f.posture !== 'bound' || !f.camp || state.at === f.camp) return null;
   return f.camp;
 }
 
@@ -111,13 +115,13 @@ export function inFleet(state: GameState): boolean {
 
 /** With the fleet now: sworn to it, and not off on his own. An oarsman goes where his captain goes. */
 export function withFleet(state: GameState): boolean {
-  return !!state.fleet && (!!state.service || !state.fleet.away);
+  return !!state.fleet && (!!state.service || !!state.fleet.own || !state.fleet.away);
 }
 
 /** A captain in an army that keeps a camp sets out for somewhere else: the army stays, he goes alone. */
 export function leaveArmy(state: GameState, content: ContentBundle, dest: string | null): string | null {
   const f = state.fleet;
-  if (!f?.camp || state.service || f.away || dest === f.camp) return null;
+  if (!f?.camp || state.service || f.away || f.own || dest === f.camp) return null;
   // bound and following, the fleet's road is his road
   if (f.posture === 'bound') return null;
   f.away = true;
@@ -177,6 +181,12 @@ export function leaveFleet(state: GameState, content: ContentBundle): void {
 
 /** The turn of the year: a fleet past its year breaks up. */
 export function fleetYear(state: GameState, content: ContentBundle): string[] {
+  // his own fleet: it winters with him if he asked it to, or breaks up
+  const own = state.fleet?.own;
+  if (own) {
+    if (own.winter) { delete own.winter; own.lastAction = state.day; return [`Your fleet has wintered with you: ${plural(own.ships, 'ship')} still beside your own, and their captains waiting to hear where this summer goes.`]; }
+    return endOwnFleet(state, content);
+  }
   const f = state.fleet ? content.fleets[state.fleet.id] : undefined;
   if (!f || dateOf(state.day).year <= f.until) return [];
   const name = f.name;

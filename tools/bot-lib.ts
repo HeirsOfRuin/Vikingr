@@ -21,6 +21,7 @@ import { holdingAt } from '../src/engine/land';
 import { seatPlace } from '../src/engine/rule';
 import { getValue } from '../src/engine/paths';
 import { armyCamp, fleetBound } from '../src/engine/sailfleet';
+import { ownFleetMen } from '../src/engine/ownfleet';
 import { landPath } from '../src/engine/march';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
@@ -79,6 +80,7 @@ export class Bot {
   planned = '';
   bought = new Map<number, number>();
   harried = new Set<string>();
+  arrowTried = new Set<number>();
   constructor(public policy: Policy, public rng: RngCursor) {}
 
   position(): Position {
@@ -217,6 +219,12 @@ export class Bot {
     const h = (what: string, arg?: string) => pick((a) => a.t === 'hall' && a.what === what && (arg === undefined || a.arg === arg));
     if (state.hero.hp < hpMax(state, content) * 0.7) return h('rest') ?? h('train')!;
     if (untoldCount(state) > 0) { const f = h('feast'); if (f) return f; }
+    // a name big enough: the bold send out the war-arrow (docs/FRAME-FLEETS-REALMS.md, Part C)
+    if ((this.policy === 'raider' || this.policy === 'reckless') && !this.arrowTried.has(dateOf(state.day).year)) {
+      this.arrowTried.add(dateOf(state.day).year);
+      const wa = pick((a) => a.t === 'war_arrow');
+      if (wa && this.rng.float() < 0.6) return wa;
+    }
     const sulky = aliveMen(state).sort((a, b) => a.loyalty - b.loyalty)[0];
     // a ring for the sulkiest man: the smith makes one first if there is none to give
     if (sulky && sulky.loyalty <= 4) {
@@ -261,6 +269,8 @@ export class Bot {
     if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? fallback(opts);
     // the bold take the skald to sea; the careful leave him at the jarl's benches (playtest 8)
     { const want = this.policy === 'raider' || this.policy === 'reckless'; const sa = pick((a) => a.t === 'skald_aboard' && a.on === want); if (sa) return sa; }
+    // his own fleet: now and then a town is made to pay instead (docs/FRAME-FLEETS-REALMS.md, Part C)
+    if (state.fleet?.own && this.rng.float() < 0.3) { const tr = pick((a) => a.t === 'tribute'); if (tr) return tr; }
     const raid = pick((a) => a.t === 'raid');
     const year = dateOf(state.day).year;
     if (raid && this.policy !== 'homebody' && !this.passed.has(`${year}:${at}`)) {
@@ -365,7 +375,7 @@ export class Bot {
     let target: string | null = null;
     if (!goingHome) {
       // no single crew goes up against a town: big places only with a partner beside him
-      const strength = state.crew.men + (partner(state, content) ? 40 : 0);
+      const strength = state.crew.men + (partner(state, content) ? 40 : 0) + ownFleetMen(state);
       const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id) && !this.passed.has(`${dateOf(state.day).year}:${id}`) && content.places[id]!.raid!.defenders <= strength * 1.8);
       targets.sort((a, b) => hops(state, content, at, a) - hops(state, content, at, b));
       target = targets[0] ?? state.known.find((id) => !this.visited.has(id) && content.places[id]?.active) ?? null;

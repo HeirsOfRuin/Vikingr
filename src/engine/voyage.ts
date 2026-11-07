@@ -244,6 +244,8 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   const back = rejoinArmy(state, content, v.to);
   if (back) lines.push(back);
   fleetArrived(state, v.to);
+  // a landfall keeps his own fleet busy (src/engine/ownfleet.ts)
+  if (state.fleet?.own) state.fleet.own.lastAction = state.day;
   if (v.expedition) {
     // the far end is charted now, for good
     if (!state.known.includes(v.to)) state.known.push(v.to);

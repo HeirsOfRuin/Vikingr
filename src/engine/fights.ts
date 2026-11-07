@@ -1,5 +1,6 @@
 // The glue between the game state and the two combat layers: starting a fight
 // from the state, and writing its result back (wounds, deaths, deeds, plunder).
+import { ownFleetFought, ownFleetMen } from './ownfleet';
 import { mournMan } from './crewman';
 import { strandRaided } from './strand';
 import { skaldRout, skaldSees } from './skald';
@@ -201,6 +202,9 @@ export function startBattle(
   const named = fitMen(state).map((m) => ({ id: m.id, name: m.name, slot: m.slot, weapons: m.weapons, down: false, hurt: false }));
   // a félag partner's men, unless he hangs back (docs/FRAME-TRADE-ALLIES.md)
   const ally = opts.noAlly ? { men: 0, line: null } : partnerInFight(state, content, ((state.day * 37 + state.stats.battles * 11) % 100) / 100);
+  // his own fleet's crews stand in his line (docs/FRAME-FLEETS-REALMS.md, Part C)
+  const fleetMen = opts.noAlly || state.service ? 0 : ownFleetMen(state);
+  if (fleetMen) { ally.men += fleetMen; ally.line = `${ally.line ? `${ally.line} ` : ''}Your fleet's crews come in beside your own: ${fleetMen} men.`; }
   const ours = state.crew.men + named.length + ally.men;
   const b: BattleState = {
     foeId: foe.id,
@@ -275,6 +279,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   // a partner's men die in proportion, and they are his to bury
   const ownShare = b.allyMen ? (b.us.start - b.allyMen) / b.us.start : 1;
   const crewLost = Math.max(0, Math.round(b.lost * ownShare) - namedLost.length);
+  ownFleetFought(state, won, Math.round(b.lost * (1 - ownShare)));
   state.crew.men = Math.max(0, state.crew.men - crewLost);
   lines.push(`${crewLost || namedLost.length ? `You lost ${crewLost ? plural(crewLost, 'man', 'men') : ''}${crewLost && namedLost.length ? ' and ' : ''}${namedLost.length ? plural(namedLost.length, 'sworn man', 'sworn men') : ''}.` : 'You lost no one.'} ${b.killed ? `They lost ${b.killed}.` : 'They lost no one.'}`);
   if (won) state.crew.quality = Math.min(2.5, state.crew.quality + 0.08);

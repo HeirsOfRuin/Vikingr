@@ -52,6 +52,9 @@ import { heal } from './hero';
 import { seaClosed, BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 import { startInEra } from './era';
 import { armyCamp, desertFleet, FLEET, fleetBound, fleetName, leaveArmy, tickFleet } from './sailfleet';
+import { arrowBlock, arrowShips, endOwnFleet, gatherFleet, OWN, ownFleet, shiftCohesion, tickOwnFleet, tributeOffer } from './ownfleet';
+import { livingFame } from './fame';
+import { earn } from './hardship';
 import { landPath, landRoads, march, marchBlock } from './march';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
 
@@ -62,6 +65,9 @@ export type Action =
   | { t: 'march'; to: string }
   | { t: 'fleet_follow' }
   | { t: 'fleet_leave' }
+  | { t: 'war_arrow' }
+  | { t: 'tribute' }
+  | { t: 'own_dismiss' }
   | { t: 'voyage_on' }
   | { t: 'raid' }
   | { t: 'scout' }
@@ -528,6 +534,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       out.push(opt('Hall', { t: 'hall', what: 'train' }, lord ? 'Train with the men' : 'Practise with your bench-mates'));
       out.push(opt('Hall', { t: 'hall', what: 'rest' }, 'Rest and heal'));
       if (state.flags.skald) out.push(opt('Hall', { t: 'hall', what: 'skald' }, 'Have the skald compose'));
+      // a fleet of his own (docs/FRAME-FLEETS-REALMS.md, Part C)
+      if (!state.service && livingFame(state) >= OWN.minFame / 2) { const ab = arrowBlock(state); out.push(opt('Your fleet', { t: 'war_arrow' }, 'Send out the war-arrow', !ab, ab ?? undefined, `About ${plural(arrowShips(state, content), 'ship')} would answer it; they gather in the spring`)); }
       if (home && !state.service) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift' }, 'Send the jarl a gift', state.silver >= FAVOUR.giftCost, `You need ${formatSilver(FAVOUR.giftCost)}.`, `${formatSilver(FAVOUR.giftCost)}; his favour: ${favourWord(favour(state))}`));
       if (home && !state.service && r.gold > 0) out.push(opt('The jarl', { t: 'hall', what: 'jarl_gift', arg: 'gold' }, 'Send the jarl a gold arm-ring', true, undefined, `Twice the favour of any other gift; his favour: ${favourWord(favour(state))}`));
       // hostages (docs/FRAME-HIRD-HOSTAGES.md): ransom and surety come by their kin's go-between; these two are his alone
@@ -726,6 +734,12 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         // with the sea closed, a man winters where he is: under his ships on the beach, if nobody will take him in
         if (!roof && seaClosed(doy)) out.push(opt('Season', { t: 'winter_here' }, `Winter under your ships on the beach at ${place.name}`, true, undefined, 'Nobody here will give you a roof, and the sea is closed. Cold, hungry, and some men will not see the spring'));
         else out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, roof, 'Nobody here will give you a roof.'));
+      }
+      const own = ownFleet(state);
+      if (own) {
+        const offer = tributeOffer(state, content, at);
+        if (offer > 0 && tierAt(state, content, at) !== 'friendly' && tierAt(state, content, at) !== 'allied' && !state.seasonRaids.includes(at)) out.push(opt('Your fleet', { t: 'tribute' }, `Send to ${place.name} for tribute`, state.places[at]?.tributed !== dateOf(state.day).year, 'They have paid you once this year.', `About ${formatSilver(offer)} for the whole fleet, ${formatSilver(Math.round(offer * OWN.leaderShare))} of it yours; ${plural(own.ships, 'ship')}, cohesion ${Math.round(own.cohesion)}/10`));
+        out.push(opt('Your fleet', { t: 'own_dismiss' }, 'Thank the captains, and send them home', true, undefined, `${plural(own.ships, 'ship')}, ${own.men} men; cohesion ${Math.round(own.cohesion)}/10`));
       }
       return closeTheSea(followFleet(out, state, content, doy), doy, state.inland, content);
     }
@@ -962,6 +976,27 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
     case 'fleet_leave':
       report('Leaving the fleet', desertFleet(state, content));
       break;
+    case 'war_arrow':
+      open(state, 'of_arrow', content);
+      break;
+    case 'own_dismiss':
+      report('Your fleet', endOwnFleet(state, content, `You thank the captains on the beach, one by one, and they take their ships home with what they took under your arrow. They will tell it, and next winter more of them will come.`));
+      break;
+    case 'tribute': {
+      const at = state.at!;
+      const offer = tributeOffer(state, content, at);
+      const mine = Math.round(offer * OWN.leaderShare);
+      state.silver += mine;
+      earn(state, mine);
+      state.places[at]!.tributed = dateOf(state.day).year;
+      state.places[at]!.wealth = Math.max(0, (state.places[at]!.wealth ?? 0) - offer);
+      shiftStanding(state, content, at, -1);
+      shiftCohesion(state, 1);
+      state.day += 3;
+      journal(state, `${content.places[at]!.name} paid the fleet ${formatSilver(offer)} to be left alone; his share ${formatSilver(mine)}.`);
+      report('Tribute', [`You send a man up to ${content.places[at]!.name} with a green branch and a number. They count your sails from the walls, and argue for three days, and pay: ${formatSilver(offer)}, weighed out on the strand. Your share as the man who called the fleet is ${formatSilver(mine)}. The captains take the rest, and like you better for it.`]);
+      break;
+    }
     case 'sail':
     case 'follow':
     case 'fleet_follow':
@@ -1352,7 +1387,7 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
   // the world goes on without him (docs/FRAME-WORLD.md §B)
   tickChronicle(state, content);
   // and so does the fleet he is sworn to (docs/FRAME-FLEETS-REALMS.md, Part A)
-  const word = tickFleet(state, content);
+  const word = [...tickFleet(state, content), ...gatherFleet(state, content), ...tickOwnFleet(state, content, rng)];
   if (word.length) { if (!state.pending) state.pending = { t: 'report', title: 'Word of the fleet', lines: word }; else state.after = { title: 'Word of the fleet', lines: word }; }
   // days ashore abroad eat from the stores, the same as days at sea
   const hungry = eatAshore(state);

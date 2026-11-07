@@ -72,3 +72,9 @@
   ships: 62
   until: 861
   desc: Sixty-two ships out of the Loire, bound past Spain and through the strait into the Middle Sea, where no Northman has been. Two winters away, if they come back at all (docs/FRAME-MED.md).
+- id: own
+  name: your fleet
+  leader: you
+  ships: 2
+  until: 9999
+  desc: The ships that answered your war-arrow (docs/FRAME-FLEETS-REALMS.md, Part C). It sails where you sail, and breaks up at the year's end unless you hold it together through the winter.

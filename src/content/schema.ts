@@ -123,6 +123,10 @@ const baseEffect = z.union([
   z.object({ march: id }).strict(),
   /** The fleet he is sworn to sets out for a place: he follows it, or leaves it (docs/FRAME-FLEETS-REALMS.md). */
   z.object({ fleet_to: id }).strict(),
+  /** He sends out the war-arrow, naming a place or none; the fleet gathers in the spring (docs/FRAME-FLEETS-REALMS.md, Part C). */
+  z.object({ war_arrow: id }).strict(),
+  /** His own fleet: its cohesion shifts, ships leave, it winters together, or it breaks up. */
+  z.object({ own_fleet: z.object({ cohesion: z.number().optional(), ships: z.number().int().optional(), winter: z.literal(true).optional(), end: z.literal(true).optional() }).strict() }).strict(),
   /** He sails for a far place with men who know the water: an expedition road, as an ordinary passage. */
   z.object({ sail_with: id }).strict(),
   /** The winter at the far end of the East road (Kiev, Itil): a winter abroad, kept where he stands on the map. */

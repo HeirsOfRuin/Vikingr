@@ -276,6 +276,8 @@ export type Pending =
   | { t: 'report'; title: string; lines: string[]; next?: string; art?: string; laughter?: string; then?: 'heir' };
 
 export interface PlaceState {
+  /** The year his fleet last took tribute here (src/engine/ownfleet.ts). */
+  tributed?: number;
   wealth: number;
   defence: number; // multiplier on defenders, decays toward 1
   raided: number; // times raided
@@ -333,6 +335,8 @@ export interface GameState {
   inland?: string;
   /** A road the story has set him on (the `march` effect): the next move goes overland to here. */
   marchTo?: string;
+  /** The war-arrow he sent out over the winter: the fleet gathers in the spring (src/engine/ownfleet.ts). */
+  arrow?: { target?: string; year: number };
   /** A road event broke into a march: the place's arrival is still to come. */
   arriveDue?: boolean;
   /** Goods aboard: lots, and what they cost him (docs/FRAME-TRADE-ALLIES.md). */
