@@ -208,54 +208,54 @@ legs:
   - { a: karmoy, b: shetland, days: 2, kind: open }
   - { a: shetland, b: orkney, days: 1, kind: open }
   - { a: orkney, b: home_fjord, days: 2.5, kind: open }
-  - { a: orkney, b: iona, days: 3, kind: coastal }
-  - { a: iona, b: bangor, days: 1.5, kind: coastal }
+  - { a: orkney, b: iona, days: 4, kind: coastal }
+  - { a: iona, b: bangor, days: 2, kind: coastal }
   # opened in 831
-  - { a: home_fjord, b: kaupang, days: 3, kind: coastal }
-  - { a: karmoy, b: kaupang, days: 2.5, kind: coastal }
+  - { a: home_fjord, b: kaupang, days: 4, kind: coastal }
+  - { a: karmoy, b: kaupang, days: 3.5, kind: coastal }
   - { a: orkney, b: lindisfarne, days: 4, kind: coastal }
-  - { a: home_fjord, b: lindisfarne, days: 4, kind: open }
+  - { a: home_fjord, b: lindisfarne, days: 3.5, kind: open }
   - { a: orkney, b: skye, days: 3, kind: coastal }
   - { a: skye, b: iona, days: 1.5, kind: coastal }
-  - { a: bangor, b: conaille, days: 1, kind: coastal }
+  - { a: bangor, b: conaille, days: 1.5, kind: coastal }
   # uncharted water: sailed as an expedition until the far end is charted (FRAME-FOUNDATION §1)
-  - { a: shetland, b: faroes, days: 3, kind: open, expedition: true }
-  - { a: faroes, b: island, days: 5, kind: open, expedition: true }
+  - { a: shetland, b: faroes, days: 2, kind: open, expedition: true }
+  - { a: faroes, b: island, days: 3.5, kind: open, expedition: true }
   - { a: noirmoutier, b: bordeaux, days: 3, kind: coastal }
   - { a: island, b: breidafjordr, days: 2, kind: coastal }
-  - { a: orkney, b: faroes, days: 4, kind: open, expedition: true }
-  - { a: home_fjord, b: faroes, days: 5, kind: open, expedition: true }
+  - { a: orkney, b: faroes, days: 2.5, kind: open, expedition: true }
+  - { a: home_fjord, b: faroes, days: 3.5, kind: open, expedition: true }
   # the Danish and Swedish markets (playtest 3: Ubbi's Hedeby, and rumours that lead somewhere)
-  - { a: kaupang, b: hedeby, days: 4, kind: coastal }
+  - { a: kaupang, b: hedeby, days: 3.5, kind: coastal }
   - { a: hedeby, b: ribe, days: 2, kind: river }
   - { a: home_fjord, b: ribe, days: 4, kind: open }
   - { a: hedeby, b: birka, days: 7, kind: coastal }
   - { a: kaupang, b: birka, days: 8, kind: coastal }
   # the Frisian road and the Irish river road (docs/FRAME-HOSTS-FRISIA.md)
-  - { a: ribe, b: dorestad, days: 4, kind: coastal }
-  - { a: ribe, b: walcheren, days: 4, kind: coastal }
-  - { a: walcheren, b: dorestad, days: 2, kind: river }
-  - { a: conaille, b: armagh, days: 1.5, kind: river }
+  - { a: ribe, b: dorestad, days: 5, kind: coastal }
+  - { a: ribe, b: walcheren, days: 5, kind: coastal }
+  - { a: walcheren, b: dorestad, days: 3, kind: river }
+  - { a: conaille, b: armagh, days: 2, kind: land }
   # the twelve new places (docs/FRAME-PLACES-2.md)
   - { a: home_fjord, b: hladir, days: 5, kind: coastal }
-  - { a: birka, b: uppsala, days: 1, kind: river }
-  - { a: birka, b: gotland, days: 3, kind: open }
+  - { a: birka, b: uppsala, days: 1.5, kind: river }
+  - { a: birka, b: gotland, days: 2, kind: open }
   # the East road's door (docs/FRAME-PLACES-EAST.md): across the eastern sea and up the Neva to the lake
-  - { a: birka, b: aldeigjuborg, days: 8, kind: open, expedition: true }
-  - { a: gotland, b: aldeigjuborg, days: 9, kind: open, expedition: true }
-  - { a: hedeby, b: gotland, days: 5, kind: open }
-  - { a: gotland, b: truso, days: 3, kind: open }
-  - { a: hedeby, b: truso, days: 6, kind: coastal }
+  - { a: birka, b: aldeigjuborg, days: 7, kind: open, expedition: true }
+  - { a: gotland, b: aldeigjuborg, days: 7, kind: open, expedition: true }
+  - { a: hedeby, b: gotland, days: 3.5, kind: open }
+  - { a: gotland, b: truso, days: 2, kind: open }
+  - { a: hedeby, b: truso, days: 5, kind: coastal }
   - { a: bangor, b: man, days: 1, kind: open }
-  - { a: man, b: dublin, days: 1.5, kind: open }
+  - { a: man, b: dublin, days: 1, kind: open }
   - { a: conaille, b: dublin, days: 1.5, kind: coastal }
-  - { a: dublin, b: clonmacnoise, days: 5, kind: river }
+  - { a: dublin, b: clonmacnoise, days: 4, kind: land }
   - { a: lindisfarne, b: york, days: 3, kind: coastal }
-  - { a: york, b: sheppey, days: 5, kind: coastal }
-  - { a: walcheren, b: sheppey, days: 2, kind: open }
+  - { a: york, b: sheppey, days: 4, kind: coastal }
+  - { a: walcheren, b: sheppey, days: 1, kind: open }
   - { a: sheppey, b: london, days: 1.5, kind: river }
-  - { a: sheppey, b: noirmoutier, days: 6, kind: coastal }
-  - { a: walcheren, b: noirmoutier, days: 7, kind: coastal }
+  - { a: sheppey, b: noirmoutier, days: 7, kind: coastal }
+  - { a: walcheren, b: noirmoutier, days: 8, kind: coastal }
   - { a: noirmoutier, b: nantes, days: 1, kind: river }
   # the third batch (docs/FRAME-IRELAND-SEINE.md)
   - { a: lindisfarne, b: jarrow, days: 1, kind: coastal }
@@ -264,32 +264,32 @@ legs:
   - { a: gipeswic, b: sheppey, days: 1.5, kind: coastal }
   # the roads: Roman roads and old ways inland, walked or ridden, never sailed (src/engine/march.ts)
   - { a: gipeswic, b: thetford, days: 2, kind: land }
-  - { a: thetford, b: york, days: 5, kind: land }
-  - { a: thetford, b: nottingham, days: 5, kind: land }
-  - { a: gipeswic, b: london, days: 4, kind: land }
+  - { a: thetford, b: york, days: 6, kind: land }
+  - { a: thetford, b: nottingham, days: 4, kind: land }
+  - { a: gipeswic, b: london, days: 3, kind: land }
   - { a: york, b: nottingham, days: 3, kind: river }
   - { a: nottingham, b: repton, days: 1, kind: river }
   - { a: london, b: reading, days: 2, kind: river }
   - { a: reading, b: chippenham, days: 3, kind: land }
   - { a: hamwic, b: chippenham, days: 3, kind: land }
-  - { a: walcheren, b: gipeswic, days: 2, kind: open }
+  - { a: walcheren, b: gipeswic, days: 1, kind: open }
   - { a: sheppey, b: hamwic, days: 3, kind: coastal }
   - { a: hamwic, b: rouen, days: 2.5, kind: open }
   - { a: walcheren, b: rouen, days: 4, kind: coastal }
-  - { a: skye, b: applecross, days: 1, kind: coastal }
+  - { a: skye, b: applecross, days: 0.5, kind: coastal }
   - { a: orkney, b: tarbat, days: 2, kind: coastal }
   - { a: man, b: whithorn, days: 1, kind: open }
-  - { a: bangor, b: whithorn, days: 1.5, kind: open }
-  - { a: iona, b: alt_clut, days: 3, kind: coastal }
+  - { a: bangor, b: whithorn, days: 1, kind: open }
+  - { a: iona, b: alt_clut, days: 2, kind: coastal }
   - { a: conaille, b: linn_duachaill, days: 0.5, kind: coastal }
   - { a: linn_duachaill, b: dublin, days: 1.5, kind: coastal }
   - { a: bangor, b: rechru, days: 1, kind: coastal }
-  - { a: iona, b: rechru, days: 1.5, kind: open }
-  - { a: dublin, b: glendalough, days: 2, kind: river }
-  - { a: dublin, b: cork, days: 4, kind: coastal }
+  - { a: iona, b: rechru, days: 1, kind: open }
+  - { a: dublin, b: glendalough, days: 2, kind: land }
+  - { a: dublin, b: cork, days: 3, kind: coastal }
   - { a: cork, b: skellig, days: 2, kind: coastal }
-  - { a: cork, b: noirmoutier, days: 6, kind: open }
+  - { a: cork, b: noirmoutier, days: 4, kind: open }
   - { a: rouen, b: jumieges, days: 0.5, kind: river }
   - { a: rouen, b: fontenelle, days: 0.5, kind: river }
-  - { a: rouen, b: paris, days: 5, kind: river }
+  - { a: rouen, b: paris, days: 4, kind: river }
   - { a: paris, b: saint_denis, days: 0.5, kind: river }

@@ -841,7 +841,8 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
   const reportAfter = (title: string, lines: string[]) => {
     if (!lines.length) return;
     if (!state.pending) report(title, lines, undefined, { key: 'open_sea' });
-    else state.after = { title, lines };
+    // told after the scene that broke in on it: the title says it came first (a man named here may have died since)
+    else state.after = { title: title === 'At sea' ? 'Before that, at sea' : `Before that: ${title}`, lines };
   };
 
   switch (action.t) {

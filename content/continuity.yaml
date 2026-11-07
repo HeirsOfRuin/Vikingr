@@ -24,3 +24,7 @@ memorial:
   - "the stories go round"
   # the rites
   - "under [A-Za-z'’]+ tongue"
+
+# what the road or the coast held before a fight broke in, told after it: a man named there was alive then
+dead_names_ok:
+  "report: Before that, at sea": ['*']

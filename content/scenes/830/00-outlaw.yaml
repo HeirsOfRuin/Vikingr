@@ -154,7 +154,7 @@
     [break]
     His name is Kolgrímr. He's Hrapp's sister's son. He has an uncle in Orkney, he tells the man next to him, loudly, where you can hear, and he's going to tell his uncle all the news from Hordaland. All of it.
 
-    It is six days to Hjaltland, and four more to Orkney, and you have to sleep sometime.
+    It is three days to Hjaltland, and two more to Orkney, and you have to sleep sometime.
   choices:
     - id: face
       text: Call him out on the beach at Hjaltland. End it there.
@@ -196,7 +196,7 @@
     - id: on
       text: Get back in the ship.
       effects: [ { set: flag.o_kolgrimr_left }, *west ]
-      result: You row the last four days to Orkney with a bench to yourself and your back to nobody.
+      result: You row the last two days to Orkney with a bench to yourself and your back to nobody.
 
 - id: o_passage_lost
   kind: spine
