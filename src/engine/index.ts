@@ -51,7 +51,7 @@ import { renderText } from './text';
 import { heal } from './hero';
 import { seaClosed, BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 import { startInEra } from './era';
-import { armyCamp, leaveArmy } from './sailfleet';
+import { armyCamp, desertFleet, FLEET, fleetBound, fleetName, leaveArmy, tickFleet } from './sailfleet';
 import { landPath, landRoads, march, marchBlock } from './march';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
 
@@ -60,6 +60,8 @@ export type Action =
   | { t: 'continue' }
   | { t: 'sail'; to: string }
   | { t: 'march'; to: string }
+  | { t: 'fleet_follow' }
+  | { t: 'fleet_leave' }
   | { t: 'voyage_on' }
   | { t: 'raid' }
   | { t: 'scout' }
@@ -725,13 +727,30 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         if (!roof && seaClosed(doy)) out.push(opt('Season', { t: 'winter_here' }, `Winter under your ships on the beach at ${place.name}`, true, undefined, 'Nobody here will give you a roof, and the sea is closed. Cold, hungry, and some men will not see the spring'));
         else out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, roof, 'Nobody here will give you a roof.'));
       }
-      return closeTheSea(out, doy, state.inland, content);
+      return closeTheSea(followFleet(out, state, content, doy), doy, state.inland, content);
     }
   }
 }
 
 /** From 1 December to the end of February no ship puts out (Josh, 2026-10-29): every road off the beach is shut. */
 const SEA_ACTIONS = new Set(['sail', 'course', 'expedition', 'cruise_plan', 'cruise_on', 'passage_home', 'follow', 'harek']);
+/** A fleet bound somewhere, with him in it: he follows it, or leaves it (docs/FRAME-FLEETS-REALMS.md, Part A). */
+function followFleet(out: ActionOption[], state: GameState, content: ContentBundle, doy: number): ActionOption[] {
+  const to = fleetBound(state);
+  if (!to || !state.at) return out;
+  const name = fleetName(state, content);
+  const there = content.places[to]?.name ?? to;
+  const road = !nextHop(content, state.at, to) && !!landPath(content, state.at, to);
+  const can = road || (!seaClosed(doy) && !!nextHop(content, state.at, to));
+  const why = `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}. You go with it, or you leave it.`;
+  const shut = out.map((o) => (SEA_ACTIONS.has(o.action.t) || (o.action.t === 'march' && (o.action as { to: string }).to !== to) ? { ...o, enabled: false, reason: why } : o));
+  return [
+    opt(road ? 'March' : 'Sail', { t: 'fleet_follow' }, `${road ? (state.flags.ga_rider ? 'Ride' : 'March') : 'Sail'} with ${name} for ${there}`, can, seaClosed(doy) ? 'The sea is closed until spring.' : 'There is no road there from here.', `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}`),
+    opt('Sail', { t: 'fleet_leave' }, `Leave ${name}`, true, undefined, `Desertion: ${FLEET.desertHonour} honour, and every crew in the fleet will tell it`),
+    ...shut,
+  ];
+}
+
 /** The road the story set him on, as the first thing to do (the `march` effect, src/engine/march.ts). */
 function marchOption(state: GameState, content: ContentBundle, ships: string): ActionOption | null {
   const to = state.marchTo;
@@ -940,11 +959,20 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       report('On the road', [...(left ? [left] : []), ...march(state, content, rng, action.to)]);
       break;
     }
+    case 'fleet_leave':
+      report('Leaving the fleet', desertFleet(state, content));
+      break;
     case 'sail':
     case 'follow':
+    case 'fleet_follow':
     case 'voyage_on': {
       const left = action.t === 'sail' ? leaveArmy(state, content, action.to) : null;
       if (action.t === 'sail') { delete state.course; startVoyage(state, content, action.to); }
+      if (action.t === 'fleet_follow') {
+        const dest = state.fleet!.camp!;
+        if (!nextHop(content, state.at!, dest) && landPath(content, state.at!, dest)) { report('On the road', march(state, content, rng, dest)); break; }
+        startVoyage(state, content, dest, true);
+      }
       if (action.t === 'follow') {
         const dest = state.service?.route[0] ?? serviceHome(state);
         // the army rides: no sea road there, but a land one (src/engine/march.ts)
@@ -1323,6 +1351,9 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
   if (!state.hero.alive) return;
   // the world goes on without him (docs/FRAME-WORLD.md §B)
   tickChronicle(state, content);
+  // and so does the fleet he is sworn to (docs/FRAME-FLEETS-REALMS.md, Part A)
+  const word = tickFleet(state, content);
+  if (word.length) { if (!state.pending) state.pending = { t: 'report', title: 'Word of the fleet', lines: word }; else state.after = { title: 'Word of the fleet', lines: word }; }
   // days ashore abroad eat from the stores, the same as days at sea
   const hungry = eatAshore(state);
   if (hungry && !state.pending) state.pending = { t: 'report', title: 'Hungry', lines: [hungry] };

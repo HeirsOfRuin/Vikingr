@@ -34,7 +34,7 @@ import { loseSeat, takeSeat } from './rule';
 import { nameChild } from './family';
 import { loseHome } from './settle';
 import { buyBlock, buyLand, claimBlock, claimLand } from './land';
-import { joinFleet, leaveFleet } from './sailfleet';
+import { joinFleet, leaveFleet, moveFleet } from './sailfleet';
 import { stowGoods } from './trade';
 /** They come back for a home fort in force: its people, and their neighbours. */
 const HOME_ATTACK = 1.4;
@@ -181,6 +181,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('hear_of' in e) {
       if (!state.known.includes(e.hear_of) && !state.rumoured.includes(e.hear_of)) state.rumoured.push(e.hear_of);
     }
+    else if ('fleet_to' in e) moveFleet(state, e.fleet_to, 'bound');
     else if ('march' in e) {
       // the move itself is the next action, so the place's arrival scene fires after this one is read
       if (state.at && state.at !== e.march && landPath(content, state.at, e.march)) state.marchTo = e.march;
@@ -344,7 +345,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('camp' in e) {
       // the army moves its winter quarters; a captain in it winters where it does
       if (state.service) state.service.home = e.camp;
-      if (state.fleet) { state.fleet.camp = e.camp; if (state.at === e.camp) delete state.fleet.away; }
+      if (state.fleet) moveFleet(state, e.camp, 'lying');
       if (!state.known.includes(e.camp)) state.known.push(e.camp);
     }
     else if ('join_ship' in e) {

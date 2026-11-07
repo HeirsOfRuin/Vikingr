@@ -121,6 +121,8 @@ const baseEffect = z.union([
   z.object({ hear_of: id }).strict(),
   /** He marches overland, by roads and river valleys (src/engine/march.ts). */
   z.object({ march: id }).strict(),
+  /** The fleet he is sworn to sets out for a place: he follows it, or leaves it (docs/FRAME-FLEETS-REALMS.md). */
+  z.object({ fleet_to: id }).strict(),
   /** He sails for a far place with men who know the water: an expedition road, as an ordinary passage. */
   z.object({ sail_with: id }).strict(),
   /** The winter at the far end of the East road (Kiev, Itil): a winter abroad, kept where he stands on the map. */
@@ -144,7 +146,7 @@ const baseEffect = z.union([
   // lords, land and rule (docs/FRAME-WORLD.md §C-E)
   z.object({ lord: z.object({ id, fav: z.number().int().optional(), meet: z.boolean().optional(), swear: z.enum(['first', 'open', 'secret']).optional(), call: z.enum(['answer', 'refuse']).optional() }).strict() }).strict(),
   z.object({ grant: id }).strict(),
-  z.object({ rule: z.enum(['orkney', 'dublin', 'home', 'walcheren']) }).strict(),
+  z.object({ rule: z.enum(['orkney', 'dublin', 'home', 'walcheren', 'york', 'eastangles', 'nottingham', 'loire', 'isles', 'frisia', 'lordship']) }).strict(),
   z.object({ lose_rule: z.literal(true) }).strict(),
   z.object({ legend: z.object({ id, fame: z.number().int() }).strict() }).strict(),
   z.object({ hostage: z.enum(['ransom', 'ransom_high', 'surety', 'sell', 'free', 'dies', 'maybe_dies', 'escape', 'fetters', 'foster', 'marry', 'hand_over', 'keep_one', 'sell_party']) }).strict(),
@@ -419,7 +421,10 @@ export const upbringingDef = z.object({ id, when: z.enum(['always', 'sailed', 'f
 export type UpbringingDef = z.infer<typeof upbringingDef>;
 
 /** A great fleet he can sail with (docs/FRAME-FLEET-843.md §2). */
-export const fleetDef = z.object({ id, name: z.string(), leader: z.string(), ships: z.number().int().min(2), until: z.number().int(), desc: z.string() }).strict();
+/** A stage of a fleet's course (docs/FRAME-FLEETS-REALMS.md, Part A): from this day it lies at, or is bound for, this place. */
+export const courseStage = z.object({ from: z.tuple([z.number().int(), z.number().int().min(1).max(365)]), at: id, posture: z.enum(['lying', 'bound']), requires: condInput.optional(), note: z.string().optional() }).strict();
+export type CourseStage = z.infer<typeof courseStage>;
+export const fleetDef = z.object({ id, name: z.string(), leader: z.string(), ships: z.number().int().min(2), until: z.number().int(), desc: z.string(), course: z.array(courseStage).optional() }).strict();
 export type FleetDef = z.infer<typeof fleetDef>;
 
 /** `saga`: the flag is a choice the Saga tab remembers (its description, told as a line of the saga). */

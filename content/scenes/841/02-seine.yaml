@@ -240,6 +240,7 @@
 
 - id: sn_danegeld
   kind: queued
+  requires: [fleet]
   art: muster
   title: Seven thousand pounds
   text: |
@@ -260,6 +261,7 @@
               else: [ { add: { geld: 1600 } } ]
         - { deed: { type: deed, text: "Was at Paris when King Charles paid seven thousand pounds", weight: 6, witnesses: 2000 } }
         - { envy: 2 }
+        - { fleet_end: true }
         - { queue: { scene: sn_flux, days: 15 } }
       result: |
         [if ships >= 3]

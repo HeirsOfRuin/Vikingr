@@ -24,7 +24,7 @@ import { driftStanding, tierAt } from './standing';
 import { hearNews } from './chronicle';
 import { atLordSeat, lordMen, lordName, lordsYear, lordTenth, secretYear } from './lords';
 import { holdingAt, holdingsYear } from './land';
-import { ruleYear, SEAT_DEF } from './rule';
+import { ruleYear, seatPlace } from './rule';
 import { familyYear, winterBirth } from './family';
 import {
   BEACH_WINTER, HALL_ACTIONS, HALL_ACTION_DAYS, LEADER_SHARE, MUSTER_DOY, ORTUG_PER_MARK, PROVISION_ORTUG_PER, SHARE_EXPECTED, SIGN_ON_GIFT, WINTER_DOY,
@@ -414,7 +414,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
 /** Wintering abroad: fewer choices, no feast at home. */
 export function winterHere(state: GameState, content?: ContentBundle, rng?: RngCursor): string[] {
   // his own land abroad, or his lord's hall: a winter as at home (docs/FRAME-WORLD.md §C-D)
-  const own = holdingAt(state, state.at) ?? (state.rule && SEAT_DEF[state.rule.seat].place === state.at ? true : undefined);
+  const own = holdingAt(state, state.at) ?? (state.rule && seatPlace(state, state.rule.seat) === state.at ? true : undefined);
   const seat = content ? atLordSeat(state, content) : false;
   // at another man's oar, abroad when the sea closed: the captain winters where he is, and so does his crew
   if (state.service) {
@@ -431,7 +431,7 @@ export function winterHere(state: GameState, content?: ContentBundle, rng?: RngC
     return [`Nobody at ${content!.places[state.at!]!.name} will give you a roof, and the sea is closed. You haul the ships up the beach and turn them over, and the men live under the hulls all winter, with a ditch round them and a fire that never goes out.${lost ? ` ${plural(lost, 'man', 'men')} don't see the spring.` : ''}`];
   }
   startWinter(state, own || seat ? HALL_ACTIONS : 2, content, rng);
-  if (own && content && state.rule && SEAT_DEF[state.rule.seat].place === state.at) return [`You winter in your own high seat at ${content.places[state.at!]!.name}, and your people see you there, which is the point.`];
+  if (own && content && state.rule && seatPlace(state, state.rule.seat) === state.at) return [`You winter in your own high seat at ${content.places[state.at!]!.name}, and your people see you there, which is the point.`];
   if (own && content) return [`You haul the ships up on your own shore at ${content.places[state.at!]!.name}, and winter under your own roof.`];
   if (seat && content) return [`You haul the ships up below your lord's hall, and winter at ${lordName(state, content, state.oath!.lord)}'s fire, as his men do.`];
   return ['You haul the ships up and find a hall that will take you in for the winter, for a price in silver and good behaviour.'];

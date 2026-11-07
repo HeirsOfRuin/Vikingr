@@ -18,9 +18,9 @@ import { untoldCount } from '../src/engine/fame';
 import { armCost } from '../src/engine/items';
 import { LATE_SEASON_DOY, WINTER_ABROAD_DOY } from '../src/engine/tuning';
 import { holdingAt } from '../src/engine/land';
-import { SEAT_DEF } from '../src/engine/rule';
+import { seatPlace } from '../src/engine/rule';
 import { getValue } from '../src/engine/paths';
-import { armyCamp } from '../src/engine/sailfleet';
+import { armyCamp, fleetBound } from '../src/engine/sailfleet';
 import { landPath } from '../src/engine/march';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
@@ -256,6 +256,8 @@ export class Bot {
     const road = pick((a) => a.t === 'march' && a.to === state.marchTo);
     if (road) return road;
     if (state.inland && !state.service) { const back = this.walk(state, content, pick, state.at!, state.inland); if (back) return back; }
+    // a fleet on its course: follow it (docs/FRAME-FLEETS-REALMS.md, Part A)
+    if (fleetBound(state)) { const f = pick((a) => a.t === 'fleet_follow'); if (f) return f; }
     if (state.service) return pick((a) => a.t === 'follow') ?? pick((a) => a.t === 'end_season') ?? fallback(opts);
     // the bold take the skald to sea; the careful leave him at the jarl's benches (playtest 8)
     { const want = this.policy === 'raider' || this.policy === 'reckless'; const sa = pick((a) => a.t === 'skald_aboard' && a.on === want); if (sa) return sa; }
@@ -331,7 +333,7 @@ export class Bot {
     if (ml) return ml;
     if (this.policy === 'raider' && state.silver > 700) { const b = pick((a) => a.t === 'buy_land'); if (b) return b; }
     if (this.policy === 'reckless' || (this.policy === 'raider' && state.crew.men >= 55)) { const f = pick((a) => a.t === 'dig_fort'); if (f) return f; }
-    if (doy >= WINTER_ABROAD_DOY && (holdingAt(state, at) || (state.rule && SEAT_DEF[state.rule.seat].place === at))) { const w = pick((a) => a.t === 'winter_here'); if (w) return w; }
+    if (doy >= WINTER_ABROAD_DOY && (holdingAt(state, at) || (state.rule && seatPlace(state, state.rule.seat) === at))) { const w = pick((a) => a.t === 'winter_here'); if (w) return w; }
     // a sullen crew loses: mend it in port before the next fight (playtest 2026-10-15)
     if (state.crew.morale <= 4) { const al = pick((a) => a.t === 'ale'); if (al) return al; }
     // the old sailors at the fire: a round of ale for a rumour (FRAME-FOUNDATION §1), once a year a port
@@ -369,10 +371,12 @@ export class Bot {
       target = targets[0] ?? state.known.find((id) => !this.visited.has(id) && content.places[id]?.active) ?? null;
     }
     // a ruler abroad goes to be seen at his seat before the winter, every other year at least
-    if (goingHome && state.rule && SEAT_DEF[state.rule.seat].place !== 'home_fjord' && dateOf(state.day).year - state.rule.seen >= 1) target = SEAT_DEF[state.rule.seat].place;
+    if (goingHome && state.rule && seatPlace(state, state.rule.seat) !== 'home_fjord' && dateOf(state.day).year - state.rule.seen >= 1) target = seatPlace(state, state.rule.seat);
     // a captain in an army that keeps a winter camp winters in it (docs/FRAME-865.md)
     const camp = armyCamp(state);
-    if (camp && (goingHome || hungry) && !(state.holdings ?? []).length) {
+    // and between raids, a sworn captain goes back to the fleet where it lies (docs/FRAME-FLEETS-REALMS.md, Part A)
+    const backToFleet = !!state.fleet?.away && !state.service && this.rng.float() < 0.5;
+    if (camp && (goingHome || hungry || backToFleet) && !(state.holdings ?? []).length) {
       if (at === camp) { const w = pick((a) => a.t === 'winter_here'); if (w) return w; }
       target = camp;
     }

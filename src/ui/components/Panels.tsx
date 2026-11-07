@@ -29,7 +29,7 @@ import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
 import type { KitSlot } from '../../engine/state';
 import { lordAlive, lordFav, lordMen, lordName, secretChance, swornTo } from '../../engine/lords';
 import { holdingYield, LAND } from '../../engine/land';
-import { claimWords, rivalOf, RULE, SEAT_DEF, SEATS, seatOpen } from '../../engine/rule';
+import { claimWords, LORDSHIP, rivalOf, RULE, ruleTitle, ruleTribute, SEAT_DEF, SEATS, seatOpen } from '../../engine/rule';
 
 const SLOT_NAMES: Record<KitSlot, string> = { weapon: 'In his hand', shield: 'On his arm', helmet: 'On his head', armour: 'On his back' };
 
@@ -310,8 +310,8 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
           {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
         </dl>
       ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
-      {state.rule ? <p class="small">You are {SEAT_DEF[state.rule.seat].title}, since {formatDate(state.rule.since)}: {formatSilver(RULE.tribute)} in tribute and {plural(RULE.men, 'man', 'men')} more at the muster every year. You were last seen there the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {rivalOf(state, content, state.rule.seat).name} takes it.</p>
-        : !open.length ? <p class="muted small">No seat is open to you. A seat opens when its lord dies or its rival falters, and only to a man with a great name and a tie to the place: a lord's favour, land there, kin by marriage.</p>
+      {state.rule ? <p class="small">You are {ruleTitle(state, content)}, since {formatDate(state.rule.since)}: {formatSilver(ruleTribute(state).silver)} in tribute and {plural(ruleTribute(state).men, 'man', 'men')} more at the muster every year. You were last seen there the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {state.rule.seat === 'lordship' ? 'its people will stop calling you lord' : `${rivalOf(state, content, state.rule.seat).name} takes it`}.</p>
+        : !open.length ? <p class="muted small">No seat is open to you. A seat opens when its lord dies or its rival falters, and only to a man with a great name and a tie to the place: a lord's favour, land there, kin by marriage. A holding of your own, kept {LORDSHIP.winters} winters, can be raised into a lordship: go there.</p>
         : open.map((s) => <p key={s} class="small">{SEAT_DEF[s].title.charAt(0).toUpperCase() + SEAT_DEF[s].title.slice(1)}: the seat is open, at {content.places[SEAT_DEF[s].place]!.name}. {claimWords(state, content, s)}</p>)}
     </div>
   );

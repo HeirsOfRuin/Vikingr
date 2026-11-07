@@ -13,8 +13,11 @@ import { standing } from './standing';
 import { holdingAt } from './land';
 import { earn } from './hardship';
 
-export type Seat = 'orkney' | 'dublin' | 'home' | 'walcheren';
-export const SEATS: Seat[] = ['orkney', 'dublin', 'home', 'walcheren'];
+export type Seat = 'orkney' | 'dublin' | 'home' | 'walcheren' | 'york' | 'eastangles' | 'nottingham' | 'loire' | 'isles' | 'frisia' | 'lordship';
+/** The seats with a place of their own (docs/FRAME-FLEETS-REALMS.md, Part B adds six). `lordship` is any holding raised up, and is not listed. */
+export const SEATS: Seat[] = ['orkney', 'dublin', 'home', 'walcheren', 'york', 'eastangles', 'nottingham', 'loire', 'isles', 'frisia'];
+/** A holding held this many winters can be raised into a lordship of his own. */
+export const LORDSHIP = { winters: 3, minFame: 80 } as const;
 
 export const RULE = {
   tribute: 120,
@@ -24,6 +27,8 @@ export const RULE = {
   absent: 2,
   /** A rival's challenge, a year. */
   challenge: 0.25,
+  /** One of the seat's own troubles, a year. */
+  seatEvent: 0.5,
   /** Claim: his name counts for half, men for half, the old lord's favour five a point, standing three. */
   perFame: 0.5,
   perMan: 0.5,
@@ -44,9 +49,41 @@ export const SEAT_DEF: Record<Seat, { place: string; title: string; lord?: strin
   dublin: { place: 'dublin', title: 'king in Dublin', minFame: 150 },
   home: { place: 'home_fjord', title: 'jarl in Hordaland', lord: 'jarl', minFame: 150 },
   walcheren: { place: 'walcheren', title: 'count of Walcheren', minFame: 150 },
+  // where the Northmen did rule (docs/FRAME-FLEETS-REALMS.md, Part B)
+  york: { place: 'york', title: 'king in Jórvík', minFame: 160 },
+  eastangles: { place: 'thetford', title: 'king of the East Angles', minFame: 160 },
+  nottingham: { place: 'nottingham', title: 'jarl in Snotingaham', minFame: 130 },
+  loire: { place: 'noirmoutier', title: 'lord of the Loire Northmen', minFame: 130 },
+  isles: { place: 'man', title: 'king of Man and the Isles', minFame: 140 },
+  frisia: { place: 'dorestad', title: 'lord of Frisia', minFame: 150 },
+  lordship: { place: '', title: 'lord', minFame: LORDSHIP.minFame },
 };
 
-export interface RuleState { seat: Seat; since: number; seen: number }
+/** `place`: a lordship's own place, the holding he raised up. */
+/** Each new seat's troubles, in the order they come (content/scenes/world/realms.yaml). */
+export const SEAT_EVENTS: Partial<Record<Seat, string[]>> = {
+  york: ['rl_york_archbishop', 'rl_york_rising', 'rl_york_coin'],
+  eastangles: ['rl_ea_edmund', 'rl_ea_border'],
+  nottingham: ['rl_nt_ceolwulf', 'rl_nt_boroughs'],
+  loire: ['rl_lo_bretons', 'rl_lo_monks'],
+  isles: ['rl_is_poet', 'rl_is_dublin'],
+  frisia: ['rl_fr_emperor', 'rl_fr_dikes'],
+  lordship: ['rl_ld_hall', 'rl_ld_neighbours'],
+};
+
+export interface RuleState { seat: Seat; since: number; seen: number; place?: string; title?: string }
+
+/** Where a seat sits, and what he is called there. */
+export function seatPlace(state: GameState, seat: Seat): string {
+  return seat === 'lordship' ? (state.rule?.seat === 'lordship' ? state.rule.place ?? state.at ?? '' : state.at ?? '') : SEAT_DEF[seat].place;
+}
+export function seatTitle(state: GameState, content: ContentBundle, seat: Seat): string {
+  return seat === 'lordship' ? `lord of ${content.places[seatPlace(state, seat)]?.name ?? 'his land'}` : SEAT_DEF[seat].title;
+}
+/** The place and title of the seat he holds. */
+export function ruleDef(state: GameState, content: ContentBundle): { place: string; title: string } | null {
+  return state.rule ? { place: seatPlace(state, state.rule.seat), title: state.rule.title ?? seatTitle(state, content, state.rule.seat) } : null;
+}
 
 function hashOf(s: string): number {
   let h = 2166136261;
@@ -71,6 +108,13 @@ export function rivalOf(state: GameState, content: ContentBundle, seat: Seat): {
       return state.flags.fr_jarl_eirik ? { name: 'Hákon Eysteinsson', claim: 180 } : state.flags.fr_jarl_hakon ? { name: 'Eiríkr Eysteinsson', claim: 180 } : { name: 'Bárðr the Rogalander', claim: 170 };
     case 'home': return { name: 'young Eysteinn, the jarl\'s son', claim: 180 };
     case 'walcheren': return { name: 'Rorik', claim: legendClaim(state, content, 'rorik', year), legend: 'rorik' };
+    case 'york': return year < 877 ? { name: 'Hálfdan', claim: legendClaim(state, content, 'halfdan', year), legend: 'halfdan' } : { name: 'Guðrøðr, the army\'s choice', claim: 190 };
+    case 'eastangles': return year < 878 ? { name: 'Æthelred, the English king the army set up', claim: 150 } : { name: 'Guthrum', claim: 210 };
+    case 'nottingham': return { name: 'Þorkell, a jarl of the army', claim: 160 };
+    case 'loire': return { name: 'Hastein', claim: legendClaim(state, content, 'hastein', year), legend: 'hastein' };
+    case 'isles': return year < 853 ? { name: 'Gofraid, son of Fergus', claim: 170 } : { name: 'Ketill, called Flatnose', claim: 180 };
+    case 'frisia': return { name: 'Rorik', claim: legendClaim(state, content, 'rorik', year), legend: 'rorik' };
+    case 'lordship': return { name: 'nobody', claim: 0 };
   }
 }
 
@@ -81,7 +125,7 @@ function legendClaim(state: GameState, content: ContentBundle, id: string, year:
 
 /** His claim, part by part: what the thing will weigh. */
 export function claimParts(state: GameState, content: ContentBundle, seat: Seat): { label: string; n: number }[] {
-  const d = SEAT_DEF[seat];
+  const d = { ...SEAT_DEF[seat], place: seatPlace(state, seat) };
   const parts: { label: string; n: number }[] = [
     { label: 'your name', n: Math.round(livingFame(state) * RULE.perFame) },
     { label: 'your men', n: Math.round((state.crew.men + aliveMen(state).length) * RULE.perMan) },
@@ -92,6 +136,9 @@ export function claimParts(state: GameState, content: ContentBundle, seat: Seat)
   if (seat === 'home' && state.base.level === 'hall') parts.push({ label: 'a hall of your own', n: RULE.land });
   if (seat !== 'home' && holdingAt(state, d.place)) parts.push({ label: 'land of your own there', n: RULE.land });
   if (seat === 'dublin' && state.flags.ir_fort_lord) parts.push({ label: 'the high seat of the ship-fort', n: RULE.land });
+  if ((seat === 'york' || seat === 'nottingham' || seat === 'eastangles') && state.flags.ga_army) parts.push({ label: 'a captain of the army', n: RULE.land });
+  if (seat === 'eastangles' && state.flags.ru_baptised) parts.push({ label: 'baptised, with a treaty', n: RULE.kin });
+  if (seat === 'loire' && (state.flags.bx_taken || state.flags.mh_went)) parts.push({ label: 'what you did with Hastein', n: RULE.land });
   return parts.filter((p) => p.n > 0);
 }
 
@@ -116,7 +163,25 @@ export function seatOpen(state: GameState, content: ContentBundle, seat: Seat): 
     case 'dublin': return !!state.places.dublin?.norse && (year >= 845 || !lordAlive(state, content, 'turgeis') || claimMargin(state, content, 'dublin') > 0);
     case 'home': return year >= jarlDies(state) && !state.flags.outlawed;
     case 'walcheren': return year >= 841;
+    case 'york': return year >= 867 && (!!state.places.york?.norse || !!state.flags.ga_army);
+    case 'eastangles': return year >= 870;
+    case 'nottingham': return year >= 877;
+    case 'loire': return year >= 845 && !!state.places.noirmoutier?.norse;
+    case 'isles': return year >= 850;
+    case 'frisia': return year >= 850 && year <= 873;
+    case 'lordship': return lordshipReady(state, content);
   }
+}
+
+/** A holding of his, held long enough, at the place he stands: he can be called its lord. */
+export function lordshipReady(state: GameState, content: ContentBundle): boolean {
+  if (state.rule || !state.at || livingFame(state) < LORDSHIP.minFame) return false;
+  const h = holdingAt(state, state.at);
+  if (!h) return false;
+  // a place with a seat of its own is claimed as that seat, not as a lordship
+  if (SEATS.some((s) => SEAT_DEF[s].place === state.at)) return false;
+  void content;
+  return dateOf(state.day).year - dateOf(h.since).year >= LORDSHIP.winters;
 }
 
 /** A claim needs a tie to the place: a stranger, however famous, is not asked (docs/FRAME-WORLD.md §E). */
@@ -126,6 +191,13 @@ export function tied(state: GameState, content: ContentBundle, seat: Seat): bool
     case 'dublin': return !!state.flags.ir_fort_member || !!holdingAt(state, 'dublin') || !!holdingAt(state, 'linn_duachaill');
     case 'home': return lordFav(state, 'jarl') >= RULE.tieFavour || state.base.level === 'hall';
     case 'walcheren': return standing(state, content, 'walcheren') >= 0;
+    case 'york': return !!state.flags.ga_army || !!holdingAt(state, 'york');
+    case 'eastangles': return !!state.flags.ga_army || !!holdingAt(state, 'thetford') || !!holdingAt(state, 'gipeswic');
+    case 'nottingham': return !!state.flags.ga_army || !!holdingAt(state, 'nottingham') || !!holdingAt(state, 'repton');
+    case 'loire': return !!holdingAt(state, 'noirmoutier') || !!holdingAt(state, 'nantes') || !!state.flags.cw_nantes_sworn || !!state.flags.bx_sworn || !!state.flags.mh_went;
+    case 'isles': return !!holdingAt(state, 'man') || !!holdingAt(state, 'skye') || !!holdingAt(state, 'iona') || standing(state, content, 'man') >= 3;
+    case 'frisia': return !!holdingAt(state, 'dorestad') || !!holdingAt(state, 'walcheren') || standing(state, content, 'dorestad') >= 2;
+    case 'lordship': return true;
   }
 }
 
@@ -136,14 +208,16 @@ export function claimWords(state: GameState, content: ContentBundle, seat: Seat)
   return `Your claim: ${claim(state, content, seat)} (${parts.map((p) => `${p.label} ${p.n}`).join(', ')}). ${r.name}'s: ${r.claim}${r.legend ? ', his name on every beach' : ''}.`;
 }
 
-export function ruleTitle(state: GameState): string | null {
-  return state.rule ? SEAT_DEF[state.rule.seat].title : null;
+export function ruleTitle(state: GameState, content?: ContentBundle): string | null {
+  if (!state.rule) return null;
+  return state.rule.title ?? (content ? seatTitle(state, content, state.rule.seat) : SEAT_DEF[state.rule.seat].title);
 }
 
 /** He takes the seat. */
 export function takeSeat(state: GameState, content: ContentBundle, seat: Seat): void {
-  const d = SEAT_DEF[seat];
-  state.rule = { seat, since: state.day, seen: dateOf(state.day).year };
+  const place = seatPlace(state, seat);
+  const d = { place, title: seatTitle(state, content, seat) };
+  state.rule = { seat, since: state.day, seen: dateOf(state.day).year, title: d.title, ...(seat === 'lordship' ? { place } : {}) };
   state.flags[`ru_${seat}`] = 1;
   const ps = state.places[d.place];
   if (ps && d.place !== 'home_fjord') ps.standing = Math.max(ps.standing ?? 0, 8);
@@ -157,7 +231,7 @@ export function takeSeat(state: GameState, content: ContentBundle, seat: Seat): 
 export function loseSeat(state: GameState, content: ContentBundle, why: string): string[] {
   if (!state.rule) return [];
   const seat = state.rule.seat;
-  const d = SEAT_DEF[seat];
+  const d = ruleDef(state, content)!;
   delete state.rule;
   delete state.flags[`ru_${seat}`];
   state.flags[`ru_${seat}_lost`] = 1;
@@ -170,20 +244,33 @@ export function loseSeat(state: GameState, content: ContentBundle, why: string):
 export function ruleYear(state: GameState, content: ContentBundle, rng: RngCursor, wintered: string | null): string[] {
   const r = state.rule;
   if (!r) return [];
-  const d = SEAT_DEF[r.seat];
+  const d = ruleDef(state, content)!;
   const year = dateOf(state.day).year;
   if (wintered === d.place) r.seen = year;
   if (year - r.seen > RULE.absent) {
+    if (r.seat === 'lordship') return loseSeat(state, content, `You have not been seen at ${content.places[d.place]?.name ?? 'your land'} for ${plural(year - r.seen, 'winter')}. Its people still pay what they owe, to your steward, and have stopped calling you lord.`);
     const rv = rivalOf(state, content, r.seat);
     return loseSeat(state, content, `You have not been seen at ${content.places[d.place]!.name} for ${plural(year - r.seen, 'winter')}. ${rv.name} sits in the high seat now, and the people who were yours have stopped saying your name at the door.`);
   }
-  state.silver += RULE.tribute;
-  earn(state, RULE.tribute);
-  state.musterPool += RULE.men;
-  const lines = [`As ${d.title}, your tribute comes in: ${formatSilver(RULE.tribute)}, and ${plural(RULE.men, 'man', 'men')} more at the muster.`];
+  const t = ruleTribute(state);
+  state.silver += t.silver;
+  earn(state, t.silver);
+  state.musterPool += t.men;
+  const lines = [`As ${d.title}, your tribute comes in: ${formatSilver(t.silver)}, and ${plural(t.men, 'man', 'men')} more at the muster.`];
   // the legends' years (docs/FRAME-WORLD.md §B): the Danes at Dublin in 851, Rorik's fleet in 850
   if (r.seat === 'dublin' && year === 851) state.queue.push({ scene: 'ru_danes', day: state.day });
   else if (r.seat === 'walcheren' && year === 850) state.queue.push({ scene: 'ru_rorik', day: state.day });
-  else if (rng.float() < RULE.challenge) state.queue.push({ scene: 'ru_challenge', day: state.day });
+  // each new seat has its own troubles, one a year at most (content/scenes/world/realms.yaml)
+  else if (SEAT_EVENTS[r.seat] && rng.float() < RULE.seatEvent) {
+    const due = SEAT_EVENTS[r.seat]!.filter((id) => state.seen[id] === undefined);
+    if (due.length) state.queue.push({ scene: due[0]!, day: state.day });
+    else if (r.seat !== 'lordship' && rng.float() < RULE.challenge) state.queue.push({ scene: 'ru_challenge', day: state.day });
+  }
+  else if (r.seat !== 'lordship' && rng.float() < RULE.challenge) state.queue.push({ scene: 'ru_challenge', day: state.day });
   return lines;
+}
+
+/** What a seat brings in a year: a lordship, half. */
+export function ruleTribute(state: GameState): { silver: number; men: number } {
+  return state.rule?.seat === 'lordship' ? { silver: RULE.tribute / 2, men: RULE.men / 2 } : { silver: RULE.tribute, men: RULE.men };
 }

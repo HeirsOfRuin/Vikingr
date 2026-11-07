@@ -188,27 +188,22 @@
   art: muster
   title: The Roman walls
   text: |
-    Bordeaux's walls are Roman, square-built and high, with towers, and the duke of Gascony, William, behind them with his household and every man in the city who can hold a spear. The fleet sits down outside them in the vineyards, and waits. And waits. Through the summer, and the autumn, and the winter, living off the country, while the city lives off its granaries and watches.
+    Bordeaux's walls are Roman, square-built and high, with towers, and the duke of Gascony, William, behind them with his household and every man in the city who can hold a spear. The fleet can't take them by storm. Hastein walks along under them for a whole day, out of bowshot, looking, and comes back and says the fleet will sit down outside them and wait.
 
-    In the spring, a man comes out of the city at night, through a postern by the river, and asks for Hastein. He has a grievance against the duke, and the key to the postern, and a price.
+    So the fleet sits down in the vineyards, and digs a ditch, and waits, while the city lives off its granaries and watches. Waiting is a thing Hastein is good at. Most of his captains are not.
     [break]
-    "Tonight," Hastein says. "Who goes through the postern first?"
+    "Go where you like," Hastein tells them, "and come back when you like. The walls will still be here. When the time comes, I'll want you."
   choices:
-    - id: first
-      text: You do.
+    - id: dig
+      text: Dig in with the fleet.
       visible_if: "!service"
-      danger: true
-      effects: [ { days_foraged: 200 }, { position: front }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 40, ratio: 1.1, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 50 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
-    - id: second
-      text: Let Hastein's own men go first. Follow them in.
-      visible_if: "!service"
-      danger: true
-      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
-    - id: crew
-      text: Go through the postern with your captain's crew.
+      effects: [ { set: flag.bx_siege }, { camp: bordeaux } ]
+      result: You dig your stretch of the ditch, and build a hut of vine-props, and settle down to see who gets hungry first. The country round the city is open to anyone who wants to go and look for food in it, and the Garonne and the Dordogne go up into country nobody has stripped yet.
+    - id: oar
+      text: Dig where your captain tells you.
       visible_if: service
-      danger: true
-      effects: [ { days_foraged: 200 }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: man, win: bx_taken, lose: bx_repulsed } } ]
+      effects: [ { set: flag.bx_siege }, { camp: bordeaux } ]
+      result: You dig where you're told, and build a hut of vine-props, and settle down to wait.
 
 - id: bx_taken
   kind: spine

@@ -12,7 +12,7 @@ import { eatDays, hearOfNeighbours } from './voyage';
 import { heal } from './hero';
 import { journal } from './journal';
 import { trigger } from './director';
-import { armyCamp, rejoinArmy, withFleet } from './sailfleet';
+import { armyCamp, fleetArrived, rejoinArmy, withFleet } from './sailfleet';
 import { plural } from './format';
 
 /** Legs a man can walk: the roads, and the river valleys beside the rivers ships go up. */
@@ -83,6 +83,7 @@ export function march(state: GameState, content: ContentBundle, rng: RngCursor, 
   state.at = to;
   delete state.marchTo;
   const back = rejoinArmy(state, content, to);
+  fleetArrived(state, to);
   for (const p of lp.path) if (!state.known.includes(p)) state.known.push(p);
   if (state.service && state.service.route[0] === to) state.service.route.shift();
   const place = content.places[to]!;

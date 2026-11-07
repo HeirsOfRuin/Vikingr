@@ -19,7 +19,7 @@ import { tickChronicle } from './chronicle';
 import { HEIR_ATTRS, makeupError } from './makeup';
 import { hpMax } from './hero';
 import { mouths } from './crew';
-import { SEAT_DEF } from './rule';
+import { seatPlace } from './rule';
 import type { ActionOption } from './index';
 
 export const FAMILY = {
@@ -361,7 +361,7 @@ export function goOnAs(state: GameState, content: ContentBundle, rng: RngCursor,
     return keep;
   });
   if (lost.length) home.push(`The land at ${lost.join(' and ')} went back to other men.`);
-  if (state.rule) { home.push(`The high seat at ${content.places[SEAT_DEF[state.rule.seat].place]!.name} went to another man.`); delete state.rule; }
+  if (state.rule) { home.push(`The high seat at ${content.places[seatPlace(state, state.rule.seat)]?.name ?? 'his seat'} went to another man.`); delete state.rule; }
   delete state.oath; delete state.oath2;
   // regard and favour are a father's; the son has half of it, and his father's feuds whole
   for (const ls of Object.values(state.lords ?? {})) ls.fav = Math.round(ls.fav * FAMILY.regardCarried);

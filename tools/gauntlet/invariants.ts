@@ -2,7 +2,8 @@
 // `error`: the game is broken. `season`: the calendar says something no Norseman would believe.
 import type { ContentBundle } from '../../src/content/schema';
 import type { GameState } from '../../src/engine/state';
-import { dateOf } from '../../src/engine/calendar';
+import { dateOf, dayOf } from '../../src/engine/calendar';
+import { courseStage } from '../../src/engine/sailfleet';
 import { renderText } from '../../src/engine/text';
 import { test } from '../../src/engine/conditions';
 import { seaClosed } from '../../src/engine/tuning';
@@ -37,6 +38,12 @@ export function checkStep(prev: GameState | null, s: GameState, content: Content
   if (!s.death && !s.at && !s.voyage) err('nowhere', 'neither in a place nor at sea');
   if (s.at && !content.places[s.at]) err('unknown place', s.at);
   for (const q of s.queue) if (!content.scenes[q.scene]) err('queued scene missing', q.scene);
+  // a fleet's story never stalls: once settled, it is never behind its own timetable (docs/FRAME-FLEETS-REALMS.md)
+  if (s.fleet && !s.service && !s.pending) {
+    const st = courseStage(s, content);
+    if (st && dayOf(st.from[0], st.from[1]) > (s.fleet.moved ?? s.fleet.since)) err('fleet behind its course', `${s.fleet.id} at ${s.fleet.camp}, should be ${st.posture} at ${st.at}`);
+    if (s.fleet.posture === 'bound' && !s.fleet.camp) err('fleet bound for nowhere', s.fleet.id);
+  }
   for (const sh of s.ships) {
     const [kind, who] = (sh.master ?? '').split(':');
     if (kind === 'sworn' && who && !s.men.some((m) => m.id === who && m.alive)) err('dead or gone shipmaster', `${sh.name}: ${who}`);

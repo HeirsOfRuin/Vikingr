@@ -131,7 +131,7 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'fleet.id') return ['', ...Object.keys(content.fleets)];
   if (path === 'bound.people' || path === 'at.people') return ['', ...PEOPLES];
   if (path === 'oath') return ['', ...Object.keys(content.lords)];
-  if (path === 'rule') return ['', ...SEATS];
+  if (path === 'rule') return ['', ...SEATS, 'lordship'];
   return undefined;
 }
 
@@ -220,7 +220,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'omen': return content.fates[a!] && !b ? null : `unknown fate "${a}" for an omen`;
     case 'captain': return content.captains[a!] && ['rel', 'met', 'alive', 'partner'].includes(b!) ? null : `bad captain path "${path}"`;
     case 'lord': return content.lords[a!] && ['fav', 'sworn', 'cast', 'alive', 'met', 'answered'].includes(b!) ? null : `bad lord path "${path}"`;
-    case 'claim': case 'seat': return (SEATS as string[]).includes(a!) && !b ? null : `unknown seat "${a}"`;
+    case 'claim': case 'seat': return ([...SEATS, 'lordship'] as string[]).includes(a!) && !b ? null : `unknown seat "${a}"`;
     case 'holding': return content.places[a!] && !b ? null : `unknown place "${a}" for a holding`;
     case 'legend': return content.rivals[a!] && !b ? null : `unknown legend "${a}"`;
     case 'boast': return content.boasts[a!] && !b ? null : `unknown boast "${a}" (declare it in content/registry/boasts.yaml)`;

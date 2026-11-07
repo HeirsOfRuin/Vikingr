@@ -15,7 +15,7 @@ import { addDeed } from './fame';
 import { trigger } from './director';
 import { journal } from './journal';
 import { capitalise, formatSilver, plural } from './format';
-import { FLEET, fleetName, rejoinArmy, withFleet } from './sailfleet';
+import { FLEET, fleetArrived, fleetName, rejoinArmy, withFleet } from './sailfleet';
 
 export interface Route {
   to: string;
@@ -243,6 +243,7 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   state.stats.legs += 1;
   const back = rejoinArmy(state, content, v.to);
   if (back) lines.push(back);
+  fleetArrived(state, v.to);
   if (v.expedition) {
     // the far end is charted now, for good
     if (!state.known.includes(v.to)) state.known.push(v.to);

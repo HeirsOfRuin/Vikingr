@@ -85,6 +85,28 @@ Your idea, made into the rule:
 - **Lying periods get used.** In 60 bot lives, captains spend 20–50% of lying time away from the fleet.
 - **Desertion is rare.** Under 10% of sworn summers end in desertion.
 
+### Built (2026-11-07)
+- **The engine:**
+  - The fleet now has a posture, lying or bound, and a `moved` day.
+  - `fleets.yaml` gives five fleets a `course` timetable. The 844 voyage south and the Middle Sea are chains off the map and need none.
+  - The new `fleet_to` effect sets a fleet bound for a place. The `camp` effect now means lying.
+  - While a fleet is bound, a captain has "Sail with X for Y" (it marches where there's no sea road) and "Leave X", which is desertion: 2 honour. Every other sea action shows why it is shut.
+  - The timetable catches up once a day. A fleet that moves while he is away sends "Word of the fleet".
+  - A fleet that goes on to lie somewhere he isn't marks him as away.
+  - The map banner shows "bound here".
+  - A gauntlet rule fails any life whose fleet falls behind its own timetable.
+- **The story:**
+  - The Danes at Walcheren: the Frisians buy back their cloth; a quarrel over the shares.
+  - The Vestfold summer on Noirmoutier.
+  - A turn-back window at the Gironde for the southern fleet.
+  - Ragnarr's fleet waiting at Paris, and its council. The fleet breaks up with the silver, and the payment now waits until he is with the fleet.
+  - The siege of Bordeaux, split up. It was one scene that skipped 200 days. Now: the arrival and digging in (the fleet lies there), a winter in the lines, and the postern in spring 848.
+  - Two scenes of great-army camp life: the army's market, and an English nobleman come to buy a kingship.
+- **Measured** (36 sworn lives over the 843 and 865 eras, raider and reckless bots):
+  - The fleet never fell behind its timetable (the gauntlet rule).
+  - Lying time spent away: 73%, against a 20–50% target. The bots raid out from the camp and come back between raids. This measures the bots' habits more than the design, and the mechanic itself works.
+  - No desertions, so under the 10% target.
+
 ---
 
 ## Part B: a realm of your own
@@ -130,6 +152,26 @@ Your idea, made into the rule:
 ### Targets
 - **Reachable.** In 60 bot lives in the 865 era, 3–8 claim a seat.
 - **Fragile.** A seat is lost within five years about a third of the time.
+
+### Built (2026-11-07)
+- **Change from this frame:** seats stay in `src/engine/rule.ts` rather than moving to `seats.yaml`. Each has logic of its own (who the rival is, when it opens, what ties a man to it), and that logic reads better as code than as data.
+- **Six new seats, each with a rival from history and a claim scene at its place** (`content/scenes/world/realms.yaml`):
+  - king in Jórvík (from 867; rival Hálfdan, later Guðrøðr);
+  - king of the East Angles (from 870; Æthelred the army's English king, later Guthrum). Its claim scene offers baptism and a treaty with the West Saxon king, worth 40 on the claim;
+  - jarl in Snotingaham (from 877);
+  - lord of the Loire Northmen (from 845, against Hastein);
+  - king of Man and the Isles (from 850; Gofraid son of Fergus, later Ketill Flatnose);
+  - lord of Frisia (850–873, against Rorik).
+- **A lordship of your own.** Any holding kept three winters, with fame of 80 or more, can be raised into "lord of X": half a seat's tribute and men, no rival claimant, lost if he isn't seen there.
+- **Each seat's troubles** (one a year at most, in order):
+  - Jórvík: the archbishop's lands; the Northumbrians' rising; a coin of his own;
+  - the East Angles: the dead king's church; the border stones;
+  - Snotingaham: Ceolwulf; the five boroughs' thing;
+  - the Loire: the Breton king's war; the monks' lamp;
+  - the Isles: the poet; the kings in Dublin;
+  - Frisia: the emperor's summons; the sea over the dikes;
+  - a lordship: a hall of your own; the neighbours.
+- **Measured** (60 bot lives from the 865 start, 20 years each): 3 took a seat (king in Jórvík, count of Walcheren, jarl in Hordaland), and 2 of them lost it again. Target 3–8: met, at the low end. Only 4 lives reached fame 150.
 
 ---
 

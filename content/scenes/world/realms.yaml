@@ -1,0 +1,526 @@
+# A realm of your own (docs/FRAME-FLEETS-REALMS.md, Part B): seats where the Northmen did rule, and a holding raised up into
+# a lordship. The claim is shown in full ({claim_<seat>}), as for the four old seats (world/rule.yaml); the troubles come
+# at the turn of the year, one at most (src/engine/rule.ts SEAT_EVENTS).
+# Sources: the Anglo-Saxon Chronicle (876, Hálfdan shares out Northumbria; 877, the army shares out Mercia and gives part to
+# Ceolwulf, "a foolish king's thegn"; 878-880, Guthrum baptised with Alfred as his godfather, and settles East Anglia);
+# Symeon of Durham on Archbishop Wulfhere driven out in 872; the Annals of St-Bertin on Rorik and Frisia (850 onwards) and
+# on the Loire Northmen with the Bretons (Brissarthe, 866); the Irish annals on the Gall-Gáedil and the Isles (850s).
+# Later, and used as a step forward in time: the York and East Anglian Viking coinages (c. 895), St Edmund's memorial pennies.
+
+# ---- Jórvík ----
+- id: ru_york
+  kind: place
+  trigger: arrive
+  at: [york]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.york", "!service"]
+  art: town_rise
+  title: The high seat in Jórvík
+  text: |
+    The Romans' walls, the English kings' hall, the archbishop's minster, and now the army's: Jórvík belongs to whoever can hold it, and the men who hold it now are arguing about who that should be.
+
+    The captains meet in the old king's hall, under his blackened roof-beams, with their swords on the table in front of them because nobody trusts anyone enough to leave them by the door.
+    [break]
+    {claim_york}
+  choices:
+    - id: thing_strong
+      text: Stand up in the hall and ask the army for the seat.
+      visible_if: "claim.york >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "They bang their swords on the table for you, which is how the army votes. By the end of the night the old king's seat is yours, and the archbishop has sent a priest to ask, carefully, what you would like to be called.", effects: [ { rule: york } ] }
+      failure: { text: "You say it badly, and the hall goes to {rival_york}. The army is not a patient audience.", effects: [ { set: flag.ru_york_lost } ] }
+    - id: thing_even
+      text: Stand up in the hall and ask the army for the seat.
+      visible_if: "claim.york >= 0 && claim.york < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It's close, and loud, and two men are carried out with broken heads before it's decided. Then the swords bang for you.", effects: [ { rule: york } ] }
+      failure: { text: "It's close, and then it isn't. The hall goes to {rival_york}, and somebody spits on your boots on the way out.", effects: [ { set: flag.ru_york_lost } ] }
+    - id: thing_weak
+      text: Ask the army anyway.
+      visible_if: "claim.york < 0 && claim.york >= -40"
+      check: { skill: speech, attr: pre, difficulty: 8 }
+      success: { text: "Nobody thought you had it in you. You remind them of the walls on the day the kings came, and who was on them. The swords bang.", effects: [ { rule: york } ] }
+      failure: { text: "They let you talk, and then give it to {rival_york}, the way they were always going to.", effects: [ { set: flag.ru_york_lost } ] }
+    - id: silver
+      text: Buy the captains who matter, the night before.
+      visible_if: "claim.york >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: york } ]
+      result: Ten pounds of silver goes round the camp in the dark. In the morning the swords bang for you. Everyone knows why, and everyone took some.
+    - id: wait
+      text: Let it lie for now.
+      result: You let {rival_york} sit in the old king's seat, for now. Jórvík has had a great many kings. It will have more.
+
+- id: rl_york_archbishop
+  kind: queued
+  art: town_rise
+  title: The archbishop
+  text: |
+    Wulfhere, archbishop of York, comes to your hall in his vestments with two priests and a box of documents. The minster owns half the land in Northumbria, he says, and has since before your grandfather's grandfather. He would like it to go on doing so. In return the minster will pray for you, and tell the English that you are a lawful king.
+
+    The last time the English were told that about a man the army set up, they drove him out, and the archbishop with him.
+  choices:
+    - id: deal
+      text: Make the bargain. A king the church calls lawful is a king.
+      effects: [ { add: { honour: 1 } }, { standing: { people: english, n: 2 } } ]
+      result: You put your mark on his document, and he puts his on yours, and afterwards he gives you a blessing you didn't ask for. The minster's reeves go back to collecting rents. Some of them now come to you.
+    - id: take
+      text: Take the minster's land, and its rents.
+      effects: [ { add: { silver: 240 } }, { standing: { people: english, n: -3 } } ]
+      result: Five pounds of silver in the first year from the minster's farms, and the archbishop gone south to complain to the Mercians. Every priest in Northumbria preaches against you on Sunday. On Monday the farmers pay their rent to your reeve anyway.
+
+- id: rl_york_rising
+  kind: queued
+  art: shield_wall
+  title: The Northumbrians rise
+  text: |
+    The English of Northumbria have had a king of their own blood within living memory, and some of them want one again. In the spring a thegn called Eadwulf raises the country north of the Tees and comes south with every man who can hold a spear, and the farmers you thought were yours open their gates to him.
+  choices:
+    - id: fight
+      text: Meet him in the field before he reaches the walls.
+      danger: true
+      effects: [ { battle: { foe: northumbrian_levy, terrain: field, men: 40, ratio: 1.0 } } ]
+      result: You go out to meet him on the old Roman road with every man you can raise.
+    - id: walls
+      text: Hold the walls, and let him starve outside them.
+      effects: [ { add: { crew.morale: -1 } }, { standing: { people: english, n: -1 } } ]
+      result: He sits outside for a month, burning your farms, and goes home when his men want their harvest in. The farms will be yours again by winter. They'll remember who burned them, and it won't be him.
+
+- id: rl_york_coin
+  kind: queued
+  art: hearth_ormr
+  title: Your own coin
+  text: |
+    A moneyer comes to you, an Englishman who struck pennies for the last king, and asks if he may strike them for you. Your name on one side, he says, and on the other a cross, or a sword, or a hammer, as you like. Men trust a coin with a king on it more than a lump of hacksilver.
+  choices:
+    - id: cross
+      text: Your name, and a cross.
+      effects: [ { add: { honour: 1 } }, { standing: { people: english, n: 1 } } ]
+      result: The pennies are thin and well struck, with your name round the edge spelled as an Englishman spells it. The English take them without biting them. Your own men bite them anyway.
+    - id: sword
+      text: Your name, and a sword.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The sword comes out looking more like a cross than the moneyer meant, which pleases everyone. Your men carry them as luck-pieces. Some of them will be found in the ground a thousand years from now, though nobody digging will know whose they were.
+
+# ---- the East Angles ----
+- id: ru_eastangles
+  kind: place
+  trigger: arrive
+  at: [thetford]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.eastangles", "!service"]
+  art: town_rise
+  title: King of the East Angles
+  text: |
+    East Anglia has had no king of its own since the army killed Edmund. It has had men the army set up, one after another, who collected the army's tribute and were called kings by nobody who didn't have to. The country is tired of it. So is the army, which would like to settle down and farm it.
+
+    The army's men and the East Angles' thegns meet at the ford at Thetford to see who will be king.
+    [break]
+    {claim_eastangles}
+  choices:
+    - id: baptism
+      text: Take baptism, and make a treaty with the West Saxon king.
+      visible_if: "!flag.ru_baptised"
+      effects: [ { set: flag.ru_baptised }, { standing: { people: english, n: 2 } } ]
+      result: You stand in a cold river while a bishop pours water over your head, with an English king beside you as your godfather, and come out with a Christian name you will never use. The East Angles' thegns watch it done. The next time the thing sits, they will count it.
+    - id: thing_strong
+      text: Ask the thing at the ford for the kingship.
+      visible_if: "claim.eastangles >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "The army shouts for you, and then, slowly, the English thegns do too, because a king the army chose is better than the army without one.", effects: [ { rule: eastangles } ] }
+      failure: { text: "The thing goes to {rival_eastangles}. The East Angles look relieved, and you'd like to know why.", effects: [ { set: flag.ru_eastangles_lost } ] }
+    - id: thing_even
+      text: Ask the thing at the ford for the kingship.
+      visible_if: "claim.eastangles >= 0 && claim.eastangles < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It takes two days. On the second the English thegns come over to you one by one, without looking at each other. King of the East Angles.", effects: [ { rule: eastangles } ] }
+      failure: { text: "It takes two days, and on the second they go to {rival_eastangles}.", effects: [ { set: flag.ru_eastangles_lost } ] }
+    - id: silver
+      text: Buy the thegns who matter.
+      visible_if: "claim.eastangles >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: eastangles } ]
+      result: The English are cheaper than the Danes, it turns out, and quieter about it. King of the East Angles, by the grace of ten pounds of silver.
+    - id: wait
+      text: Let the kingship lie for now.
+      result: Not this year. The ford will still be here.
+
+- id: rl_ea_edmund
+  kind: queued
+  art: celtic_monastery
+  title: The dead king
+  text: |
+    The East Angles' priests have started calling Edmund, the king the army killed, a saint. People are going to the place where he died, and coming back cured of things. The priests would like to build a church over his body, and they would like you to pay for it.
+
+    Your men think this is very funny. Some of the men who killed him are your men.
+  choices:
+    - id: build
+      text: Pay for the church.
+      requires: ["silver >= 96"]
+      effects: [ { add: { silver: -96 } }, { standing: { people: english, n: 3 } } ]
+      result: You pay for the church, and go to its hallowing, and stand at the back while the priests tell the story of how Edmund died. They don't name the men who killed him. They look at you while they don't name them.
+    - id: refuse
+      text: Refuse. Let his saints pay for him.
+      effects: [ { standing: { people: english, n: -2 } } ]
+      result: The church gets built anyway, slowly, with the farmers' pennies. Years later your own settlers' sons will strike coins with the dead king's name on them, and think nothing of it.
+
+- id: rl_ea_border
+  kind: queued
+  art: muster
+  title: The border
+  text: |
+    The West Saxon king's reeves have put up stones along the river Lea, marking where his land ends and yours begins. Your men keep moving them. His men keep moving them back. Last week somebody was killed doing it.
+  choices:
+    - id: keep
+      text: Keep the treaty, and hang the man who moved the stones.
+      effects: [ { add: { honour: 1, crew.morale: -1 } } ]
+      result: You hang him at the stone he moved, with the West Saxon reeve watching. The border is quiet after that. Your men are quieter too, and not in a good way.
+    - id: push
+      text: Move the stones a mile further, and see what he does.
+      effects: [ { add: { crew.morale: 1 } }, { standing: { people: english, n: -2 } } ]
+      result: He does nothing, this year. His reeve writes it down, though. The West Saxons write everything down.
+
+# ---- Snotingaham and the Mercian boroughs ----
+- id: ru_nottingham
+  kind: place
+  trigger: arrive
+  at: [nottingham]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.nottingham", "!service"]
+  art: town_rise
+  title: The army shares out Mercia
+  text: |
+    In the harvest the army takes half of Mercia for its own, and gives the other half to an English thegn called Ceolwulf, who will be called king and do as he's told. The half the army keeps is shared out among its captains, borough by borough. Snotingaham, on its red rock over the Trent, is the best of them.
+    [break]
+    {claim_nottingham}
+  choices:
+    - id: thing_strong
+      text: Ask the army's council for Snotingaham.
+      visible_if: "claim.nottingham >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "Nobody argues for long. The rock and the river and the land round them are yours to share out among your men.", effects: [ { rule: nottingham } ] }
+      failure: { text: "The council gives it to {rival_nottingham}, who has more men and fewer words.", effects: [ { set: flag.ru_nottingham_lost } ] }
+    - id: thing_even
+      text: Ask the army's council for Snotingaham.
+      visible_if: "claim.nottingham >= 0 && claim.nottingham < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It's close. {rival_nottingham} takes Derby instead, with bad grace. Snotingaham is yours.", effects: [ { rule: nottingham } ] }
+      failure: { text: "It goes to {rival_nottingham}. You get a farm on the Trent, and a grudge.", effects: [ { set: flag.ru_nottingham_lost } ] }
+    - id: silver
+      text: Buy the council's voices.
+      visible_if: "claim.nottingham >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: nottingham } ]
+      result: The council is bought by morning. Snotingaham is yours, and so is the reputation that goes with buying it.
+    - id: wait
+      text: Take a farm, and wait.
+      result: You take a farm on the Trent and wait. The boroughs will change hands again.
+
+- id: rl_nt_ceolwulf
+  kind: queued
+  art: muster
+  title: The other king
+  text: |
+    Ceolwulf, the English king of the other half of Mercia, sends to say that some of your settlers are farming his land, and that he would like them to stop. He sends it politely. He has to.
+  choices:
+    - id: give
+      text: Pull your settlers back to the line.
+      effects: [ { standing: { people: english, n: 2 } }, { add: { crew.morale: -1 } } ]
+      result: Your settlers move back, cursing, and Ceolwulf sends you a gold cup. A foolish king's thegn, the English call him. Not entirely foolish.
+    - id: keep
+      text: Tell him the land is farmed by whoever farms it.
+      effects: [ { standing: { people: english, n: -2 } }, { add: { silver: 48 } } ]
+      result: He does nothing. He can't. But somebody writes down that he asked, and somebody else writes down what you said.
+
+- id: rl_nt_boroughs
+  kind: queued
+  art: town_rise
+  title: The five boroughs
+  text: |
+    The jarls of the other boroughs, Lincoln and Stamford and Leicester and Derby, send to ask whether you will meet them each spring, at a thing of your own, to settle quarrels between your people and theirs without killing each other. Their law will be Danish law. Their people are English, mostly. It will be something new.
+  choices:
+    - id: yes
+      text: Go to the thing, and help make the law.
+      effects: [ { add: { honour: 1, skill.speech: 1 } } ]
+      result: The first thing argues for three days about what a man owes for a stolen pig. By the end of it there is a law about pigs, Danish and English both. The English farmers come to it. Some of them start calling themselves by Danish names.
+    - id: no
+      text: Snotingaham needs no one else's law.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: The other four meet without you. Their quarrels are settled at the thing; yours are settled at the ford, with axes, and cost more.
+
+# ---- the Loire ----
+- id: ru_loire
+  kind: place
+  trigger: arrive
+  at: [noirmoutier]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.loire", "!service"]
+  art: shore_wait
+  title: The Loire Northmen
+  text: |
+    The monks' island has been a Norse camp for longer than some of the men on it have been alive. There are houses on it now, and wives, and children who speak Frankish to their mothers and Norse to their fathers, and every summer the crews go up the river and come back. What there isn't, is anyone in charge.
+
+    The captains meet on the old threshing-floor, where Hastein held his councils.
+    [break]
+    {claim_loire}
+  choices:
+    - id: thing_strong
+      text: Ask the island to make you its lord.
+      visible_if: "claim.loire >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "The island shouts for you, and Hastein, who is old now, laughs and shouts with them.", effects: [ { rule: loire } ] }
+      failure: { text: "The island goes to {rival_loire}, as it was always going to while he lived.", effects: [ { set: flag.ru_loire_lost } ] }
+    - id: thing_even
+      text: Ask the island to make you its lord.
+      visible_if: "claim.loire >= 0 && claim.loire < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It's close. Hastein looks at you across the threshing-floor, a long look, and then nods, once, and the island follows him.", effects: [ { rule: loire } ] }
+      failure: { text: "It's close, and it goes to {rival_loire}.", effects: [ { set: flag.ru_loire_lost } ] }
+    - id: silver
+      text: Buy the captains' voices.
+      visible_if: "claim.loire >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: loire } ]
+      result: The captains are bought by morning, and the island is yours. Hastein, when he hears how, laughs until he coughs.
+    - id: wait
+      text: Let it lie.
+      result: Not yet. The island has waited this long.
+
+- id: rl_lo_bretons
+  kind: queued
+  art: muster
+  title: The Breton king
+  text: |
+    Salomon, king of the Bretons, sends a man in a fine cloak to the island. The Bretons and the Franks are at war again, he says, and a fleet of Northmen on the Loire could be very useful to the side that paid it. He has silver, and an enemy: Robert, the Frankish count of Anjou.
+  choices:
+    - id: join
+      text: Take the Breton's silver, and fight his war.
+      danger: true
+      effects: [ { add: { silver: 96 } }, { standing: { people: frankish, n: -2 } }, { battle: { foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9 } } ]
+      result: You go up the river with the Bretons to a church at a place called Brissarthe, where Count Robert has your men trapped. He comes to the church door without his helmet on, because it is hot.
+    - id: refuse
+      text: Tell him the Loire Northmen fight for themselves.
+      effects: [ { add: { honour: 1 } } ]
+      result: The Breton goes away with his silver. Hastein takes it instead, the next week, and kills Count Robert at Brissarthe, and the Franks blame you anyway.
+
+- id: rl_lo_monks
+  kind: queued
+  art: celtic_monastery
+  title: The monks' saint
+  text: |
+    The monks who fled the island thirty years ago send a letter, carried by a frightened young priest. They have their saint's bones in Burgundy now, a long way from the sea, and they don't want the island back. But the saint's old church is on it, and they would like to know if anyone is keeping a lamp lit in it.
+  choices:
+    - id: lamp
+      text: Have a lamp lit in the church.
+      effects: [ { add: { hamingja: 1 } }, { standing: { people: frankish, n: 1 } } ]
+      result: The young priest lights it himself, and stays a week, and says a mass for nobody in particular. Your men's wives come to it. So do some of your men, at the back, to see what it's like.
+    - id: no
+      text: Send him back with nothing.
+      result: He goes back with nothing. The church is a storehouse now, for salt, and smells of it.
+
+# ---- Man and the Isles ----
+- id: ru_isles
+  kind: place
+  trigger: arrive
+  at: [man]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.isles", "!service"]
+  art: shore_wait
+  title: King of the Isles
+  text: |
+    The Gall-Gáedil, the Irish call them, the foreign Gaels: men of the islands who are half Norse and half Irish and speak both badly. They have no king who can hold them all, from Man to Lewis. Every few years somebody tries.
+
+    The island chiefs meet on Tynwald hill, in the middle of Man, where the thing has met since before anyone remembers.
+    [break]
+    {claim_isles}
+  choices:
+    - id: thing_strong
+      text: Stand on the hill and ask the islands for the kingship.
+      visible_if: "claim.isles >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "The islands shout for you in two languages. King of Man and the Isles, for as long as you can keep them.", effects: [ { rule: isles } ] }
+      failure: { text: "The islands go to {rival_isles}. The Gall-Gáedil like a king they've known since he was a boy.", effects: [ { set: flag.ru_isles_lost } ] }
+    - id: thing_even
+      text: Stand on the hill and ask the islands for the kingship.
+      visible_if: "claim.isles >= 0 && claim.isles < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It's close. A poet speaks for you, in Irish, a verse nobody understands but everyone applauds. King of the Isles.", effects: [ { rule: isles } ] }
+      failure: { text: "It goes to {rival_isles}, in Irish, which you only half follow.", effects: [ { set: flag.ru_isles_lost } ] }
+    - id: silver
+      text: Buy the island chiefs.
+      visible_if: "claim.isles >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: isles } ]
+      result: The island chiefs are bought one by one, in their own halls, over a month. King of the Isles. They will want buying again.
+    - id: wait
+      text: Not yet.
+      result: The hill will still be here.
+
+- id: rl_is_poet
+  kind: queued
+  art: hearth_ormr
+  title: The poet
+  text: |
+    A poet comes to your hall: an Irishman with a harp and a long cloak and the right, he says, to be fed by any king for as long as he likes. He will make a poem in your praise. Or, if he isn't fed, he will make a different kind of poem, and the Irish believe that kind can raise boils on a king's face.
+  choices:
+    - id: feed
+      text: Feed him, and give him a gold ring.
+      requires: ["silver >= 48"]
+      effects: [ { add: { silver: -48 } }, { add: { honour: 1 } }, { standing: { people: gael, n: 2 } } ]
+      result: The poem is very long and very beautiful, and nobody in your hall understands a word of it except that your name comes round again and again, like a wave. The Gaels of the isles go home humming it.
+    - id: send
+      text: Send him on his way.
+      effects: [ { standing: { people: gael, n: -2 } } ]
+      result: He goes, with a look. In a month you have a boil on your neck. It's a boil. The Gaels in your hall look at it, and at each other.
+
+- id: rl_is_dublin
+  kind: queued
+  art: muster
+  title: The kings in Dublin
+  text: |
+    Ships come from Dublin with men who say they speak for the kings there, the sons of Ívarr. The Isles have always paid them, they say, a tribute of ships and men in the summers. They have come to collect.
+  choices:
+    - id: pay
+      text: Pay them, this year.
+      effects: [ { add: { silver: -96 } } ]
+      result: Two pounds of silver and the promise of two ships next summer. They go away satisfied. They'll be back.
+    - id: refuse
+      text: Tell them the Isles have a king of their own now.
+      danger: true
+      effects: [ { battle: { foe: danish_raiders, terrain: beach, men: 30, ratio: 0.9 } } ]
+      result: They go back to their ships, and come back the next morning with their shields.
+
+# ---- Frisia ----
+- id: ru_frisia
+  kind: place
+  trigger: arrive
+  at: [dorestad]
+  cooldown_days: 300
+  weight: 25
+  requires: ["seat.frisia", "!service"]
+  art: town_rise
+  title: Lord of Frisia
+  text: |
+    The emperor's people have given up holding Frisia against the Danes, and have started giving it to them instead, on condition that they hold it against the other Danes. It is the kind of bargain the emperor makes when he has no choice.
+
+    The Frisian lords and the emperor's count meet at what is left of Dorestad to see which Northman will get it.
+    [break]
+    {claim_frisia}
+  choices:
+    - id: thing_strong
+      text: Ask the emperor's count for Frisia.
+      visible_if: "claim.frisia >= 20"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "The count gives you the emperor's ring, and a sword, and a parchment with a seal. Lord of Frisia, for the emperor. Holding it against the Danes, of whom you are one.", effects: [ { rule: frisia } ] }
+      failure: { text: "The count gives it to {rival_frisia}, who has done this before.", effects: [ { set: flag.ru_frisia_lost } ] }
+    - id: thing_even
+      text: Ask the emperor's count for Frisia.
+      visible_if: "claim.frisia >= 0 && claim.frisia < 20"
+      check: { skill: speech, attr: pre, difficulty: 7 }
+      success: { text: "It takes a week of Frisian lords talking. At the end of it they take you, because you are not {rival_frisia}.", effects: [ { rule: frisia } ] }
+      failure: { text: "It goes to {rival_frisia}, after a week of talk.", effects: [ { set: flag.ru_frisia_lost } ] }
+    - id: silver
+      text: Buy the emperor's count.
+      visible_if: "claim.frisia >= -15"
+      requires: ["silver >= 480"]
+      effects: [ { add: { silver: -480, honour: -1 } }, { rule: frisia } ]
+      result: The count is cheaper than you thought. Emperors' counts usually are.
+    - id: wait
+      text: Not yet.
+      result: The emperor has more of Frisia to give away. He'll give it again.
+
+- id: rl_fr_emperor
+  kind: queued
+  art: town_rise
+  title: The emperor's summons
+  text: |
+    A count comes from the emperor with a summons: Lord of Frisia, come to Aachen at Easter, put your hands between the emperor's, and swear again to hold his coast against his enemies. And bring the tribute.
+  choices:
+    - id: go
+      text: Go to Aachen, and swear.
+      effects: [ { add: { silver: -48, honour: 1 } }, { standing: { people: frisian, n: 2 } } ]
+      result: The emperor is a tired man in a gold crown who doesn't look at you while you swear. His court looks at you a great deal. You come home with a cloak of red silk and a renewed parchment.
+    - id: no
+      text: Send the tribute, and stay home.
+      effects: [ { standing: { people: frisian, n: -1 } } ]
+      result: The tribute goes. You don't. The emperor's court notices, and so does the next Dane who wants Frisia.
+
+- id: rl_fr_dikes
+  kind: queued
+  art: storm_ship
+  title: The sea comes in
+  text: |
+    A storm in the autumn, at the highest tide of the year, and the sea comes over the Frisians' dikes in the night. In the morning there are villages standing in salt water up to the eaves, and cattle drowned in rows, and the Frisians on their mounds looking at you to see what kind of lord you are.
+  choices:
+    - id: help
+      text: Put your men to the dikes, and feed the drowned villages.
+      effects: [ { add: { provisions: -200, crew.morale: -1 } }, { standing: { people: frisian, n: 3 } } ]
+      result: Your men dig clay all winter beside the Frisians, cursing, and the dikes go up again higher. The Frisians are a hard people to please. They are pleased.
+    - id: no
+      text: Leave the Frisians to their own sea.
+      effects: [ { standing: { people: frisian, n: -3 } } ]
+      result: The Frisians mend their own dikes, as they always have. They pay their tribute, too. They don't say anything to you at all.
+
+# ---- a lordship of your own ----
+- id: ru_lordship
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 365
+  weight: 30
+  requires: ["seat.lordship", "!service"]
+  art: hearth_ormr
+  title: What to call you
+  text: |
+    You have held this land for three winters now. The people who farm it pay you what they used to pay someone else, and bring their quarrels to your hall, and their sons to your benches. One evening an old man stands up at your fire and asks the question everyone has been waiting for someone to ask: what are they supposed to call you?
+    [break]
+    {claim_lordship}
+  choices:
+    - id: lord
+      text: Let them call you their lord.
+      effects: [ { rule: lordship } ]
+      result: The old man nods, as if that settles something, and sits down. By the spring they are calling you lord at the door, and their children are calling you it in the fields, and men from other places have started to hear of you.
+    - id: no
+      text: Tell them your name will do.
+      result: The old man shrugs and sits down. They go on calling you by your name. It's a good name. It will have to do.
+
+- id: rl_ld_hall
+  kind: queued
+  art: yule_hall
+  title: A hall of your own
+  text: |
+    A lord should have a hall, the people say, and so do your men. Not a house: a hall, long enough for the whole crew at the benches, with a high seat carved by someone who knows how, and posts at the door that people will talk about.
+  choices:
+    - id: build
+      text: Build it, and carve the posts.
+      requires: ["silver >= 144"]
+      effects: [ { add: { silver: -144, honour: 1, crew.morale: 1 } } ]
+      result: It takes a summer. The posts have dragons on them, climbing, and the high seat has your father's ship carved on its back. The first feast in it lasts four days. People come from two valleys over to see the posts.
+    - id: plain
+      text: A plain house will do.
+      result: A plain house does. Your men say nothing. Your neighbours, who have halls, say a great deal.
+
+- id: rl_ld_neighbours
+  kind: queued
+  art: muster
+  title: The neighbours
+  text: |
+    The men who hold the land around yours have noticed that you're calling yourself lord now. One of them sends his cattle onto your grazing, openly, in daylight, with his herdsmen watching to see what you'll do about it.
+  choices:
+    - id: drive
+      text: Drive his cattle into your own pens, and wait for him to come for them.
+      effects: [ { add: { provisions: 120, honour: 1 } } ]
+      result: He comes for them a week later with twenty men, and finds forty of yours, and goes home without them. He doesn't send cattle again.
+    - id: talk
+      text: Ride over and talk to him.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: You talk, and drink, and talk, and by the end of it he has agreed to a boundary and you have agreed to marry nobody's daughter to his son for the moment. Neighbours.
+        effects: [ { add: { honour: 1 } } ]
+      failure:
+        text: You talk, and he laughs at you, in front of his men. You drive his cattle off your grazing anyway, the next day, and it ends in a feud, which is what he wanted.
+        effects: [ { add: { crew.morale: -1 } } ]

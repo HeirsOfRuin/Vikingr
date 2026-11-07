@@ -6,7 +6,7 @@ import { FIGHT_DEEDS, NAMED_FAME } from './items';
 import type { ContentBundle, Rival } from '../content/schema';
 import type { Deed, GameState } from './state';
 import { dateOf } from './calendar';
-import { SEAT_DEF } from './rule';
+import { ruleTitle } from './rule';
 import { FAME_FADE_DAYS, FAME_FADE_PER_YEAR, VERSE_LASTING_MULT } from './tuning';
 
 /** What an old deed still carries each time it is told again. */
@@ -131,5 +131,5 @@ export function fameRank(state: GameState, content: ContentBundle): number {
 
 export function heroName(state: GameState): string {
   const n = state.hero.nickname ? `${state.hero.name} ${state.hero.nickname}` : state.hero.name;
-  return state.rule ? `${n}, ${SEAT_DEF[state.rule.seat].title}` : n;
+  return state.rule ? `${n}, ${ruleTitle(state)}` : n;
 }

@@ -366,6 +366,21 @@ ru_dublin_lost: { description: "Lost the claim to Dublin, or the seat" }
 ru_home_lost: { description: "Lost the claim to the jarldom at home, or the seat" }
 ru_walcheren_lost: { description: "Lost the claim to Walcheren, or the seat" }
 ru_dublin_ditch: { description: "Dug Dublin's ditch deeper against the Danes" }
+ru_york: { description: "King in Jórvík", saga: true }
+ru_eastangles: { description: "King of the East Angles", saga: true }
+ru_nottingham: { description: "Jarl in Snotingaham", saga: true }
+ru_loire: { description: "Lord of the Loire Northmen", saga: true }
+ru_isles: { description: "King of Man and the Isles", saga: true }
+ru_frisia: { description: "Lord of Frisia", saga: true }
+ru_lordship: { description: "Lord of his own land abroad", saga: true }
+ru_york_lost: { description: "Lost the claim to Jórvík, or the seat" }
+ru_eastangles_lost: { description: "Lost the claim to East Anglia, or the seat" }
+ru_nottingham_lost: { description: "Lost the claim to Snotingaham, or the seat" }
+ru_loire_lost: { description: "Lost the claim to the Loire, or the seat" }
+ru_isles_lost: { description: "Lost the claim to the Isles, or the seat" }
+ru_frisia_lost: { description: "Lost the claim to Frisia, or the seat" }
+ru_lordship_lost: { description: "Stopped being called lord of his land abroad" }
+ru_baptised: { description: "Took baptism, and a treaty with the West Saxon king, for East Anglia", saga: true }
 # Ragnarr's days (docs/FRAME-LINEAGE.md D)
 era843: { description: "A life begun in the spring of 843" }
 e43_debt: { description: "Owes Ölvir for the Hart" }
@@ -437,3 +452,4 @@ mh_gerard_warned: { description: "The Frankish envoys went home unpaid, and Coun
 mh_river_known: { description: "Learned the Rhône from the envoys' boatmen" }
 mh_left: { description: "Left Hastein's fleet early, and came home alone", saga: true }
 mh_warned_luna: { description: "Warned the bishop of Luna", saga: true }
+bx_siege: { description: "Sat down outside Bordeaux with Hastein's fleet" }

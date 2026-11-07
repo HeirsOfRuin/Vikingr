@@ -8,12 +8,21 @@
   ships: 67
   until: 843
   desc: Sixty-seven ships out of Vestfold and the west, Norwegians all, bound for the Loire. They winter on Noirmoutier.
+  # Annals of St-Bertin 843; the Chronicle of Nantes: Nantes on St John's Day, 24 June; then the winter on Noirmoutier.
+  course:
+    - { from: [843, 105], at: noirmoutier, posture: bound, note: "The Vestfold fleet sails for the Loire." }
+    - { from: [843, 168], at: nantes, posture: bound, note: "Up the river to Nantes, for St John's Day." }
+    - { from: [843, 182], at: noirmoutier, posture: bound, note: "Back down the river to the monks' island, to lie there through the winter." }
 - id: danes834
   name: the Danish fleet
   leader: Ubbi
   ships: 34
   until: 834
   desc: Horik's hersirs and Ubbi's Danes, bound up the Rhine for Dorestad.
+  # Annals of St-Bertin 834: the Danes fall on Dorestad; they come back in 835 and 836, wintering on the Frisian islands.
+  course:
+    - { from: [834, 110], at: dorestad, posture: bound, note: "Horik's Danes are bound for Dorestad." }
+    - { from: [834, 200], at: walcheren, posture: bound, note: "After Dorestad the fleet goes down to lie in the Frisian islands for the rest of the summer." }
 - id: southern
   name: the southern fleet
   leader: the captains of the Loire
@@ -26,18 +35,37 @@
   ships: 120
   until: 845
   desc: A hundred and twenty ships for the Seine and Paris, under Ragnarr.
+  # Annals of St-Bertin 845: up the Seine in March, Paris at Easter (28 March), paid off and gone by early summer.
+  course:
+    - { from: [845, 60], at: paris, posture: bound, note: "Ragnarr takes the fleet up the Seine for Paris." }
 - id: loire847
   name: Hastein's fleet
   leader: Hastein
   ships: 40
   until: 848
   desc: The Loire Northmen under Hastein, bound south for the Garonne and Bordeaux.
+  # Annals of St-Bertin 847-848: the siege of Bordeaux through the winter; the town taken at night in 848.
+  course:
+    - { from: [847, 60], at: bordeaux, posture: bound, note: "Hastein takes the fleet south to sit down outside Bordeaux." }
 - id: greatarmy
   name: the great army
   leader: the sons of Ragnarr
   ships: 140
   until: 878
   desc: Not a fleet but an army, the English call it, the micel here, under Ívarr and Hálfdan and Ubbi. Danes mostly, and anyone else who comes. It winters where it likes.
+  # The Anglo-Saxon Chronicle, 865-878: where the army wintered, and when it moved.
+  course:
+    - { from: [865, 280], at: gipeswic, posture: lying, note: "The army winters in East Anglia, and horses itself." }
+    - { from: [866, 300], at: york, posture: bound, note: "Over the Humber to York, on All Saints' Day." }
+    - { from: [867, 275], at: nottingham, posture: bound, note: "Into Mercia, to Nottingham." }
+    - { from: [868, 250], at: york, posture: bound, note: "Back to York, to sit there a year." }
+    - { from: [869, 260], at: thetford, posture: bound, note: "Across Mercia into East Anglia, to Thetford." }
+    - { from: [870, 330], at: reading, posture: bound, note: "Into Wessex, to Reading, between the two rivers." }
+    - { from: [871, 280], at: london, posture: bound, note: "To London, for the winter, and the Mercians' silver." }
+    - { from: [873, 280], at: repton, posture: bound, note: "Up the Trent to Repton, where the Mercian kings are buried." }
+    - { from: [874, 270], at: york, posture: bound, requires: flag.ga_halfdan, note: "Hálfdan takes his half of the army north." }
+    - { from: [874, 270], at: thetford, posture: bound, requires: flag.ga_guthrum, note: "Guthrum takes his half to East Anglia." }
+    - { from: [878, 6], at: chippenham, posture: bound, requires: flag.ga_guthrum, note: "Guthrum falls on Chippenham at Twelfth Night, while the king keeps the feast." }
 - id: med859
   name: the fleet of Hastein and Björn
   leader: Hastein and Björn

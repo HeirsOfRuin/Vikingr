@@ -59,6 +59,11 @@
         text: The walls are manned, and the men on them have crossbows. You lose men in the suburbs for nothing, and come back down the river with less than the ones who stayed with the farms.
         effects: [ { days_foraged: 40 }, { add: { loot: 140, crew.men: -4, crew.morale: -1 } } ]
       next: sf_asturias
+    - id: turn
+      text: Turn back at the Gironde with what you have.
+      effects: [ { days_foraged: 40 }, { add: { loot: 200, honour: -1 } }, { fleet_end: true } ]
+      result: |
+        At the river's mouth, where the fleet turns south for the unknown coast, you turn north for the known one. A few other crews come with you. The rest watch you go from their benches and say nothing you can hear. You're on the monks' island in a fortnight, with Garonne wine and Garonne silver, and a long winter to wonder what you've missed.
 
 - id: sf_asturias
   kind: spine

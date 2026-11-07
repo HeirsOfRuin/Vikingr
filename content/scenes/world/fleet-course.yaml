@@ -1,0 +1,242 @@
+# Fleets that move (docs/FRAME-FLEETS-REALMS.md, Part A): what a captain does while his fleet lies somewhere, free to go
+# off on his own account and come back. Each fleet's course is in content/registry/fleets.yaml.
+
+# ---- the Danes, 834: after Dorestad, in the Frisian islands ----
+# Annals of St-Bertin 834-836: the Danes came back to Dorestad in 835 and 836; the Frisians bought, and were bought.
+- id: dn_buyback
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: ["year == 834", "fleet.id == danes834", fleet, "place == walcheren", "!service"]
+  art: shore_wait
+  title: The Frisians come to buy
+  text: |
+    The Danish fleet lies off Walcheren with the plunder of Dorestad in its holds, and within a week the Frisians come out to it in little boats. Not to fight. To buy.
+
+    The cloth merchant from Dorestad's riverside is here, with his own cloth's mark on the bales in your hold, and silver in a bag, and a face that has decided not to feel anything about it. He'll pay a third of what the cloth is worth. Nobody else on this coast will pay you anything for it at all.
+  choices:
+    - id: sell
+      text: Sell him back his own cloth.
+      effects: [ { add: { silver: 36 } }, { standing: { people: frisian, n: 1 } } ]
+      result: He counts the silver out on your sea-chest, and takes his cloth, and nods to you as if you'd done ordinary business. Perhaps you have. By next spring the cloth will be in Dorestad's market again, and the Danes will be back for it.
+    - id: hard
+      text: Make him pay half, or watch you burn it.
+      check: { skill: trade, attr: pre, difficulty: 5 }
+      success:
+        text: You have a man bring a torch to the bales. The merchant looks at the torch for a long moment and pays half. "You'll do well in trade," he says, not as a compliment.
+        effects: [ { add: { silver: 54 } } ]
+      failure:
+        text: He looks at the torch, and at you, and shrugs, and rows away to the next ship. In the end you sell the cloth to a Dane for drink.
+        effects: [ { add: { crew.morale: 1 } } ]
+
+- id: dn_shares
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year == 834", "fleet.id == danes834", fleet, "place == walcheren", "!service", seen.dn_buyback]
+  art: muster
+  title: The shares of Dorestad
+  text: |
+    A Danish captain called Hrærekr says your crews took more than their share at Dorestad, and says it at the fleet's fire, loudly, with his men behind him. He wants a tenth of what's in your hold. It's a lie, mostly. It's also forty Danes against your men, on a Danish king's island.
+
+    Ubbi watches from across the fire and doesn't move, which means he wants to see what you'll do.
+  choices:
+    - id: pay
+      text: Pay him something, to keep the peace in the fleet.
+      effects: [ { add: { loot: -60 } }, { ally: { id: ubbi, rel: -1 } } ]
+      result: You give him less than he asked and more than he deserves, in front of everyone. Hrærekr takes it and goes away grinning. Ubbi says later, mildly, that the Danes will remember the Norwegian who paid.
+    - id: words
+      text: Answer him at the fire, word for word.
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success:
+        text: You tell the fire where Hrærekr's men were when your crews were on the jetties at Dorestad, which was in the warehouses with the wine, and the fire laughs, and Hrærekr goes red, and nobody asks you for anything again.
+        effects: [ { add: { honour: 1 } }, { ally: { id: ubbi, rel: 1 } } ]
+      failure:
+        text: You answer him, and he answers back better, and the fire laughs at you. You pay him in the end, more than you would have at the start.
+        effects: [ { add: { loot: -90 } } ]
+
+# ---- the Vestfold fleet, 843: the summer on the island ----
+# Annals of St-Bertin 843: after Nantes the Northmen harried the coast of Aquitaine, and wintered on an island.
+- id: vf_island_summer
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year == 843", "fleet.id == vestfold", fleet, "place == noirmoutier", "!service", "month >= 7", "month <= 10"]
+  art: shore_wait
+  title: The island in summer
+  text: |
+    After Nantes the fleet comes back down the river to the monks' island and lies there, sixty ships along the beach, with the plunder of a city in the huts. Nobody is in a hurry. The Vestfold jarls have the island for the winter, and the summer is long.
+
+    South of the river there is a whole coast nobody has touched: salt-pans, fishing villages, little churches on the dunes. Some crews go out every week and come back by the next.
+  choices:
+    - id: coast
+      text: Take your crew down the coast, and be back for the winter.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: You'll go when the wind is right. The fleet will be here when you come back. It isn't going anywhere until spring.
+    - id: island
+      text: Stay on the island, and make your hut a good one.
+      effects: [ { add: { provisions: 60 } } ]
+      result: You build a hut of stone and driftwood with a hearth that draws, and spend the summer fishing and mending, and in the evenings watch the other crews come back from the coast with their boats low in the water. Yours is the warmest hut on the island by autumn.
+
+# ---- Ragnarr's fleet, 845: waiting for the king's silver at Paris ----
+# Annals of St-Bertin 845: the Northmen held Paris while Charles gathered the seven thousand pounds.
+- id: sn_wait
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: ["year == 845", "fleet.id == seine845", fleet, "place == paris", "!service", "!seen.sn_danegeld", { any: [seen.sn_paris_sack, seen.sn_paris_hanging, seen.sn_paris_lost] }]
+  art: town_rise
+  title: Waiting for the king
+  text: |
+    The king will pay. Everyone knows it, even the king. But seven thousand pounds of silver doesn't come out of the ground in a day, and his reeves have to go round every abbey and every count in Neustria with carts and scales, and in the meantime the fleet sits at Paris and eats.
+
+    Ragnarr doesn't mind. He sits on a bench in the abbey cloister at Saint-Germain with his boots off, and receives the king's men, and eats the monks' cheese.
+    [break]
+    Down the river, the abbeys you passed coming up still have bells, and some of them, the men say, still have what was under the bells.
+  choices:
+    - id: down
+      text: Take your crew down the river while the king counts his silver.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: Ragnarr waves a hand when you tell him. Come back for the share-out, he says, if you want a share. The fleet will be here until the carts come.
+    - id: stay
+      text: Stay at Paris, close to Ragnarr and the share-out.
+      effects: [ { add: { honour: 1 } } ]
+      result: You stay, and sit on the bench in the cloister with Ragnarr's captains, and learn what a king sounds like when he's frightened, through an interpreter. Ragnarr notices who stayed.
+
+- id: sn_council
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 30
+  requires: ["year == 845", "fleet.id == seine845", fleet, "place == paris", "!service", "!seen.sn_danegeld", seen.sn_wait]
+  art: muster
+  title: Ragnarr's council
+  text: |
+    The king's envoy comes with a priest and a question. The silver is coming. Will the Northmen swear to go, and never come back up the Seine?
+
+    Ragnarr asks his captains. Half of them say take it. The other half say a king who can find seven thousand pounds can find fourteen, and that the abbeys upriver at Saint-Denis are still standing.
+  choices:
+    - id: take
+      text: Speak for taking the silver.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: You say what everyone knows. A fleet that sits a summer in one place sickens, and this one has a long way to go home. The council comes round to you. Ragnarr gives the envoy his oath, with a straight face.
+        effects: [ { add: { honour: 1 } } ]
+      failure:
+        text: You speak for the silver, and the young captains shout you down, and Ragnarr takes it anyway, because he was always going to.
+    - id: more
+      text: Speak for asking more.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: You speak for more. Ragnarr laughs, and tells the envoy seven thousand will do, this time. The young captains slap your back. The old ones look at you the way they'd look at weather.
+
+# ---- Hastein's fleet, 847-848: the siege of Bordeaux ----
+# Annals of St-Bertin 847-848: Bordeaux besieged through a winter; taken at night in 848, Duke William captured.
+- id: bx_lines
+  kind: pool
+  trigger: hall
+  once: true
+  weight: 30
+  requires: [flag.bx_siege, "fleet.id == loire847", "place == bordeaux", "!service"]
+  art: hearth_ormr
+  title: The lines in winter
+  text: |
+    The fleet's camp outside Bordeaux is a ditch and a bank and huts made of vine-props, and the winter comes into it through every gap. The town on its walls has granaries. The camp has what it can take from a country it has already stripped.
+
+    At night the town's bells ring for its services, and the men in the huts lie awake and count them.
+  choices:
+    - id: forage
+      text: Take your men far up the valleys for food.
+      check: { skill: cunning, attr: end, difficulty: 5 }
+      success:
+        text: Three days' march up into the hills, where the farms haven't been touched, and back with cattle and grain on stolen carts. Your huts eat when others don't.
+        effects: [ { add: { provisions: 200, crew.morale: 1 } } ]
+      failure:
+        text: The hill farms have been warned. You come back thinner than you went, with a cow and two men short.
+        effects: [ { add: { provisions: 40, crew.men: -2 } } ]
+    - id: dig
+      text: Keep your men digging the lines, and fed on what there is.
+      effects: [ { add: { crew.morale: -1, honour: 1 } } ]
+      result: You keep them at the ditch through the frosts, on half rations, and Hastein sees whose stretch of the line never has a gap in it. Your men curse you for it, and will tell it later as the winter they were hardest.
+
+- id: bx_postern
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 60
+  requires: [flag.bx_siege, "year == 848", "place == bordeaux", fleet]
+  art: muster
+  when: Spring, 848
+  title: The postern
+  text: |
+    In the spring, a man comes out of the city at night, through a postern by the river, and asks for Hastein. He has a grievance against the duke, and the key to the postern, and a price.
+    [break]
+    "Tonight," Hastein says. "Who goes through the postern first?"
+  choices:
+    - id: first
+      text: You do.
+      visible_if: "!service"
+      danger: true
+      effects: [ { position: front }, { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 40, ratio: 1.1, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 50 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
+    - id: second
+      text: Let Hastein's own men go first. Follow them in.
+      visible_if: "!service"
+      danger: true
+      effects: [ { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: wing, win: bx_taken, lose: bx_repulsed } } ]
+    - id: crew
+      text: Go through the postern with your captain's crew.
+      visible_if: service
+      danger: true
+      effects: [ { host: { title: "The postern at Bordeaux", foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9, wings: [ { name: "Hastein's crews", men: 200, quality: 1.1, foe_men: 60 } ], role: man, win: bx_taken, lose: bx_repulsed } } ]
+
+# ---- the great army: a camp's own life ----
+- id: ga_camp_market
+  kind: pool
+  trigger: phase_start
+  chance: 0.25
+  cooldown_days: 300
+  requires: [flag.ga_army, "fleet.id == greatarmy", fleet, "phase != winter", "!service"]
+  art: town_rise
+  title: The army's market
+  text: |
+    Wherever the army camps for more than a week, a market grows up outside the ditch: Frisian traders with wine, Danes with ships to sell, slave-dealers out of Dublin with chains on their carts, and English farmers from the next valley who have decided that if the army is going to take their pigs anyway, they might as well be paid for them.
+  choices:
+    - id: buy
+      text: Buy food for the men from the English farmers.
+      requires: ["silver >= 12"]
+      effects: [ { add: { silver: -12, provisions: 200 } }, { standing: { n: 1 } } ]
+      result: The farmers take your silver warily, as if it might bite. The pigs are thin, and the men eat them anyway, and the next week the same farmers come back with more.
+    - id: wine
+      text: Buy the men a cask of Frisian wine.
+      requires: ["silver >= 8"]
+      effects: [ { add: { silver: -8, crew.morale: 1 } } ]
+      result: The Frisian swears it's from the Rhine. It's from somewhere. The men drink it and sing, and nobody asks.
+    - id: look
+      text: Walk through it, and listen.
+      effects: [ { add: { skill.cunning: 1 } } ]
+      result: You learn more in an afternoon at the army's market than in a month at its council. Which jarl is short of men, which English king has paid whom, which captain is selling his ship to go home.
+
+- id: ga_camp_kings
+  kind: pool
+  trigger: phase_start
+  chance: 0.2
+  cooldown_days: 400
+  requires: [flag.ga_army, "fleet.id == greatarmy", fleet, "phase != winter", "year >= 868"]
+  art: muster
+  title: Kings for sale
+  text: |
+    An English nobleman rides into the camp under a green branch with six men, very straight in the saddle. He has come to see the army's leaders about the matter of who should be king of his country, since the last one is dead and the army seems to be in the business of deciding.
+
+    The army has been in that business, on and off, since York. It pays well.
+  choices:
+    - id: listen
+      text: Sit in on the talk, and see what a kingdom costs.
+      effects: [ { add: { skill.speech: 1 } } ]
+      result: It costs a great deal, it turns out, and most of it isn't silver. Oaths, hostages, a share of the taxes, the right to winter where you please. By evening the army has a king to put up and the English have a king to hate. Both seem satisfied.
+    - id: guard
+      text: Stand guard on the tent, and keep your eyes on his six men.
+      effects: [ { add: { honour: 1 } } ]
+      result: His six men keep their eyes on you, and nobody does anything, and in the evening he rides out again with his back very straight and his kingdom bought.
