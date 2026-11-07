@@ -1341,9 +1341,14 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
   }
   // what the road or the coast held, told after the scene that broke in on it
   if (state.after) {
-    state.pending = { t: 'report', title: state.after.title, lines: state.after.lines, art: 'open_sea' };
+    state.pending = { t: 'report', title: state.after.title, lines: state.after.lines, art: state.after.title === 'On the road' ? 'muster' : 'open_sea' };
     delete state.after;
     return;
+  }
+  // a road event broke into the march: the place he came to has its say now (src/engine/march.ts)
+  if (state.arriveDue) {
+    delete state.arriveDue;
+    if (state.at && trigger(state, content, rng, 'arrive')) return;
   }
   // news that has come into this port ahead of him
   if (newsWaiting(state, content)) {

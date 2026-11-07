@@ -57,3 +57,32 @@ describe('the roads', () => {
     }
   });
 });
+
+describe('road events', () => {
+  it('a march can meet the road; its account and the arrival come after', () => {
+    let fired = 0;
+    for (let seed = 1; seed <= 60 && fired < 3; seed++) {
+      let s = sandboxGame(seed);
+      s.at = 'gipeswic';
+      s.known.push('gipeswic', 'thetford', 'york');
+      s.day = dayOf(866, 150);
+      s.phase = 'sailing';
+      s.places.york!.standing = -6;
+      s.fleet = { id: 'greatarmy', since: s.day, camp: 'york' };
+      s.marchTo = 'york';
+      const go = listActions(s, content).find((o) => o.action.t === 'march')!;
+      s = act(content, s, go.action);
+      if (s.pending?.t !== 'scene' || !s.pending.id.startsWith('rd_')) continue;
+      fired++;
+      expect(s.at).toBe('york');
+      expect(s.arriveDue).toBe(true);
+      const c = listActions(s, content).find((o) => o.enabled && o.action.t === 'choose')!;
+      s = act(content, s, c.action);
+      for (let i = 0; i < 30 && s.pending && !(s.pending.t === 'report' && s.pending.title === 'On the road'); i++) s = act(content, s, listActions(s, content).find((o) => o.enabled)!.action);
+      expect(s.pending?.t === 'report' && s.pending.title).toBe('On the road');
+      s = act(content, s, { t: 'continue' });
+      expect(s.arriveDue).toBeUndefined();
+    }
+    expect(fired).toBeGreaterThan(0);
+  });
+});

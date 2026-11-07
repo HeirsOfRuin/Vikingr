@@ -333,6 +333,8 @@ export interface GameState {
   inland?: string;
   /** A road the story has set him on (the `march` effect): the next move goes overland to here. */
   marchTo?: string;
+  /** A road event broke into a march: the place's arrival is still to come. */
+  arriveDue?: boolean;
   /** Goods aboard: lots, and what they cost him (docs/FRAME-TRADE-ALLIES.md). */
   cargo?: Record<string, { lots: number; cost: number }>;
   /** The year's trade news: one good dear or cheap everywhere. */

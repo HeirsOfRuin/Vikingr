@@ -201,7 +201,7 @@ export const scene = z.object({
   at: z.array(id).optional(),
   at_kind: z.array(z.enum(PLACE_KINDS)).optional(),
   phase: z.array(z.enum(PHASES)).optional(),
-  trigger: z.enum(['arrive', 'sea', 'phase_start', 'hall']).optional(),
+  trigger: z.enum(['arrive', 'sea', 'phase_start', 'hall', 'road']).optional(),
   requires: condInput.optional(),
   weight: z.number().optional(),
   chance: z.number().min(0).max(1).optional(),

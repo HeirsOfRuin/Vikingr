@@ -17,6 +17,8 @@ import { plural } from './format';
 
 /** Legs a man can walk: the roads, and the river valleys beside the rivers ships go up. */
 const WALKABLE: Leg['kind'][] = ['land', 'river'];
+/** The chance of a road event for each day of a march. */
+const ROAD_EVENT_PER_DAY = 0.12;
 
 /** Roads out of a place to places on the map: the land legs (a river leg is sailed, unless the ships are left behind). */
 export function landRoads(state: GameState, content: ContentBundle, from: string): { to: string; days: number }[] {
@@ -89,6 +91,13 @@ export function march(state: GameState, content: ContentBundle, rng: RngCursor, 
   const heard = hearOfNeighbours(state, content, to);
   if (heard.length) lines.push(`They tell you of ${heard.map((id) => content.places[id]!.name).join(' and ')}.`);
   journal(state, `Marched to ${place.name}.`);
+  // the road has its own life, as the sea does: one event at most on a march, likelier the longer it is.
+  // It is read first; the march's account and the place's own arrival come after it.
+  if (rng.float() < 1 - Math.pow(1 - ROAD_EVENT_PER_DAY, lp.days) && trigger(state, content, rng, 'road')) {
+    state.after = { title: 'On the road', lines };
+    state.arriveDue = true;
+    return [];
+  }
   trigger(state, content, rng, 'arrive');
   return lines;
 }

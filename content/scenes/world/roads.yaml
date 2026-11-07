@@ -1,0 +1,348 @@
+# Road events (Josh, 2026-11-07: "make sure there are some events to trigger on land routes as well, for each
+# region, in hostile or friendly territory"). The land's answer to the sea pool: one at most on a march
+# (src/engine/march.ts), read before the march's account and the place's own arrival. `at` is where the road ends.
+#
+# Sources for the colour: the ASC's army that "horsed itself" in East Anglia (866) and rode where it liked; the
+# Roman roads (Ermine Street, the Icknield Way) that it rode on; the Irish annals' cattle-raids and the passes of
+# the Wicklow hills; the Annals of St-Bertin on Frankish counts shadowing Northmen ashore.
+
+# ---- England ----
+- id: rd_en_ford
+  kind: pool
+  trigger: road
+  chance: 0.35
+  cooldown_days: 150
+  requires: ["at.people == english", "at.standing <= -3", "!fleet", "!service"]
+  art: shield_wall
+  title: The ford
+  text: |
+    The road goes down to a ford, and on the far bank, where the alders are thick, a horse whinnies and is hushed. Somebody's reeve has been watching the road for you, and has found a place to say so.
+
+    You count spear-points in the alders, and stop counting at twenty.
+  choices:
+    - id: force
+      danger: true
+      text: Cross in a wedge, shields up, and let them come into the water after you.
+      effects: [ { battle: { foe: english_fyrd, terrain: ford, men: 18, ratio: 0.7 } } ]
+      result: You go down into the water in a wedge, shields up, and they come out of the alders to meet you.
+    - id: round
+      text: Go round by the next ford upstream, and lose a day.
+      effects: [ { days: 1 }, { add: { crew.morale: -1 } } ]
+      result: A day upstream through wet meadows, and the men grumbling all the way. The second ford has nobody at it. The reeve will have heard by evening that the Northmen were afraid of him. Let him.
+    - id: night
+      text: Wait for dark, and cross where the water is noisiest.
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: You cross in the dark where the water runs loud over stones, one man at a time, holding each other's belts. By dawn you're a mile past the ford and the reeve's men are still watching the far bank.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: A man slips on the stones and shouts, and the alders come alive. You get across, most of you, with spears coming out of the dark. Two men don't.
+        effects: [ { add: { crew.men: -2 } }, { add: { crew.morale: -1 } } ]
+
+- id: rd_en_village
+  kind: pool
+  trigger: road
+  chance: 0.35
+  cooldown_days: 150
+  requires: ["at.people == english", fleet]
+  art: muster
+  title: The empty village
+  text: |
+    The country empties ahead of the army like water ahead of a ship's bow. This village went this morning: the fires still warm, a pot of pottage on the hearth, a dog that won't leave, the church door standing open on nothing worth taking.
+
+    The army goes through it the way the army goes through everything.
+  choices:
+    - id: food
+      text: Take what's in the barns, and leave the roofs on.
+      visible_if: "!service"
+      effects: [ { add: { provisions: 150 } } ]
+      result: Grain, a side of bacon, two cheeses and a barrel of something that might be ale. The men carry it out and the village stays standing. Somebody will come back to it.
+    - id: burn
+      text: Take what's in the barns, and burn it after, as the others are doing.
+      visible_if: "!service"
+      effects: [ { add: { provisions: 150 } }, { add: { crew.morale: 1 } }, { standing: { people: english, n: -1 } } ]
+      result: You burn it. Everyone else is burning theirs, and the men want to. The smoke goes up behind you all afternoon. You don't look back.
+    - id: dog
+      visible_if: service
+      text: Feed the dog. Leave the rest to the men who came first.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: It follows you for a mile and then goes home, to wait. {captain} laughs at you. You don't mind.
+
+- id: rd_en_priest
+  kind: pool
+  trigger: road
+  chance: 0.3
+  cooldown_days: 200
+  requires: ["at.people == english", "at.standing >= -2", "!fleet"]
+  art: town_rise
+  title: The priest on the road
+  text: |
+    A priest on a mule, alone, with a boy walking at the mule's head and a book in a bag on his knees. He sees what you are when it's too late to get off the road, and does the bravest thing he can think of: he says good day.
+
+    He is going where you are going, he says, in careful Norse he learned from somebody. The road is not safe. He would be glad of company.
+  choices:
+    - id: escort
+      text: Take him with you, and bring him in safe.
+      effects: [ { days: 1 }, { standing: { n: 1 } } ]
+      result: He talks the whole way, about his bishop, his bad tooth and the price of wax, and at the end of the road he blesses you, which you didn't ask for, and tells everyone at the gate who brought him. It does you no harm there.
+    - id: rob
+      text: Take the book and the mule. Leave him the boy.
+      visible_if: "!service"
+      effects: [ { add: { loot: 30 } }, { standing: { n: -2 } }, { add: { honour: -1 } } ]
+      result: The book has silver on its cover and the mule has a good saddle. The priest says nothing at all while you take them. A curse would have been easier. Word goes ahead of you down the road.
+    - id: pass
+      text: Wish him good day and ride on.
+      result: You ride on. Behind you, you hear him start to sing, a little shakily, to show the boy he isn't frightened.
+
+- id: rd_en_stud
+  kind: pool
+  trigger: road
+  chance: 0.3
+  cooldown_days: 200
+  requires: ["at.people == english", "year >= 865"]
+  art: muster
+  title: The thegn's horses
+  text: |
+    A thegn's stud in a fold of the downs: forty horses in a walled paddock and two old men and a boy to mind them. The thegn is off with his king's host. His horses are not.
+
+    The army has learned what horses are for. It covers in a day what it used to cover in a week, and it is always somewhere it isn't expected.
+  choices:
+    - id: take
+      text: Take the horses.
+      effects: [ { set: flag.ga_rider }, { add: { crew.morale: 1 } }, { standing: { people: english, n: -1 } } ]
+      result: The old men open the gate themselves, which saves the wall. By evening every man of yours who can sit a horse has one, and some who can't are learning, loudly.
+    - id: leave
+      text: Leave them. Horses eat, and ships don't.
+      result: You leave them. Ívarr's men, half a day behind you, don't.
+
+- id: rd_en_road
+  kind: pool
+  trigger: road
+  chance: 0.25
+  cooldown_days: 365
+  requires: ["at.people == english"]
+  art: muster
+  title: The giants' road
+  text: |
+    The road runs straight as a spear-shaft over the hills, paved, cambered, ditched on both sides, older than anyone's grandfather's grandfather. The English say giants made it. At a crossing there is a stone as tall as a man with letters cut into it, Latin letters, half-filled with moss.
+  choices:
+    - id: read
+      text: Look at the letters. Somebody must have meant something by them.
+      check: { skill: lore, attr: wit, difficulty: 5 }
+      success:
+        text: A word you know from a monk's book, and a number. It is telling you how far it is to somewhere. The giants who made this road counted their steps. You find that oddly comforting.
+        effects: [ { add: { skill.lore: 1 } } ]
+      failure:
+        text: The letters say nothing to you. One of the men suggests it is a curse, and they spit as they pass it, every one of them, all afternoon.
+    - id: on
+      text: Ride on. A road is a road.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: A road is a road, and this one is a good one. You make better time than you hoped.
+
+# ---- Ireland ----
+- id: rd_ir_pass
+  kind: pool
+  trigger: road
+  chance: 0.35
+  cooldown_days: 150
+  requires: ["at.people == gael", "at.standing <= -2", "!service"]
+  art: shield_wall
+  title: The pass
+  text: |
+    The track climbs into the hills between bog and birchwood, and narrows at a pass where a stream comes down. It's a place made for an ambush, and the Irish know their own country.
+
+    A horn somewhere above you. Then another, on the other side.
+  choices:
+    - id: fight
+      danger: true
+      text: Shields out to both sides, and push through.
+      effects: [ { battle: { foe: leinster_men, terrain: woods, men: 16, ratio: 0.6 } } ]
+      result: They come down out of the birches shouting, and you meet them in the stream.
+    - id: pay
+      text: Hold up a ring and shout for whoever is in charge.
+      requires: ["silver >= 20"]
+      effects: [ { add: { silver: -20 } }, { standing: { n: 1 } } ]
+      result: A long silence, then a man in a striped cloak comes down alone, takes the silver, weighs it in his hand, and waves you through. A toll. Every road in this country has one, and most of them are paid in blood.
+    - id: back
+      text: Go back and find another way, through the bog.
+      effects: [ { days: 2 }, { add: { crew.morale: -1 } } ]
+      result: Two days in the bog, wet to the thigh. The horns follow you for the first of them, and then lose interest.
+
+- id: rd_ir_cattle
+  kind: pool
+  trigger: road
+  chance: 0.3
+  cooldown_days: 200
+  requires: ["at.people == gael", "!service"]
+  art: muster
+  title: The herd
+  text: |
+    Cattle are wealth here, more than silver: kings are counted in them, and wars are fought for them. You come on a herd of sixty in a valley with three boys minding it, who take one look at you and run.
+  choices:
+    - id: drive
+      text: Drive the herd with you.
+      effects: [ { add: { provisions: 300 } }, { standing: { n: -2 } } ]
+      result: Cattle are slow, and the owners are not. You hear them behind you on the second night, and the third. You eat well, though, and so do the men.
+    - id: one
+      text: Take two beasts for the pot, and leave the rest.
+      effects: [ { add: { provisions: 80 } } ]
+      result: Two beasts, killed and butchered by the stream. The boys will tell their father two were taken and fifty-eight were left, and in this country that might count as manners.
+    - id: leave
+      text: Leave them. Cattle-raids start feuds that outlive kings.
+      result: You leave them. Somebody in the valley will be grateful, and will never know who to thank.
+
+- id: rd_ir_well
+  kind: pool
+  trigger: road
+  chance: 0.25
+  cooldown_days: 365
+  requires: ["at.people == gael"]
+  art: celtic_monastery
+  title: The holy well
+  text: |
+    A spring by the road with a little stone hut over it, and rags tied to the thorn tree beside it, hundreds of them, faded to the colour of the bark. An old woman sits by the water. People come here to be cured, she says, of whatever it is they have.
+  choices:
+    - id: drink
+      text: Drink, and tie a rag to the tree.
+      effects: [ { add: { hamingja: 1 } } ]
+      result: The water is cold enough to hurt your teeth. You tie a strip of your shirt to the thorn. The old woman nods as if you'd done something right. Perhaps you have.
+    - id: pass
+      text: Water the horses and go on.
+      result: The horses drink. The old woman watches you go, and says something after you that might be a blessing.
+
+# ---- Frankia ----
+- id: rd_fr_riders
+  kind: pool
+  trigger: road
+  chance: 0.35
+  cooldown_days: 150
+  requires: ["at.people == frankish", "at.standing <= -2", "!service"]
+  art: shield_wall
+  title: The count's riders
+  text: |
+    Horsemen on the skyline: thirty, forty, in mail, with long spears, keeping pace with you a mile off along the ridge. A Frankish count's household, who don't fight on foot and don't need to. They're waiting for you to string out on the road.
+  choices:
+    - id: close
+      text: Close up, shields out, and march slow.
+      effects: [ { days: 1 } ]
+      result: You march like a hedgehog all day, slow and close, and they ride alongside and never come in. At dusk they wheel away. You've lost a day, and nothing else.
+    - id: bait
+      danger: true
+      text: Let them think a wagon has fallen behind, and wait for them in the hedges.
+      check: { skill: cunning, attr: wit, difficulty: 6 }
+      success:
+        text: They come for the wagon, eight of them, and the hedges close on them. Mail, two good horses, a sword with a gilt hilt, and the rest of them gone back over the ridge to tell the count about it.
+        effects: [ { add: { loot: 60 } }, { add: { crew.morale: 1 } } ]
+      failure:
+        effects: [ { battle: { foe: frankish_levy, terrain: field, men: 18, ratio: 0.6 } } ]
+        text: They don't come for the wagon. They come for the hedge, all forty of them, from the side you didn't expect.
+
+- id: rd_fr_vines
+  kind: pool
+  trigger: road
+  chance: 0.3
+  cooldown_days: 200
+  requires: ["at.people == frankish"]
+  art: town_rise
+  title: The vineyard
+  text: |
+    Vines in rows up a south-facing slope, and at the bottom a stone press-house with the barrels of last year's wine inside, more wine than anyone at home sees in a lifetime. The monks it belongs to have gone.
+  choices:
+    - id: drink
+      text: Let the men drink their fill tonight.
+      effects: [ { add: { crew.morale: 2 } }, { days: 1 } ]
+      result: They drink their fill, and then some, and sing, and fight, and sleep where they fall, and the next day nobody can walk straight until noon. They talk about it for years.
+    - id: carry
+      text: Load what the carts will take, and keep the men sober.
+      visible_if: "!service"
+      effects: [ { add: { loot: 40 } } ]
+      result: Six barrels on two carts, and the men looking back at the rest the way they look back at a woman. It'll fetch good silver at the right market.
+
+# ---- anywhere ----
+- id: rd_flood
+  kind: pool
+  trigger: road
+  chance: 0.25
+  cooldown_days: 200
+  requires: ["!service"]
+  art: muster
+  title: The river in spate
+  text: |
+    Three days of rain in the hills, and the river that was knee-deep at this ford in the spring is brown and loud and chest-deep and carrying whole trees.
+  choices:
+    - id: wait
+      text: Camp and wait for it to drop.
+      effects: [ { days: 2 } ]
+      result: Two days in wet tents, and the river goes down as fast as it came up. You cross dry-shod, nearly.
+    - id: cross
+      text: Rope the strongest men together and cross now.
+      check: { skill: craft, attr: str, difficulty: 5 }
+      success:
+        text: A rope across, men hand over hand along it, the water trying to pull your legs from under you. Everyone gets over. Somebody's shield doesn't.
+        effects: [ { add: { crew.morale: 1 } } ]
+      failure:
+        text: The rope holds. One man lets go of it. You see his head twice in the brown water, and then not.
+        effects: [ { add: { crew.men: -1 } }, { add: { crew.morale: -1 } } ]
+
+- id: rd_camp
+  kind: pool
+  trigger: road
+  chance: 0.25
+  cooldown_days: 90
+  art: muster
+  title: A camp on the road
+  text: |
+    A night under the sky a long way from the ships, with a fire in a ring of stones and the horses hobbled and a guard on the road both ways. Seamen don't sleep well on land. It doesn't move enough.
+  choices:
+    - id: talk
+      text: Sit up at the fire with the men.
+      effects: [ { add: { crew.morale: 1 } } ]
+      result: Somebody tells the one about the troll and the ferryman, and somebody else tells it better, and the guard on the road has to be told twice to keep his voice down because he's laughing.
+    - id: sleep
+      text: Sleep while you can.
+      result: You sleep, badly, with your sword under your hand and every owl in the wood sounding like a man.
+
+- id: rd_stragglers
+  kind: pool
+  trigger: road
+  chance: 0.3
+  cooldown_days: 200
+  requires: [fleet]
+  art: muster
+  title: The stragglers
+  text: |
+    An army on the march leaves a tail: the lame, the drunk, the men with too much plunder on their backs to keep up. The local people know about the tail. This morning there are eleven of them dead by the road, and the men who did it can't be far.
+  choices:
+    - id: hunt
+      text: Go after the men who did it.
+      visible_if: "!service"
+      check: { skill: cunning, attr: wit, difficulty: 5 }
+      success:
+        text: You find them in a wood a mile off, sharing out a dead man's silver. It doesn't take long. The army hears who did it, and that is worth more than the silver.
+        effects: [ { add: { honour: 1 } }, { add: { loot: 20 } } ]
+      failure:
+        text: You find the wood, and the trampled place where they were, and nothing else. They know the country. You don't.
+        effects: [ { days: 1 } ]
+    - id: close
+      text: Close up the tail, and keep your own men together.
+      result: You march the rest of the day with the lame on the horses and the drunk carried, and nobody falls behind. Nobody thanks you. Nobody dies, either.
+
+- id: rd_deserters
+  kind: pool
+  trigger: road
+  chance: 0.2
+  cooldown_days: 365
+  requires: [fleet, "!service", "crew.men >= 10"]
+  art: muster
+  title: Men going home
+  text: |
+    Four men from another crew catch up with you on the road at dusk, heavy with plunder, going the wrong way. They've had enough of the army, they say. They have a ship's worth of silver between them and a farm each waiting. They'd go home with you, if you're going home. Or with anyone.
+  choices:
+    - id: sign
+      text: Take them on your benches.
+      effects: [ { add: { crew.men: 4 } }, { add: { crew.morale: -1 } } ]
+      result: Four more men, and their captain's curses following them up the road. Your own men watch them sideways for a week.
+    - id: send
+      text: Send them back to their captain.
+      effects: [ { add: { honour: 1 } } ]
+      result: They curse you and go back. Their captain sends you a ring for it, in front of everyone, which is the point.

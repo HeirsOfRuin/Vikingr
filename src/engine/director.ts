@@ -9,7 +9,7 @@ import { test } from './conditions';
 import { makeCandidate } from './hird';
 import { pickHostage } from './hostages';
 
-export type Trigger = 'arrive' | 'sea' | 'phase_start' | 'hall';
+export type Trigger = 'arrive' | 'sea' | 'phase_start' | 'hall' | 'road';
 
 function eligible(s: Scene, state: GameState, content: ContentBundle, trigger: Trigger): boolean {
   if (s.trigger !== trigger) return false;

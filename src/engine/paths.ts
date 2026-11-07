@@ -79,6 +79,7 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   partner: (s) => (s.partner && s.partner.year === dateOf(s.day).year ? 1 : 0),
   /** Where his ship is bound, at sea; and who lives there (regional sea events). */
   bound: (s) => s.voyage?.to ?? '',
+  'at.people': (s, c) => (s.at ? c.places[s.at]?.people ?? '' : ''),
   'bound.people': (s, c) => (s.voyage ? c.places[s.voyage.to]?.people ?? '' : ''),
   'cargo.lots': (s) => Object.values(s.cargo ?? {}).reduce((n, c) => n + c.lots, 0),
   'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
@@ -128,7 +129,7 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'bound') return ['', ...Object.keys(content.places)];
   if (path === 'home') return Object.keys(content.places);
   if (path === 'fleet.id') return ['', ...Object.keys(content.fleets)];
-  if (path === 'bound.people') return ['', ...PEOPLES];
+  if (path === 'bound.people' || path === 'at.people') return ['', ...PEOPLES];
   if (path === 'oath') return ['', ...Object.keys(content.lords)];
   if (path === 'rule') return ['', ...SEATS];
   return undefined;

@@ -141,6 +141,21 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
                 </g>
               );
             })}
+            {(() => {
+              // the army he is sworn to: a banner at its camp, so he can find it when he is away from it
+              const camp = state.fleet?.camp ? content.places[state.fleet.camp] : undefined;
+              if (!camp) return null;
+              const [cx, cy] = lonLatToTile(camp.lon, camp.lat);
+              const x = cx * PX, y = cy * PX, u = 1 / scale;
+              const name = content.fleets[state.fleet!.id]?.name ?? 'the army';
+              return (
+                <g opacity={state.fleet!.away ? 1 : 0.85}>
+                  <path d={`M ${x - 9 * u} ${y + 2 * u} v ${-14 * u}`} stroke="#e6ddc8" stroke-width={1.2 * u} />
+                  <path d={`M ${x - 9 * u} ${y - 12 * u} h ${8 * u} l ${-2 * u} ${3 * u} l ${2 * u} ${3 * u} h ${-8 * u} z`} fill="#c8913a" stroke="#111213" stroke-width={0.6 * u} />
+                  <text x={x - 9 * u} y={y - 14 * u} font-size={label * 0.85} fill="#c8913a" stroke="#111213" stroke-width={label * 0.22} paint-order="stroke" font-family="Georgia, serif">{name.charAt(0).toUpperCase() + name.slice(1)}{state.fleet!.away ? '' : ' (you are with it)'}</text>
+                </g>
+              );
+            })()}
             <path d={`M ${fleet[0] * PX - 6 / scale} ${fleet[1] * PX + 3 / scale} h ${12 / scale} l ${-2 / scale} ${3 / scale} h ${-8 / scale} z M ${fleet[0] * PX} ${fleet[1] * PX + 3 / scale} v ${-9 / scale} l ${5 / scale} ${6 / scale} h ${-5 / scale}`} fill="#b3352a" stroke="#e6ddc8" stroke-width={0.8 / scale} />
           </svg>
         </div>
