@@ -662,7 +662,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         const odds = scoutedOdds(state, content, at);
         const sc = freshScout(state, at);
         const hint = odds ? `Scouted: about ${odds.asleep} if asleep, ${odds.awake} if awake; ${Math.round(odds.p * 10)} in 10 to catch them asleep` : sc && !sc.ok ? `They saw your scouts: ${Math.round(surpriseChance(state, content, at) * 10)} in 10 to catch them asleep` : undefined;
-        out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.', hint));
+        out.push(opt('Here', { t: 'raid' }, `Raid ${place.name}`, !done && state.crew.men >= 6, done ? 'You raided it this summer already.' : 'You have too few men.', `${hint ?? ''}${hurtNote(state, content)}`.replace(/^\. /, '') || undefined));
         if (!done) {
           const looked = scoutedThisYear(state, at);
           out.push(opt('Here', { t: 'scout' }, 'Send men up to look', !looked, 'Your men have looked at it this summer already.', `A day; cunning and wits, ${checkWord(scoutChance(state, content, at))}. If they are seen, the place is warned`));
@@ -673,7 +673,9 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (at !== homeOf(state)) {
         if (tier === 'hostile') {
           const lf = landingFoe(content, at);
-          out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them`));
+          // just sacked: he is ashore already and their men are still in the woods (playtest, 2026-11-07)
+          if (scattered(state, at)) out.push(opt('Here', { t: 'land' }, 'Round up their cattle while they are scattered', true, undefined, 'A day; they have not come back since the raid'));
+          else out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them${hurtNote(state, content)}`));
         } else {
           const rc = resupplyCost(state, content, at);
           if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${rc.days} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
@@ -737,6 +739,19 @@ function marchOption(state: GameState, content: ContentBundle, ships: string): A
   const lp = landPath(content, state.at, to);
   if (!lp) return null;
   return opt('March', { t: 'march', to }, `${state.flags.ga_rider ? 'Ride' : 'March'} to ${content.places[to]!.name} with the army`, true, undefined, `About ${plural(lp.days, 'day')} by road; ${ships}`);
+}
+
+/** Raided within the week: the place's men are still scattered, and he is ashore already. */
+const SCATTER_DAYS = 7;
+function scattered(state: GameState, at: string): boolean {
+  const lr = state.places[at]?.lastRaided;
+  return lr != null && state.day - lr <= SCATTER_DAYS;
+}
+
+/** A warning on a fight's button when he is badly hurt. */
+function hurtNote(state: GameState, content: ContentBundle): string {
+  const max = hpMax(state, content);
+  return state.hero.hp <= max * 0.35 ? `. You are badly hurt (${Math.max(0, Math.round(state.hero.hp))} of ${max} blood): one blow could kill you` : '';
 }
 
 function closeTheSea(out: ActionOption[], doy: number, inland?: string, content?: ContentBundle): ActionOption[] {
@@ -1142,6 +1157,13 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
     }
     case 'land': {
       const lf = landingFoe(content, state.at!);
+      if (scattered(state, state.at!)) {
+        state.day += 1;
+        shiftStanding(state, content, state.at!, -1);
+        state.provisions += mouths(state) * 10;
+        report('The cattle', [`Nobody comes out of the woods to stop you. The men drive in what cattle the raid left, kill them on the strand and fill the water-casks, and by evening there is meat salted for ${plural(10, 'day')}. Somewhere up the valley they are counting what you took, and they will remember it.`]);
+        break;
+      }
       state.day += 1;
       shiftStanding(state, content, state.at!, -1);
       startBattle(state, content, { foe: lf.foe, men: lf.men, terrain: 'beach', context: 'scene', place: state.at });

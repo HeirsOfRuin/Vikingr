@@ -111,6 +111,7 @@ function WallView({ content, b, options, onAct }: { content: ContentBundle; b: B
           <div><b>{b.them.name}: about {b.them.men}. {b.us.name}: {b.us.men}.</b></div>
           <div>Before the horns: {w.step === 'sworn' ? 'where do your sworn men stand?' : w.step === 'reserve' ? 'how many men do you hold back?' : 'where do you stand?'}</div>
           {!w.leads && <div class="muted">You do not command this wall. Where you stand, and what you shout, is yours.</div>}
+          <div>Blood {Math.max(0, b.heroHp)}/{b.heroHpMax}.{b.heroHp <= b.heroHpMax * 0.35 ? ' You are badly hurt: in the front rank one blow could kill you. The rear is safer.' : ''}</div>
         </div>
       ) : (
         <>
