@@ -51,7 +51,7 @@ import { renderText } from './text';
 import { heal } from './hero';
 import { seaClosed, BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 import { startInEra } from './era';
-import { armyCamp } from './sailfleet';
+import { armyCamp, leaveArmy } from './sailfleet';
 import { landPath, landRoads, march, marchBlock } from './march';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
 
@@ -918,8 +918,9 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       const o = state.cruisePlan!;
       state.pending = null;
       delete state.cruisePlan;
+      const left = leaveArmy(state, content, null);
       startCruise(state, content, o);
-      reportAfter(content.coasts[o.coast]!.name, runCruise(state, content, rng));
+      reportAfter(content.coasts[o.coast]!.name, [...(left ? [left] : []), ...runCruise(state, content, rng)]);
       break;
     }
     case 'cruise_on':
@@ -930,15 +931,19 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       break;
     case 'course': {
       state.course = action.to;
-      reportAfter('At sea', sailCourse(state, content, rng));
+      const left = leaveArmy(state, content, action.to);
+      reportAfter('At sea', [...(left ? [left] : []), ...sailCourse(state, content, rng)]);
       break;
     }
-    case 'march':
-      report('On the road', march(state, content, rng, action.to));
+    case 'march': {
+      const left = leaveArmy(state, content, action.to);
+      report('On the road', [...(left ? [left] : []), ...march(state, content, rng, action.to)]);
       break;
+    }
     case 'sail':
     case 'follow':
     case 'voyage_on': {
+      const left = action.t === 'sail' ? leaveArmy(state, content, action.to) : null;
       if (action.t === 'sail') { delete state.course; startVoyage(state, content, action.to); }
       if (action.t === 'follow') {
         const dest = state.service?.route[0] ?? serviceHome(state);
@@ -947,6 +952,7 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
         startVoyage(state, content, dest, true);
       }
       const r = runVoyage(state, content, rng);
+      if (left) r.lines.unshift(left);
       // a leg of a course, interrupted and finished: the course goes on unless something else has the stage
       if (action.t === 'voyage_on' && r.arrived && state.course && !state.pending) r.lines.push(...sailCourse(state, content, rng));
       if (action.t === 'voyage_on' && r.arrived && state.cruise && !state.pending) r.lines.push(...runCruise(state, content, rng));
@@ -1120,6 +1126,7 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       break;
     }
     case 'expedition': {
+      leaveArmy(state, content, action.to);
       startVoyage(state, content, action.to, false, true);
       journal(state, `Set out on an expedition to ${content.places[action.to]!.name}.`);
       const r = runVoyage(state, content, rng);

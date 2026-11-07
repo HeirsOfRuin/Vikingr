@@ -16,7 +16,7 @@ import { claimMargin, seatOpen, SEATS, type Seat } from './rule';
 import { holdingAt } from './land';
 import { legendFame } from './fame';
 import { focusChild, ownChildren } from './family';
-import { councilVoice } from './sailfleet';
+import { councilVoice, withFleet } from './sailfleet';
 
 const s_lords = (state: GameState, id: string) => state.lords?.[id];
 
@@ -62,7 +62,7 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   children: (s) => ownChildren(s).filter((c) => c.alive).length,
   heir: (s) => (s.hero.father ? 1 : 0),
   /** In a great fleet (docs/FRAME-FLEET-843.md §2), which, and his voice at its council (0 at the oar). */
-  fleet: (s) => (s.fleet ? 1 : 0),
+  fleet: (s) => (withFleet(s) ? 1 : 0),
   /** His skald (playtest 8): kept, and aboard this summer. */
   skald: (s) => (s.flags.skald ? 1 : 0),
   'skald.aboard': (s) => (skaldAboard(s) ? 1 : 0),

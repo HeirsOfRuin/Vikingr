@@ -1,5 +1,6 @@
 // Standing in the ports (DESIGN §11.6): what each place thinks of him. Everything a port will or won't do for
 // him is derived from one number: whether he may dock, buy food, hire men or winter there, or is fought on landing.
+import { withFleet } from './sailfleet';
 import { alarmRegion } from './hardship';
 import type { ContentBundle, People } from '../content/schema';
 import type { GameState } from './state';
@@ -66,7 +67,7 @@ export function canHire(state: GameState, content: ContentBundle, id: string): n
   const p = content.places[id]!;
   if (p.kind === 'home') return 0;
   // a great fleet's camp is full of men whose ships are lost or whose captains are dead (playtest 9: no way to hire on the Loire)
-  if (state.fleet && !state.service) return Math.max(0, FLEET_HIRE - (state.places[id]?.hired ?? 0));
+  if (withFleet(state) && !state.service) return Math.max(0, FLEET_HIRE - (state.places[id]?.hired ?? 0));
   if (!(HIRING_PEOPLES.includes(p.people) || norseHeld(state, id))) return 0;
   return Math.max(0, HIRE_POOL[tierAt(state, content, id)] - (state.places[id]?.hired ?? 0));
 }

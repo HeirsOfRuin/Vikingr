@@ -12,7 +12,7 @@ import { eatDays, hearOfNeighbours } from './voyage';
 import { heal } from './hero';
 import { journal } from './journal';
 import { trigger } from './director';
-import { armyCamp } from './sailfleet';
+import { armyCamp, rejoinArmy, withFleet } from './sailfleet';
 import { plural } from './format';
 
 /** Legs a man can walk: the roads, and the river valleys beside the rivers ships go up. */
@@ -51,7 +51,7 @@ export function landPath(content: ContentBundle, from: string, to: string): { pa
 
 /** Do his ships go with him on a march? With an army's fleet, or another man's ship, yes. */
 function shipsFollow(state: GameState): boolean {
-  return !!state.service || !!armyCamp(state);
+  return !!state.service || (!!armyCamp(state) && withFleet(state));
 }
 
 /** Why he can't march from here, or null. */
@@ -80,10 +80,12 @@ export function march(state: GameState, content: ContentBundle, rng: RngCursor, 
   }
   state.at = to;
   delete state.marchTo;
+  const back = rejoinArmy(state, content, to);
   for (const p of lp.path) if (!state.known.includes(p)) state.known.push(p);
   if (state.service && state.service.route[0] === to) state.service.route.shift();
   const place = content.places[to]!;
   lines.push(how ?? `${plural(lp.days, 'day')} on the road${lp.path.length > 1 ? `, by ${lp.path.slice(0, -1).map((p) => content.places[p]!.name).join(' and ')}` : ''}, and you come to ${place.name}.${shipsFollow(state) ? ' The ships come round by water to meet you.' : state.inland ? ` The ships are hauled up at ${content.places[state.inland]!.name}, with a few men to watch them.` : ' The ships are where you left them.'}`);
+  if (back) lines.push(back);
   const heard = hearOfNeighbours(state, content, to);
   if (heard.length) lines.push(`They tell you of ${heard.map((id) => content.places[id]!.name).join(' and ')}.`);
   journal(state, `Marched to ${place.name}.`);

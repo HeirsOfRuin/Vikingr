@@ -343,7 +343,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('camp' in e) {
       // the army moves its winter quarters; a captain in it winters where it does
       if (state.service) state.service.home = e.camp;
-      if (state.fleet) state.fleet.camp = e.camp;
+      if (state.fleet) { state.fleet.camp = e.camp; if (state.at === e.camp) delete state.fleet.away; }
       if (!state.known.includes(e.camp)) state.known.push(e.camp);
     }
     else if ('join_ship' in e) {

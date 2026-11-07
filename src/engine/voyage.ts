@@ -15,7 +15,7 @@ import { addDeed } from './fame';
 import { trigger } from './director';
 import { journal } from './journal';
 import { capitalise, formatSilver, plural } from './format';
-import { FLEET, fleetName } from './sailfleet';
+import { FLEET, fleetName, rejoinArmy, withFleet } from './sailfleet';
 
 export interface Route {
   to: string;
@@ -137,7 +137,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
   lines.push('A storm. Black water over the bows, the sail split, men bailing with helmets.');
   state.provisions = Math.round(state.provisions * 0.85);
   // in a great fleet the storm scatters the ships, and the fleet gathers again at the meeting-place
-  if (state.fleet) {
+  if (withFleet(state)) {
     lines.push(`By morning ${fleetName(state, content)} is scattered over twenty miles of sea. You make for the meeting-place, and the ships come in one by one over the next days, most of them.`);
     let over = 0;
     for (const ship of state.ships) { ship.hull = Math.max(FLEET.hullFloor, ship.hull - (4 + rng.int(14))); over += rng.int(3); }
@@ -210,7 +210,7 @@ export function runVoyage(state: GameState, content: ContentBundle, rng: RngCurs
     state.day += 1;
     v.daysAtSea += 1;
     v.wind = rollWind(v.wind, rng);
-    v.progress += WIND.progress[v.wind] * fleetSpeed(state, content) * (state.fleet ? FLEET.pace : 1);
+    v.progress += WIND.progress[v.wind] * fleetSpeed(state, content) * (withFleet(state) ? FLEET.pace : 1);
     if (eatDays(state, 1) && v.daysAtSea % 3 === 1) lines.push('The food is gone. The men row on water and anger.');
     state.fedTo = state.day;
     learn(state, 'seamanship', 1);
@@ -241,6 +241,8 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
   state.at = v.to;
   state.voyage = null;
   state.stats.legs += 1;
+  const back = rejoinArmy(state, content, v.to);
+  if (back) lines.push(back);
   if (v.expedition) {
     // the far end is charted now, for good
     if (!state.known.includes(v.to)) state.known.push(v.to);

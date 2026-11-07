@@ -21,7 +21,13 @@ export const FLEET = {
 } as const;
 
 /** `camp`: where an army that lives on land winters (docs/FRAME-865.md); a captain in it may winter there too. */
-export interface FleetState { id: string; since: number; camp?: string }
+export interface FleetState {
+  id: string;
+  since: number;
+  camp?: string;
+  /** A captain who has taken his ships off from the army's camp on his own account (playtest 2026-11-07). */
+  away?: boolean;
+}
 
 /** The army's winter camp, if he is with an army that keeps one. */
 export function armyCamp(state: GameState): string | undefined {
@@ -30,6 +36,30 @@ export function armyCamp(state: GameState): string | undefined {
 
 export function inFleet(state: GameState): boolean {
   return !!state.fleet;
+}
+
+/** With the fleet now: sworn to it, and not off on his own. An oarsman goes where his captain goes. */
+export function withFleet(state: GameState): boolean {
+  return !!state.fleet && (!!state.service || !state.fleet.away);
+}
+
+/** A captain in an army that keeps a camp sets out for somewhere else: the army stays, he goes alone. */
+export function leaveArmy(state: GameState, content: ContentBundle, dest: string | null): string | null {
+  const f = state.fleet;
+  if (!f?.camp || state.service || f.away || dest === f.camp) return null;
+  f.away = true;
+  const camp = content.places[f.camp]?.name ?? f.camp;
+  journal(state, `Took his ships away from ${fleetName(state, content)} on his own account.`);
+  return `${fleetName(state, content).replace(/^./, (c) => c.toUpperCase())} stays at ${camp}. You go on your own account: no fleet around you if the weather turns, and no one to come if you meet trouble. Its business goes on without you until you come back to it.`;
+}
+
+/** He comes back to the army's camp. */
+export function rejoinArmy(state: GameState, content: ContentBundle, at: string): string | null {
+  const f = state.fleet;
+  if (!f?.away || at !== f.camp) return null;
+  delete f.away;
+  journal(state, `Rejoined ${fleetName(state, content)} at ${content.places[at]?.name ?? at}.`);
+  return `You come back to ${fleetName(state, content)} at ${content.places[at]?.name ?? at}, and take your place in the camp again.`;
 }
 
 export function fleetName(state: GameState, content: ContentBundle): string {
