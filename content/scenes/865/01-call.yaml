@@ -96,7 +96,7 @@
 
     King Edmund sends horses. He sends them in herds, with boys to lead them, and peace, and food for the winter, and a priest with a face like a wet week to say how glad the East Angles are of their guests. The Danes take it all and thank him very nicely.
 
-    Kolr looks at the horses. "Now," he says, "we are not a fleet any more."
+    [if service]Kolr looks at the horses. "Now," he says, "we are not a fleet any more."[else]The Danish captain on the next beach looks at the horses, and then at you. "Now," he says, "we are not a fleet any more."[/if]
   choices:
     - id: ride
       text: Learn to ride, before the spring.
@@ -135,10 +135,10 @@
       text: Tell him what you think. The English will wait for someone else to fight first.
       check: { skill: lore, attr: wit, difficulty: 5 }
       success:
-        text: The man goes back up the hall and says it in Ívarr's ear. Ívarr looks at you again, longer, and lifts his cup an inch from the table. In the spring Kolr is told that the Elk will ride in the van, which pays better and dies faster. Kolr says that is what comes of having a clever oarsman.
+        text: The man goes back up the hall and says it in Ívarr's ear. Ívarr looks at you again, longer, and lifts his cup an inch from the table. [if service]In the spring Kolr is told that the Elk will ride in the van, which pays better and dies faster. Kolr says that is what comes of having a clever oarsman.[else]In the spring your ships are told they will ride in the van, which pays better and dies faster. Your men say that is what comes of having a clever captain.[/if]
         effects: [ { add: { hamingja: 1 } }, { set: flag.ga_ivarr_knows }, { deed: { type: deed, text: "Was noticed by Ívarr at the army's Yule", weight: 2, witnesses: 200 } } ]
       failure:
-        text: You say something about the English being cowards. The man nods politely and goes back up the hall with it. Ívarr doesn't look at you again, which, Kolr says afterwards, is the best thing that could have happened.
+        text: You say something about the English being cowards. The man nods politely and goes back up the hall with it. Ívarr doesn't look at you again, which, [if service]Kolr says[else]an old Dane tells you[/if] afterwards, is the best thing that could have happened.
     - id: drink
       text: Tell him the English will do whatever Ívarr wants, and drink his health.
       effects: [ { add: { crew.morale: 1 } } ]

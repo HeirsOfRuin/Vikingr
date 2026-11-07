@@ -52,7 +52,7 @@
   at: [noirmoutier]
   once: true
   weight: 25
-  requires: [flag.era843, "year >= 845", "year <= 847"]
+  requires: ["year >= 845", "year <= 847"]
   art: bangor_field
   title: The Franks on the island
   text: |
@@ -102,7 +102,7 @@
   trigger: phase_start
   once: true
   weight: 20
-  requires: [flag.era843, "year >= 846", "year <= 847", "!service", "ships >= 1", "place == noirmoutier || place == nantes"]
+  requires: ["year >= 846", "year <= 847", "!service", "ships >= 1", "place == noirmoutier || place == nantes"]
   art: celtic_monastery
   title: A monastery in Poitou
   text: |

@@ -453,3 +453,4 @@ mh_river_known: { description: "Learned the Rhône from the envoys' boatmen" }
 mh_left: { description: "Left Hastein's fleet early, and came home alone", saga: true }
 mh_warned_luna: { description: "Warned the bishop of Luna", saga: true }
 bx_siege: { description: "Sat down outside Bordeaux with Hastein's fleet" }
+ga_captain: { description: "Joined the great army as a captain with ships of his own, from an earlier life", saga: true }

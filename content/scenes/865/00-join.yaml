@@ -1,0 +1,73 @@
+# The great army for a captain from an earlier life (Josh, 2026-11-07: "if starting from early starts, can you still join
+# fleets and story paths that are a part of later starts?"). The 865 start begins at Kolr's oar; a man who started in 830
+# or 843 and has ships of his own by 865 is a captain the army wants. Three ways in, each on the record:
+# the sons of Ragnarr's call in 865; the army's men in the northern markets while it sits in England (866-870); and the
+# "great summer army" that came to Reading in 871 to join it (Anglo-Saxon Chronicle 871).
+# The army's own scenes (865/01-05) read [if service] for the oarsman and [else] for a captain.
+
+- id: ga_join_865
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 40
+  requires: ["year == 865", "month <= 7", "!service", "ships >= 1", "!flag.ga_army"]
+  art: muster
+  when: Spring, 865
+  title: The sons of Ragnarr
+  text: |
+    The story comes up the coast with the Danish traders, and it gets better at every landing. Ragnarr, the one who took Paris, went to England in his old age with two ships, and the king of the Northumbrians, Ælla, caught him and threw him into a pit of snakes. Now his sons are gathering every ship in the north to go and ask Ælla about it.
+    [break]
+    [if age >= 45]You were a young man when Ragnarr's name was new. You are not young now. But the sons want ships, and captains who have done this before, and they are paying for both.[else]They want ships, and captains with names, and you have both. The Danish trader looks at your ships on the beach while he tells it, and doesn't need to say the rest.[/if]
+  choices:
+    - id: go
+      text: Take your ships to England, to the sons of Ragnarr.
+      danger: true
+      effects: [ { set: flag.ga_army }, { set: flag.ga_captain }, { fleet: greatarmy }, { know: gipeswic }, { fleet_to: gipeswic } ]
+      result: You send word back with the trader. The army is gathering in East Anglia, he says, at the old wic on the Orwell. By the time you get there it will be the biggest army anyone in England has ever seen, and you will be one of its captains, not a man on its benches.
+    - id: no
+      text: Let the sons of Ragnarr settle their own feud.
+      result: You let them go. All summer the ships go past, Danes and Norwegians and Swedes and men from the Irish forts, more ships than you have seen in one sea. You'll hear what happens. Everyone will.
+
+- id: ga_join_recruit
+  kind: phase
+  trigger: phase_start
+  cooldown_days: 365
+  weight: 25
+  requires: ["year >= 866", "year <= 870", "!service", "ships >= 1", "!flag.ga_army", "phase != winter"]
+  at: [hedeby, ribe, walcheren, dorestad, dublin, kaupang, home_fjord, orkney, linn_duachaill]
+  art: shore_wait
+  title: The army wants men
+  text: |
+    There are men on the strand from the army in England, Danes with English silver on their arms and English horses in their stories, going from ship to ship. The army has taken York, they say, and killed two kings in one morning, and it is going to take the rest of England one kingdom at a time. It needs ships. It pays in land.
+    [break]
+    One of them stops at your ships and looks at your crew, and then at you. "You have a name," he says. "Bring it."
+  choices:
+    - id: go
+      text: Take your ships to England, to the army.
+      danger: true
+      effects: [ { set: flag.ga_army }, { set: flag.ga_captain }, { fleet: greatarmy } ]
+      result: He tells you where the army lies this year, and how to find it, and which of the sons of Ragnarr to ask for. You'll be a captain in it, with a voice at its council. The English have a word for it, he says, laughing. Here. It just means army. They have never needed a word for anything worse.
+    - id: no
+      text: Wish him luck in England.
+      result: He wishes you the same, wherever you're going, and goes on down the strand to the next ship.
+
+- id: ga_join_871
+  kind: phase
+  trigger: phase_start
+  once: true
+  weight: 35
+  requires: ["year == 871", "month <= 6", "!service", "ships >= 1", "!flag.ga_army", "phase != winter"]
+  art: muster
+  when: Spring, 871
+  title: The great summer army
+  text: |
+    A whole new army is gathering for England this spring, on every Danish beach: a summer army, men are calling it, to go over and join the old one, which has been in England six winters now and is fighting the West Saxons at a place called Reading. They say the West Saxon king is dying. They say his brother is young.
+  choices:
+    - id: go
+      text: Sail with the summer army.
+      danger: true
+      effects: [ { set: flag.ga_army }, { set: flag.ga_captain }, { fleet: greatarmy } ]
+      result: The summer army goes over in the spring, a hundred ships or near it, up the Thames to Reading, where the old army is dug in between the two rivers. The old army's men look at the new men the way old men always look at new ones. Then they put them in the front.
+    - id: no
+      text: Let the summer army go without you.
+      result: It goes without you. In the autumn the ships that come back bring news of battles every month, nine in a year, the English say, and of a young West Saxon king called Alfred who will not stop fighting.

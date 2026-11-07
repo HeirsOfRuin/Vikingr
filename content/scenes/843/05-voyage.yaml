@@ -11,7 +11,7 @@
   chance: 1
   once: true
   weight: 40
-  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes", { any: ["bound == kaupang", "bound == hedeby", "bound == ribe"] }]
+  requires: ["year == 843", "fleet.id == vestfold", "!seen.cw_nantes", { any: ["bound == kaupang", "bound == hedeby", "bound == ribe"] }]
   art: open_sea
   title: King Horik's ships
   text: |
@@ -44,7 +44,7 @@
   at: [ribe]
   once: true
   weight: 30
-  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
+  requires: ["year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
   art: ship_home
   title: The market at Ribe
   text: |
@@ -79,7 +79,7 @@
   chance: 1
   once: true
   weight: 40
-  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes", "bound == walcheren"]
+  requires: ["year == 843", "fleet.id == vestfold", "!seen.cw_nantes", "bound == walcheren"]
   art: open_sea
   title: The low country
   text: |
@@ -111,7 +111,7 @@
   at: [walcheren]
   once: true
   weight: 30
-  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
+  requires: ["year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
   art: muster
   title: The baptized king
   text: |
@@ -144,7 +144,7 @@
   chance: 1
   once: true
   weight: 40
-  requires: [flag.era843, "year == 843", "fleet.id == vestfold", "!seen.cw_nantes", "bound == noirmoutier"]
+  requires: ["year == 843", "fleet.id == vestfold", "!seen.cw_nantes", "bound == noirmoutier"]
   art: open_sea
   title: The coast of the Franks
   text: |

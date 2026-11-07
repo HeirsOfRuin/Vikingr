@@ -8,7 +8,7 @@
   trigger: hall
   once: true
   weight: 15
-  requires: [flag.era843, { any: ["winter == 845", "winter == 846"] }]
+  requires: [{ any: ["winter == 845", "winter == 846"] }]
   art: hearth_ormr
   title: A man from the Paris fleet
   text: |
@@ -40,7 +40,7 @@
   trigger: hall
   once: true
   weight: 15
-  requires: [flag.era843, "winter == 846"]
+  requires: ["winter == 846"]
   art: yule_hall
   title: The hard winter
   text: |
@@ -69,7 +69,7 @@
   trigger: phase_start
   once: true
   weight: 15
-  requires: [flag.era843, "year == 847"]
+  requires: ["year == 847"]
   art: muster
   when: Spring, 847
   title: The kings' warning
@@ -97,13 +97,13 @@
   trigger: hall
   once: true
   weight: 15
-  requires: [flag.era843, "winter == 847"]
+  requires: ["winter == 847", "!service"]
   art: hearth_ormr
   title: A boy who wants a bench
   text: |
     He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the winter to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About Nantes, and the south, and what you did.
 
-    You were sixteen yourself, on the beach at Skiringssal, five summers ago. It doesn't feel like five.
+    [if flag.era843]You were sixteen yourself, on the beach at Skiringssal, five summers ago. It doesn't feel like five.[else]You were his age yourself, once, with a spear you'd made and nothing else. It doesn't feel as long ago as it was.[/if]
   choices:
     - id: take
       text: Take him on. Someone took you.
@@ -129,7 +129,7 @@
   trigger: hall
   once: true
   weight: 15
-  requires: [flag.era843, "winter == 848"]
+  requires: ["winter == 848"]
   art: hearth_ormr
   title: The men from Ireland
   text: |

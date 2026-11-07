@@ -156,6 +156,8 @@ export function joinFleet(state: GameState, content: ContentBundle, id: string):
   const st = courseStage(state, content);
   if (st) moveFleet(state, st.at, st.posture);
   else if (state.at) moveFleet(state, state.at, 'lying');
+  // a captain who joins a fleet lying somewhere else sails to join it (Josh, 2026-11-07: later stories from earlier lives)
+  if (!state.service && state.fleet.camp && state.fleet.camp !== state.at) state.fleet.posture = 'bound';
   journal(state, `Sailed with ${f.name}.`);
 }
 

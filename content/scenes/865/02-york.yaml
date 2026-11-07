@@ -17,7 +17,7 @@
 
     Ælla. The snake-pit king. The sons of Ragnarr hear the name and the camp is struck in a morning.
     [break]
-    "The horses go by the road," Kolr says, "and the ships go by the sea, and we meet them in the Humber. Which are you?"
+    "The horses go by the road," [if service]Kolr says[else]says the Dane who brings the word to your ships[/if], "and the ships go by the sea, and we meet them in the Humber. Which are you?"
   choices:
     - id: horse
       text: Ride north with the army.
@@ -98,7 +98,7 @@
     - id: away
       text: Go and see to the wounded.
       effects: [ { add: { honour: 1, crew.morale: 1 } } ]
-      result: The Elk's men lost four in the lanes and have six more who won't row for a month. You bind what can be bound, and hear it from the yard, and keep binding. Kolr finds you at it afterwards, white, with his leg bleeding through the bandage. "Good lad," he says. "Somebody had to."
+      result: "[if service]The Elk's men lost four in the lanes and have six more who won't row for a month. You bind what can be bound, and hear it from the yard, and keep binding. Grjótgarðr finds you at it afterwards, white, with somebody else's blood to the elbows. \"Good lad,\" he says. \"Somebody had to.\"[else]Your men lost four in the lanes and have six more who won't row for a month. You bind what can be bound, and hear it from the yard, and keep binding. Your steersman finds you at it afterwards, and says nothing, and kneels down and helps.[/if]"
       next: e67_kolr
 
 - id: e67_kings_lost

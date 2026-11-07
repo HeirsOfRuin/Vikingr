@@ -84,7 +84,7 @@
   trigger: hall
   once: true
   weight: 20
-  requires: [flag.era843, "place == noirmoutier", "winter == 843"]
+  requires: [{ any: [flag.era843, flag.cw_nantes_sworn] }, "place == noirmoutier", "winter == 843"]
   art: yule_hall
   title: The monks' island
   text: |
