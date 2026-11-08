@@ -39,18 +39,83 @@ export function age(state: GameState): number {
   return ageOn(state.day, state.hero.born);
 }
 
-/** Learning by use. Returns a line when the skill rises. */
+/** Learning by use. Returns a line when the skill rises, or an attribute with it. */
 export function learn(state: GameState, skill: Skill, xp: number, ceiling = 10): string | null {
   const h = state.hero;
-  if (h.skills[skill] >= ceiling) return null;
-  h.xp[skill] += xp;
-  const need = SKILL_XP_PER_LEVEL * (h.skills[skill] + 1);
-  if (h.xp[skill] >= need) {
-    h.xp[skill] -= need;
-    h.skills[skill] += 1;
-    return `${skill[0]!.toUpperCase()}${skill.slice(1)} rises to ${h.skills[skill]}.`;
+  // the practice works the body or the mind too, whether or not the skill has more to teach (Josh, 2026-11-08)
+  const grew = Object.entries(SKILL_ATTRS[skill]).map(([a, share]) => train(state, a as Attr, xp * share!)).filter((x): x is string => !!x);
+  let rose: string | null = null;
+  if (h.skills[skill] < ceiling) {
+    h.xp[skill] += xp;
+    const need = SKILL_XP_PER_LEVEL * (h.skills[skill] + 1);
+    if (h.xp[skill] >= need) {
+      h.xp[skill] -= need;
+      h.skills[skill] += 1;
+      rose = `${skill[0]!.toUpperCase()}${skill.slice(1)} rises to ${h.skills[skill]}.`;
+    }
   }
-  return null;
+  const lines = [rose, ...grew].filter(Boolean);
+  return lines.length ? lines.join(' ') : null;
+}
+
+/** Attributes grow by use, slower than skills (Josh, 2026-11-08: "your health, breath, and stuff should increase, like your
+ *  skills do"). Endurance carries Blood and Breath with it. The body grows fastest young, slower from 27, not at all from 35,
+ *  when ageing is already taking it back (AGEING); wits and presence grow at any age. Nobody passes 6, the hardest
+ *  champions' mark. perLevel is xp to the next point × (point + 1), measured in tools/measure-growth.ts. */
+export const ATTR_GROWTH = { perLevel: 35, max: 6, bodySlows: 27, bodyStops: 35 } as const;
+const BODY: readonly Attr[] = ['str', 'agi', 'end'];
+
+/** What each skill's practice works: rowing builds the back and the wind, the shield-wall the arms and the legs. */
+export const SKILL_ATTRS: Record<Skill, Partial<Record<Attr, number>>> = {
+  weapons: { agi: 0.6, str: 0.4 },
+  shield: { str: 0.5, end: 0.5 },
+  seamanship: { end: 0.6, str: 0.4 },
+  craft: { str: 1 },
+  command: { pre: 1 },
+  speech: { pre: 0.6, wit: 0.4 },
+  cunning: { wit: 0.6, agi: 0.4 },
+  trade: { wit: 1 },
+  lore: { wit: 1 },
+};
+
+const RISES: Record<Attr, (n: number) => string> = {
+  str: (n) => `Years at the oar and in the shield-wall have thickened your arms and back. Strength rises to ${n}.`,
+  agi: (n) => `Your hands are quicker than they were; they move before you have finished thinking. Agility rises to ${n}.`,
+  end: (n) => `You can row a watch, fight, and row another now. Endurance rises to ${n}: more blood and more breath in a fight.`,
+  wit: (n) => `You see more than you used to, and sooner. Wits rise to ${n}.`,
+  pre: (n) => `Men go quiet now when you stand up to speak. Presence rises to ${n}.`,
+};
+
+/** Practice toward an attribute. Returns a line when it rises (and journals it). */
+export function train(state: GameState, a: Attr, xp: number): string | null {
+  const h = state.hero;
+  if (xp <= 0 || h.attrs[a] >= ATTR_GROWTH.max) return null;
+  if (BODY.includes(a)) {
+    const years = age(state);
+    if (years >= ATTR_GROWTH.bodyStops) return null;
+    if (years >= ATTR_GROWTH.bodySlows) xp *= 0.5;
+  }
+  const axp = (h.axp ??= {});
+  axp[a] = (axp[a] ?? 0) + xp;
+  const need = ATTR_GROWTH.perLevel * (h.attrs[a] + 1);
+  if (axp[a]! < need) return null;
+  axp[a]! -= need;
+  h.attrs[a] += 1;
+  const line = RISES[a](h.attrs[a]);
+  journal(state, line);
+  return line;
+}
+
+/** How far toward the next point: [done, needed], or null at the top or past growing. */
+export function attrProgress(state: GameState, a: Attr): [number, number] | null {
+  const h = state.hero;
+  if (h.attrs[a] >= ATTR_GROWTH.max || (BODY.includes(a) && age(state) >= ATTR_GROWTH.bodyStops)) return null;
+  return [Math.floor(h.axp?.[a] ?? 0), ATTR_GROWTH.perLevel * (h.attrs[a] + 1)];
+}
+
+/** Breath in a fight: what a man has before he must stop and guard (duel and bout stamina). */
+export function breathMax(state: GameState, content: ContentBundle): number {
+  return 6 + effAttr(state, content, 'end');
 }
 
 export function addWound(state: GameState, content: ContentBundle, injury: string, from: string, rng?: RngCursor): void {

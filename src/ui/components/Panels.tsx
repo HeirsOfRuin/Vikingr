@@ -8,7 +8,7 @@ import type { Child, GameState, Position } from '../../engine/state';
 import { useState } from 'preact/hooks';
 import { childAge, FAMILY, hostName } from '../../engine/family';
 import type { Action } from '../../engine/index';
-import { effAttr, hpMax, age } from '../../engine/hero';
+import { effAttr, hpMax, age, breathMax, attrProgress } from '../../engine/hero';
 import { ATTR_NAMES } from '../../engine/paths';
 import { capacity, mouths, aliveMen } from '../../engine/crew';
 import { legendTable, livingFame, lastingFame, deedFame } from '../../engine/fame';
@@ -91,12 +91,15 @@ export function HeroPanel({ content, state, onAct }: { content: ContentBundle; s
         <h3>Body</h3>
         Blood {Math.round(h.hp)}/{hpMax(state, content)}
         <Bar value={h.hp} max={hpMax(state, content)} kind="red" />
+        <p class="small">Breath {breathMax(state, content)} <span class="muted">(how long you can press a fight before you must stop and guard)</span></p>
         <dl class="kv">
           {ATTRS.map((a) => {
             const e = effAttr(state, content, a);
-            return [<dt key={a}>{capitalise(ATTR_NAMES[a]!)}</dt>, <dd key={a + 'v'}>{e}{e !== h.attrs[a] ? ` (${h.attrs[a]})` : ''}</dd>];
+            const p = attrProgress(state, a);
+            return [<dt key={a}>{capitalise(ATTR_NAMES[a]!)}</dt>, <dd key={a + 'v'}>{e}{e !== h.attrs[a] ? ` (${h.attrs[a]})` : ''} {p ? <span class="muted small">({p[0]}/{p[1]})</span> : null}</dd>];
           })}
         </dl>
+        <p class="muted small sans" style={{ marginTop: 8 }}>The body grows with use, more slowly than skills: rowing and the shield-wall build strength and endurance, and endurance brings more blood and breath. It grows fastest young, and stops at 35. Wits and presence grow at any age.</p>
       </div>
       <div class="card">
         <h3>Skills</h3>

@@ -24,7 +24,14 @@ memorial:
   - "the stories go round"
   # the rites
   - "under [A-Za-z'’]+ tongue"
+  # the men the sea kept (Josh's save, 2026-11-08: a drowned man's mourning)
+  - "drowned|went down with|the sea has"
 
 # what the road or the coast held before a fight broke in, told after it: a man named there was alive then
 dead_names_ok:
   "report: Before that, at sea": ['*']
+  # a sworn man's own mourning is about him, every line of it
+  mourn_ketill: [ketill]
+  mourn_ulf: [ulf]
+  mourn_hallvard: [hallvard]
+  mourn_bersi: [bersi]

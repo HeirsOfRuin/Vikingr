@@ -18,6 +18,8 @@ export interface Hero {
   attrs: Record<Attr, number>;
   skills: Record<Skill, number>;
   xp: Record<Skill, number>;
+  /** Practice toward the next point of each attribute (src/engine/hero.ts train): the body and the mind grow by use, slower than skills. */
+  axp?: Partial<Record<Attr, number>>;
   hp: number;
   wounds: Wound[];
   nickname: string | null;

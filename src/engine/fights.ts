@@ -18,7 +18,7 @@ import { fighterGuile, startBout } from './bout';
 import { livingFame } from './fame';
 import { dateOf } from './calendar';
 import { makeDuel, sideFromFighter } from './duel';
-import { effAttr, hpMax, addWound, woundFor, kill, learn } from './hero';
+import { effAttr, hpMax, addWound, woundFor, kill, learn, breathMax } from './hero';
 import { addDeed } from './fame';
 import { aliveMen, addLoyalty, clampMorale, fitMen } from './crew';
 import { banter } from './banter';
@@ -39,8 +39,8 @@ export function heroDuelSide(state: GameState, content: ContentBundle, kind: Due
     name: state.hero.name,
     hp: Math.max(1, Math.round(state.hero.hp)),
     hpMax: hpMax(state, content),
-    stamina: 6 + end,
-    staminaMax: 6 + end,
+    stamina: breathMax(state, content),
+    staminaMax: breathMax(state, content),
     shields: kind === 'holmgang' ? DUEL.holmgangShields : 1,
     integrity: kind === 'holmgang' ? DUEL.holmgangShieldIntegrity : DUEL.shieldIntegrity,
     str: effAttr(state, content, 'str'),
