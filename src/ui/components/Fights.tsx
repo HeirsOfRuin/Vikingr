@@ -214,7 +214,7 @@ function FightBody({ content, b, options, onAct }: { content: ContentBundle; b: 
       </div>
       <div class="card sans small">
         <div>Round {b.round}. You stand: <b>{b.heroDown ? 'carried out of the wall' : POSITION_NAMES[b.position].toLowerCase()}</b>. Blood {Math.max(0, b.heroHp)}/{b.heroHpMax}.</div>
-        <div class="forecast">{b.position === 'rear' ? 'From behind the wall you can see their whole line' : b.position === 'wall' ? 'From the wall you can see some of their line' : 'In the front rank you see the shield in front of you'}: they look likely to {likely.map((o) => ORDER_NAMES[o].toLowerCase()).join(' or ')}.</div>
+        <div class="forecast">{b.position === 'rear' ? 'From behind the wall you can see their whole line' : b.position === 'wall' ? 'From the wall you can see some of their line' : 'In the front rank you see the shield in front of you'}: they look likely to {likely.map((o) => ORDER_NAMES[o].toLowerCase().replace('their', 'your')).join(' or ')}.</div>
         {b.us.name !== 'Your men' && <div class="muted">You do not command this wall. But a wall moves with its loudest voices, and what you shout, the men round you take up.</div>}
         <div class="muted">Front rank: more fame, more danger, the men fight harder. Behind the wall: you see more and the men notice.</div>
       </div>

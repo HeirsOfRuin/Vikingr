@@ -15,7 +15,8 @@ export function epitaph(state: GameState, content: ContentBundle): string[] {
   const d = state.death!;
   const lines: string[] = [];
   const age = ageOn(d.day, state.hero.born);
-  const summers = Math.max(1, dateOf(d.day).year - 829);
+  // a boy first sails at about fifteen; an heir or a later start began his summers then, not in 830
+  const summers = Math.max(1, Math.min(dateOf(d.day).year - 829, age - 15));
   lines.push(`${state.hero.nickname ? `${state.hero.name}, called ${state.hero.nickname},` : state.hero.name} was ${age} winters old, and had gone viking ${summers === 1 ? 'one summer' : `${summers} summers`}.`);
   // the heaviest deeds that were told
   const best = state.deeds.filter((x) => x.told !== null || x.verse).sort((a, b) => b.weight - a.weight || a.n - b.n).slice(0, 3);

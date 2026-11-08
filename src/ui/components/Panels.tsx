@@ -17,6 +17,7 @@ import { formatSilver, capitalise, plural } from '../../engine/format';
 import { POSITION_NAMES } from '../../engine/battle';
 import { SKILL_XP_PER_LEVEL } from '../../engine/tuning';
 import { Bar } from './Actions';
+import { OWN } from '../../engine/ownfleet';
 import { tierAt, TIER_NAMES } from '../../engine/standing';
 import { BASE, FARM_PRICE, HALL_FAME, HALL_PRICE, hallPrice, winterYield } from '../../engine/base';
 import { envyWords, SETBACK, upkeepBill } from '../../engine/hardship';
@@ -127,6 +128,34 @@ export function HeroPanel({ content, state, onAct }: { content: ContentBundle; s
   );
 }
 
+/** The fleet he sails with, or his own (docs/FRAME-FLEETS-REALMS.md): where it is, and where he stands with it. */
+function FleetCard({ content, state }: { content: ContentBundle; state: GameState }) {
+  const f = state.fleet;
+  if (!f) return null;
+  const own = f.own;
+  if (own) {
+    const word = own.cohesion >= 7 ? 'they would follow you anywhere' : own.cohesion >= 4 ? 'they are holding together' : own.cohesion >= OWN.leaveBelow ? 'they are restless' : 'captains are starting to go home';
+    return (
+      <div class="card">
+        <h3>Your fleet</h3>
+        <p class="small">{plural(own.ships, 'ship')} answered your war-arrow, with {own.men} men in them{own.target ? `, for ${content.places[own.target]?.name ?? own.target}` : ''}. Their crews stand in your line, and you take a leader's share of what they take.</p>
+        <p class="small">Cohesion {Math.round(own.cohesion)}/10: {word}. Fights won, plunder and tribute raise it; lost fights and idle weeks at anchor wear it down.</p>
+        <Bar value={own.cohesion} max={10} />
+        <p class="muted small">{own.winter ? 'It will winter with you, and sail again in the spring.' : 'It breaks up when you haul up for the winter.'}</p>
+      </div>
+    );
+  }
+  const name = capitalise(content.fleets[f.id]?.name ?? 'the fleet');
+  const camp = f.camp ? content.places[f.camp]?.name ?? f.camp : null;
+  return (
+    <div class="card">
+      <h3>{name}</h3>
+      {camp && <p class="small">{f.posture === 'bound' ? `Bound for ${camp}.` : `Lying at ${camp}.`}</p>}
+      <p class="small">{state.service ? 'You row where your captain rows.' : f.away ? 'You are away from it on your own account: its storms and its business go on without you until you come back to it.' : f.posture === 'bound' ? 'You sail with it, or you leave it.' : 'You are with it. You may go off on your own account and come back.'}</p>
+    </div>
+  );
+}
+
 export function CrewPanel({ content, state, onAct }: { content: ContentBundle; state: GameState; onAct: (a: Action) => void }) {
   const days = Math.floor(state.provisions / Math.max(1, mouths(state)));
   return (
@@ -161,6 +190,7 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
         )}
         {!state.service && <p class="small">The men carry {gearWord(state.crew.gear)}.</p>}
       </div>
+      <FleetCard content={content} state={state} />
       <div class="card">
         <h3>{state.service ? `${state.service.captain}'s ship` : 'The crew'}</h3>
         {state.service ? (

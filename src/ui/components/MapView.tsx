@@ -180,7 +180,7 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
               <p class="muted small sans">{pickedPlace.region}{pickedPlace.raid ? ' · a place to raid' : ''}{state.places[pickedPlace.id]?.norse ? ' · a Norse ship-fort' : pickedPlace.market ? ' · a market' : ''}</p>
               <p>{pickedPlace.desc}</p>
               {pickedPlace.active && pickedPlace.kind !== 'home' && <p class="small sans"><span class={`pill standing-${tierAt(state, content, pickedPlace.id)}`}>{TIER_NAMES[tierAt(state, content, pickedPlace.id)]}</span> {TIER_HINTS[tierAt(state, content, pickedPlace.id)]}</p>}
-              {!pickedPlace.active && <p class="muted small sans">Beyond your reach for now. (Later phases.)</p>}
+              {!pickedPlace.active && <p class="muted small sans">Beyond your reach for now.</p>}
               {visits(pickedPlace.id).length > 0 && <p class="muted small sans">You were here: {visits(pickedPlace.id).join(', ')}</p>}
               {onAct && (() => {
                 // a course for this place, if one can be set from where he is (docs/FRAME-PACING.md)

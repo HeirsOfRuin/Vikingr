@@ -344,18 +344,19 @@ export function recoverHoard(state: GameState, frac: number): void {
 }
 
 /** A ship lost: driven ashore in a storm at anchor, or given away. The worst-kept goes, never the flagship. */
-export function loseShip(state: GameState, content: ContentBundle, how: 'wreck' | 'give'): string | null {
+export function loseShip(state: GameState, content: ContentBundle, how: 'wreck' | 'give' | 'burned'): string | null {
   if (state.ships.length < 2 || state.service) return null;
   const rest = state.ships.slice(1).sort((a, b) => a.hull - b.hull);
-  const ship = how === 'wreck' ? rest[0]! : rest[rest.length - 1]!;
+  const ship = how === 'give' ? rest[rest.length - 1]! : rest[0]!;
   const cap = content.ships[ship.type]?.crew ?? 0;
   const total = state.ships.reduce((s, sh) => s + (content.ships[sh.type]?.crew ?? 0), 0);
   const aboard = Math.round((state.crew.men * cap) / Math.max(1, total));
   // in a wreck about a third of her men drown; given away, her crew goes with her
-  const gone = how === 'wreck' ? Math.round(aboard / 3) : aboard;
+  const gone = how === 'give' ? aboard : Math.round(aboard / (how === 'burned' ? 2 : 3));
   state.crew.men = Math.max(0, state.crew.men - gone);
   state.ships.splice(state.ships.indexOf(ship), 1);
-  if (how === 'wreck') setback(state, 'storm', `${ship.name} was driven ashore at anchor and broke up; ${plural(gone, 'man', 'men')} drowned.`);
+  if (how === 'burned') setback(state, 'storm', `${ship.name} burned in a sea-fight; ${plural(gone, 'man', 'men')} went down with her.`);
+  else if (how === 'wreck') setback(state, 'storm', `${ship.name} was driven ashore at anchor and broke up; ${plural(gone, 'man', 'men')} drowned.`);
   else setback(state, 'jarl', `Gave ${ship.name} to the jarl, and her crew with her.`);
   return ship.name;
 }

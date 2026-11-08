@@ -313,7 +313,13 @@ export function goOnAs(state: GameState, content: ContentBundle, rng: RngCursor,
   const years = startYear - dead.year;
   const lines: string[] = [];
   const sailing = !!c.man;
-  lines.push(`${given(father.name)} ${father.nickname ? `${father.nickname} ` : ''}is buried in the winter of ${dead.year}, in a mound above the fjord, with his weapons. ${c.name} is ${dead.year - c.born}.`);
+  const fname = `${given(father.name)}${father.nickname ? ` ${father.nickname}` : ''}`;
+  const burial = death.cause === 'drowned'
+    ? `${fname} has no grave: the sea kept him, in the winter of ${dead.year}. They raise a stone for him above the fjord, with his name cut in it.`
+    : death.cause === 'straw' || state.at === 'home_fjord' || state.at === state.homeAt
+      ? `${fname} is buried in the winter of ${dead.year}, in a mound above the fjord, with his weapons.`
+      : `${fname} is buried where he fell, in the year ${dead.year}, by the men who were with him. At home they raise a stone for him above the fjord.`;
+  lines.push(`${burial} ${c.name} is ${dead.year - c.born}.`);
   // the ships come home, with what he carried
   const carried = state.silver + state.loot;
   if (carried > 0) { state.base.hoard += Math.round(carried * 0.8); lines.push(`His men bring home what he carried, ${formatSilver(carried)}, and take their shares of it; the rest goes under the floor.`); }
