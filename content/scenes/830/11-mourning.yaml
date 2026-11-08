@@ -3,7 +3,13 @@
   kind: queued
   title: Ketill
   text: |
+    [if man.ketill.drowned]
+    There is nothing to bury. Ketill went down with his ship in the dark, and the sea has kept him, and his axe, and the oar he pulled for thirty summers.
+
+    The men carry stones up the headland anyway, one at a time, and raise a cairn over nobody, facing the water. Half the stones in the north stand for men the sea kept.
+    [else]
     You bury Ketill on a headland above the sea, with his axe and his shield and the oar he pulled for thirty summers, and a cairn of stones over him that the men carry up one at a time.
+    [/if]
 
     He never told you what he promised your father. You understand now that he kept it, whatever it was.
   choices:
@@ -25,7 +31,7 @@
   text: |
     Ulf is dead, and the ship is quieter than it has ever been.
 
-    He wanted a name so badly. He wanted to be in a verse. You sit with him through the night before the burning, and you keep thinking of things he would have said, and then remembering that he won't.
+    He wanted a name so badly. He wanted to be in a verse. [if man.ulf.drowned]There is no body to sit with and no pyre to build: the sea has him. You sit up on the strand all night instead[else]You sit with him through the night before the burning[/if], and you keep thinking of things he would have said, and then remembering that he won't.
     [if flag.bg_ulf_pulled]
     He dragged you out of the surf at Bangor by your hair, and said "That's one you owe me," and was sick in the bilge. You never paid it back. You'd meant to.
     [elif flag.s_saved_ulf]
@@ -40,7 +46,7 @@
       visible_if: flag.skald
       effects: [ { man: { id: ulf, nickname: the Unafraid } }, { deed: { type: man_deed, text: Ulf the Unafraid is remembered in a verse, weight: 2 } }, { set: flag.mourned_ulf } ]
       result: |
-        Kálfr makes it in the dawn, by the pyre. It is short, and it is about a man who laughed in the shield-wall, and it calls him Ulf the Unafraid.
+        Kálfr makes it in the dawn, [if man.ulf.drowned]looking out at the water[else]by the pyre[/if]. It is short, and it is about a man who laughed in the shield-wall, and it calls him Ulf the Unafraid.
 
         He would have hated how short it is. He would have loved the name.
     - id: name
@@ -55,16 +61,27 @@
   kind: queued
   title: Hallvard
   text: |
+    [if man.hallvard.drowned]
+    Hallvard is dead, drowned, and his silver hammer went down with him. He'd have said it was meant.
+    [else]
     Hallvard is dead. You find his silver hammer in the grass where he fell, the thong cut through, and you don't know whether it fell off before or after.
+    [/if]
 
     He saw signs in everything. He never saw this one, or never said.
   choices:
+    - id: pour
+      text: Pour ale into the sea for him, from the stern.
+      visible_if: man.hallvard.drowned
+      effects: [ { add: { hamingja: 1 } }, { set: flag.mourned_hallvard } ]
+      result: You pour it over the stern at dusk and say his name, and the men who believed what he believed say it with you. The ones who didn't say it too.
     - id: hammer
       text: Wear his hammer.
+      visible_if: "!man.hallvard.drowned"
       effects: [ { add: { hamingja: 1 } }, { item: { id: hallvard_hammer } } ]
       result: You tie the hammer round your own neck. It is warm from the sun. It stays warm, somehow, all that summer.
     - id: grave
       text: Bury it with him.
+      visible_if: "!man.hallvard.drowned"
       effects: [ { add: { honour: 1 } }, { set: flag.mourned_hallvard } ]
       result: You put the hammer in his hand and close his fingers on it. Whatever he was going to need it for, he'll have it.
 
@@ -72,15 +89,34 @@
   kind: queued
   title: Bersi
   text: |
+    [if man.bersi.drowned]
+    Bersi is dead, drowned, and his sea-chest went down with him, tally-stick and all. He'd have hated that more than the drowning: every share he was ever owed, and nobody left to collect.
+
+    It's a man from his district who tells you, on the strand: there is a woman in Hordaland. Nobody knew. There is a child.
+    [else]
     Bersi is dead. When they go through his sea-chest they find a tally-stick with every share he was ever owed cut into it, and a few that he wasn't, and at the bottom, wrapped in a rag, a little more silver than anyone would have guessed.
 
     There is a woman in Hordaland, it turns out. Nobody knew. There is a child.
+    [/if]
   choices:
+    - id: pay
+      text: Send the woman his share, out of your own silver.
+      visible_if: man.bersi.drowned
+      requires: ["silver >= 30"]
+      effects: [ { add: { silver: -30, honour: 1, man.ketill.loyalty: 1 } }, { set: flag.bersi_silver_sent } ]
+      result: You send it with a man you trust, and a message you take a long time over. Bersi would have said you were paying for something you didn't owe. He would have been right, and he would have taken it.
+    - id: sea
+      text: There's nothing to send. The sea has his share.
+      visible_if: man.bersi.drowned
+      effects: [ { set: flag.bersi_silver_kept } ]
+      result: The sea has it, and the sea doesn't pay out. You put the woman out of your mind. It takes longer than you'd like.
     - id: send
       text: Send the silver to the woman, all of it.
+      visible_if: "!man.bersi.drowned"
       effects: [ { add: { honour: 1, man.ketill.loyalty: 1 } }, { set: flag.bersi_silver_sent } ]
       result: You send it all, with a man you trust, and a message you take a long time over. Bersi would have said you were overpaying. He would have been right.
     - id: share
       text: Put it in the common heap. That's the law of the ship.
+      visible_if: "!man.bersi.drowned"
       effects: [ { add: { loot: 30 } }, { set: flag.bersi_silver_kept } ]
       result: It goes in the heap with everything else. It's the law. Bersi would have done the same, and counted it twice.

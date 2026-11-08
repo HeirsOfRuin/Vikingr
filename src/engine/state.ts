@@ -96,6 +96,8 @@ export interface SwornMan {
   deeds: number;
   nickname: string | null;
   diedOn: number | null;
+  /** Lost at sea: no body to bury, no mound (Josh's save, 2026-11-08: Ketill was "buried on a headland" after he drowned). */
+  drowned?: boolean;
   sworn: boolean; // has given his oath to the hero (bench-mates have not)
   hurtUntil: number | null; // sits out fights until this day
   /** A man not in the registry, made when he came (docs/FRAME-HIRD-HOSTAGES.md): where from, and what he is like. */

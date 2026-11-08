@@ -45,6 +45,13 @@ export function capitalise(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/** A name in the middle of a sentence: "a Frankish sword", "your father's axe", but "Ubbi's ring" and "Máel Brigte's sword" keep their capital. */
+export function lowerFirst(s: string): string {
+  const first = s.split(/\s/)[0] ?? '';
+  const proper = (/'s$/.test(first) && first !== "Father's") || /[^\x00-\x7f]/.test(first);
+  return proper ? s : s.charAt(0).toLowerCase() + s.slice(1);
+}
+
 const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
 export function numberWord(n: number): string {
   return WORDS[n] ?? String(n);

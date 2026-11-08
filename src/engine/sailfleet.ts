@@ -9,7 +9,7 @@ import { test } from './conditions';
 import { journal } from './journal';
 import { livingFame } from './fame';
 import { endOwnFleet } from './ownfleet';
-import { plural } from './format';
+import { plural, lowerFirst, capitalise } from './format';
 
 export const FLEET = {
   /** A fleet sails at the pace of its slower ships. */
@@ -38,6 +38,8 @@ export interface FleetState {
   away?: boolean;
   /** His own fleet: the ships that answered his war-arrow (src/engine/ownfleet.ts). */
   own?: import('./ownfleet').OwnFleet;
+  /** Sworn to it, and still on his way to where it gathers: turning back now is not desertion (Josh's save, 2026-11-08). */
+  joining?: boolean;
 }
 
 /** The stage of the fleet's course it should be at today, from its timetable (the latest begun whose condition holds). */
@@ -60,13 +62,14 @@ export function moveFleet(state: GameState, to: string, posture: 'lying' | 'boun
   f.camp = to;
   f.posture = state.at === to && !state.voyage ? 'lying' : posture;
   f.moved = day;
-  if (state.at === to && !state.voyage) delete f.away;
+  if (state.at === to && !state.voyage) { delete f.away; delete f.joining; }
 }
 
 /** He reaches the place the fleet was bound for, with it: it lies there now. */
 export function fleetArrived(state: GameState, at: string): void {
   const f = state.fleet;
   if (f && f.camp === at && f.posture === 'bound' && !f.away) f.posture = 'lying';
+  if (f && f.camp === at) delete f.joining;
 }
 
 /** Once a day: the timetable catches up a fleet whose story has gone on without him. Returns news, if he is away. */
@@ -84,14 +87,19 @@ export function tickFleet(state: GameState, content: ContentBundle): string[] {
   if (was === st.at) { f.moved = from; if (st.posture === 'lying' && f.posture === 'bound' && state.at === st.at) f.posture = 'lying'; return []; }
   moveFleet(state, st.at, st.posture, from);
   const there = content.places[st.at]?.name ?? st.at;
+  // still on his way to it: he sails for wherever it has gone
+  if (f.joining && state.at !== st.at) {
+    f.posture = 'bound';
+    return [`Word comes: ${lowerFirst(name)} has ${st.posture === 'bound' ? `set out for ${there}` : `gone to ${there}`}. You'll find it there. ${st.note ?? ''}`.trim()];
+  }
   if (f.away) {
-    journal(state, `${name} moved to ${there} while he was away.`);
-    return [`Word comes: ${name.charAt(0).toLowerCase()}${name.slice(1)} has ${st.posture === 'bound' ? `set out for ${there}` : `gone to ${there}`}${was ? `, and left ${content.places[was]?.name ?? was} empty` : ''}. ${st.note ?? ''}`.trim()];
+    journal(state, `${name} moved to ${there} while you were away.`);
+    return [`Word comes: ${lowerFirst(name)} has ${st.posture === 'bound' ? `set out for ${there}` : `gone to ${there}`}${was ? `, and left ${content.places[was]?.name ?? was} empty` : ''}. ${st.note ?? ''}`.trim()];
   }
   // with it, and it is lying somewhere he isn't: he has let it go on without him
   if (st.posture === 'lying' && state.at !== st.at && !state.voyage) {
     f.away = true;
-    journal(state, `${name} went on to ${there} without him.`);
+    journal(state, `${name} went on to ${there} without you.`);
     return [`${name} has gone on to ${there} without you. ${st.note ?? ''}`.trim()];
   }
   return [];
@@ -115,7 +123,8 @@ export function inFleet(state: GameState): boolean {
 
 /** With the fleet now: sworn to it, and not off on his own. An oarsman goes where his captain goes. */
 export function withFleet(state: GameState): boolean {
-  return !!state.fleet && (!!state.service || !!state.fleet.own || !state.fleet.away);
+  // on his way to join it he sails alone: the fleet's sea is not his yet
+  return !!state.fleet && (!!state.service || !!state.fleet.own || (!state.fleet.away && !state.fleet.joining));
 }
 
 /** A captain in an army that keeps a camp sets out for somewhere else: the army stays, he goes alone. */
@@ -126,7 +135,7 @@ export function leaveArmy(state: GameState, content: ContentBundle, dest: string
   if (f.posture === 'bound') return null;
   f.away = true;
   const camp = content.places[f.camp]?.name ?? f.camp;
-  journal(state, `Took his ships away from ${fleetName(state, content)} on his own account.`);
+  journal(state, `Took your ships away from ${fleetName(state, content)} on your own account.`);
   return `${fleetName(state, content).replace(/^./, (c) => c.toUpperCase())} stays at ${camp}. You go on your own account: no fleet around you if the weather turns, and no one to come if you meet trouble. Its business goes on without you until you come back to it.`;
 }
 
@@ -159,7 +168,7 @@ export function joinFleet(state: GameState, content: ContentBundle, id: string):
   if (st) moveFleet(state, st.at, st.posture);
   else if (state.at) moveFleet(state, state.at, 'lying');
   // a captain who joins a fleet lying somewhere else sails to join it (Josh, 2026-11-07: later stories from earlier lives)
-  if (!state.service && state.fleet.camp && state.fleet.camp !== state.at) state.fleet.posture = 'bound';
+  if (!state.service && state.fleet.camp && state.fleet.camp !== state.at) { state.fleet.posture = 'bound'; state.fleet.joining = true; }
   journal(state, `Sailed with ${f.name}.`);
 }
 
@@ -167,14 +176,17 @@ export function joinFleet(state: GameState, content: ContentBundle, id: string):
 export function desertFleet(state: GameState, content: ContentBundle): string[] {
   const f = state.fleet;
   if (!f) return [];
-  const bound = f.posture === 'bound' && !f.away;
+  const bound = f.posture === 'bound' && !f.away && !f.joining;
   const name = fleetName(state, content);
   if (bound) state.honour -= FLEET.desertHonour;
-  journal(state, bound ? `Deserted ${name}.` : `Left ${name} for good.`);
+  journal(state, bound ? `Deserted ${name}.` : f.joining ? `Thought better of joining ${name}.` : `Left ${name} for good.`);
+  const joining = f.joining;
   delete state.fleet;
   return bound
     ? [`You put your steering-oar over and leave ${name} on its course. Nobody tries to stop you. Every ship you pass watches you go, and every man in them will tell it, the same way: that you left.`]
-    : [`You let ${name} go on without you, and go your own way.`];
+    : joining
+      ? [`You think better of it. ${capitalise(name)} will sail without you; nobody there has seen your sail yet, and nobody will miss it.`]
+      : [`You let ${name} go on without you, and go your own way.`];
 }
 
 export function leaveFleet(state: GameState, content: ContentBundle): void {

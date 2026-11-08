@@ -105,7 +105,7 @@ export function crewBynames(state: GameState): string[] {
     const list = BYNAMES[m.temperament as Temperament] ?? BYNAMES.steady;
     m.nickname = list[hash(m.id) % list.length]!;
     out.push(`The crew have started calling ${m.name} "${m.nickname}". He pretends not to like it.`);
-    journal(state, `${m.name} is called ${m.nickname} now.`);
+    journal(state, m.alive ? `${m.name} is called ${m.nickname} now.` : `${m.name} will be remembered as ${m.name} ${m.nickname}.`);
   }
   return out;
 }

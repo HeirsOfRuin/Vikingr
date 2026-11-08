@@ -138,7 +138,9 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
       const champion = foe.weapons >= 4;
       const type = d.kind === 'holmgang' ? 'holmgang_won' : champion ? 'killed_champion' : 'duel_won';
       const how = d.over === 'foe_yielded' ? 'yielded to you' : d.lethal ? 'died under your blade' : 'went down and stayed down';
-      addDeed(state, content, { type, text: `${foe.name} ${how}`, witnesses: d.kind === 'holmgang' ? 40 : 10 });
+      // the saga's voice, not the fight's: "Killed Cú Mara in single combat"
+      const told = d.over === 'foe_yielded' ? `Made ${foe.name} yield${d.kind === 'holmgang' ? ' on the holmgang cloak' : ''}` : d.lethal ? `Killed ${foe.name} in single combat` : `Beat ${foe.name} in single combat`;
+      addDeed(state, content, { type, text: told, witnesses: d.kind === 'holmgang' ? 40 : 10 });
       if (d.over === 'foe_yielded') {
         state.silver += DUEL.holmlausnMarks * ORTUG_PER_MARK;
         lines.push(`${foe.name} pays the holmlausn: ${formatSilver(DUEL.holmlausnMarks * ORTUG_PER_MARK)}.`);
@@ -329,7 +331,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   const where = b.place ? content.places[b.place]?.name ?? b.place : 'at sea';
   const atWhere = b.place ? ` at ${where}` : ' at sea';
   // "the Ulster levy", not "The Ulster levy", in the middle of a sentence
-  const foeName = (content.foes[b.foeId]?.name ?? 'them').replace(/^The /, 'the ');
+  const foeName = (content.foes[b.foeId]?.name ?? 'them').replace(/^(The|A|An) /, (w) => w.toLowerCase());
   // at another man's oar the crew's victory is the captain's: he was there (docs/FRAME-BEGINNINGS.md)
   const crewMult = mult * (state.service ? SERVICE_DEED : 1);
   if (won && b.context === 'sea') addDeed(state, content, { type: 'sea_fight_won', text: `Beat ${foeName === 'them' ? 'a crew' : foeName} at sea`, witnesses, mult: crewMult });
@@ -467,7 +469,7 @@ export function startRaid(state: GameState, content: ContentBundle, rng: RngCurs
 
 /** A name for the oarsman who takes a fallen sworn man's bench: one nobody aboard already answers to. */
 export function benchHeir(state: GameState, content: ContentBundle): string {
-  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0]]);
+  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), state.hero.name.split(' ')[0], ...(state.hostages ?? []).map((h) => h.name)]);
   const free = content.names.filter((n) => !taken.has(n));
   return free[(state.day * 7 + state.men.length * 13) % Math.max(1, free.length)] ?? 'Grim';
 }

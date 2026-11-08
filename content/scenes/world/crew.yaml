@@ -263,7 +263,7 @@
   text: |
     {man} is dead. He swore his oath to you on a ring, and kept it, all the way.
 
-    You sit with him the night before the burning, as a lord should, and the men come one by one to say something, or not to.
+    [if focus.drowned]There is nothing to burn: the sea has him. You sit up on the strand the first night ashore instead, as a lord should, and the men come one by one to say something, or not to.[else]You sit with him the night before the burning, as a lord should, and the men come one by one to say something, or not to.[/if]
   choices:
     - id: stone
       text: Raise a stone for him, with his name cut in it.
@@ -276,5 +276,6 @@
       result: The stories go round until the fire is low. Half of them aren't true. All of them are about {man}.
     - id: gear
       text: Give his weapons to the youngest man on the benches.
+      visible_if: "!focus.drowned"
       effects: [ { add: { honour: 1 } } ]
       result: The boy takes {man}'s sword as if it might bite him. He'll carry it well. He'll carry it for years, and every time he draws it somebody will ask whose it was.

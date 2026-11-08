@@ -360,7 +360,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
     case 'buy_farm': {
       state.silver -= FARM_PRICE;
       state.base.level = 'farm';
-      journal(state, 'Bought a farm of his own.');
+      journal(state, 'Bought a farm of your own.');
       lines.push(`You buy the old Ketilsstead at the head of the fjord from a widow going to live with her daughter: a longhouse with a bad roof, a byre, a field, a strip of shore. ${formatSilver(FARM_PRICE)}.`, state.base.wife ? `${state.base.wife} walks round it twice, and says it will do, and starts on the roof.` : 'It is cold, and it is empty, and it is yours.');
       break;
     }

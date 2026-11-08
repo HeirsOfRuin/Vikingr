@@ -15,6 +15,8 @@
     His name is Bersi Bersason. His mother is dead this winter. He is fifteen, he says, which is a lie by a year at least.
     [if flag.bersi_silver_sent]
     "My mother said you sent the silver," he says. "All of it. She said nobody would have known if you hadn't. I'd like an oar."
+    [elif man.bersi.drowned]
+    "My mother said my father went down with his silver," he says, "and nobody sent her any. I'd like some, or an oar. I'll take the oar."
     [else]
     "My mother said my father had silver in his chest when he died," he says. "She said it went in the common heap. I'd like it, or an oar. I'll take the oar."
     [/if]
@@ -25,7 +27,7 @@
       result: |
         [if flag.bersi_silver_sent]He takes the oar as if it might be taken back. By midsummer he has a tally-stick of his own, and he is cutting notches in it.[else]He takes the oar, and counts the benches, and works out the shares before you've cast off. Some things are in the blood.[/if]
     - id: silver
-      text: Give him the silver his father left, out of your own purse, and the oar.
+      text: Give him his father's share, out of your own purse, and the oar.
       visible_if: flag.bersi_silver_kept
       requires: ["silver >= 30"]
       effects: [ { add: { silver: -30, honour: 1 } }, { recruit: 1 }, { journal: "Paid Bersi's son his father's silver, and gave him an oar." } ]

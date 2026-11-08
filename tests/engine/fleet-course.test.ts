@@ -19,8 +19,8 @@ const clear = (s: GameState) => { for (let i = 0; i < 30 && s.pending; i++) s = 
 describe('a fleet on its course', () => {
 
   it('the timetable sets the course, and the actions follow it', () => {
-    let s = captain('home_fjord', 834, 115);
-    s.fleet = { id: 'danes834', since: dayOf(834, 90), camp: 'home_fjord', posture: 'lying', moved: dayOf(834, 90) };
+    let s = captain('ribe', 834, 155);
+    s.fleet = { id: 'danes834', since: dayOf(834, 90), camp: 'ribe', posture: 'lying', moved: dayOf(834, 90) };
     expect(courseStage(s, content)?.at).toBe('dorestad');
     s = act(content, s, { t: 'rest' });
     s = clear(s);
@@ -60,7 +60,7 @@ describe('a fleet on its course', () => {
     s = act(content, s, { t: 'rest' });
     expect(s.fleet?.camp).toBe('thetford');
     expect(s.pending?.t === 'report' && s.pending.title).toBe('Word of the fleet');
-    expect(s.journal.some((j) => /moved to Þjóðford while he was away/.test(j.text))).toBe(true);
+    expect(s.journal.some((j) => /moved to Þjóðford while you were away/.test(j.text))).toBe(true);
   });
 
   it('a scene that moved the army ahead of the timetable is not undone by it', () => {

@@ -25,7 +25,7 @@ describe('a captain of the great army', () => {
     expect(s.fleet?.away).toBe(true);
     expect(withFleet(s)).toBe(false);
     expect(cond(['fleet'], s, content)).toBe(false);
-    expect(s.journal.some((j) => /on his own account/.test(j.text))).toBe(true);
+    expect(s.journal.some((j) => /on your own account/.test(j.text))).toBe(true);
     // finish whatever the voyage threw up, then sail back
     for (let i = 0; i < 40 && (s.pending || s.at !== 'whitby'); i++) s = act(content, s, listActions(s, content).find((o) => o.enabled)!.action);
     expect(s.at).toBe('whitby');

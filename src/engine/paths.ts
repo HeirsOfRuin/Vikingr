@@ -111,6 +111,8 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   'hostages.political': (s, c) => hostageCount(s, c, 'political'),
   /** The party the open scene is about: can it stand surety; how many heads. */
   'hostage.surety': (s, c) => { const h = s.hostages?.find((x) => x.id === s.hfocus); return h ? !!c.hostages.kinds[h.kind]?.surety && h.state === 'held' : false; },
+  // the man a queued scene is about (the hird's mourning) went down with a ship: nothing to bury
+  'focus.drowned': (s) => { const m = s.mfocus ? s.men.find((x) => x.id === s.mfocus) : undefined; return !!m && !m.alive && !!m.drowned; },
   'hostage.n': (s) => s.hostages?.find((x) => x.id === s.hfocus)?.n ?? 0,
   'hostage.kids': (s) => (s.hostages?.find((x) => x.id === s.hfocus)?.n ?? 1) - 1,
   /** A prize ship already taken this year: one a year. */
@@ -195,6 +197,7 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
       if (b === 'master') return !!m && m.alive && state.ships.some((x) => x.master === `man:${m.id}`);
       if (!m) return b === 'alive' ? false : 0;
       if (b === 'alive') return m.alive;
+      if (b === 'drowned') return !m.alive && !!m.drowned;
       // a dead man's loyalty is nothing: passages that ask for it are about the living (the parting at Birsay named the dead)
       if (b === 'loyalty') return m.alive ? m.loyalty : 0;
       return 0;
@@ -216,7 +219,7 @@ export function checkPath(content: ContentBundle, path: string): string | null {
     case 'skill': return (SKILLS as readonly string[]).includes(a!) && !b ? null : `unknown skill "${a}"`;
     case 'wound': return content.injuries[a!] ? null : `unknown injury "${a}"`;
     case 'known': case 'rumoured': return content.places[a!] ? null : `unknown place "${a}"`;
-    case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn', 'master'].includes(b!) ? null : `bad sworn-man path "${path}"`;
+    case 'man': return content.men[a!] && ['present', 'alive', 'loyalty', 'sworn', 'master', 'drowned'].includes(b!) ? null : `bad sworn-man path "${path}"`;
     case 'item': return content.items[a!] && !b ? null : `unknown item "${a}"`;
     case 'standing': return content.places[a!] && !b ? null : `unknown place "${a}" for standing`;
     case 'norse': return content.places[a!] && !b ? null : `unknown place "${a}" for a ship-fort`;

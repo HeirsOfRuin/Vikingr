@@ -85,7 +85,7 @@ export function stow(state: GameState, content: ContentBundle, n: number): numbe
 }
 
 function hiredName(state: GameState, content: ContentBundle): string {
-  const taken = new Set([...state.men.map((m) => m.name), ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...Object.values(state.standIns ?? {}), ...(state.usedNames ?? [])]);
+  const taken = new Set([...state.men.map((m) => m.name), ...state.ships.map((s) => s.master?.split(':')[1] ?? ''), ...Object.values(state.standIns ?? {}), ...(state.usedNames ?? []), ...(state.hostages ?? []).map((h) => h.name)]);
   const free = content.names.filter((n) => !taken.has(n));
   const name = free[(state.day * 11 + state.ships.length * 5) % Math.max(1, free.length)] ?? 'Hrolf';
   (state.usedNames ??= []).push(name);
@@ -144,7 +144,10 @@ export function scatter(state: GameState, content: ContentBundle, rng: RngCursor
   const i = 1 + rng.int(state.ships.length - 1);
   const ship = state.ships[i]!;
   const m = masterOf(state, ship);
-  if (rng.float() < SCATTER.founder) {
+  // her hull and his seamanship: a sound ship under a good seaman mostly comes in late (Josh's save, 2026-11-08)
+  const hullRisk = 1.6 - Math.max(0, Math.min(100, ship.hull)) / 100;
+  const seaRisk = Math.max(0.5, 1.3 - 0.06 * state.hero.skills.seamanship);
+  if (rng.float() < SCATTER.founder * hullRisk * seaRisk) {
     const cap = content.ships[ship.type]?.crew ?? 0;
     const total = state.ships.reduce((n, s) => n + (content.ships[s.type]?.crew ?? 0), 0);
     const aboard = Math.round((state.crew.men * cap) / Math.max(1, total));
@@ -157,6 +160,7 @@ export function scatter(state: GameState, content: ContentBundle, rng: RngCursor
       const man = state.men.find((x) => x.id === m.id)!;
       man.alive = false;
       man.diedOn = state.day;
+      man.drowned = true;
       (state.standIns ??= {})[man.id] = benchHeir(state, content);
       lines.push(`${man.name} was at her steering-oar.`);
       journal(state, `${man.name} drowned with ${ship.name}.`);

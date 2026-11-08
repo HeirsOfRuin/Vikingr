@@ -38,9 +38,22 @@ export function addDeed(
     told: weight >= SELF_TELLING ? state.day : null,
     verse: false,
   };
+  // the same fight told twice (the duel's plain deed, then the scene's own words): the scene's telling stands, once
+  const last = state.deeds.at(-1);
+  if (last && last.day === deed.day && last.type === deed.type && SINGLE_FIGHTS.includes(deed.type) && d.text && /in single combat$| yield/.test(last.text) && !/in single combat$/.test(deed.text)) {
+    deed.n = last.n;
+    deed.weight = Math.max(deed.weight, last.weight);
+    deed.witnesses = Math.max(deed.witnesses, last.witnesses);
+    deed.told = deed.told ?? last.told;
+    state.deeds[state.deeds.length - 1] = deed;
+    return deed;
+  }
   state.deeds.push(deed);
   return deed;
 }
+
+/** Deeds a fight's engine writes and a scene may tell again in its own words. */
+const SINGLE_FIGHTS = ['killed_champion', 'duel_won', 'holmgang_won'];
 
 /** The fame one deed carries on a given day. */
 export function deedFame(deed: Deed, day: number): number {

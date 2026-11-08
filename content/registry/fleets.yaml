@@ -20,8 +20,11 @@
   until: 834
   desc: Horik's hersirs and Ubbi's Danes, bound up the Rhine for Dorestad.
   # Annals of St-Bertin 834: the Danes fall on Dorestad; they come back in 835 and 836, wintering on the Frisian islands.
+  # The fleet gathers on the Danish coast and goes up the Rhine at midsummer, as Ubbi's arrow says (Josh's save, 2026-11-08:
+  # with no first stage it lay in whatever fjord a Norwegian captain joined it from, for seven weeks).
   course:
-    - { from: [834, 110], at: dorestad, posture: bound, note: "Horik's Danes are bound for Dorestad." }
+    - { from: [834, 1], at: ribe, posture: lying, note: "Horik's hersirs are gathering the fleet at Ribe." }
+    - { from: [834, 150], at: dorestad, posture: bound, note: "Horik's Danes are bound for Dorestad." }
     - { from: [834, 200], at: walcheren, posture: bound, note: "After Dorestad the fleet goes down to lie in the Frisian islands for the rest of the summer." }
 - id: southern
   name: the southern fleet

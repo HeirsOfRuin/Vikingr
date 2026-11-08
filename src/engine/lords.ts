@@ -145,11 +145,11 @@ export function swear(state: GameState, content: ContentBundle, id: string, how:
     shiftLordFav(state, old, -LORD.leave);
     loseGrants(state, content, old, lines);
     lines.unshift(`You send ${lordName(state, content, old)} back his oath, openly, with a messenger and a gift, the way it should be done. He takes the gift. He will not forget it.`);
-    journal(state, `Gave back his oath to ${lordName(state, content, old)}.`);
+    journal(state, `Gave back your oath to ${lordName(state, content, old)}.`);
   }
   state.oath = { lord: id, since: state.day };
   shiftLordFav(state, id, 1);
-  journal(state, `Swore his oath to ${name}.`);
+  journal(state, `Swore your oath to ${name}.`);
   lines.push(`You kneel to ${name} in his hall, put your hands between his, and say the words in front of his men. You are his man now: his call is yours to answer, his friends are yours to leave alone, and a tenth of what you take is his.`);
   return lines;
 }
@@ -163,7 +163,7 @@ export function renounce(state: GameState, content: ContentBundle, id: string): 
   else if (state.oath2?.lord === id) delete state.oath2;
   lines.push(`You send ${name} back his oath, with a messenger and a gift. He takes the gift.`);
   loseGrants(state, content, id, lines);
-  journal(state, `Gave back his oath to ${name}.`);
+  journal(state, `Gave back your oath to ${name}.`);
   return lines;
 }
 
@@ -248,7 +248,7 @@ export function raidedFriend(state: GameState, content: ContentBundle, place: st
       lines.push(`${name} hears what you did at ${content.places[place]!.name}, and sends you back your oath. You are no man of his now.`);
       if (state.oath?.lord === id) { state.oath = state.oath2 ?? undefined; delete state.oath2; } else delete state.oath2;
       loseGrants(state, content, id, lines);
-      journal(state, `${name} gave him back his oath.`);
+      journal(state, `${name} gave you back your oath.`);
     } else lines.push(`${name} will hear what you did at ${content.places[place]!.name}. It was under his peace.`);
   }
   return lines;

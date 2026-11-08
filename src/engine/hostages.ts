@@ -71,7 +71,11 @@ export function makeHostage(state: GameState, content: ContentBundle, rng: RngCu
   const cap = captain ? content.captains[captain] : undefined;
   const people = (cap?.people ?? (kind === 'captain_kin' ? 'norse' : content.places[placeId]?.people) ?? 'norse') as People;
   const names = content.hostages.names[people] ?? content.hostages.names.norse!;
-  const name = names[k.sex][rng.int(names[k.sex].length)]!;
+  // not a name already in the story: a hostage called after a dead hird-man reads as the dead man walking (continuity)
+  const taken = new Set([...state.men.map((m) => m.name), ...Object.values(state.standIns ?? {}), ...(state.usedNames ?? []), state.hero.name.split(' ')[0], ...hostagesOf(state).map((h) => h.name)]);
+  const free = names[k.sex].filter((x) => !taken.has(x));
+  const pool = free.length ? free : names[k.sex];
+  const name = pool[rng.int(pool.length)]!;
   const kids = k.kids ? k.kids[0] + rng.int(k.kids[1] - k.kids[0] + 1) : 0;
   const place = content.places[placeId]?.name ?? 'the sea';
   const fill = (t: string) => t.replace(/\{name\}/g, name).replace(/\{place\}/g, place).replace(/\{people\}/g, peopleName(people)).replace(/\{kids\}/g, KIDS[Math.min(3, kids)]!);

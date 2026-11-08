@@ -4,7 +4,7 @@ import { SKALD } from './skald';
 import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import { journal } from './journal';
-import { formatSilver, plural } from './format';
+import { formatSilver, plural, lowerFirst } from './format';
 import { livingFame } from './fame';
 import { earn, yieldAfterHarvest } from './hardship';
 
@@ -114,7 +114,7 @@ export function hangTrophy(state: GameState, content: ContentBundle, id: string)
   if (i < 0) return;
   state.items.splice(i, 1);
   state.base.trophies.push(id);
-  journal(state, `Hung ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall at home.`);
+  journal(state, `Hung ${lowerFirst(content.items[id]!.name)} on the wall at home.`);
 }
 
 /** Keepsakes that would look well on a wall. */

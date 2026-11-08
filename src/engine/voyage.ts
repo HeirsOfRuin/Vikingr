@@ -168,6 +168,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
         if (rng.float() < 0.5) {
           m.alive = false;
           m.diedOn = state.day;
+          m.drowned = true;
           lines.push(`${m.name} is not among the men pulled from the water.`);
           journal(state, `${m.name} drowned.`);
           (state.standIns ??= {})[m.id] = benchHeir(state, content);

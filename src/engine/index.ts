@@ -43,7 +43,7 @@ import {
   borrowShip, BUILD_TYPES, winterWork, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
   type HallWhat, type ShareHow,
 } from './season';
-import { formatSilver, plural } from './format';
+import { formatSilver, plural, lowerFirst } from './format';
 import { banter } from './banter';
 import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
 import { journal } from './journal';
@@ -343,7 +343,7 @@ export function baseActions(state: GameState, content: ContentBundle): ActionOpt
   out.push(opt('Your base', { t: 'hoard_out' }, 'Dig up the whole hoard', state.base.hoard > 0, 'The hoard is empty.', state.base.hoard > 0 ? formatSilver(state.base.hoard) : undefined));
   out.push(opt('Arm-rings', { t: 'make_ring' }, 'Have the smith make a silver arm-ring', state.silver >= RING.silver.make, `You need ${formatSilver(RING.silver.make)}.`, `${formatSilver(RING.silver.make)}; you hold ${ringWords(state)}`));
   for (const m of METALS) if (ringsOf(state)[m] > 0) out.push(opt('Arm-rings', { t: 'cut_ring', metal: m }, `Cut a ${m} arm-ring into hacksilver`, true, undefined, formatSilver(RING[m].weight)));
-  for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${content.items[id]!.name.charAt(0).toLowerCase()}${content.items[id]!.name.slice(1)} on the wall`));
+  for (const id of hangable(state, content)) out.push(opt('Your base', { t: 'hang', item: id }, `Hang ${lowerFirst(content.items[id]!.name)} on the wall`));
   if (!state.service) out.push(...familyActions(state, content, opt));
   // the skald: to sea this summer, or the jarl's benches (playtest 8)
   const sk = skaldOf(state);
@@ -558,14 +558,14 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     }
     case 'shop': {
       const shops = (p as { shops: Shop[] }).shops;
-      const out = forSale(state, content, shops).map((d) => opt(d.kind === 'fitting' ? 'The shipwright' : shops.includes('smith') ? 'The smith' : 'The booths', { t: 'buy', item: d.id }, `Buy ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}`, state.silver >= d.price!, `You need ${formatSilver(d.price!)}.`, formatSilver(d.price!)));
+      const out = forSale(state, content, shops).map((d) => opt(d.kind === 'fitting' ? 'The shipwright' : shops.includes('smith') ? 'The smith' : 'The booths', { t: 'buy', item: d.id }, `Buy ${lowerFirst(d.name)}`, state.silver >= d.price!, `You need ${formatSilver(d.price!)}.`, formatSilver(d.price!)));
       if (!state.service && (shops.includes('smith') || shops.includes('market'))) out.push(opt(shops.includes('smith') ? 'The smith' : 'The booths', { t: 'make_ring' }, 'Have a silver arm-ring made', state.silver >= RING.silver.make, `You need ${formatSilver(RING.silver.make)}.`, `${formatSilver(RING.silver.make)}; you hold ${ringWords(state)}`));
       const ac = armCost(state);
       if (ac !== null && !state.service) out.push(opt('Your men', { t: 'arm' }, `Arm the men: ${gearWord(Math.floor(state.crew.gear) + 1)}`, state.silver >= ac, `You need ${formatSilver(ac)}.`, `${formatSilver(ac)} for ${state.crew.men} men`));
       // kit he no longer carries, to the smith or the booths (playtest 4)
       for (const x of spareKit(state, content)) {
         const n = itemName(content, x);
-        out.push(opt('Sell', { t: 'sell_item', uid: x.uid }, `Sell ${n.charAt(0).toLowerCase()}${n.slice(1)}`, true, undefined, `${formatSilver(sellValue(content, x))}${content.items[x.id]?.heirloom ? '; it was never yours to sell, men will say' : ''}`));
+        out.push(opt('Sell', { t: 'sell_item', uid: x.uid }, `Sell ${lowerFirst(n)}`, true, undefined, `${formatSilver(sellValue(content, x))}${content.items[x.id]?.heirloom ? '; it was never yours to sell, men will say' : ''}`));
       }
       // a ship he no longer needs, to the shipwright (playtest 2026-11-08)
       if (shops.includes('shipwright')) for (const sh of shipsToSell(state)) out.push(opt('Ships', { t: 'sell_ship', ship: sh.id }, `Sell ${sh.name}`, true, undefined, `${formatSilver(shipSellPrice(content, sh))}; a ${content.ships[sh.type]?.name.toLowerCase() ?? 'ship'}, hull ${Math.round(sh.hull)}/100${state.crew.men > capacity(state, content) - (content.ships[sh.type]?.crew ?? 0) ? `; men with no bench will stay ashore` : ''}`));
@@ -762,11 +762,12 @@ function followFleet(out: ActionOption[], state: GameState, content: ContentBund
   const there = content.places[to]?.name ?? to;
   const road = !nextHop(content, state.at, to) && !!landPath(content, state.at, to);
   const can = road || (!seaClosed(doy) && !!nextHop(content, state.at, to));
-  const why = `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}. You go with it, or you leave it.`;
+  const joining = !!state.fleet?.joining;
+  const why = joining ? `You are sworn to ${name}, at ${there}. You sail to join it, or you think better of it.` : `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}. You go with it, or you leave it.`;
   const shut = out.map((o) => (SEA_ACTIONS.has(o.action.t) || (o.action.t === 'march' && (o.action as { to: string }).to !== to) ? { ...o, enabled: false, reason: why } : o));
   return [
-    opt(road ? 'March' : 'Sail', { t: 'fleet_follow' }, `${road ? (state.flags.ga_rider ? 'Ride' : 'March') : 'Sail'} with ${name} for ${there}`, can, seaClosed(doy) ? 'The sea is closed until spring.' : 'There is no road there from here.', `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}`),
-    opt('Sail', { t: 'fleet_leave' }, `Leave ${name}`, true, undefined, `Desertion: ${FLEET.desertHonour} honour, and every crew in the fleet will tell it`),
+    opt(road ? 'March' : 'Sail', { t: 'fleet_follow' }, joining ? `${road ? 'March' : 'Sail'} to join ${name} at ${there}` : `${road ? (state.flags.ga_rider ? 'Ride' : 'March') : 'Sail'} with ${name} for ${there}`, can, seaClosed(doy) ? 'The sea is closed until spring.' : 'There is no road there from here.', joining ? `${name.charAt(0).toUpperCase()}${name.slice(1)} is gathering at ${there}` : `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}`),
+    opt('Sail', { t: 'fleet_leave' }, joining ? `Think better of joining ${name}` : `Leave ${name}`, true, undefined, joining ? 'Nobody there has seen your sail yet' : `Desertion: ${FLEET.desertHonour} honour, and every crew in the fleet will tell it`),
     ...shut,
   ];
 }
@@ -1011,7 +1012,7 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       shiftStanding(state, content, at, -1);
       shiftCohesion(state, 1);
       state.day += 3;
-      journal(state, `${content.places[at]!.name} paid the fleet ${formatSilver(offer)} to be left alone; his share ${formatSilver(mine)}.`);
+      journal(state, `${content.places[at]!.name} paid the fleet ${formatSilver(offer)} to be left alone; your share ${formatSilver(mine)}.`);
       report('Tribute', [`You send a man up to ${content.places[at]!.name} with a green branch and a number. They count your sails from the walls, and argue for three days, and pay: ${formatSilver(offer)}, weighed out on the strand. Your share as the man who called the fleet is ${formatSilver(mine)}. The captains take the rest, and like you better for it.`]);
       break;
     }
@@ -1103,8 +1104,8 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       state.pending = { t: 'shop', shops: (state.pending as { shops: Shop[] }).shops };
       break;
     case 'give_item': {
-      const line = giveKitTo(state, content, action.uid, action.man);
-      if (line) journal(state, line);
+      // giveKitTo writes the journal line itself
+      giveKitTo(state, content, action.uid, action.man);
       break;
     }
     case 'divide':

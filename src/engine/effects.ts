@@ -1,3 +1,4 @@
+import { lowerFirst } from './format';
 // Effect ops from content (DESIGN §17). Each op mutates the state copy the engine is working on.
 import { crewmanEffect } from './crewman';
 import { hireSkald, loseSkald } from './skald';
@@ -92,7 +93,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       }
       if (m && e.man.nickname) {
         m.nickname = e.man.nickname;
-        journal(state, `${m.name} is called ${e.man.nickname} now.`);
+        journal(state, m.alive ? `${m.name} is called ${e.man.nickname} now.` : `${m.name} will be remembered as ${m.name} ${e.man.nickname}.`);
       }
     } else if ('fight' in e) {
       startDuel(state, content, e.fight.foe, e.fight.kind, e.fight.lethal, e.fight.win, e.fight.lose);
@@ -150,7 +151,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       }
     } else if ('item' in e) {
       giveItem(state, content, e.item.id, !!e.item.equip);
-      journal(state, `You have ${content.items[e.item.id]!.name.charAt(0).toLowerCase()}${content.items[e.item.id]!.name.slice(1)}.`);
+      journal(state, `You have ${lowerFirst(content.items[e.item.id]!.name)}.`);
     } else if ('wife' in e) {
       state.base.wife = e.wife;
       // one wife, and every other courtship ends with the wedding (playtest 5: the others' scenes kept coming)
@@ -387,7 +388,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       state.ships = [{ id: `ship${state.day}`, type: e.ship.type, name: e.ship.name, hull: 80 }];
       state.crew.men = e.ship.crew;
       state.service = null;
-      journal(state, `Took ${e.ship.name} for his own.`);
+      journal(state, `Took ${e.ship.name} for your own.`);
     }
   }
   void rng;

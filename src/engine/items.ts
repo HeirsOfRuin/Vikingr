@@ -3,7 +3,7 @@ import type { ContentBundle, ItemDef } from '../content/schema';
 import type { GameState, ItemInst, KitSlot, Ship } from './state';
 import type { RngCursor } from './rng';
 import { journal } from './journal';
-import { formatSilver } from './format';
+import { formatSilver, lowerFirst } from './format';
 import { addDeed } from './fame';
 
 export const DEFAULT_KIT = ['spear', 'shield', 'leather'];
@@ -50,7 +50,7 @@ export function equip(state: GameState, content: ContentBundle, uid: string): vo
 /** The display name: "Leggbítr (your grandfather's sword)", or just the item's name. */
 export function itemName(content: ContentBundle, inst: ItemInst): string {
   const base = content.items[inst.id]?.name ?? inst.id;
-  return inst.name ? `${inst.name} (${base.charAt(0).toLowerCase()}${base.slice(1)})` : base;
+  return inst.name ? `${inst.name} (${lowerFirst(base)})` : base;
 }
 
 // ---- what the kit does in a fight ----
@@ -120,11 +120,11 @@ export function buy(state: GameState, content: ContentBundle, id: string): strin
   if (d.kind === 'fitting') {
     const ship = state.ships[0]!;
     ship.fittings = [...(ship.fittings ?? []), id];
-    journal(state, `Fitted ${ship.name} with ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}.`);
+    journal(state, `Fitted ${ship.name} with ${lowerFirst(d.name)}.`);
     return [`${d.desc}`, `${ship.name} has it now.`];
   }
   giveItem(state, content, id, true);
-  journal(state, `Bought ${d.name.charAt(0).toLowerCase()}${d.name.slice(1)}.`);
+  journal(state, `Bought ${lowerFirst(d.name)}.`);
   return [d.desc, 'You carry it from now on.'];
 }
 
@@ -157,7 +157,7 @@ export function creditWeapon(state: GameState, content: ContentBundle, rng: RngC
   const free = pool.filter(([nm]) => !taken.has(nm));
   const [nm, gloss] = (free.length ? free : pool)[rng.int((free.length ? free : pool).length)]!;
   w.name = nm;
-  const base = content.items[w.id]!.name.toLowerCase().replace(/^an? /, 'the ');
+  const base = lowerFirst(content.items[w.id]!.name).replace(/^an? /, 'the ');
   addDeed(state, content, { type: 'weapon_named', text: `His weapon was given a name: ${nm}, ${gloss}`, witnesses: state.crew.men });
   journal(state, `The men call ${base} ${nm} now, ${gloss}.`);
   return `Somewhere between the fight and the fire, the men start calling ${base} by a name: ${nm}, ${gloss}. You didn't choose it. Nobody ever does.`;
@@ -204,12 +204,12 @@ export function sellItem(state: GameState, content: ContentBundle, uid: string):
   state.items.splice(i, 1);
   state.silver += price;
   const name = itemName(content, inst);
-  journal(state, `Sold ${name.charAt(0).toLowerCase()}${name.slice(1)} for ${formatSilver(price)}.`);
+  journal(state, `Sold ${lowerFirst(name)} for ${formatSilver(price)}.`);
   if (def.heirloom) {
     state.honour = Math.max(-10, state.honour - 1);
-    return `You sell ${name.charAt(0).toLowerCase()}${name.slice(1)} for ${formatSilver(price)}. The trader can't believe his luck. Neither, when they hear of it at home, can anyone else.`;
+    return `You sell ${lowerFirst(name)} for ${formatSilver(price)}. The trader can't believe his luck. Neither, when they hear of it at home, can anyone else.`;
   }
-  return `You sell ${name.charAt(0).toLowerCase()}${name.slice(1)} for ${formatSilver(price)}.`;
+  return `You sell ${lowerFirst(name)} for ${formatSilver(price)}.`;
 }
 
 /** A blade or a mail-shirt given to a sworn man, in front of the others: it binds him closer, and he fights better for it. */
@@ -223,6 +223,6 @@ export function giveKitTo(state: GameState, content: ContentBundle, uid: string,
   m.loyalty = Math.min(10, m.loyalty + (def.heirloom || inst.name ? 3 : 2));
   if (def.kind === 'weapon') m.weapons = Math.min(6, m.weapons + 1);
   const name = itemName(content, inst);
-  journal(state, `Gave ${name.charAt(0).toLowerCase()}${name.slice(1)} to ${m.name}.`);
-  return `You give ${name.charAt(0).toLowerCase()}${name.slice(1)} to ${m.name}, in front of the others.`;
+  journal(state, `Gave ${lowerFirst(name)} to ${m.name}.`);
+  return `You give ${lowerFirst(name)} to ${m.name}, in front of the others.`;
 }
