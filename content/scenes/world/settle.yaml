@@ -1,6 +1,7 @@
 # Settlement (docs/FRAME-LINEAGE.md C): the winter they come for the fort that is home.
 - id: st_fort_attack
   kind: queued
+  art: army_camp
   title: They come for the fort
   text: |
     They come in the dark of the winter, as you knew they would: a war-band out of the hills with torches, and the whole countryside behind it, every man who lost a cow or a son to you since you dug the ditch.
@@ -17,6 +18,7 @@
 
 - id: st_fort_held
   kind: queued
+  art: army_camp
   title: The fort holds
   text: |
     By morning the ditch is full of them, and they have gone back into the hills with their dead on hurdles. The women come out of the hall and walk along the stockade, looking.
@@ -30,6 +32,7 @@
 
 - id: st_fort_lost
   kind: queued
+  art: army_camp
   title: The fort falls
   text: |
     They come over the ditch on brushwood bundles and through the stockade with axes, and it is a fight in the dark among the houses, among the women and the children, which is the worst kind there is.

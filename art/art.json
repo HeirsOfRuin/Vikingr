@@ -16,5 +16,14 @@
  },
  "hearth_ormr": {
   "cx": 0.55
+ },
+ "army_camp": {
+  "cy": 0.5
+ },
+ "army_march": {
+  "cy": 0.6
+ },
+ "south_harbour": {
+  "cy": 0.47
  }
 }

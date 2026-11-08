@@ -107,7 +107,7 @@
   once: true
   weight: 15
   requires: ["year >= 845", "place == noirmoutier", "!service", "norse.noirmoutier", "!holding.noirmoutier"]
-  art: home_fjord
+  art: army_camp
   title: A house on the island
   text: |
     The monks are never coming back to Noirmoutier. Everybody knows it now. The Northmen who winter here have stopped living in the cloister and started building houses of their own: turf and driftwood, with byres and boat-sheds and salt-pans, and Frankish women keeping them, some of them wives.

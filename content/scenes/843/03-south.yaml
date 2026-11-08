@@ -115,7 +115,7 @@
 
 - id: sf_lisbon
   kind: spine
-  art: open_sea
+  art: south_harbour
   when: August, 844
   title: Al-Ushbuna
   text: |
@@ -141,7 +141,7 @@
 
 - id: sf_seville
   kind: spine
-  art: iona_burning
+  art: south_harbour
   when: Autumn, 844
   title: Ishbiliya
   text: |

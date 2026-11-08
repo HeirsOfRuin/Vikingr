@@ -11,7 +11,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 869", "place == york"]
-  art: muster
+  art: army_march
   title: The road to Thetford
   text: |
     In the summer the sons of Ragnarr go back for King Edmund. Nobody says why. He gave them horses and peace four years ago, and paid them to go away, and did everything right. Perhaps that is why.
@@ -63,7 +63,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 870", "place == thetford"]
-  art: muster
+  art: army_camp
   title: Wessex
   text: |
     Three kingdoms out of four, now: Northumbria has a king who does what he's told, Mercia pays, East Anglia has a dead king and a Danish one. The fourth is Wessex, which has the most land and the most silver and two brothers on the throne who sat outside Nottingham all one winter and never attacked.
@@ -130,7 +130,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 871", "place == reading"]
-  art: muster
+  art: army_march
   title: Nine battles
   text: |
     It goes on all that year. The army beats the West Saxons at Basing, and loses to them, and beats them again, nine fights in one year by the English count, and the English king dies after Easter and his brother Alfred is king, at twenty-two, with an army that won't stop coming back.

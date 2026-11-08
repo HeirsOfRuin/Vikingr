@@ -126,3 +126,17 @@ Same format and prompt add-on. Picts and Britons built in timber and drystone; t
 | `tarbat` | Tarbat | A low spit between two firths, a monastery of timber and drystone, tall carved Pictish stones | Clear northern evening |
 | `glendalough` | Glendalough | A steep wooded valley with two dark lakes, a stone gatehouse and churches between them | Mist on the slopes |
 | `jarrow` | Jarrow | A stone church and hall on a low rise above wide tidal mudflats, a river mouth | Grey, low tide |
+
+## Received (2026-11-08)
+Three standalone images, 1168 × 784, all survive conversion (32–36 colours).
+- `army_camp`: a fortified winter camp by a river, palisade, longships drawn up inside, huts and fires, frost. Crop `cy` 0.5. Now on 20 scenes: the Dublin and Linn Duachaill ship-forts, Repton, Reading, the army's camp market and envoys, the Loire island, Bordeaux's siege lines, the Camargue winter, your own fort under attack, the Dorestad share-out.
+- `army_march`: a column of riders on a muddy road through farmland, smoke behind the hill. Crop `cy` 0.6. Now on 11 scenes: the road events and the army's rides north and to Thetford.
+- `south_harbour`: a white walled town with a square minaret, longships coming in. Crop `cy` 0.47 (keeps the tower and the ships). Now on 5 scenes: Algeciras, Nekor, the Balearics, Lisbon, Seville.
+
+## Shot list: the next three (wanted, 2026-11-08)
+| Key | Scene | Where it goes |
+|---|---|---|
+| `frank_town` | A Frankish river city: Roman walls patched in timber, a stone church, longships in the river | Nantes, Rouen, Paris, Bordeaux, the Rhône: the Loire and Seine chapters |
+| `market_strand` | A northern trading town: timber houses, jetties, booths, a knarr | Hedeby, Birka, Kaupang, Ribe, Dorestad: trade, recruiting, the market scenes |
+| `sea_fight` | Two longships locked together in a swell, men fighting across the gunwales | Every fight at sea (merchants, rivals, pirates, the Channel, the Baltic) |
+After these: the East road (a river portage in birch forest) and Iceland (a turf house on a lava field).

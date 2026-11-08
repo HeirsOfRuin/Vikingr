@@ -259,7 +259,7 @@
   cooldown_days: 300
   weight: 25
   requires: ["seat.loire", "!service"]
-  art: shore_wait
+  art: army_camp
   title: The Loire Northmen
   text: |
     The monks' island has been a Norse camp for longer than some of the men on it have been alive. There are houses on it now, and wives, and children who speak Frankish to their mothers and Norse to their fathers, and every summer the crews go up the river and come back. What there isn't is anyone in charge.

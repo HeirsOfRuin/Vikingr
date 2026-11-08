@@ -89,7 +89,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 865"]
-  art: muster
+  art: army_camp
   title: The East Angles' horses
   text: |
     The army comes ashore in East Anglia in the autumn and does nothing at all, which frightens the English worse than burning would. It digs a ditch round a camp and sits behind it, eating the East Angles' cattle, and sends word to their king that it would like horses.

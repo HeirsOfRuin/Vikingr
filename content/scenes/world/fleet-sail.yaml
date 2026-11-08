@@ -220,7 +220,7 @@
   chance: 0.15
   cooldown_days: 200
   requires: [fleet, "at.kind != home"]
-  art: muster
+  art: army_camp
   title: The flux
   text: |
     The flux comes through the camp the way it always does when too many men are on one beach too long: one crew, then the next, then all of them, and the smell of it carried on the wind. [if service]{captain}'s ship has it.[else]Your ship has it.[/if] Three men down in a day.

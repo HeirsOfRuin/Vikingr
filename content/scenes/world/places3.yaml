@@ -244,6 +244,7 @@
   at: [linn_duachaill]
   once: true
   requires: ["!service"]
+  art: army_camp
   title: Linn Duachaill
   text: |
     [if norse.linn_duachaill]

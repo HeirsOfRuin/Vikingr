@@ -36,7 +36,7 @@
   once: true
   weight: 30
   requires: ["year == 834", "fleet.id == danes834", fleet, "place == walcheren", "!service", seen.dn_buyback]
-  art: muster
+  art: army_camp
   title: The shares of Dorestad
   text: |
     A Danish captain called Hrafnkell says your crews took more than their share at Dorestad, and says it at the fleet's fire, loudly, with his men behind him. He wants a tenth of what's in your hold. It's a lie, mostly. It's also forty Danes against your men, on a Danish king's island.
@@ -65,7 +65,7 @@
   once: true
   weight: 30
   requires: ["year == 843", "fleet.id == vestfold", fleet, "place == noirmoutier", "!service", "month >= 7", "month <= 10"]
-  art: shore_wait
+  art: army_camp
   title: The island in summer
   text: |
     After Nantes the fleet comes back down the river to the monks' island and lies there, sixty ships along the beach, with the plunder of a city in the huts. Nobody is in a hurry. The Vestfold jarls have the island for the winter, and the summer is long.
@@ -141,7 +141,7 @@
   once: true
   weight: 30
   requires: [flag.bx_siege, "fleet.id == loire847", "place == bordeaux", "!service"]
-  art: hearth_ormr
+  art: army_camp
   title: The lines in winter
   text: |
     The fleet's camp outside Bordeaux is a ditch and a bank and huts made of vine-props, and the winter comes into it through every gap. The town on its walls has granaries. The camp has what it can take from a country it has already stripped.
@@ -199,7 +199,7 @@
   chance: 0.25
   cooldown_days: 300
   requires: [flag.ga_army, "fleet.id == greatarmy", fleet, "phase != winter", "!service"]
-  art: town_rise
+  art: army_camp
   title: The army's market
   text: |
     Wherever the army camps for more than a week, a market grows up outside the ditch: Frisian traders with wine, Danes with ships to sell, slave-dealers out of Dublin with chains on their carts, and English farmers from the next valley who have decided that if the army is going to take their pigs anyway, they might as well be paid for them.
@@ -225,7 +225,7 @@
   chance: 0.2
   cooldown_days: 400
   requires: [flag.ga_army, "fleet.id == greatarmy", fleet, "phase != winter", "year >= 868"]
-  art: muster
+  art: army_camp
   title: Kings for sale
   text: |
     An English nobleman rides into the camp under a green branch with six men, very straight in the saddle. He has come to see the army's leaders about the matter of who should be king of his country, since the last one is dead and the army seems to be in the business of deciding.

@@ -57,6 +57,7 @@
   once: true
   weight: 20
   requires: ["year >= 841", "!service", "norse.dublin"]
+  art: army_camp
   title: The ship-fort at Duibhlinn
   text: |
     [if year == 841]
@@ -177,6 +178,7 @@
   chance: 0.5
   cooldown_days: 300
   requires: [flag.ir_fort_member, "norse.dublin"]
+  art: army_camp
   title: A winter in the fort
   text: |
     Winter in the ship-fort is mud, smoke, rain, and Irish ale, which is better than you expected. The Irish come to the gate every day to trade: cattle, cloth, honey, sometimes their own enemies, roped together, for sale. Some of your men have Irish women already. Some of the women have Irish brothers, who come to visit, and stay to drink, and are not quite enemies any more.

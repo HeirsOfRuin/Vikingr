@@ -69,3 +69,21 @@
   title: A longship in a storm
   fx:
     - { kind: water, rect: [0, 120, 400, 40] }
+- id: army_camp
+  title: The army's winter camp
+  fx:
+    - { kind: water, rect: [150, 0, 250, 58] }
+    - { kind: smoke, at: [106, 48], spread: 4, rate: 0.25 }
+    - { kind: smoke, at: [142, 88], spread: 4, rate: 0.25 }
+    - { kind: smoke, at: [330, 110], spread: 4, rate: 0.2 }
+    - { kind: fire, rect: [146, 100, 6, 6] }
+- id: army_march
+  title: The army on the road
+  fx:
+    - { kind: smoke, at: [150, 24], spread: 8, rate: 0.3 }
+    - { kind: birds, rect: [200, 4, 180, 30], count: 2 }
+- id: south_harbour
+  title: A walled town in the south
+  fx:
+    - { kind: water, rect: [0, 92, 400, 68] }
+    - { kind: birds, rect: [20, 6, 200, 40], count: 2 }

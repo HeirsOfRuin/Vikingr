@@ -45,7 +45,7 @@
   chance: 0.35
   cooldown_days: 150
   requires: ["at.people == english", fleet]
-  art: muster
+  art: army_march
   title: The empty village
   text: |
     The country empties ahead of the army like water ahead of a ship's bow. This village went this morning: the fires still warm, a pot of pottage on the hearth, a dog that won't leave, the church door standing open on nothing worth taking.
@@ -100,7 +100,7 @@
   chance: 0.3
   cooldown_days: 200
   requires: ["at.people == english", "year >= 865", flag.ga_army]
-  art: muster
+  art: army_march
   title: The thegn's horses
   text: |
     A thegn's stud in a fold of the downs: forty horses in a walled paddock and two old men and a boy to mind them. The thegn is off with his king's host. His horses are not.
@@ -121,7 +121,7 @@
   chance: 0.25
   cooldown_days: 365
   requires: ["at.people == english"]
-  art: muster
+  art: army_march
   title: The giants' road
   text: |
     The road runs straight as a spear-shaft over the hills, paved, cambered, ditched on both sides, older than anyone's grandfather's grandfather. The English say giants made it. At a crossing there is a stone as tall as a man with letters cut into it, Latin letters, half-filled with moss.
@@ -174,7 +174,7 @@
   chance: 0.3
   cooldown_days: 200
   requires: ["at.people == gael", "!service"]
-  art: muster
+  art: army_march
   title: The herd
   text: |
     Cattle are wealth here, more than silver: kings are counted in them, and wars are fought for them. You come on a herd of sixty in a valley with three boys minding it, who take one look at you and run.
@@ -265,7 +265,7 @@
   chance: 0.25
   cooldown_days: 200
   requires: ["!service"]
-  art: muster
+  art: army_march
   title: The river in spate
   text: |
     Three days of rain in the hills, and the river that was knee-deep at this ford in the spring is brown and loud and chest-deep and carrying whole trees.
@@ -289,7 +289,7 @@
   trigger: road
   chance: 0.25
   cooldown_days: 90
-  art: muster
+  art: army_march
   title: A camp on the road
   text: |
     A night under the sky a long way from the ships, with a fire in a ring of stones and the horses hobbled and a guard on the road both ways. Seamen don't sleep well on land. It doesn't move enough.
@@ -308,7 +308,7 @@
   chance: 0.3
   cooldown_days: 200
   requires: [fleet]
-  art: muster
+  art: army_march
   title: The stragglers
   text: |
     An army on the march leaves a tail: the lame, the drunk, the men with too much plunder on their backs to keep up. The local people know about the tail. This morning eleven stragglers lie dead by the road, and the men who did it can't be far.
@@ -333,7 +333,7 @@
   chance: 0.2
   cooldown_days: 365
   requires: [fleet, "!service", "crew.men >= 10"]
-  art: muster
+  art: army_march
   title: Men going home
   text: |
     Four men from another crew catch up with you on the road at dusk, heavy with plunder, going the wrong way. They've had enough of the army, they say. They have a ship's worth of silver between them and a farm each waiting. They'd go home with you, if you're going home. Or with anyone.

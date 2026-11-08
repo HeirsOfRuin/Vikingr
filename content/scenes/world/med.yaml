@@ -158,7 +158,7 @@
 
 - id: mh_algeciras
   kind: spine
-  art: town_rise
+  art: south_harbour
   when: Summer, 859
   title: The Green Island
   text: |
@@ -195,7 +195,7 @@
 
 - id: mh_nekor
   kind: spine
-  art: shore_wait
+  art: south_harbour
   when: Autumn, 859
   title: Nekor
   text: |
@@ -226,7 +226,7 @@
 
 - id: mh_balearics
   kind: spine
-  art: open_sea
+  art: south_harbour
   when: Autumn, 859
   title: The islands
   text: |
@@ -448,7 +448,7 @@
 # ---- the second winter ----
 - id: mh_winter2
   kind: spine
-  art: shore_wait
+  art: army_camp
   when: Autumn, 860
   title: The second winter
   text: |

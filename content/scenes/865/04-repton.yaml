@@ -33,7 +33,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 873", "place == london"]
-  art: muster
+  art: army_camp
   title: Up the Trent
   text: |
     The Mercians have paid twice now, and the army has decided that a kingdom which pays twice can be had outright. In the autumn it goes north, round by the sea and up the Humber and the Trent, past Nottingham, to the Mercian kings' own minster at Repton, where their kings are buried, and makes its camp against the church wall.
@@ -84,7 +84,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 874", "place == repton"]
-  art: muster
+  art: army_camp
   title: Two armies
   text: |
     In the spring the army that came to England nine years ago comes apart, the way armies do, without anybody quite deciding it.

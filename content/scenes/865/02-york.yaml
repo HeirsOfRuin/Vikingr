@@ -10,7 +10,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 866", "place == gipeswic"]
-  art: muster
+  art: army_march
   title: North, over the Humber
   text: |
     The army sits in East Anglia all summer, eating King Edmund's cattle and riding his horses fat, and in the autumn word comes down from the north: the Northumbrians have thrown out their king, Osberht, and taken a man called Ælla instead, and now the two of them are at war, and nobody is minding York.
@@ -188,7 +188,7 @@
   once: true
   weight: 40
   requires: [flag.ga_army, "year == 868", "place == nottingham"]
-  art: muster
+  art: army_camp
   title: Back to York
   text: |
     The Mercians pay, and the army goes back down the Trent to York, and spends the whole of the summer there doing very little, which the sons of Ragnarr call resting the horses and the army calls drinking.
