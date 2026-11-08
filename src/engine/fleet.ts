@@ -182,3 +182,32 @@ export function buyHull(state: GameState, content: ContentBundle, type: string, 
   journal(state, `Bought ${s.name}, a secondhand ${content.ships[type]!.name.toLowerCase()}.`);
   return `You buy her for ${formatSilver(offer.price)}: ${s.name}, a ${content.ships[type]!.name.toLowerCase()} with a few summers on her and a patch in the sail.`;
 }
+
+/** What a shipwright pays for one of his ships: well under what she cost, less for a worn hull (playtest 2026-11-08). */
+export const SELL_SHARE = 0.4;
+export function shipSellPrice(content: ContentBundle, ship: Ship): number {
+  return Math.round((content.ships[ship.type]?.cost ?? 0) * SELL_SHARE * Math.max(0.2, ship.hull / 100));
+}
+
+/** Ships he could sell: any but his own, the first. */
+export function shipsToSell(state: GameState): Ship[] {
+  return state.service ? [] : state.ships.slice(1);
+}
+
+/** He sells one of his ships to the shipwright. Men with no bench left stay ashore. */
+export function sellShip(state: GameState, content: ContentBundle, shipId: string): string {
+  const ship = state.ships.find((s) => s.id === shipId);
+  if (!ship || state.ships.indexOf(ship) === 0) return '';
+  const price = shipSellPrice(content, ship);
+  const m = masterOf(state, ship);
+  state.ships.splice(state.ships.indexOf(ship), 1);
+  state.silver += price;
+  const room = state.ships.reduce((n, s) => n + (content.ships[s.type]?.crew ?? 0), 0);
+  const over = Math.max(0, state.crew.men - room);
+  state.crew.men -= over;
+  journal(state, `Sold ${ship.name} for ${formatSilver(price)}.`);
+  const lines = [`The shipwright walks the length of ${ship.name} twice, knocks on her strakes, looks at her sail, and names a price, and you take it: ${formatSilver(price)}.`];
+  if (m?.kind === 'sworn') lines.push(`${m.name} comes back to your own ship, to a bench near the stern.`);
+  if (over) lines.push(`${over === 1 ? 'One man has' : `${over} men have`} no bench now, and stay ashore with a share of what's owed them.`);
+  return lines.join(' ');
+}

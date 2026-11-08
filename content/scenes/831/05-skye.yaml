@@ -98,7 +98,7 @@
       result: |
         She looks at you for a long moment, the way her mother looked at your ship.
 
-        "Then come back," she says. "With the ship. And we'll see." She goes back to the dung. It is, you think, walking back down to the shore, the most romantic thing anyone has ever said to you, and you can't work out why.
+        "Then come back," she says. "With the ship. And we'll see." She goes back to the dung. It is, you think, walking back down to the shore, the sweetest thing anyone has ever said to you, and you can't work out why.
     - id: sheep
       text: Ask about the sheep.
       effects: [ { add: { skill.trade: 1 } }, { set: flag.sk_thorunn_friend }, { if: "!seen.sk_papar", then: [ { queue: { scene: sk_papar, days: 0 } } ] } ]
@@ -121,7 +121,7 @@
       result: |
         He looks surprised. Then he gets up, and raises his hand, and makes the sign of their god over the ship, slowly, from stem to stern.
 
-        Hallvard spits over the side, three times. But you notice he doesn't stop him.
+        Hallvard spits over the side, three times. But he makes no move to stop the old man.
     - id: bell
       text: Land, and take the bell from the hut. Bronze is bronze.
       effects: [ { add: { loot: 20, hamingja: -1 } }, { set: flag.sk_bell }, { item: { id: papar_bell } }, { standing: { place: skye, n: -1 } } ]

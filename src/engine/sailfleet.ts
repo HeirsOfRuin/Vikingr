@@ -151,6 +151,8 @@ export function fleetLeader(state: GameState, content: ContentBundle): string {
 export function joinFleet(state: GameState, content: ContentBundle, id: string): void {
   const f = content.fleets[id];
   if (!f) return;
+  // his own fleet goes home before he puts his ships in another man's (it would otherwise vanish)
+  if (state.fleet?.own) (state.notes ??= []).push(...endOwnFleet(state, content, 'You send the captains who answered your arrow home with thanks: you are sailing under another man\'s banner now.'));
   state.fleet = { id, since: state.day };
   // where it is today: its timetable's stage, or here
   const st = courseStage(state, content);
@@ -200,4 +202,30 @@ export function fleetYear(state: GameState, content: ContentBundle): string[] {
 export function councilVoice(state: GameState): number {
   if (state.service) return 0;
   return Math.round((state.ships.length * FLEET.voiceShips + livingFame(state) * FLEET.voiceFame) * 10) / 10;
+}
+
+/** Days a stay in the fleet's camp lasts, unless the fleet moves sooner. */
+export const STAY_DAYS = 7;
+
+/** He is with a fleet that lies where he is: he can stay in its camp, at a hostile port or not (playtest 2026-11-08). */
+export function canStay(state: GameState): boolean {
+  const f = state.fleet;
+  return !!f && !state.service && !f.away && !state.voyage && f.posture !== 'bound' && !!f.camp && f.camp === state.at;
+}
+
+/** A week in the fleet's camp: it feeds and guards its own, and the time passes until it moves. */
+export function stayWithFleet(state: GameState, content: ContentBundle): string[] {
+  const f = state.fleet!;
+  let days = STAY_DAYS;
+  // not past the day the fleet is due to move
+  const course = content.fleets[f.id]?.course ?? [];
+  for (const st of course) {
+    const d = dayOf(st.from[0], st.from[1]);
+    if (d > state.day && d - state.day < days) days = d - state.day;
+  }
+  days = Math.max(1, days);
+  state.day += days;
+  state.fedTo = state.day;
+  const at = content.places[state.at!]?.name ?? state.at;
+  return [`${days === 1 ? 'A day' : `${days} days`} in ${fleetName(state, content)}'s camp at ${at}. The fleet forages for all its crews, and keeps its own watch on the ditch, and your men eat and sleep and mend their gear.`];
 }

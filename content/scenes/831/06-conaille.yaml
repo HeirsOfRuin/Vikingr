@@ -90,7 +90,7 @@
       visible_if: "!service"
       effects: [ { add: { honour: -1 } }, { set: flag.c_declined } ]
       result: |
-        You turn the ship. Nobody argues. Nobody says anything at all, all the way out of the bay.
+        You turn the ship. Nobody argues. Somebody at the bow spits over the side toward the gate, and then they row.
         [if flag.j_promised_king]
         You think about the jarl's hall, and what you said in it, all the way out of the bay.
         [/if]
@@ -120,7 +120,7 @@
       result: |
         It takes six men with shields and a lot of shouting. The brother gets a spear in the thigh, and the king cuts one of your men nearly in half before they pin him to the doorpost with three shields and take his sword.
 
-        He doesn't stop shouting the whole time they are tying him. Nobody understands a word of it. Nobody needs to.
+        He doesn't stop shouting the whole time they are tying him. Nobody understands a word of it. Ulf says he gets the gist.
       next: c_king
 
 - id: c_king
@@ -132,7 +132,7 @@
     [/if]
     They bring him and his brother down to the ships with their hands tied, through their own cattle, past their own people. The women follow at a distance, keening. The men don't follow at all.
 
-    In the hall, on the high table, the king's cup is still standing where he left it when the boy came screaming through the gate: a big drinking-horn, rimmed and tipped with silver, half full of ale.
+    In the hall, on the high table, the king's cup is still standing where he left it when the fighting started: a big drinking-horn, rimmed and tipped with silver, half full of ale.
   choices:
     - id: drink
       text: Drink from the king's cup, in the king's own hall.
@@ -172,7 +172,7 @@
   text: |
     Máel Brigte, king of Conaille, dies in his own doorway with your sword in him and his brother dead beside him, and the hall behind them full of smoke.
 
-    You take his head down to the gate, and cut down the three Norsemen, and put the king up in their place. It is the kind of thing that will be told about, in Ireland and at home. In Ireland it will be told for a very long time.
+    You take his head down to the gate, and cut down the three Norsemen, and put the king up in their place. It is the kind of thing that will be told about, in Ireland and at home. In Ireland they will tell it longer.
   choices:
     - id: on
       text: Strip the hall, and burn it.
@@ -275,7 +275,7 @@
         text: |
           The monk closes the bag, and picks up his oar, and begins, without a word, to row away.
 
-          You shout after him. He keeps rowing. In the end you have to go after him in the ship, which is undignified, and take the first price, which is humiliating, while the king watches from the bilge, laughing until he cries.
+          You shout after him. He keeps rowing. In the end you have to go after him in the ship, which is undignified, and take less than he first offered, which is humiliating, while the king watches from the bilge, laughing until he cries.
         effects: [ { captives: -2 }, { add: { loot: 600 } }, { set: flag.c_ransomed }, { standing: { place: conaille, n: 3 } } ]
     - id: keep
       text: Keep the king. Take him home and show the jarl.

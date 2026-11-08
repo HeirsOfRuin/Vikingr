@@ -18,7 +18,7 @@
 
     "My father has had three men ask for me since you were here," she says. "He's said no to all of them. He says he's waiting for a better offer." She looks at you sideways. "I said I was waiting too. He asked what for. I didn't tell him."
     [if flag.gyda_courting || flag.gyda_eloped]
-    You think of Gyða. You think of her very clearly, and for a long moment you don't say anything at all.
+    You think of Gyða, and for a long moment you can't find anything to say.
     [/if]
   choices:
     - id: thread
@@ -48,7 +48,7 @@
         effects: [ { set: flag.ingibjorg_promised }, { standing: { place: orkney, n: 1 } } ]
       failure:
         text: |
-          Harek listens with his beard in his fist, and then laughs, not unkindly. "Come back," he says, "when you've got a ship of your own and a hall to put her in. My daughter isn't going to sleep on a rowing bench."
+          Harek listens with his beard in his fist, and then laughs, not unkindly. "Come back," he says, "when you've got a ship of your own, and a hall for my daughter to sit in. She isn't going to sleep on a rowing bench."
         effects: [ { set: flag.ingibjorg_waiting } ]
 
 - id: i_831_colman

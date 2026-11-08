@@ -26,7 +26,7 @@ import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lor
 import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding, claimBlock } from './land';
 import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
-import { appoint, buyHull, CARGO_UNIT, hullsForSale } from './fleet';
+import { appoint, buyHull, CARGO_UNIT, hullsForSale, sellShip, shipSellPrice, shipsToSell } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
 import { commitReserve, fightOutHost, fightOutHostWall, hostRound, hostWallRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
@@ -51,7 +51,7 @@ import { renderText } from './text';
 import { heal } from './hero';
 import { seaClosed, BATTLE, DUEL, SIGN_ON_GIFT, SERVICE_ROUTE, FORCE_RETURN_DOY, LATE_SEASON_DOY, MUSTER_DOY, ORTUG_PER_MARK, ORTUG_PER_POUND, SAILING_DOY, START_YEAR, WINTER_DOY, WINTER_ABROAD_DOY, BIRTH_YEAR } from './tuning';
 import { startInEra } from './era';
-import { armyCamp, desertFleet, FLEET, fleetBound, fleetName, leaveArmy, tickFleet } from './sailfleet';
+import { armyCamp, canStay, desertFleet, FLEET, fleetBound, fleetName, leaveArmy, STAY_DAYS, stayWithFleet, tickFleet } from './sailfleet';
 import { arrowBlock, arrowShips, endOwnFleet, gatherFleet, OWN, ownFleet, shiftCohesion, tickOwnFleet, tributeOffer } from './ownfleet';
 import { livingFame } from './fame';
 import { earn } from './hardship';
@@ -66,6 +66,8 @@ export type Action =
   | { t: 'fleet_follow' }
   | { t: 'fleet_leave' }
   | { t: 'war_arrow' }
+  | { t: 'fleet_stay' }
+  | { t: 'sell_ship'; ship: string }
   | { t: 'tribute' }
   | { t: 'own_dismiss' }
   | { t: 'voyage_on' }
@@ -565,6 +567,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         const n = itemName(content, x);
         out.push(opt('Sell', { t: 'sell_item', uid: x.uid }, `Sell ${n.charAt(0).toLowerCase()}${n.slice(1)}`, true, undefined, `${formatSilver(sellValue(content, x))}${content.items[x.id]?.heirloom ? '; it was never yours to sell, men will say' : ''}`));
       }
+      // a ship he no longer needs, to the shipwright (playtest 2026-11-08)
+      if (shops.includes('shipwright')) for (const sh of shipsToSell(state)) out.push(opt('Ships', { t: 'sell_ship', ship: sh.id }, `Sell ${sh.name}`, true, undefined, `${formatSilver(shipSellPrice(content, sh))}; a ${content.ships[sh.type]?.name.toLowerCase() ?? 'ship'}, hull ${Math.round(sh.hull)}/100${state.crew.men > capacity(state, content) - (content.ships[sh.type]?.crew ?? 0) ? `; men with no bench will stay ashore` : ''}`));
       // secondhand hulls on a market beach (docs/FRAME-FLEET.md)
       if (shops.includes('shipwright')) for (const h of hullsForSale(state, content)) {
         const st = content.ships[h.type]!;
@@ -735,6 +739,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         if (!roof && seaClosed(doy)) out.push(opt('Season', { t: 'winter_here' }, `Winter under your ships on the beach at ${place.name}`, true, undefined, 'Nobody here will give you a roof, and the sea is closed. Cold, hungry, and some men will not see the spring'));
         else out.push(opt('Season', { t: 'winter_here' }, armyCamp(state) === at ? `Winter in the army's camp at ${place.name}` : `Winter at ${place.name}`, roof, 'Nobody here will give you a roof.'));
       }
+      // with a fleet that lies here: stay in its camp, hostile port or not (playtest 2026-11-08)
+      if (canStay(state)) out.unshift(opt('Here', { t: 'fleet_stay' }, `Stay with ${fleetName(state, content)} in camp`, true, undefined, `Up to ${plural(STAY_DAYS, 'day')}; the fleet feeds and guards its own, and you go with it when it moves`));
       const own = ownFleet(state);
       if (own) {
         const offer = tributeOffer(state, content, at);
@@ -979,6 +985,18 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
     case 'war_arrow':
       open(state, 'of_arrow', content);
       break;
+    case 'fleet_stay': {
+      const lines = stayWithFleet(state, content);
+      heal(state, content, STAY_DAYS);
+      report('In camp', lines);
+      break;
+    }
+    case 'sell_ship': {
+      const line = sellShip(state, content, action.ship);
+      state.pending = { t: 'shop', shops: (state.pending as { shops: Shop[] }).shops };
+      state.shopNote = line;
+      break;
+    }
     case 'own_dismiss':
       report('Your fleet', endOwnFleet(state, content, `You thank the captains on the beach, one by one, and they take their ships home with what they took under your arrow. They will tell it, and next winter more of them will come.`));
       break;

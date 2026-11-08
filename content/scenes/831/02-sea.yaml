@@ -30,7 +30,7 @@
         effects: [ { set: flag.se_ubbi }, { add: { skill.lore: 1, crew.morale: 1 } } ]
       failure:
         text: |
-          You call back. Your voice cracks on the second word, the way it hasn't since you were fourteen.
+          You call back. Your voice cracks on the second word, the way it hasn't since you were fourteen winters old.
 
           The Dane laughs so hard he has to hold the stem-post. "Go home, little ship," he calls. "Your mother's worried." All nine ships seem to be laughing as they draw away.
         effects: [ { add: { crew.morale: -1 } } ]
@@ -133,7 +133,7 @@
         text: |
           You tell them where you're going, and what's there, and what their share will be, and you say it like a man who's already seen it.
 
-          It works. Not because they believe you, exactly, but because they want to, and you've given them permission.
+          It works. Half of them don't believe a word of it, but they want to, and you've given them leave.
         effects: [ { add: { crew.morale: 2, skill.command: 1 } } ]
       failure:
         text: |

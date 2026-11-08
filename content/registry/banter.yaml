@@ -39,7 +39,7 @@
 - { who: bersi, when: arrive, requires: ["place == kaupang"], text: "Bersi walks the length of the Kaupang beach twice before he buys anything, and comes back with a comb, a whetstone and a look of deep peace." }
 - { who: hallvard, when: sea, requires: [flag.c_king_kept], text: "Hallvard has started talking to the king of Conaille in the bilge, in signs. Neither of them will say what about." }
 - { who: ketill, when: fight, requires: ["year >= 831"], text: "\"You fight like a man with a name now,\" says Ketill, and you can't tell if it's praise." }
-- { who: ulf, when: hall, requires: [flag.married_gyda], text: "Ulf has made up a song about your wedding. Gyda has made him promise never to sing it again. He hums it." }
+- { who: ulf, when: hall, requires: [flag.married_gyda], text: "Ulf has made up a song about your wedding. Gyða has made him promise never to sing it again. He hums it." }
 - { who: bersi, when: sea, requires: [flag.c_ransomed], text: "Bersi has worked out how much the king of Conaille weighed, and how much silver he was ransomed for, and is now very interested in kings." }
 
 # ---- the hird, by temperament (docs/FRAME-CREW.md): any living sworn man of the kind says it; {man} names him ----
@@ -71,7 +71,7 @@
 - { who: { temperament: greedy }, when: hall, text: "{man} weighs his share twice, and then a third time when he thinks you aren't looking." }
 - { who: { temperament: greedy }, when: hall, text: "{man} lends silver at the winter benches, at a rate that would shame a Frisian. Half the hall owes him by Yule." }
 # pious
-- { who: { temperament: pious }, when: sea, text: "{man} pours a little ale over the side for Ran before the open water, and won't take the cup back until the sea has had it." }
+- { who: { temperament: pious }, when: sea, text: "{man} pours a little ale over the side for Rán before the open water, and won't take the cup back until the sea has had it." }
 - { who: { temperament: pious }, when: sea, text: "{man} has seen two ravens on the masthead, and says it means one thing, and then thinks about it and says it means another." }
 - { who: { temperament: pious }, when: fight, text: "{man} goes among the fallen and closes their eyes, theirs and ours, and says the same short words over each." }
 - { who: { temperament: pious }, when: fight, text: "\"Odin was watching,\" {man} says, wiping his blade. \"You could feel him. Couldn't you feel him?\"" }
@@ -87,7 +87,7 @@
 - { who: { temperament: ambitious }, when: arrive, text: "{man} finds out who rules here, and who he hates, and who would pay to know it, before you've finished tying up." }
 - { who: { temperament: ambitious }, when: arrive, text: "{man} talks to the shipwrights on the beach half the afternoon, and asks what a karvi costs, as if it were a question for later." }
 - { who: { temperament: ambitious }, when: hall, text: "{man} sits a little nearer the high seat every week of the winter. By Yule he's two places from you." }
-- { who: { temperament: ambitious }, when: hall, text: "{man} has been seen at the jarl's hall, drinking with the jarl's steward. He says it was a social call." }
+- { who: { temperament: ambitious }, when: hall, text: "{man} has been seen at the jarl's hall, drinking with the jarl's steward. He says they talked about horses." }
 # dour
 - { who: { temperament: dour }, when: sea, text: "\"Weather by tonight,\" says {man}, to nobody. There's not a cloud in the sky. By dusk there is." }
 - { who: { temperament: dour }, when: sea, text: "{man} has been counting the days of food left aboard, out loud, every morning since the headland." }

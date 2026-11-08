@@ -93,7 +93,7 @@
     [/if]
   choices:
     - id: yes
-      text: Clasp his hand. Hedeby, when you have a ship.
+      text: Clasp his hand. Hedeby, when the time comes.
       effects: [ { set: flag.ubbi_sworn }, { know: hedeby }, { favour: -1 } ]
       result: |
         He crushes your hand in his and laughs. "Good. Bring the loud one, too," he says, nodding at Ulf. "I like a man you can hear in the dark."

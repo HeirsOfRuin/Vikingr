@@ -28,7 +28,7 @@
         text: |
           You wait offshore until the sea has covered the sands and the island is cut off, and then you come in hard on the last of the flood.
 
-          The beacon goes up on the hill behind you. It doesn't matter. Nobody on the mainland can cross until the tide goes out again, and the only men on the island are the monks, and the island's own tenants, and a few of the reeve's men who were there to watch for you.
+          The beacon goes up on the mainland hill. It doesn't matter. Nobody on the mainland can cross until the tide goes out again, and the only men on the island are the monks, and the island's own tenants, and a few of the reeve's men who were there to watch for you.
         effects:
           - { set: flag.l_tide }
           - { battle: { foe: northumbrian_levy, men: 9, terrain: beach, win: l_church, lose: l_beaten, parted: l_beaten } }
@@ -117,7 +117,7 @@
       result: |
         You count. Then you count again, because the first number was wrong, and the second one is the same.
 
-        Nobody says anything about where it began. Nobody needs to.
+        Somebody at the oars says this is where it all started, forty years ago. "Then it can finish without us," says the man beside him, and pulls.
 
 - id: l_after
   kind: spine

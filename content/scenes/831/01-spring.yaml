@@ -40,7 +40,7 @@
       result: |
         The jarl nods slowly. "Twelve bales of marten and fox, and forty soapstone pots. Sell them in Kaupang, and bring me back a Frankish sword: a real one, with the maker's name on the blade. The rest of the silver you can keep for your trouble."
 
-        It isn't glory. It's the jarl's trust, which lasts longer.
+        There is no glory in marten skins. But a jarl remembers who carried his goods, and that lasts longer than glory.
     - id: king
       text: Promise the jarl the king of Conaille.
       visible_if: "!service"
@@ -89,7 +89,7 @@
         effects: [ { route: [kaupang, orkney, skye, conaille] }, { shares: 2 }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
       failure:
         text: |
-          "Two shares," says {captain}, "for a man who still can't take a reef in without asking Ketill how." The men laugh. It isn't cruel. It's worse: it's fond.
+          "Two shares," says {captain}, "for a man who still can't take a reef in without asking Ketill how." The men laugh. Nobody means it unkindly, and that is what stings.
         effects: [ { route: [kaupang, orkney, skye, conaille] }, { if: flag.prow_man, then: [ { shares: 1.5 } ], else: [ { shares: 1 } ] }, { know: kaupang }, { know: lindisfarne }, { know: skye }, { know: conaille } ]
 
 - id: j_gyda
@@ -109,7 +109,7 @@
 
     "A pound and a half," he says. "By the winter nights. Silver, weighed on my scales, not on yours. And a name men say without laughing. Then you can have her, and she can have you, and God help the pair of you." He says god, not gods. He has been trading with Irishmen.
     [break]
-    Gyða is behind the byre, where everybody does their meeting. "Well?" she says.
+    Gyða is behind the byre, where everybody does their courting. "Well?" she says.
   choices:
     - id: agree
       text: Tell her you'll have the pound and a half by the winter nights.

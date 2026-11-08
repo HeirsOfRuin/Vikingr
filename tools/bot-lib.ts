@@ -391,7 +391,7 @@ export class Bot {
       target = camp;
     }
     if (!target) target = 'home_fjord';
-    if (target === at) return pick((a) => a.t === 'rest') ?? fallback(opts);
+    if (target === at) return pick((a) => a.t === 'fleet_stay') ?? pick((a) => a.t === 'rest') ?? fallback(opts);
     const hop = nextHop(state, content, at, target);
     const sail = hop ? pick((a) => a.t === 'sail' && a.to === hop) : undefined;
     if (sail) return sail;

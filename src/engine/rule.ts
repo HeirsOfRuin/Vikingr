@@ -204,6 +204,8 @@ export function tied(state: GameState, content: ContentBundle, seat: Seat): bool
 /** The words for the claim, for the scene: "Your claim: 140 (your name 96, your men 22, ...). Sigurðr's: 170." */
 export function claimWords(state: GameState, content: ContentBundle, seat: Seat): string {
   const parts = claimParts(state, content, seat);
+  // a lordship of his own has no rival: only what he has built there (playtest 2026-11-08: "nobody's: 0")
+  if (seat === 'lordship') return `What you have there: ${parts.map((p) => `${p.label} ${p.n}`).join(', ')}.`;
   const r = rivalOf(state, content, seat);
   return `Your claim: ${claim(state, content, seat)} (${parts.map((p) => `${p.label} ${p.n}`).join(', ')}). ${r.name}'s: ${r.claim}${r.legend ? ', his name on every beach' : ''}.`;
 }

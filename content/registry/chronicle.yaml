@@ -226,7 +226,7 @@ events:
     unless: seen.ir_845
     # AU 845: "Turgéis was taken prisoner by Máel Sechnaill, and drowned in Loch Uair."
     news: |
-      Turgeis is dead. Máel Sechnaill of Mide took him, and drowned him in Loch Uair with a stone round his neck. The Irish are singing about it in every hall from Ulster to Munster.
+      Turgeis is dead. Máel Sechnaill of Mide took him, and drowned him in Lough Owel with a stone round his neck. The Irish are singing about it in every hall from Ulster to Munster.
 
   - id: c846_ragnar
     year: 846
@@ -343,7 +343,7 @@ events:
   - id: c860_winchester
     year: 860
     doy: 200
-    by: A great ship-army
+    by: The men of a great ship-army
     places: [hamwic]
     keep: 0.5
     defence: 0.3
@@ -421,7 +421,7 @@ events:
     defence: 0.2
     # ASC 865 (866): a great heathen army came to England and took winter quarters among the East Angles, who made peace and gave them horses.
     news: |
-      A great army has gone to England: not a raid, an army, more ships than anyone can count, under Ivar and his brothers, the sons of Ragnarr, men say. They have wintered among the East Angles, who gave them horses to be rid of them.
+      A great army has gone to England: not a raid, an army, more ships than anyone can count, under Ívarr and his brothers, the sons of Ragnarr, men say. They have taken winter quarters among the East Angles, who gave them horses to be rid of them.
 
   - id: c867_york
     unless: seen.e66_york_taken
@@ -449,13 +449,13 @@ events:
     year: 870
     doy: 200
     who: olaf
-    by: Olaf and Ivar
+    by: Olaf and Ívarr
     places: [alt_clut]
     keep: 0.2
     defence: 0.5
     # AU 870: the siege of Dumbarton (Ail Cluaithe) by Amlaíb and Ímar; it was taken after four months, when the well failed.
     news: |
-      Olaf and Ivar have taken Dumbarton, the Britons' rock on the Clyde, after a siege of four months. The well inside ran dry. They took two hundred ships of captives back to Dublin.
+      Olaf and Ívarr have taken Alt Clut, the Britons' rock on the Clyde, after a siege of four months. The well inside ran dry. They took two hundred ships of captives back to Dublin.
 
   - id: c871_alfred
     unless: seen.e71_alfred
@@ -464,7 +464,7 @@ events:
     by: The great army
     # ASC 871: the year of nine battles in Wessex; King Æthelred died after Easter and his brother Alfred became king.
     news: |
-      The army has fought the West Saxons nine times in one year. Their king is dead, and his young brother Alfred has bought the army off with silver. Wessex is the last English kingdom standing.
+      The army has fought the West Saxons nine times in one year. Their king is dead, and his young brother Alfred has bought the army off with silver. Wessex is the last English kingdom still fighting.
 
   - id: c872_hafrsfjord
     year: 872
@@ -479,10 +479,10 @@ events:
     year: 873
     doy: 60
     who: ivar
-    by: Ivar
+    by: Ívarr
     # AU 873: "Ímar, king of the Northmen of all Ireland and Britain, ended his life."
     news: |
-      Ivar is dead in Dublin: king of the Norsemen of all Ireland and Britain, the Irish annals call him. He died in his bed, of a sickness, which nobody expected of him.
+      Ívarr is dead in Dublin: king of the Norsemen of all Ireland and Britain, the Irish annals call him. He died in his bed, of a sickness, which nobody expected of him.
 
   - id: c874_repton
     unless: seen.e74_parting
@@ -492,17 +492,17 @@ events:
     by: The great army
     # ASC 874: the army wintered at Repton and drove King Burgred of Mercia over the sea.
     news: |
-      The army wintered at Repton in Mercia, and drove the Mercian king over the sea to Rome. Mercia has a Danish puppet now. Half the army has gone north with Halfdan to share out the land, and the other half south with Guthrum after Wessex.
+      The army wintered at Repton in Mercia, and drove the Mercian king over the sea to Rome. Mercia has a Danish puppet now. Half the army has gone north with Hálfdan to share out the land, and the other half south with Guthrum after Wessex.
 
   - id: c876_plough
     unless: seen.e76_plough
     year: 876
     doy: 150
     who: halfdan
-    by: Halfdan's men
+    by: Hálfdan's men
     # ASC 876: Halfdan shared out the land of the Northumbrians, and they were ploughing and providing for themselves.
     news: |
-      Halfdan has shared out the land of Northumbria among his men, and they are ploughing it. The great army is becoming farmers. There is land in England for any Norseman who can hold a sword and a plough.
+      Hálfdan has shared out the land of Northumbria among his men, and they are ploughing it. The great army is becoming farmers. There is land in England for any Norseman who can hold a sword and a plough.
 
   - id: c878_edington
     unless: seen.e78_edington
