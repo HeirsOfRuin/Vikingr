@@ -52,12 +52,15 @@
         text: |
           [if flag.irish]
           You do the talking yourself, in your grandmother's Irish, at the king's gate, under the three dead traders. The steward listens to you with his head on one side, the way a man listens to a dog that has started to speak, and asks where you learned it, and you tell him, and he goes very still. Then he goes back up the hill, and comes down again, and invites you to the hall to drink with the king.
-
-          {captain} slaps you on the back all the way up the hill. You don't remember, afterwards, a single word you said to the steward. You remember everything he said to you.
           [elif flag.colman_kept]
           Colmán does the talking. You don't know what he says; he won't tell you afterwards. But the king's steward comes down to the beach and looks at your Frankish wine, and goes back up the hill, and comes down again, and invites you to the hall to drink with the king.
           [else]
           You go in with a jar of Frankish wine on your shoulder and an Irish slave-boy from Kaupang to talk for you. The king's steward comes down to look at the wine, and goes back up the hill, and comes down again, and invites you up to the hall.
+          [/if]
+          [if flag.irish && service]
+          {captain} slaps you on the back all the way up the hill. You don't remember, afterwards, a single word you said to the steward. You remember everything he said to you.
+          [elif flag.irish]
+          Your steersman slaps you on the back all the way up the hill. You don't remember, afterwards, a single word you said to the steward. You remember everything he said to you.
           [/if]
 
           You go up with twelve men and the wine, and your swords under your cloaks, and the rest of the ship coming up the hill behind you as soon as you are inside the gate.

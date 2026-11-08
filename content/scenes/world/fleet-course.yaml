@@ -39,19 +39,19 @@
   art: muster
   title: The shares of Dorestad
   text: |
-    A Danish captain called Hrærekr says your crews took more than their share at Dorestad, and says it at the fleet's fire, loudly, with his men behind him. He wants a tenth of what's in your hold. It's a lie, mostly. It's also forty Danes against your men, on a Danish king's island.
+    A Danish captain called Hrafnkell says your crews took more than their share at Dorestad, and says it at the fleet's fire, loudly, with his men behind him. He wants a tenth of what's in your hold. It's a lie, mostly. It's also forty Danes against your men, on a Danish king's island.
 
     Ubbi watches from across the fire and doesn't move, which means he wants to see what you'll do.
   choices:
     - id: pay
       text: Pay him something, to keep the peace in the fleet.
       effects: [ { add: { loot: -60 } }, { ally: { id: ubbi, rel: -1 } } ]
-      result: You give him less than he asked and more than he deserves, in front of everyone. Hrærekr takes it and goes away grinning. Ubbi says later, mildly, that the Danes will remember the Norwegian who paid.
+      result: You give him less than he asked and more than he deserves, in front of everyone. Hrafnkell takes it and goes away grinning. Ubbi says later, mildly, that the Danes will remember the Norwegian who paid.
     - id: words
       text: Answer him at the fire, word for word.
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
-        text: You tell the fire where Hrærekr's men were when your crews were on the jetties at Dorestad, which was in the warehouses with the wine, and the fire laughs, and Hrærekr goes red, and nobody asks you for anything again.
+        text: You tell the fire where Hrafnkell's men were when your crews were on the jetties at Dorestad, which was in the warehouses with the wine, and the fire laughs, and Hrafnkell goes red, and nobody asks you for anything again.
         effects: [ { add: { honour: 1 } }, { ally: { id: ubbi, rel: 1 } } ]
       failure:
         text: You answer him, and he answers back better, and the fire laughs at you. You pay him in the end, more than you would have at the start.

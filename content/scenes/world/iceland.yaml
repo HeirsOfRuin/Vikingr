@@ -32,7 +32,7 @@
   choices:
     - id: fire
       text: Carry fire round the bounds, from sunrise to sunset.
-      check: { skill: seamanship, attr: end, difficulty: 6 }
+      check: { skill: lore, attr: end, difficulty: 6 }
       success:
         text: You run the last stretch with the torch guttering and your lungs on fire, and light the last beacon as the sun goes into the sea. It is a great deal of land. The men cheer from the shore.
         effects: [ { claim_land: true }, { add: { hamingja: 1 } } ]

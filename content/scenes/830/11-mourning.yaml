@@ -79,7 +79,7 @@
     - id: send
       text: Send the silver to the woman, all of it.
       effects: [ { add: { honour: 1, man.ketill.loyalty: 1 } }, { set: flag.bersi_silver_sent } ]
-      result: You send it all, with a man you trust, and a message you take a long time over. Bersi would have told you you were overpaying. He would have been right.
+      result: You send it all, with a man you trust, and a message you take a long time over. Bersi would have said you were overpaying. He would have been right.
     - id: share
       text: Put it in the common heap. That's the law of the ship.
       effects: [ { add: { loot: 30 } }, { set: flag.bersi_silver_kept } ]
