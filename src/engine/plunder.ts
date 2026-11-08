@@ -1,9 +1,9 @@
 // Plunder against the alarm (DESIGN §11.3, step 3). After the assault, each round takes more,
 // and the countryside wakes. Leave in time, or lose what you are carrying getting back to the ships.
 import { earn } from './hardship';
-import { ownFleetPlunder } from './ownfleet';
+import { ownFleetMen, ownFleetPlunder } from './ownfleet';
 import { strandRaided } from './strand';
-import { mouths } from './crew';
+import { aliveMen, mouths } from './crew';
 /** A raid on an unnamed place on the shore is a smaller deed than a named one (base raid weight is 3). */
 const STRAND_DEED = 1.5;
 import { SERVICE_DEED } from './fights';
@@ -40,14 +40,36 @@ export const ARMS = [
   { id: 'helmet', p: 0.3, line: 'an iron cap, dented but sound' },
 ] as const;
 
+/** How much of a place one crew can strip before it wakes (Josh, 2026-11-08: "too easy to become big and rich"; two or
+ *  three ships took 47 pounds out of Dorestad in an afternoon). A town is many houses and a crew is so many men: every
+ *  man in the line searches (a félag partner's too, who takes his men's part at the share-out) against the place's own
+ *  men. A monastery's handful is stripped whole; Dorestad by sixty men is not. In a host, the other wings strip the town
+ *  alongside him, faster than one crew could, and his crews' part of each round is their share of the men. */
+export const REACH = { perDefender: 1.5, floor: 0.25, hostMax: 2 } as const;
+
+export function plunderReach(men: number, defenders: number, host = false): number {
+  if (defenders <= 0) return 1;
+  return Math.max(REACH.floor, Math.min(host ? REACH.hostMax : 1, men / (defenders * REACH.perDefender)));
+}
+
+/** The men in his line at a raid: his crew and sworn men, his own fleet's, a félag partner's. */
+export function raidMen(state: GameState, content: ContentBundle, allyMen = 0): number {
+  return state.crew.men + aliveMen(state).length + ownFleetMen(state) + allyMen;
+}
+
 export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'hostage' | 'arms' | 'stores' | 'leave';
 export const ALARM_MAX = 10;
 
-export function startPlunder(state: GameState, place: string, lines: string[], next?: string, content?: ContentBundle): void {
+export function startPlunder(state: GameState, place: string, lines: string[], next?: string, content?: ContentBundle, line?: { allyMen?: number; hostMen?: number }): void {
   if (!state.seasonRaids.includes(place)) state.seasonRaids.push(place);
   // a region that has learned comes to the alarm faster (docs/FRAME-HARDSHIP.md)
   const alarm = 2 + (content ? coastPlunderStart(state, content, place) : 0);
-  state.pending = { t: 'plunder', plunder: { place, round: 0, alarm, taken: 0, captives: 0, burned: false, log: lines, next } };
+  const defenders = content?.places[place]?.raid?.defenders ?? 0;
+  const ours = content ? raidMen(state, content, line?.allyMen ?? 0) : 0;
+  const host = line?.hostMen ?? 0;
+  const reach = content ? plunderReach(ours + host, defenders, host > 0) : 1;
+  const share = host > 0 ? ours / Math.max(1, ours + host) : 1;
+  state.pending = { t: 'plunder', plunder: { place, round: 0, alarm, taken: 0, captives: 0, burned: false, log: lines, next, reach, share } };
 }
 
 export function plunderAction(state: GameState, content: ContentBundle, rng: RngCursor, what: PlunderWhat): void {
@@ -61,12 +83,18 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
     case 'grab': {
       // an unnamed place on the shore has its own wealth, not the port's (src/engine/strand.ts)
       const src = p.strand ?? ps;
-      const take = Math.max(1, Math.round(src.wealth * (0.14 + 0.12 * rng.float())));
-      src.wealth -= take;
+      // the shore's own farms are stripped whole; a place, as far as his men can reach, and in a host his crews' part
+      const reach = p.strand ? 1 : p.reach ?? 1;
+      const share = p.strand ? 1 : p.share ?? 1;
+      const stripped = Math.max(1, Math.round(src.wealth * (0.14 + 0.12 * rng.float()) * reach));
+      const take = Math.max(1, Math.round(stripped * share));
+      src.wealth -= stripped;
       p.taken += take;
       p.alarm += 1.5 + rng.float() * 1.5;
       const things = ['altar plate and a silver-bound book', 'a reliquary and two candlesticks', 'cloth, wax and a chest of coin', 'the abbot\'s cup and a gilded cross', 'hacksilver from a hole under a floor'];
-      p.log.push(`You strip the next house: ${things[rng.int(things.length)]}. ${formatSilver(take)}.`);
+      p.log.push(share < 1
+        ? `The host goes through the streets house by house. Your crews' part of this street: ${things[rng.int(things.length)]}. ${formatSilver(take)}.`
+        : `You strip the next house${reach < 0.6 ? ' you can reach before the place wakes' : ''}: ${things[rng.int(things.length)]}. ${formatSilver(take)}.`);
       const ring = plunderRing(state, rng, src.wealth + take);
       if (ring) p.log.push(ring);
       break;

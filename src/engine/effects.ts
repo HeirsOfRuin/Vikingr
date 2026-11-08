@@ -374,6 +374,9 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       state.flags.outlaw_ended = 1;
       state.at = 'home_fjord';
       state.voyage = null;
+      // he brings his ships home with him: they are not hauled up inland any more (bot seed 1066: an outlaw's ships
+      // stayed "at Nottingham" while he stood in Hordaland, and no sea road would open)
+      delete state.inland;
       // the muster is a spring phase: a return outside spring keeps the season he is in (playtest 5: home on 1 November in muster)
       state.phase = dateOf(state.day).doy < SAILING_DOY + 31 ? 'muster' : 'sailing';
       if (state.service) state.service.home = 'home_fjord';

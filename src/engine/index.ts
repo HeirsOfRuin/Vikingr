@@ -609,7 +609,8 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       const left = ALARM_MAX - pl.alarm;
       const warn = left <= 3 ? 'The alarm is close to spreading' : undefined;
       return [
-        opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? 'More silver; more noise'),
+        // a limit he can see, and the lever that moves it (plunder.ts REACH)
+        opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? ((pl.reach ?? 1) < 0.95 && !pl.strand ? `More silver; more noise. A place this size is too big for your men to strip: they reach about ${Math.round((pl.reach ?? 1) * 100)}% of what more men would` : 'More silver; more noise')),
         opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, 'Worth silver in Kaupang; slow and loud'),
         opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
         opt('Plunder', { t: 'plunder', what: 'arms' }, 'Search the dead and the hall for war-gear', !pl.armed, 'You have searched already.', 'A sword, mail or a helmet, for yourself; once a raid'),
@@ -761,7 +762,8 @@ function followFleet(out: ActionOption[], state: GameState, content: ContentBund
   const name = fleetName(state, content);
   const there = content.places[to]?.name ?? to;
   const road = !nextHop(content, state.at, to) && !!landPath(content, state.at, to);
-  const can = road || (!seaClosed(doy) && !!nextHop(content, state.at, to));
+  // the same test the voyage makes: no sea road while his ships are hauled up somewhere else
+  const can = road || (!seaClosed(doy) && !state.inland && !!nextHop(content, state.at, to));
   const joining = !!state.fleet?.joining;
   const why = joining ? `You are sworn to ${name}, at ${there}. You sail to join it, or you think better of it.` : `${name.charAt(0).toUpperCase()}${name.slice(1)} is bound for ${there}. You go with it, or you leave it.`;
   const shut = out.map((o) => (SEA_ACTIONS.has(o.action.t) || (o.action.t === 'march' && (o.action as { to: string }).to !== to) ? { ...o, enabled: false, reason: why } : o));
@@ -1307,6 +1309,8 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       if (paid) state.silver -= 12;
       state.day += paid ? 12 : 30;
       state.fedTo = state.day; // a passenger eats the trader's food
+      // a passenger's own ships, if any were hauled up inland, are fetched home over the winter by the men who watched them
+      delete state.inland;
       if (exiled(state)) {
         state.at = 'orkney';
         report('Orkney', [paid ? 'A trader takes you west to Orkney for silver and a hand at the oars. It isn\'t home. It\'s the nearest thing you have.' : 'A trader takes you west to Orkney for nothing but your back at his oars. It isn\'t home. It\'s the nearest thing you have.']);

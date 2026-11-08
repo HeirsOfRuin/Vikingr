@@ -25,7 +25,7 @@ import { ownFleetMen } from '../src/engine/ownfleet';
 import { landPath } from '../src/engine/march';
 
 /** Switches for A/B measurement (tools/measure-scout.ts). */
-export const BOT_OPTS = { scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false, /** Take land and settle on it (docs/FRAME-LINEAGE.md C, E): off in the check, on in measure:lineage. */ settle: false };
+export const BOT_OPTS = { /** Play like a skilled human (Josh, 2026-11-08: "too easy to become big and rich"): fill every bench, buy ships up to four, raid the richest place it can beat. Off in the check, on in measure:power --ambitious. */ ambitious: false, scout: true, /** Go a-viking along a coast on standing orders (docs/FRAME-PACING.md). */ cruise: false, /** Take land and settle on it (docs/FRAME-LINEAGE.md C, E): off in the check, on in measure:lineage. */ settle: false };
 
 export type Policy = 'raider' | 'reckless' | 'coward' | 'homebody' | 'random';
 export const POLICIES: Policy[] = ['raider', 'reckless', 'coward', 'homebody', 'random'];
@@ -172,6 +172,13 @@ export class Bot {
       }
       case 'shop': {
         // a second hull when rich: a knarr if the holds are the trouble, else a karvi (docs/FRAME-FLEET.md)
+        // the ambitious captain buys a longship whenever he can and keeps a mark and a half in hand, up to four hulls
+        if (BOT_OPTS.ambitious && state.ships.length < 4 && !state.service) {
+          for (const want of ['snekkja', 'karvi'] as const) {
+            const h = opts.find((o) => o.enabled && o.action.t === 'buy_hull' && o.action.type === want);
+            if (h && state.silver - Math.round(content.ships[want]!.cost * SECONDHAND) > 36) return h.action;
+          }
+        }
         if (state.ships.length < 2 && !state.service) {
           const want = state.loot > hold(state, content) * 0.8 ? 'knarr' : 'karvi';
           const h = opts.find((o) => o.enabled && o.action.t === 'buy_hull' && o.action.type === want);
@@ -377,7 +384,9 @@ export class Bot {
       // no single crew goes up against a town: big places only with a partner beside him
       const strength = state.crew.men + (partner(state, content) ? 40 : 0) + ownFleetMen(state);
       const targets = state.known.filter((id) => content.places[id]?.raid && !state.seasonRaids.includes(id) && !this.passed.has(`${dateOf(state.day).year}:${id}`) && content.places[id]!.raid!.defenders <= strength * 1.8);
-      targets.sort((a, b) => hops(state, content, at, a) - hops(state, content, at, b));
+      // the ambitious captain goes for the richest place within a few days' sail; the others for the nearest
+      if (BOT_OPTS.ambitious) targets.sort((a, b) => (hops(state, content, at, a) > 4 ? 1 : 0) - (hops(state, content, at, b) > 4 ? 1 : 0) || (state.places[b]?.wealth ?? 0) - (state.places[a]?.wealth ?? 0));
+      else targets.sort((a, b) => hops(state, content, at, a) - hops(state, content, at, b));
       target = targets[0] ?? state.known.find((id) => !this.visited.has(id) && content.places[id]?.active) ?? null;
     }
     // a ruler abroad goes to be seen at his seat before the winter, every other year at least

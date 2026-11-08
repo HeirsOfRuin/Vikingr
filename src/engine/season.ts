@@ -458,6 +458,9 @@ export function startWinter(state: GameState, actions: number, content?: Content
   }
 }
 
+/** The pull of a name on the spring muster: this × √fame (see yearEnd). */
+export const MUSTER_FAME = 1.5;
+
 // ---- the turn of the year ----
 
 export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor): string[] {
@@ -517,7 +520,9 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   if (state.service) state.crew.men = Math.max(state.crew.men, SERVICE_CREW);
   state.crew.morale = Math.round((state.crew.morale + (settledAbroad(state) ? 7 : 6)) / 2);
   clampMorale(state);
-  state.musterPool = 4 + Math.floor(livingFame(state) / 6) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + (settledAbroad(state) ? settledMuster(state) : favourMuster(state));
+  // men come to a name, but a district has only so many young men to send: the pull of fame grows as its square root
+  // (Josh, 2026-11-08: 64 men signed on in one spring at fame 400; it was fame / 6, now 1.5 × √fame: 11 at 50, 26 at 300)
+  state.musterPool = 4 + Math.floor(MUSTER_FAME * Math.sqrt(Math.max(0, livingFame(state)))) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + (settledAbroad(state) ? settledMuster(state) : favourMuster(state));
   // his lord sends men to his muster
   state.musterPool += lordMen(state);
   state.musterPool = Math.max(0, state.musterPool);

@@ -1,7 +1,7 @@
 // The power curve (docs/FRAME-HARDSHIP.md): over long bot lives, silver, ships, men and fame should rise, level
 // off and wobble, not climb without limit. Snapshots each spring; medians by year; the hardship counts.
 import { loadContent } from './content-loader';
-import { Bot, type Policy } from './bot-lib';
+import { Bot, BOT_OPTS, type Policy } from './bot-lib';
 import { act, newGame } from '../src/engine/index';
 import { RngCursor, seedRng } from '../src/engine/rng';
 import { dateOf } from '../src/engine/calendar';
@@ -17,13 +17,15 @@ const years = arg('--years', 20);
 const off = process.argv.includes('--off') ? process.argv[process.argv.indexOf('--off') + 1]!.split(',') : [];
 for (const k of off) ABLATE[k] = true;
 if (off.length) console.log(`brakes off: ${off.join(', ')}`);
+// --ambitious: the bot plays like a skilled human (more ships, the richest targets)
+if (process.argv.includes('--ambitious')) { BOT_OPTS.ambitious = true; console.log('ambitious bot'); }
 const policies = (process.argv.includes('--all') ? ['raider', 'reckless', 'coward'] : ['raider']) as Policy[];
 const median = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)]! : 0; };
 const p90 = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length * 0.9)]! : 0; };
 const marks = (o: number) => Math.round(o / 24);
 
 for (const policy of policies) {
-  const snaps: Record<number, { wealth: number[]; ships: number[]; men: number[]; fame: number[]; envy: number[]; upkeep: number[]; income: number[] }> = {};
+  const snaps: Record<number, { wealth: number[]; ships: number[]; men: number[]; fame: number[]; envy: number[]; upkeep: number[]; income: number[]; earned: number[]; land: number[] }> = {};
   let bigFleetYears = 0, livesBig = 0, setbacks = 0, lifeYears = 0, deaths = 0;
   const kinds: Record<string, number> = {};
   for (let i = 0; i < runs; i++) {
@@ -41,7 +43,10 @@ for (const policy of policies) {
       const y = dateOf(s.day).year;
       if (y !== lastYear) {
         lastYear = y;
-        const sn = (snaps[y] ??= { wealth: [], ships: [], men: [], fame: [], envy: [], upkeep: [], income: [] });
+        const sn = (snaps[y] ??= { wealth: [], ships: [], men: [], fame: [], envy: [], upkeep: [], income: [], earned: [], land: [] });
+        // everything that came to his own purse so far (the ledger), and the farms he holds abroad
+        sn.earned.push(Object.values(s.hard?.ledger ?? {}).reduce((n, l) => n + l.income, 0));
+        sn.land.push((s.holdings ?? []).length);
         sn.wealth.push(s.silver + s.base.hoard + s.loot);
         sn.ships.push(s.ships.length);
         sn.men.push(s.crew.men + aliveMen(s).length);
@@ -61,10 +66,11 @@ for (const policy of policies) {
     }
   }
   console.log(`\n${policy}: ${runs} lives × ${years} years; ${deaths} died before the end`);
-  console.log('  year   wealth(mk) p50/p90   ships p50/p90   men p50/p90   fame p50/p90   envy p50   upkeep share p50 (fame 60+)');
+  console.log('  year   wealth(mk) p50/p90   earned(lb) p50/p90   ships p50/p90   men p50/p90   land p90   fame p50/p90   envy p50   upkeep share p50 (fame 60+)');
   for (const [y, v] of Object.entries(snaps).sort()) {
     const share = v.income.length ? median(v.upkeep.map((u, k) => u / Math.max(1, u + v.income[k]!))) : 0;
-    console.log(`  ${y}   ${String(marks(median(v.wealth))).padStart(4)}/${String(marks(p90(v.wealth))).padEnd(5)}        ${median(v.ships)}/${p90(v.ships)}             ${String(median(v.men)).padStart(3)}/${String(p90(v.men)).padEnd(4)}      ${String(Math.round(median(v.fame))).padStart(3)}/${String(Math.round(p90(v.fame))).padEnd(4)}       ${median(v.envy).toFixed(1)}       ${Math.round(share * 100)}%  (${v.wealth.length})`);
+    const lb = (o: number) => Math.round(o / 48);
+    console.log(`  ${y}   ${String(marks(median(v.wealth))).padStart(4)}/${String(marks(p90(v.wealth))).padEnd(5)}        ${String(lb(median(v.earned))).padStart(4)}/${String(lb(p90(v.earned))).padEnd(5)}        ${median(v.ships)}/${p90(v.ships)}             ${String(median(v.men)).padStart(3)}/${String(p90(v.men)).padEnd(4)}   ${p90(v.land)}      ${String(Math.round(median(v.fame))).padStart(3)}/${String(Math.round(p90(v.fame))).padEnd(4)}       ${median(v.envy).toFixed(1)}       ${Math.round(share * 100)}%  (${v.wealth.length})`);
   }
   console.log(`  lives that ever held more than 8 ships: ${livesBig}; years past the second with more than 8: ${bigFleetYears}`);
   console.log(`  setbacks: ${setbacks} in ${lifeYears} living years (one every ${(lifeYears / Math.max(1, setbacks)).toFixed(1)} years): ` + Object.entries(kinds).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} ${n}`).join(', '));

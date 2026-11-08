@@ -389,6 +389,7 @@ export function goOnAs(state: GameState, content: ContentBundle, rng: RngCursor,
   state.fedTo = state.day;
   state.phase = 'muster';
   state.at = state.homeAt ?? 'home_fjord';
+  delete state.inland;
   state.voyage = null;
   state.service = null;
   state.boasts = [];

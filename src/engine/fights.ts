@@ -370,7 +370,9 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     const pl = content.places[b.place]!;
     lines.unshift(`${pl.name} is yours for the afternoon.`);
     clampMorale(state);
-    startPlunder(state, b.place, lines, b.win, content);
+    // the line that took it searches it: a partner's men beside his, and in a host the other wings (plunder.ts REACH)
+    const hostMen = b.host ? b.host.wings.reduce((n, w) => n + Math.max(0, w.us.men), 0) : 0;
+    startPlunder(state, b.place, lines, b.win, content, { allyMen: b.allyMen ?? 0, hostMen });
     return;
   }
   if (b.context === 'raid' && b.place) {

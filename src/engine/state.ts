@@ -135,6 +135,10 @@ export interface PlunderState {
   burned: boolean;
   log: string[];
   next?: string; // scene to open when it is over
+  /** How much of the place his men can strip in a round, by their numbers against its own (plunder.ts REACH); and, in a
+   *  host, his crews' part of what the whole line strips. Both 1 when unset (old saves). */
+  reach?: number;
+  share?: number;
   /** Someone worth a ransom was looked for (once a raid), and found. */
   searched?: boolean;
   hostage?: string;
