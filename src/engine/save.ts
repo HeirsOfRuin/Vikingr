@@ -59,6 +59,12 @@ export function fromSave(raw: unknown, content: ContentBundle): LoadResult {
     const p = content.places[id]!;
     state.places[id] ??= { wealth: p.raid?.wealth ?? 0, defence: 1, raided: 0, lastRaided: null };
   }
+  // two ships of one name from before names were kept apart: the later one is "the other" (Josh's save, 2026-11-08)
+  const named = new Set<string>();
+  for (const sh of state.ships) {
+    if (named.has(sh.name)) sh.name = sh.name.startsWith('The ') && !named.has(sh.name.replace(/^The /, 'The other ')) ? sh.name.replace(/^The /, 'The other ') : `${sh.name} the Second`;
+    named.add(sh.name);
+  }
   // a save from before the chronicle: the world's past stays as he lived it, and the chronicle runs from today
   if (!state.chron) state.chron = pastChronicle(state, content);
   if (save.contentHash !== content.hash) warnings.push('The game content has been updated since this save was made.');

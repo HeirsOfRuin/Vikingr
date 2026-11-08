@@ -27,7 +27,7 @@
           You call back your name, and your father's, and the jarl's, and where you have been. The Dane laughs, and tells you his: Ubbi, a hersir of King Horik's, going to Frisia "to see what the emperor's sons have left lying about."
 
           He throws you a skin of wine across the water, Frankish wine, sour and wonderful. "When you're tired of rowing for jarls," he calls, as they draw away, "come to Hedeby and ask for Ubbi."
-        effects: [ { set: flag.se_ubbi }, { add: { skill.lore: 1, crew.morale: 1 } } ]
+        effects: [ { set: flag.se_ubbi }, { ally: { id: ubbi, meet: true } }, { add: { skill.lore: 1, crew.morale: 1 } } ]
       failure:
         text: |
           You call back. Your voice cracks on the second word, the way it hasn't since you were fourteen winters old.

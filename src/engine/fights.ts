@@ -322,6 +322,7 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
     state.crew.morale -= 1;
     state.honour = Math.max(-10, state.honour - 1);
     lines.push('The men have started saying you lead from behind.');
+    journal(state, 'The men are saying you lead from behind. Honour suffers for it.');
     state.rearFights = 0;
   }
 

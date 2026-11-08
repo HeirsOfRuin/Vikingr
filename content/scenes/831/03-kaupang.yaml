@@ -94,19 +94,19 @@
   choices:
     - id: yes
       text: Clasp his hand. Hedeby, when the time comes.
-      effects: [ { set: flag.ubbi_sworn }, { know: hedeby }, { favour: -1 } ]
+      effects: [ { set: flag.ubbi_sworn }, { ally: { id: ubbi, meet: true } }, { know: hedeby }, { favour: -1 } ]
       result: |
         He crushes your hand in his and laughs. "Good. Bring the loud one, too," he says, nodding at Ulf. "I like a man you can hear in the dark."
 
         Ketill says nothing until Ubbi is gone. Then he says, "The jarl won't like it," and goes to sleep.
     - id: maybe
       text: Tell him you'll think on it.
-      effects: [ { set: flag.ubbi_offer }, { item: { id: ubbi_ring } } ]
+      effects: [ { set: flag.ubbi_offer }, { ally: { id: ubbi, meet: true } }, { item: { id: ubbi_ring } } ]
       result: |
         "Think fast," Ubbi says. "Frisia won't wait, and neither will I." He leaves you a ring off his own arm, a thin twisted thing of Danish silver, as a reminder.
     - id: no
       text: Tell him you have a jarl already.
-      effects: [ { set: flag.ubbi_refused }, { add: { honour: 1 } }, { favour: 1 } ]
+      effects: [ { set: flag.ubbi_refused }, { ally: { id: ubbi, meet: true } }, { add: { honour: 1 } }, { favour: 1 } ]
       result: |
         He shrugs. "Every man has a jarl until he hasn't," he says, and goes.
 

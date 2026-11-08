@@ -6,7 +6,7 @@ import type { GameState, Ship } from './state';
 import type { RngCursor } from './rng';
 import { journal } from './journal';
 import { formatSilver, plural } from './format';
-import { addLoyalty, aliveMen } from './crew';
+import { addLoyalty, aliveMen, SHIP_NAMES } from './crew';
 import { benchHeir } from './fights';
 import { partnerHold } from './allies';
 
@@ -95,12 +95,40 @@ function hiredName(state: GameState, content: ContentBundle): string {
 /** A ship joins the fleet. The flagship needs no master; any other gets a hired steersman, and a scene lets him choose. */
 export function addShip(state: GameState, content: ContentBundle, ship: Omit<Ship, 'id'> & { id?: string }): Ship {
   const s: Ship = { id: ship.id ?? `ship${state.day}_${state.ships.length}`, ...ship };
+  s.name = freeShipName(state, s.name);
   state.ships.push(s);
   if (state.ships.length > 1 && !s.master) {
     s.master = `hired:${hiredName(state, content)}`;
     if (content.scenes.fl_master && !state.service) state.queue.push({ scene: 'fl_master', day: state.day });
   }
   return s;
+}
+
+/** No two ships in his fleet share a name (Josh's save, 2026-11-08: two knarrs called The Frisian). A second prize
+ *  of the same kind is "the other" one, as the crews would say; anything else takes the first free name on the list. */
+export function freeShipName(state: GameState, wanted: string): string {
+  const taken = new Set(state.ships.map((s) => s.name));
+  if (!taken.has(wanted)) return wanted;
+  const other = wanted.replace(/^The /, 'The other ');
+  if (other !== wanted && !taken.has(other)) return other;
+  return SHIP_NAMES.find((n) => !taken.has(n)) ?? `${wanted} ${taken.size + 1}`;
+}
+
+/** A sworn shipmaster has died: a hired steersman takes his ship at once, and he is told (Josh's save, 2026-11-08:
+ *  Grey Goose sailed two summers with "nobody at her steering-oar" after Rognvald fell). Run on every settle. */
+export function deadMasters(state: GameState, content: ContentBundle): string[] {
+  const lines: string[] = [];
+  for (const s of state.ships.slice(1)) {
+    if (!s.master?.startsWith('man:')) continue;
+    const id = s.master.slice(4);
+    const m = state.men.find((x) => x.id === id);
+    if (m?.alive) continue;
+    const hired = hiredName(state, content);
+    s.master = `hired:${hired}`;
+    journal(state, `${hired}, a hired steersman, has the steering-oar of ${s.name}.`);
+    lines.push(`${m?.name ?? 'Her master'} is dead, and ${s.name} needs a man at her steering-oar. ${hired}, a hired steersman, has her for now, for his three shares. You can give her to one of your sworn men in the Crew tab, when you are in port.`);
+  }
+  return lines;
 }
 
 /** Gives a ship's steering-oar to a sworn man, or back to a hired steersman. */

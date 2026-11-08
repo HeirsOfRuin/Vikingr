@@ -26,7 +26,7 @@ import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lor
 import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding, claimBlock } from './land';
 import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
-import { appoint, buyHull, CARGO_UNIT, hullsForSale, sellShip, shipSellPrice, shipsToSell } from './fleet';
+import { appoint, buyHull, CARGO_UNIT, deadMasters, hullsForSale, sellShip, shipSellPrice, shipsToSell } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
 import { commitReserve, fightOutHost, fightOutHostWall, hostRound, hostWallRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
@@ -1408,6 +1408,9 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
   // and so does the fleet he is sworn to (docs/FRAME-FLEETS-REALMS.md, Part A)
   const word = [...tickFleet(state, content), ...gatherFleet(state, content), ...tickOwnFleet(state, content, rng)];
   if (word.length) { if (!state.pending) state.pending = { t: 'report', title: 'Word of the fleet', lines: word }; else state.after = { title: 'Word of the fleet', lines: word }; }
+  // a dead man's ship gets a steersman, and he hears of it once the fight or the scene is over
+  const helm = deadMasters(state, content);
+  if (helm.length) { if (!state.pending) state.pending = { t: 'report', title: 'A ship without her master', lines: helm }; else if (!state.after) state.after = { title: 'A ship without her master', lines: helm }; else state.after.lines.push(...helm); }
   // days ashore abroad eat from the stores, the same as days at sea
   const hungry = eatAshore(state);
   if (hungry && !state.pending) state.pending = { t: 'report', title: 'Hungry', lines: [hungry] };

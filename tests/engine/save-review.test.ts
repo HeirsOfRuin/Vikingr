@@ -108,3 +108,40 @@ describe('names in the middle of a sentence', () => {
     expect(lowerFirst('The Danish fleet')).toBe('the Danish fleet');
   });
 });
+
+// Josh's second save, 2026-11-08 (Ragnavald, autumn 836): the year 835 never happened; Grey Goose and The Frisian sailed
+// with dead masters; two knarrs called The Frisian.
+import { startWinter } from '../../src/engine/season';
+import { addShip, deadMasters } from '../../src/engine/fleet';
+
+describe('the second save', () => {
+  it('home after 1 November, the winter starts that day, not a year later', () => {
+    const s = captain();
+    s.day = dayOf(834, 331); // 28 November 834
+    startWinter(s, 3);
+    expect(s.day).toBe(dayOf(834, 331));
+    expect(s.flags._winter).toBe(834);
+    const t = captain();
+    t.day = dayOf(834, 280); // home in October: the winter starts on 1 November
+    startWinter(t, 3);
+    expect(t.day).toBe(dayOf(834, 304));
+  });
+
+  it("a dead master's ship gets a hired steersman, and he is told", () => {
+    const s = captain();
+    s.ships.push({ id: 'goose', type: 'snekkja', name: 'Grey Goose', hull: 100, master: 'man:ketill' } as GameState['ships'][number]);
+    s.men.find((m) => m.id === 'ketill')!.alive = false;
+    const lines = deadMasters(s, content);
+    expect(lines[0]).toMatch(/Ketill is dead, and Grey Goose needs a man at her steering-oar/);
+    expect(s.ships[1]!.master).toMatch(/^hired:/);
+    expect(deadMasters(s, content)).toEqual([]);
+  });
+
+  it('no two ships share a name', () => {
+    const s = captain();
+    const a = addShip(s, content, { type: 'knarr', name: 'The Frisian', hull: 55 });
+    const b = addShip(s, content, { type: 'knarr', name: 'The Frisian', hull: 55 });
+    expect(a.name).toBe('The Frisian');
+    expect(b.name).toBe('The other Frisian');
+  });
+});

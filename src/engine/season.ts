@@ -239,7 +239,8 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
     state.honour = Math.min(10, state.honour + 1);
     addDeed(state, content, { type: 'open_handed', text: 'Shared the plunder with an open hand', witnesses: heads });
   }
-  if (how === 'mean') state.honour = Math.max(-10, state.honour - 1);
+  // a mean share costs honour; say so where he can find it later (Josh's save, 2026-11-08: honour 0 to -5 and no record why)
+  if (how === 'mean') { state.honour = Math.max(-10, state.honour - 1); journal(state, 'Kept a mean captain\'s part at the share-out. The men noticed.'); }
   lines.push(pot > 0
     ? `Of the ${formatSilver(pot)} left, you keep ${formatSilver(keep)}, a ${how === 'generous' ? 'generous' : how === 'mean' ? 'mean' : 'fair'} captain's part (${Math.round(LEADER_SHARE[how] * 100)}%). ${heads ? (heads === 1 ? `The one other man takes about ${formatSilver(each)}.` : `The other ${plural(heads, 'man', 'men')} take about ${formatSilver(each)} each.`) : 'There is nobody else to share it with.'}`
     : 'There is nothing to share. The men go home with what they left with.');
@@ -445,7 +446,9 @@ export function startWinter(state: GameState, actions: number, content?: Content
   state.flags._winter = d.doy >= 182 ? d.year : d.year - 1;
   state.phase = 'winter';
   state.hallLeft = actions;
-  if (d.doy >= 182) state.day = Math.max(state.day, nextDoy(state.day, WINTER_DOY));
+  // home before 1 November: the winter starts then. Home after it: it has already started, today
+  // (Josh's save, 2026-11-08: home on 28 November 834, and nextDoy skipped to 1 November 835, a whole year gone)
+  if (d.doy >= 182 && d.doy < WINTER_DOY) state.day = Math.max(state.day, nextDoy(state.day, WINTER_DOY));
   // the harvest is in, or isn't; and a long dark winter of fires in a wooden house (docs/FRAME-HARDSHIP.md)
   if (content && rng && !state.service) {
     rollHarvest(state, content, rng, state.flags._winter);
@@ -505,9 +508,9 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   if (state.building) {
     const t = content.ships[state.building]!;
     const name = SHIP_NAMES[(state.ships.length + state.stats.legs) % SHIP_NAMES.length]!;
-    addShip(state, content, { type: t.id, name, hull: 100 });
-    lines.push(`The new ${t.name.toLowerCase()} is launched. You name her ${name}.`);
-    journal(state, `Launched ${name}, a ${t.name.toLowerCase()}.`);
+    const sh = addShip(state, content, { type: t.id, name, hull: 100 });
+    lines.push(`The new ${t.name.toLowerCase()} is launched. You name her ${sh.name}.`);
+    journal(state, `Launched ${sh.name}, a ${t.name.toLowerCase()}.`);
     state.building = null;
   }
   // at another man's oar: the captain fills his empty benches from the muster, as every captain does
