@@ -21,7 +21,7 @@
     - id: jarl
       text: Go up to the jarl's hall.
       effects:
-        - { if: { all: [flag.j_promised_king, { any: [flag.c_king_kept, flag.c_horn_for_jarl, flag.c_drank, flag.c_king_killed] }] }, then: [ { add: { silver: 48 } }, { set: flag.j_promise_kept }, { deed: { type: ring_giving, text: Given a ring by Jarl Eystein for the king of Conaille, weight: 3 } } ], else: [ { if: flag.j_promised_king, then: [ { add: { honour: -2 } }, { set: flag.j_promise_broken } ] } ] }
+        - { if: { all: [flag.j_promised_king, { any: [flag.c_king_kept, flag.c_horn_for_jarl, flag.c_drank, flag.c_king_killed] }] }, then: [ { if: flag.c_king_kept, then: [ { ring: { metal: gold } } ], else: [ { ring: { metal: silver } } ] }, { set: flag.j_promise_kept }, { deed: { type: ring_giving, text: Given a ring by Jarl Eystein for the king of Conaille, weight: 3 } } ], else: [ { if: flag.j_promised_king, then: [ { add: { honour: -2 } }, { set: flag.j_promise_broken } ] } ] }
         - { if: flag.c_horn_for_jarl, then: [ { lose_item: king_horn } ] }
         - { if: flag.j_commission_done, then: [ { set: flag.j_trusted } ], else: [ { if: flag.j_commission, then: [ { add: { honour: -1 } }, { set: flag.j_commission_failed } ] } ] }
       result: |
@@ -30,9 +30,9 @@
 
         Jarl Eystein looks Máel Brigte up and down, the way he'd look at a bull at a fair. Then he laughs, a big bark of a laugh, and takes a gold ring off his own arm and throws it to you across the hall.
         [elif flag.j_promised_king && flag.c_horn_for_jarl]
-        You bring him the king's horn, silver-rimmed, and put it in his hands. He turns it over, and smells it, and laughs, and takes a ring off his own arm and throws it to you across the hall.
+        You bring him the king's horn, silver-rimmed, and put it in his hands. He turns it over, and smells it, and laughs, and takes a silver ring off his own arm and throws it to you across the hall.
         [elif flag.j_promised_king && flag.c_drank || flag.j_promised_king && flag.c_king_killed]
-        You tell him what you did in Máel Brigte's hall. He listens without moving. Then he takes a ring off his own arm and throws it to you. "Next time," he says, "bring me the cup."
+        You tell him what you did in Máel Brigte's hall. He listens without moving. Then he takes a silver ring off his own arm and throws it to you. "Next time," he says, "bring me the cup."
         [elif flag.j_promised_king]
         You promised him the king of Conaille, in front of the whole hall, in the spring. You have come back without him.
 
@@ -347,8 +347,17 @@
   choices:
     - id: pay
       text: Pay him. It's the law.
+      visible_if: "silver >= 72"
       effects: [ { add: { silver: -72, honour: -1 } }, { set: flag.hrapp_ended } ]
       result: You pay. You'd pay twice as much not to have to look at him while you do it.
+    - id: short
+      text: Tell him you haven't got it.
+      visible_if: { not: "silver >= 72" }
+      effects: [ { add: { honour: -2 } } ]
+      result: |
+        You tell him, on your knees on his own cloak, with the blood running into your eyes. Grímr looks down at you for a while. Then he laughs, and wipes his axe on your shoulder, and goes back into his house.
+
+        "A pound and a half," Thorgils calls after you from the doorway, as your men lift you. "We'll be here when you have it." By the next day the whole district knows you bled on a cloak and couldn't pay for it.
 
 - id: w1_yule
   kind: phase

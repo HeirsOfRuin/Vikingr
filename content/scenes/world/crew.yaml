@@ -248,7 +248,7 @@
   choices:
     - id: yes
       text: Let him go, with your blessing and a cow for the wedding.
-      effects: [ { crewman: { settle: true } }, { add: { honour: 1 } } ]
+      effects: [ { crewman: { settle: true } }, { add: { honour: 1 } }, { if: "silver >= 12", then: [ { add: { silver: -12 } } ], else: [ { add: { honour: -1 } } ] } ]
       result: The wedding is in the spring, and you give the bride away, since she has nobody else, and he cries, which surprises everyone but you. Every muster after, he is the first man on the landing with his shield.
     - id: summer
       text: Ask him for one more summer. You need him.

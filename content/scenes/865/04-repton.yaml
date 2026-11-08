@@ -20,7 +20,7 @@
     - id: news
       text: Get the Hordaland men drunk, and hear the news from home.
       effects: [ { add: { skill.lore: 1 } }, { set: flag.ga_heard_harald } ]
-      result: The news from home is all Harald. He has sworn not to cut his hair until he is king of all Norway, they say, and his hair is getting long. Your father's farm is still there. So is your brother. Nobody in Hordaland has knelt yet. They will.
+      result: The news from home is all Harald. He has sworn not to cut his hair until he is king of all Norway, they say, and his hair is getting long. [if age < 40]Your father's farm is still there. So is your brother.[elif children >= 1]Your own farm is still there, and your children with it, keeping their heads down.[else]Your own farm is still there, and the men you grew up with are grey now, and keeping their heads down.[/if] Nobody in Hordaland has knelt yet. They will.
     - id: strand
       text: Go down to the strand, and trade the army's loot for good silver.
       oar: true
@@ -93,14 +93,16 @@
 
     Guthrum and the summer army's kings are going south, to Cambridge, and then back into Wessex. Alfred is the last English king, and Guthrum means to be the end of him.
     [break]
-    Both of them want men. Both of them have asked for you.
+    [if service]Both of them want men. {captain} has made up his mind for {ship}: south, with Guthrum, where the silver is. But a free man's bench is his own, in a spring like this one, and there are ships on the river going north with empty benches, and land at the end of it.[else]Both of them want men. Both of them have asked for you.[/if]
   choices:
     - id: halfdan
       text: Go north with Hálfdan, for land.
+      visible_if: "!service"
       effects: [ { set: flag.ga_halfdan }, { route: [york] }, { camp: york } ]
       result: Hálfdan claps you on the shoulder hard enough to hurt and says he'll find you a farm with a river on it. He says it to everyone. He might even mean it.
     - id: guthrum
       text: Go south with Guthrum, for Wessex.
+      visible_if: "!service"
       effects: [ { set: flag.ga_guthrum }, { route: [thetford] }, { camp: thetford }, { march: thetford } ]
       result: Guthrum is a broad, slow-speaking Dane with a patient face, nothing like the sons of Ragnarr. He takes his time over you before he says anything. "Good," he says. "Alfred has learned. So must we."
     - id: home
@@ -108,3 +110,18 @@
       visible_if: "!service"
       effects: [ { fleet_end: true }, { set: flag.ga_went_home } ]
       result: Nine years, for the men who came with the first ships. You go down the Trent with the spring flood, and out of the Humber, and north, with a ship full of men who have forgotten what their wives look like. Some of their wives have forgotten too.
+    - id: bench
+      text: Stay at your bench, and go south with {captain}.
+      visible_if: service
+      oar: true
+      effects: [ { set: flag.ga_guthrum }, { route: [thetford] }, { camp: thetford }, { march: thetford } ]
+      result: You stay. {captain} grunts, which from him is thanks. Guthrum walks along the ships the morning the army leaves, a broad, slow-speaking Dane with a patient face, nothing like the sons of Ragnarr, looking at every bench as if he were buying it. "Alfred has learned," he says to the man beside him. "So must we."
+    - id: north
+      text: Carry your sea-chest to a ship going north with Hálfdan.
+      visible_if: service
+      oar: true
+      effects: [ { set: flag.ga_halfdan }, { join_ship: { captain: Steinn, ship_name: the Otter, type: karvi, crew: 26, home: york, route: [york] } }, { camp: york } ]
+      result: |
+        The Otter is a Jutland ship that lost six men to the flux at Repton, and her steersman, Steinn, wants oarsmen more than he wants their stories. Your old captain watches you carry your chest along the bank, and lifts a hand, and turns back to his own ship.
+
+        Hálfdan comes down the bank the morning the ships go, and claps you on the shoulder hard enough to hurt, and says he'll find you a farm with a river on it. He says it to everyone. He might even mean it.

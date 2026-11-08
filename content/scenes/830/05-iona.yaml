@@ -338,7 +338,13 @@
         - { deed: { type: raid, text: At the raid on Iona } }
         - { if: flag.i_first, then: [ { shares: 2 } ] }
       result: |
+        [if background == younger_son]
         "I don't know," Hallvard says. "Ormr would have known. Or he'd have said he did."
+        [elif background == freedman]
+        "I don't know," Hallvard says. "Your grandmother would have known. She prayed to him every night, they say, all those years at Hrapp's."
+        [else]
+        "I don't know," Hallvard says. "A völva would know. Or she'd say she did."
+        [/if]
 
         He takes the silver hammer from round his neck and holds it in his fist, looking at the smoke. "Maybe it means nothing. Maybe their god doesn't mind about houses." He puts the hammer back. "I'd mind."
 

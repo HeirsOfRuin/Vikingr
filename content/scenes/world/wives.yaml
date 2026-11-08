@@ -212,7 +212,7 @@
   text: |
     She comes over in a borrowed knarr in the autumn gales, with two thralls, a dog, a chest, and forty ewes, of which thirty-eight arrive, and she is furious about the other two for a week.
 
-    The wedding is small and loud. She drinks your father under the table, which nobody has done in twenty years, and dances with your mother, which nobody has done ever.
+    The wedding is small and loud. [if heir]She drinks your father's old shipmates under the table, one after another, which nobody has done in twenty years, and dances with the oldest of them, which nobody has done ever.[else]She drinks your father under the table, which nobody has done in twenty years, and dances with your mother, which nobody has done ever.[/if]
     [if base == father]
     The silver from her valley buys the old Ketilsstead at the head of the fjord, with a bad roof and a good field. She is on the roof herself the morning after the wedding, with a mallet.
     [else]

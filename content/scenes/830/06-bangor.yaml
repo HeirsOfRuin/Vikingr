@@ -12,7 +12,7 @@
   text: |
     The lough opens in front of you like a mouth: wide and grey and quiet, with low green hills on both sides and the smoke of farms going up into a still evening.
 
-    Bangor is on the south shore, near the mouth. You can see the abbey from the water: a ring of earth bank, a lot of roofs inside it, a round bell-tower of stone. Smoke from a dozen cooking fires. Cattle on the slope above.
+    Bangor is on the south shore, near the mouth. You can see the abbey from the water: a ring of earth bank, a lot of roofs inside it, the long dark roof of a timber church with a wooden bell-house beside it. Smoke from a dozen cooking fires. Cattle on the slope above.
 
     It is bigger than Iona. It is a great deal bigger than Iona.
     [break]
@@ -330,14 +330,14 @@
     [else]
     Ásgeir stands in the gate of the abbey bank and calls the men up.
     [/if]
-    The bell has stopped. Inside the bank there are a dozen houses, and a stone church, and a round tower with its door ten feet off the ground and the ladder pulled up behind it.
+    The bell has stopped. Inside the bank there are a dozen houses, and the bell-house on its four oak posts with the rope hanging slack, and a long church of split oak with a shingled roof, its door shut and barred from inside.
 
-    "They're in there with the silver," says Bersi, looking up at the tower. "Every abbey in Ireland has one. They pull the ladder up and wait for us to get bored."
+    "They're in there with the silver," says Bersi, looking at the door. "They always are. They bar it and sing, and wait for us to get bored."
   choices:
     - id: up
       text: Go up into the abbey with the rest.
       effects: [ { plunder: { next: b_leave } } ]
-      result: The tower can wait. Everything else in Bangor can't.
+      result: The church can wait. Everything else in Bangor can't.
 
 - id: b_rout
   kind: spine

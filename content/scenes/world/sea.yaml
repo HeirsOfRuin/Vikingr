@@ -152,8 +152,16 @@
         The boy is sixteen and trying not to shake. His father, bleeding from the scalp in the bilge, says that if anything happens to him you will be hunted from here to Hel's gate. You tell him that nothing will happen to him as long as his father remembers whose ship beat his. His father understands. The boy goes in your ship.
     - id: burn
       text: Burn her, so every ship on this coast sees the smoke.
+      visible_if: "!service"
       effects: [ { deed: { type: deed, text: "Burned a rival's longship at sea", weight: 2 } } ]
       result: She goes up like a torch, and the smoke stands over the sea all afternoon. Every crew on this coast will know whose work it was by nightfall.
+    - id: torch
+      text: Carry the pitch-pot across, and set her alight for {captain}.
+      oar: true
+      visible_if: service
+      effects: [ { deed: { type: man_deed, text: "Fired a beaten rival's ship at sea", weight: 1 } }, { add: { crew.morale: 1 } } ]
+      result: |
+        {captain} wants her burned, so every ship on this coast sees the smoke. You go over her rail with the pitch-pot, slopping it along her benches, and the first torch catches before you're clear. You come back over the gap with your eyebrows gone and your sleeve smouldering. "Better kept than ours," says the man on the next bench, watching her go up. "Not now."
 
 - id: g_sea_wreck
   kind: pool
@@ -259,6 +267,7 @@
       text: Hold your course. Rán takes what she takes.
       visible_if: "!service"
       effects: [ { add: { crew.men: -1, crew.morale: -2 } } ]
+      result: You hold your course, and nobody looks aft at the steering-oar for the rest of the day. Somebody forward is saying the dead man's name over and over, until somebody else tells him to stop.
     - id: call
       text: "Shout aft to {captain}: bring her round, there's time."
       visible_if: service
@@ -271,7 +280,6 @@
         text: |
           {captain} brings her round, but too slowly, and too late. By the time she answers there's nothing to throw a line to. Somebody forward is saying the dead man's name over and over, until somebody else tells him to stop.
         effects: [ { add: { crew.men: -1, crew.morale: -1 } } ]
-      result: You hold your course. Somebody forward is saying the dead man's name over and over, until somebody else tells him to stop.
 
 - id: g_sea_whale
   kind: pool

@@ -228,12 +228,17 @@
 
     The silver here is different. It comes from the east, in round coins with writing on them that nobody can read, cut into pieces and weighed. A fur trader shows you one with the writing still crisp, and says it came from a city further east than anyone in this harbour has been, and to that city from somewhere further east again.
     [break]
+    [if year <= 831]
     And in the middle of the market there is a monk: a Frank, thin and dark, standing on a box and talking about his god in bad Norse to anyone who'll listen. Nobody is stopping him. A few people are listening. The king, they say, has given him leave.
 
     His name is Ansgar.
+    [else]
+    At the edge of the market there is a little church of split logs, with a cross on the gable that somebody has thrown dung at. Frankish monks built it, with the king's leave, and they have come and gone from it since, as the king's mood and the harvest go. Today its door is shut.
+    [/if]
   choices:
     - id: listen
       text: Stop, and listen to the monk.
+      visible_if: "year <= 831"
       effects: [ { add: { skill.lore: 1 } }, { set: flag.birka_ansgar } ]
       result: |
         He talks about a god who was hanged on a tree and came back, which sounds familiar, and a world where the poor go first, which doesn't. Afterwards he asks your name, and where you're from, and writes it down on a scrap of parchment, and thanks you as if you'd done him a kindness.

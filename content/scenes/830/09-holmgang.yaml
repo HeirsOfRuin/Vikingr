@@ -34,7 +34,7 @@
       next: y_name
     - id: pay
       text: Go to the jarl, and offer to let the law settle it with silver.
-      effects: [ { set: flag.y_withdrew }, { add: { honour: -2 } }, { if: "!nickname", then: [ { nickname: Grautr } ] } ]
+      effects: [ { set: flag.y_withdrew }, { add: { honour: -2 } }, { if: "silver >= 24", then: [ { add: { silver: -24 } } ], else: [ { add: { honour: -1 } } ] }, { if: "!nickname", then: [ { nickname: Grautr } ] } ]
       result: |
         The jarl listens, and his face doesn't change. He fines Thorgils half a pound for the insult and you half a pound for the challenge, and that is the law satisfied.
 
@@ -60,9 +60,9 @@
         - { queue: { scene: y_thorgils_kin, days: 6 } }
         - { if: "!nickname", then: [ { nickname: Holm-Bear } ] }
       result: |
-        The hall goes quiet when you come in, then louder than before. Ulf is already telling it, and in his version you are taller.
+        The hall goes quiet when you come in, then louder than before. [if man.ulf.alive]Ulf is already telling it, and in his version you are taller.[else]Bersi is already telling it, and in his version you are taller, and he had silver on you from the start.[/if]
 
-        By noon they have a name for it. They call you Holm-Bear, which is more than you deserve and less than Ulf thinks you do.
+        By noon they have a name for it. They call you Holm-Bear, which is more than you deserve and less than [if man.ulf.alive]Ulf thinks you do[else]the story Bersi tells[/if].
       next: y_name
 
 - id: y_holm_lost

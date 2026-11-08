@@ -99,7 +99,7 @@
   trigger: road
   chance: 0.3
   cooldown_days: 200
-  requires: ["at.people == english", "year >= 865"]
+  requires: ["at.people == english", "year >= 865", flag.ga_army]
   art: muster
   title: The thegn's horses
   text: |

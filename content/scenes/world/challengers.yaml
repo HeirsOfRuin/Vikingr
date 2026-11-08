@@ -41,7 +41,7 @@
   choices:
     - id: done
       text: Take his holmlausn, and his sword-belt for the trouble.
-      effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Beat Hrafn Ketilsson, the collector of names, on the strand", weight: 4, witnesses: 300 } } ]
+      effects: [ { add: { honour: 1, silver: 36 } }, { deed: { type: deed, text: "Beat Hrafn Ketilsson, the collector of names, on the strand", weight: 4, witnesses: 300 } } ]
       result: The traders who bet on you buy your crew ale until the barrels are empty. The ones who bet on him tell the story too. That's how you know it will last.
 
 - id: ch_hrafn_lost
@@ -55,7 +55,7 @@
   choices:
     - id: done
       text: Pay, and go back to the ship.
-      effects: [ { add: { honour: -1 } } ]
+      effects: [ { add: { honour: -1 } }, { if: "silver >= 24", then: [ { add: { silver: -24 } } ], else: [ { add: { honour: -1 } } ] } ]
       result: He does tell it well. You hear it in three markets that summer, a little better each time, and you are a little smaller in it each time.
 
 - id: ch_hrafn_parted
@@ -112,7 +112,7 @@
   choices:
     - id: done
       text: Take the torc, and nothing else.
-      effects: [ { add: { silver: 60, honour: 1 } }, { deed: { type: killed_champion, text: "Killed Cú Mara, the Hound of the Sea, before the hosts", weight: 6, witnesses: 400 } } ]
+      effects: [ { ring: { metal: gold } }, { add: { honour: 1 } }, { deed: { type: killed_champion, text: "Killed Cú Mara, the Hound of the Sea, before the hosts", weight: 6, witnesses: 400 } } ]
       result: The king sends nothing. No herald, no silver, no war. For a year after, his people step aside on the strand when your crew comes up it, and none of them will meet your eye.
 
 - id: ch_cu_mara_lost
@@ -180,13 +180,13 @@
   art: holmgang
   title: At the thaw
   text: |
-    He breaks your last shield and puts you on your knees and stands there with the sword up. Then he looks at the crowd, and at your father, and lowers it.
+    He breaks your last shield and puts you on your knees and stands there with the sword up. Then he looks at the crowd, and at [if heir]your kinsmen in it[else]your father[/if], and lowers it.
 
     "One of us has to stop," he says. "It's going to be me." He walks off the cloak.
   choices:
     - id: done
       text: Pay what the law says, and let it be over.
-      effects: [ { add: { honour: -1 } } ]
+      effects: [ { add: { honour: -1 } }, { if: "silver >= 24", then: [ { add: { silver: -24 } } ], else: [ { add: { honour: -1 } } ] } ]
       result: It is over. He walks home through the slush, and you never see him again.
 
 # ---- Ögmundr Wolf-coat: a berserkr ----
@@ -296,5 +296,5 @@
   choices:
     - id: done
       text: Pay what the law says, and get up.
-      effects: [ { add: { honour: -1 } } ]
+      effects: [ { add: { honour: -1 } }, { if: "silver >= 24", then: [ { add: { silver: -24, crew.morale: 1 } } ], else: [ { add: { honour: -1 } } ] } ]
       result: He doesn't take the silver. He gives it to your men for ale, and sits with them while they drink it, and tells them what you did wrong. Some of it, you have to admit, is true.

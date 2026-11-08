@@ -259,14 +259,15 @@
   choices:
     - id: swear
       text: Free him at the ale, and take his oath on a ring.
-      requires: ["rings.silver >= 1"]
+      requires: ["rings.silver >= 1", "silver >= 12"]
       effects: [ { add: { thralls: -1, silver: -12 } }, { swear_cand: silver } ]
       result: |
-        You brew the ale and hold the feast, small as it is, and he sits at your table for the first time with a cup in his hand and doesn't drink it, just holds it. In the morning he swears, on a ring, in front of your men. Some of them were not pleased to see a thrall sit at the table. None of them say so to him.
+        A quarter-pound of silver goes on malt and a wether. You brew the ale and hold the feast, small as it is, and he sits at your table for the first time with a cup in his hand and doesn't drink it, just holds it. In the morning he swears, on a ring, in front of your men. Some of them were not pleased to see a thrall sit at the table. None of them say so to him.
     - id: free
       text: Free him, but keep him on the farm as a free man, with his own plot.
+      requires: ["silver >= 12"]
       effects: [ { add: { thralls: -1, silver: -12, honour: 1 } } ]
-      result: He drinks his freedom-ale and works the same fields the next morning, for himself now, and for you. He thanks you once, and then never again, which is how a free man does it.
+      result: He drinks his freedom-ale, which costs you a quarter-pound of silver in malt and meat, and works the same fields the next morning, for himself now, and for you. He thanks you once, and then never again, which is how a free man does it.
     - id: no
       text: Tell him no.
       result: He nods, and goes out, and is at work before you the next morning. Nothing in his face changes. You find you don't like how easily he does that.

@@ -114,7 +114,7 @@
   art: open_sea
   title: The fleet's skalds
   text: |
-    In camp, when sixty ships are drawn up on a river beach, the skalds find each other the way dogs do. There are a dozen in {fleet}, and each one of them is making verses about the fleet, and each one of them has his own lord a little nearer the front of every fight than the others. {skald} the skald comes back to your fire one night and says that {fleet_leader}'s skald has been telling the camp that your ship was last up the beach at the last landing.
+    In camp, when every ship in the fleet is drawn up on a river beach, the skalds find each other the way dogs do. There are more of them in {fleet} than anyone needs, and each one of them is making verses about the fleet, and each one of them has his own lord a little nearer the front of every fight than the others. {skald} the skald comes back to your fire one night and says that {fleet_leader}'s skald has been telling the camp that your ship was last up the beach at the last landing.
   choices:
     - id: answer
       text: Tell {skald} to answer him, at the leader's fire, in front of everyone.

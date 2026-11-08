@@ -66,15 +66,17 @@
     - { from: [874, 270], at: york, posture: bound, requires: flag.ga_halfdan, note: "Hálfdan takes his half of the army north." }
     - { from: [874, 270], at: thetford, posture: bound, requires: flag.ga_guthrum, note: "Guthrum takes his half to East Anglia." }
     - { from: [878, 6], at: chippenham, posture: bound, requires: flag.ga_guthrum, note: "Guthrum falls on Chippenham at Twelfth Night, while the king keeps the feast." }
+# docs/FRAME-MED.md
 - id: med859
   name: the fleet of Hastein and Björn
   leader: Hastein and Björn
   ships: 62
   until: 861
-  desc: Sixty-two ships out of the Loire, bound past Spain and through the strait into the Middle Sea, where no Northman has been. Two winters away, if they come back at all (docs/FRAME-MED.md).
+  desc: Sixty-two ships out of the Loire, bound past Spain and through the strait into the Middle Sea, where no Northman has been. Two winters away, if they come back at all.
+# docs/FRAME-FLEETS-REALMS.md, Part C
 - id: own
   name: your fleet
   leader: you
   ships: 2
   until: 9999
-  desc: The ships that answered your war-arrow (docs/FRAME-FLEETS-REALMS.md, Part C). It sails where you sail, and breaks up at the year's end unless you hold it together through the winter.
+  desc: The ships that answered your war-arrow. It sails where you sail, and breaks up at the year's end unless you hold it together through the winter.

@@ -217,7 +217,7 @@
       text: Go ashore with the Rus, into the suburbs.
       visible_if: "year == 860"
       danger: true
-      effects: [ { host: { title: "The suburbs of Miklagarðr", foe: frankish_levy, terrain: field, men: 20, ratio: 0.9, wings: [ { name: "Askold's Rus", men: 400, quality: 1.0, foe_men: 300 } ], role: wing, win: ea_d_860, lose: ea_d_860 } } ]
+      effects: [ { host: { title: "The suburbs of Miklagarðr", foe: greek_guard, terrain: field, men: 20, ratio: 0.9, wings: [ { name: "Askold's Rus", men: 400, quality: 1.0, foe_men: 300 } ], role: wing, win: ea_d_860, lose: ea_d_860 } } ]
     - id: hold
       text: Stay with the ships, and watch the walls.
       visible_if: "year == 860"
@@ -231,11 +231,11 @@
       result: The Greeks pay for furs and wax and slaves in gold and silver and silk, and they write it all down, and tax it, and smile. You come away with silk that would buy a farm in Hordaland, and the feeling of having been very politely robbed, and a story nobody at home will believe.
       next: ea_d_back
     - id: sword
-      text: Spend the summer's silver on a Greek sword.
+      text: Spend the summer's silver on a sword in the Greeks' market.
       visible_if: "year != 860"
       requires: ["silver >= 120"]
       effects: [ { add: { silver: -120 } }, { item: { id: frankish_sword, equip: true } }, { days_foraged: 20 }, { deed: { type: deed, text: "Bought a sword in Miklagarðr", weight: 2, witnesses: 60 } } ]
-      result: The swordsmith's shop is in a street of nothing but swordsmiths, and he has never sold to a Northman before and charges you double for it. The blade is better than anything in the North. The scabbard alone has more silver on it than your father's farm.
+      result: The sword-sellers have a street of their own, and the Greek in the best shop has never sold to a Northman before, and charges you double. What he sells you is a Frankish blade, with the maker's name in iron wire, that came further than you did to reach his rack. The Greek scabbard alone has more silver on it than your father's farm.
       next: ea_d_back
 
 - id: ea_d_860
@@ -340,7 +340,7 @@
     - id: shore
       text: Raid the shore of the sea instead, where the emir's men are thin.
       danger: true
-      effects: [ { days_foraged: 20 }, { battle: { foe: moorish_host, terrain: beach, men: 14, ratio: 0.6, raid: true, win: ea_v_raided, lose: ea_v_back } } ]
+      effects: [ { days_foraged: 20 }, { battle: { foe: daylami_men, terrain: beach, men: 14, ratio: 0.6, raid: true, win: ea_v_raided, lose: ea_v_back } } ]
 
 - id: ea_v_raided
   kind: spine

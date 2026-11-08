@@ -21,12 +21,12 @@
     [else]
     The news comes up the coast with the first Danish trader of the year. King Horik's hersirs are gathering ships at Hedeby and Ribe: thirty of them, some say; forty, say others. Nobody says where they're going. Everybody knows. Dorestad, the richest market in the north, with the emperor's sons at each other's throats and nobody on the walls.
 
-    Nobody has asked you. A man with a ship doesn't wait to be asked: he can join any fleet that'll have him.
+    Nobody has asked you. Nobody needs to: Horik's hersirs will take any ship that comes, and every man at her oars.
     [/if]
     [break]
     [if favour >= 3]
     The jarl sends for you before you've answered. He's thinner than in the winter, and he doesn't get up. "Go," he says. "Bring me back something the Franks will miss. I'd like to hear about it." He coughs. "Soon."
-    [elif flag.fr_jarl_hakon || flag.fr_backs_eirik]
+    [elif flag.fr_backs_eirik]
     Eiríkr, at his father's right hand, says nothing, which in Eiríkr is a kind of permission.
     [/if]
   choices:
@@ -38,6 +38,7 @@
         You cut your own mark into a split arrow and send it south. By the next morning every man in the district knows, and by the end of the week your muster is the biggest it's ever been. Men will row a long way to see Dorestad burn.
     - id: west
       text: Tell them you've your own road this summer.
+      visible_if: "!service"
       effects: [ { set: flag.fr_west } ]
       result: Whoever brought the word shrugs and goes. Dorestad will burn without you. You'll hear about it all winter, from men who were there, and you'll smile, and say nothing.
     - id: oar

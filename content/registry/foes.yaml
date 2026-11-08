@@ -177,6 +177,23 @@
   leader: "the emir's general"
   doctrine: { hold: 1, push: 2, flank: 3, missiles: 2 }
   desc: "Abd al-Rahman's army out of Córdoba: horsemen in mail on fast horses, archers, and a general who has read about war and fought it. They have never seen Northmen before, and they learn quickly."
+# The East road (docs/FRAME-PLACES-EAST.md): the Greeks at Miklagarðr in 860, and the hill-men of the Caspian's south shore.
+- id: greek_guard
+  name: The emperor's guard
+  quality: 2
+  resolve: hird
+  guile: 1
+  leader: "the city's prefect"
+  doctrine: { hold: 3, missiles: 2, push: 1, flank: 1 }
+  desc: "What the emperor left behind in Miklagarðr: palace guardsmen in mail and gilded shields, and the city's militia with bows behind them. They have never fought Northmen, and they have a great deal to lose."
+- id: daylami_men
+  name: The Daylamites
+  quality: 2
+  resolve: warriors
+  guile: 2
+  leader: "the hill chief"
+  doctrine: { hold: 2, missiles: 3, push: 2, flank: 1 }
+  desc: "Hill-men from the mountains above the south shore of the sea: foot-soldiers with big painted shields, short spears for throwing and long ones for holding. Nobody has ever conquered them, and they would like you to know it."
 # The Great Army's enemies (docs/FRAME-865.md): kings' households, not a shire's farmers.
 - id: west_saxon_host
   name: The West Saxon host

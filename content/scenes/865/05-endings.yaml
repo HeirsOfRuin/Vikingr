@@ -168,14 +168,30 @@
 
     The terms are strange. Hostages, and an oath, and an army that leaves Wessex and never comes back; that much everyone expected. But Alfred wants something else as well. He wants Guthrum baptised, and thirty of his best men with him, with Alfred himself standing godfather. The king's priests will put the white cloth on them at a place called Aller, and the king will give them gifts.
     [break]
-    Guthrum names his thirty. Your name is among them.
+    Guthrum names his thirty. [if service]{captain}'s name is among them. Yours is not. Kings stand godfather to captains, not to the men at their oars, and the men nobody names are free to go where they like, so long as it isn't Wessex.[else]Your name is among them.[/if]
   choices:
     - id: baptism
       text: Go into the water at Aller with Guthrum.
+      visible_if: "!service"
       effects: [ { add: { silver: 96, honour: -1 } }, { set: flag.ga_baptised }, { fleet_end: true }, { deed: { type: deed, text: "Was baptized at Aller with Guthrum, with the king of Wessex for godfather", weight: 3, witnesses: 300 } } ]
       result: |
         The water is cold and the priest's hand is heavy on your head. Then a white cloth for eight days, and a feast, and gifts from the king's own hand, a sword-belt and two pounds of silver, given with a look that weighs you very exactly. Guthrum goes to East Anglia and rules it as a Christian king, more or less. A great many Danes are more or less Christian after Aller.
     - id: refuse
       text: Refuse, and go to the Thames, where a new army is gathering.
+      visible_if: "!service"
       effects: [ { add: { hamingja: 1 } }, { fleet_end: true }, { route: [london] }, { set: flag.ga_refused_aller } ]
       result: Guthrum looks at you, says nothing, and names another man in your place. That summer a new army comes into the Thames from the east and winters at Fulham, looking at Frankia across the sea. They're glad of a ship that has seen Edington. They are going to the Franks, who still pay.
+    - id: follow
+      text: Stay at your bench, and go to East Anglia with {captain}.
+      visible_if: service
+      oar: true
+      effects: [ { add: { silver: 6 } }, { fleet_end: true }, { route: [thetford] }, { camp: thetford } ]
+      result: |
+        {captain} goes into the water at Aller with the other twenty-nine, and comes out blue to the lips and swearing, and wears the white cloth for eight days as if it itched. On the ninth he shares the king's gifts along the benches, a handful of coins to every man. "Christian silver," he says, and bites one. "Weighs the same." Then {ship} goes round to East Anglia behind Guthrum, who means to be a king there, and a Christian one, more or less.
+    - id: thames
+      text: Take your sea-chest to the Thames, where a new army is gathering.
+      visible_if: service
+      oar: true
+      effects: [ { fleet_end: true }, { join_ship: { captain: Eilífr, ship_name: the Crane, type: karvi, crew: 30, home: london, route: [london] } } ]
+      result: |
+        Your captain gives you your share and a shrug. You walk east for ten days with your chest on a borrowed horse, and find a new army come into the Thames from over the sea, lying at Fulham and looking at Frankia. A Dane called Eilífr has an empty bench in the Crane, and is glad of a man who has seen Edington. They are going to the Franks, who still pay.

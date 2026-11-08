@@ -32,11 +32,11 @@
       next: f_ale
     - id: mast
       text: Go up the mast with the new rope. Nobody else is small enough.
-      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.f_mast } ]
+      effects: [ { add: { skill.seamanship: 1, silver: 1 } }, { set: flag.f_mast } ]
       result: |
         The mast is taller from the top than it looks from the bottom. The whole fjord tilts under you, and the men below stop work to watch, and somebody starts taking bets.
 
-        You reeve the new halyard through the block with your legs wrapped round the mast and your heart going like a hammer, and come down the way you went up, and the man who bet against you pays the man who bet for you, and the man who bet for you gives you a piece of it. It's the first silver you've ever had that wasn't found on the shingle.
+        You reeve the new halyard through the block with your legs wrapped round the mast and your heart going like a hammer, and come down the way you went up, and the man who bet against you pays the man who bet for you, and the man who bet for you gives you a piece of it: five coins, bent and nicked. It's the first silver you've ever had that wasn't found on the shingle.
       next: f_ale
     - id: fire
       text: Sit at the crew's fire, where the dead men's names are being said.
@@ -63,7 +63,7 @@
   when: Midsummer, 826
   title: The freedom-ale
   text: |
-    Your father was thirty-one winters a thrall, and this is the day he stops.
+    Your father was thirty winters a thrall, and this is the day he stops.
 
     The law is old and simple, the way the oldest laws are. A thrall who has been given himself, or bought himself, brews the freedom-ale: three measures of malt, in his own vat, with his own hands. He carries it to his old master's house, and leads his master to the high seat in front of witnesses, and pours. Until the ale is drunk he is a thrall let go. After it, he is a freedman, and his son is a freedman's son, and his son's son is a man nobody remembers to call anything at all.
 
@@ -77,7 +77,7 @@
 
     "Thrall-piss," he says. "Brewed in a byre." His brothers laugh.
 
-    Your father doesn't move. Your father has spent thirty-one years not moving.
+    Your father doesn't move. Your father has spent thirty years not moving.
   choices:
     - id: fight
       text: Go for Thorgils, in front of everyone.
@@ -100,7 +100,7 @@
       check: { skill: speech, attr: wit, difficulty: 4 }
       success:
         text: |
-          "Brewed in a byre," you agree, loud enough for the hall. "Hrapp's byre. With Hrapp's barley. Thirty-one years of it, that Hrapp never paid him for. I'm surprised it's not better."
+          "Brewed in a byre," you agree, loud enough for the hall. "Hrapp's byre. With Hrapp's barley. Thirty years of it, that Hrapp never paid him for. I'm surprised it's not better."
 
           There's a terrible silence, and then Hrapp bellows with laughter and slaps the high seat. "He's right!" he shouts. "It's my ale! Thorgils, you've poured my ale on my floor!" The whole hall laughs at Thorgils, who goes the colour of a boiled crab, and looks at you, and keeps looking.
         effects: [ { add: { skill.speech: 1 } }, { set: flag.f_hrapp_laughed } ]
@@ -121,7 +121,7 @@
 
     Her name is Órlaith, which nobody in the district can say, so they call her the Irishwoman, or Hrapp's Irishwoman, though Hrapp's father sold her to your grandfather's people long ago and bought her back again when they couldn't feed her. She has a bed by the fire and a voice like dry heather, and she still prays at night, in her own tongue, to her own god, and Hrapp's people let her, because she's old and there's no harm in it.
     [break]
-    She tells it the same way every time. The island was Rechru, off the coast of Ulster. She was eleven. It was the first year the ships came; there had never been ships like that, and the monks were still writing it down when the church was burning. The bell. The smoke. Her brothers going into the water after the boats. A hand on the back of her neck, and the sea, and then Kaupang, and a man weighing her like a sheep.
+    She tells it the same way every time. The island was Rechru, off the coast of Ulster. She was sixteen. It was the first year the ships came; there had never been ships like that, and the monks were still writing it down when the church was burning. The bell. The smoke. Her brothers going into the water after the boats. A hand on the back of her neck, and the sea, and then Kaupang, and a man weighing her like a sheep.
 
     "Thirty-odd years," she says. "And you know, I still dream in Irish." She takes your wrist. Her fingers are cold and very strong. "They'll go back there, the ships. They always go back. You'll go with them. I want somebody to say my name the right way, over there. Will you learn it?"
   choices:

@@ -158,7 +158,7 @@
   at: [whithorn]
   once: true
   weight: 20
-  requires: ["!service", seen.pl_whithorn, "year >= 850"]
+  requires: ["!service", seen.pl_whithorn, "year >= 854", "year <= 858"]
   art: muster
   title: The Gall-Gáedil
   text: |
@@ -168,7 +168,7 @@
   choices:
     - id: yes
       text: Swap men with him, two for two, as a pledge of friendship.
-      effects: [ { recruit: 2 }, { add: { skill.speech: 1 } }, { standing: { people: gael, n: 1 } }, { set: flag.gall_friend } ]
+      effects: [ { add: { skill.speech: 1 } }, { standing: { people: gael, n: 1 } }, { set: flag.gall_friend } ]
       result: Two of his come aboard, cousins, who speak Irish and Norse and lie fluently in both. They are the best thieves you've ever had and the worst oarsmen. Caittil gets two of yours, and teaches them to swear in Irish.
     - id: no
       text: Tell him you'd rather know who you're fighting beside.
@@ -338,7 +338,9 @@
         effects: [ { unload: { id: amber, lots: 1 } }, { standing: { place: hedeby, n: -3 } } ]
     - id: honest
       text: Pay the toll like an honest man.
-      result: The toll-man weighs it twice, takes his tenth, and looks at you with something like respect. Honest men are rare at Hedeby. They're also poorer.
+      requires: ["silver >= 8"]
+      effects: [ { add: { silver: -8 } } ]
+      result: The toll-man weighs it twice, takes his tenth in silver, forty coins nicked and weighed, and looks at you with something like respect. Honest men are rare at Hedeby. They're also poorer.
 
 # ---- Sheppey ----
 # ASC 855: the heathen men first stayed the winter on Sheppey.
@@ -387,7 +389,7 @@
   at: [sheppey]
   once: true
   weight: 20
-  requires: ["!service", seen.pl_sheppey, "year >= 851"]
+  requires: ["!service", seen.pl_sheppey, "year >= 855", "year <= 860"]
   art: sail_home
   title: A winter in the Thames
   text: |
@@ -544,7 +546,7 @@
         effects: [ { goods: { id: wine, lots: 3 } }, { add: { silver: 12 } } ]
       failure:
         text: The toll-men look under the wine-cart. You leave the fair by the main gate, faster than you came, with your goods still in the abbey's cellar.
-        effects: [ { standing: { place: saint_denis, n: -2 } } ]
+        effects: [ { lose_cargo: 1 }, { standing: { place: saint_denis, n: -2 } } ]
 
 - id: pl4_saint_denis_ransom
   kind: place

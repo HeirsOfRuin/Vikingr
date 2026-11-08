@@ -33,7 +33,11 @@
 
         "First ashore," says Bersi, behind you, cheerfully. "First into the wall. First the Irish see. They'll make songs about you. Short ones."
 
+        [if man.ulf.alive]
         "You're in the prow," says Ulf. "You've always been in the prow."
+        [else]
+        "Ulf would have liked to see that," says Hallvard.
+        [/if]
     - id: ask
       text: Go to the jarl yourself and ask for his old karvi.
       check: { skill: speech, attr: pre, difficulty: 7 }
@@ -57,7 +61,11 @@
 
         "Sensible," says Bersi. "The middle men live longer."
 
+        [if man.ulf.alive]
         "Nobody ever made a song about the middle men," says Ulf.
+        [else]
+        "Tell that to Ulf," says Hallvard, and Bersi finds something to do with his oar.
+        [/if]
 
 # Keeping the boast to his father (boasts.yaml: father_silver).
 - id: sp_father

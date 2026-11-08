@@ -16,7 +16,7 @@
     [break]
     "Which means," says Jarl Eystein, slowly, from the high seat, "that there's nobody watching the Frankish coast. Nobody at all." He coughs. He's been coughing since Yule, and he's thinner than he was. "Somebody should go and look at it."
 
-    His sons are either side of him. Eiríkr, the elder, broad and dark and forty, who has never once looked at you without remembering that a boy of sixteen brought his father's ship home when he'd asked for her himself. And Hákon, the younger, quick and fair, who pours the ale and smiles at everyone and misses nothing.
+    His sons are either side of him. Eiríkr, the elder, broad and dark and forty, who has never once looked at you [if background == outlaw]without remembering that you killed a man in the horse-ring at his father's Thing, and that his father let you come home[elif flag.bg_acclaimed]without remembering that a boy of sixteen brought his father's ship home when he'd asked for her himself[elif flag.owes_jarl]without remembering that his father gave his old karvi to a boy with two summers at an oar, when he'd asked for her himself[elif background == freedman]without remembering that your father was born a thrall on Hrapp's farm[elif ships >= 1]without remembering that a second son from up the fjord bought himself a ship, and thinks it makes him somebody[else]as anything but one more pair of hands at his father's oars[/if]. And Hákon, the younger, quick and fair, who pours the ale and smiles at everyone and misses nothing.
     [if flag.ubbi_dorestad]
     You think of Ubbi on his barrel on the beach at Hedeby. Dorestad will still be there, he said, with nobody watching it.
     [/if]
@@ -201,7 +201,7 @@
 
     Eiríkr sits at its right hand, where he always sits. Hákon sits at its left. Between them the empty seat looks like a question nobody wants to ask aloud.
     [break]
-    It's Eiríkr who asks it, in the end, with the bragarfull in his hand and too much ale in him. He stands up and looks down the hall at you, and says, loud enough for everyone: "There are men in this hall who think a ship makes a jarl. A boy finds a ship on a field in Ireland, and now he sits where my father's hirdmen sat. I'd like to know what he thinks he's owed."
+    It's Eiríkr who asks it, in the end, with the bragarfull in his hand and too much ale in him. He stands up and looks down the hall at you, and says, loud enough for everyone: [if background == outlaw]"There are men in this hall who think three winters wash the blood off. A boy kills a man at my father's Thing, and comes home with a full sea-chest, and now he sits where my father's hirdmen sat.[elif flag.bg_acclaimed]"There are men in this hall who think a ship makes a jarl. A boy finds a ship on a field in Ireland, and now he sits where my father's hirdmen sat.[elif flag.owes_jarl]"There are men in this hall who think a ship makes a jarl. A boy talks my father out of his old karvi, and now he sits where my father's hirdmen sat.[elif background == freedman && ships >= 1]"There are men in this hall who think a ship makes a jarl. A thrall's son gets his hands on one, and now he sits where my father's hirdmen sat.[elif background == freedman]"There are men in this hall who think silver makes a man free. A thrall's son brings a sea-chest home from Ireland, and now he sits where my father's hirdmen sat.[elif ships >= 1]"There are men in this hall who think a ship makes a jarl. A boy buys a farmer's leaky karvi, and now he sits where my father's hirdmen sat.[else]"There are men in this hall who think a name makes a jarl. A boy pulls another man's oar for three summers, and the district learns to say his name, and now he sits where my father's hirdmen sat.[/if] I'd like to know what he thinks he's owed."
 
     The hall goes very quiet. Later, when Eiríkr's gone out to piss, Hákon slides along the bench to you.
 
@@ -221,7 +221,7 @@
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
-          You stand up. "I'm owed nothing," you say. "I brought your father's ship home full, and I'll do it again for whoever sits in that seat, if he wants me to. Does that answer you?" There's a silence, and then somebody at the bottom of the hall bangs his cup on the table, and then everybody does. Eiríkr sits down. He doesn't look at you again all night.
+          You stand up. "I'm owed nothing," you say. [if flag.bg_acclaimed && background != outlaw]"I brought your father's ship home full, and I'll do it again[elif ships >= 1]"I bring my ship home full every autumn, and I'll go on doing it[else]"I pull my oar and take my share, and I'll go on doing it[/if] for whoever sits in that seat, if he wants me to. Does that answer you?" There's a silence, and then somebody at the bottom of the hall bangs his cup on the table, and then everybody does. Eiríkr sits down. He doesn't look at you again all night.
         effects: [ { set: flag.fr_neutral }, { add: { flag.y_hall: 2 } } ]
       failure:
         text: |

@@ -65,5 +65,5 @@
         text: In the spring every soul who came is still alive, and the cows are thin but standing, and the first lambs are born in the snow. Men will say of you, in the book of the land-takings, that you came out with your household and lived.
         effects: [ { add: { crew.morale: 2 } } ]
       failure:
-        text: The cold takes two of the old people and a third of the cattle. In the spring you bury them on the hill above the farm, looking at the sea. They are the first graves on your land.
+        text: The cold takes one of the old thralls and a third of the cattle. In the spring you bury him on the hill above the farm, looking at the sea. His is the first grave on your land.
         effects: [ { add: { thralls: -1, crew.morale: -1 } } ]

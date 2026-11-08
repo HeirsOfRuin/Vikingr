@@ -162,7 +162,7 @@
   requires: [flag.e43_debt]
   title: Ölvir's silver
   text: |
-    [if place == noirmoutier]Ölvir's new ship comes round the point at Noirmoutier in the spring, as he said it would, and Ölvir comes up the beach to find you.[else]Word comes from Ölvir, by a ship from the Loire: he was at Noirmoutier, as he said he would be, and you were not. He will come and find you. He knows where Hordaland is.[/if]
+    [if place == noirmoutier]Ölvir's new ship comes round the point at Noirmoutier in the spring, as he said it would, and Ölvir comes up the beach to find you.[else]Ölvir doesn't come himself. He sends his sister's son, Össurr, a long-faced young man off a ship from the Loire, with a notched tally-stick in his belt. Ölvir was at Noirmoutier in the spring, as he said he would be, and you were not. Össurr is to tell you that his uncle knows where Hordaland is.[/if]
 
     [if flag.e43_all_owed]"Four pounds," he says.[else]"Two pounds," he says. "The rest of her."[/if]
   choices:
@@ -174,12 +174,12 @@
         - { clear: flag.e43_debt }
         - { add: { honour: 1 } }
       result: |
-        He counts it, twice, and puts it away, and then he grins, which you have never seen him do. "I told them on Askøy you'd pay," he says. "Nobody believed me." He buys the ale.
+        [if place == noirmoutier]He counts it, twice, and puts it away, and then he grins, which you have never seen him do. "I told them on Askøy you'd pay," he says. "Nobody believed me." He buys the ale.[else]Össurr counts it twice, the way his uncle taught him, and puts it away, and breaks the tally-stick over his knee. "He told them on Askøy you'd pay," he says. "Nobody believed him." He buys the ale, out of his uncle's silver.[/if]
     - id: owe
       text: Ask him for another year.
       effects: [ { add: { honour: -2 } }, { clear: flag.e43_debt }, { favour: -1 } ]
       result: |
-        He gives it to you, because he is a careful man and a dead debtor pays nothing. But he tells the story on every beach between the Loire and Askøy: the boy he sold the Hart to, who couldn't pay. Men in Hordaland will hear it before you get there.
+        [if place == noirmoutier]He gives it to you[else]Össurr takes that back to the Loire, and Ölvir gives it to you[/if], because he is a careful man and a dead debtor pays nothing. But he tells the story on every beach between the Loire and Askøy: the boy he sold the Hart to, who couldn't pay. Men in Hordaland will hear it before you get there.
 
 - id: e43_outlaw_home
   kind: phase
@@ -188,10 +188,10 @@
   weight: 30
   requires: [flag.era843, "background == outlaw", flag.outlawed, "!flag.outlaw_ended", "year >= 846", "month <= 5", "phase != winter"]
   art: home_fjord
-  when: Spring, 846
+  when: Spring
   title: Three winters
   text: |
-    Three winters. The Thing's sentence is served. You could go home now, if home will have you: walk up the beach at Hordaland in daylight, and sit at your father's fire, and dare anyone to say a word.
+    [if year == 846]Three winters.[else]Three winters, and more besides.[/if] The Thing's sentence is served. You could go home now, if home will have you: walk up the beach at Hordaland in daylight, and sit at your father's fire, and dare anyone to say a word.
 
     Some of them will. The dead man's kin have long memories. But the law is the law, and it says you have paid.
   choices:

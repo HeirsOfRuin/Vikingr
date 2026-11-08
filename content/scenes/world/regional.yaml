@@ -182,7 +182,7 @@
     - id: let
       text: Keep your mouth shut. Monks sell, and you'll have your share.
       visible_if: service
-      effects: [ { add: { honour: -1 } } ]
+      effects: [ { add: { honour: -1, silver: 4 } } ]
       result: They come aboard without a fight. At the next market {captain} sells them, and your share is a few coins of silver. They sang all the way there.
 
 # ---- the new waters (docs/FRAME-PLACES-2.md) ----

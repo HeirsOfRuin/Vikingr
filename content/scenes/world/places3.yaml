@@ -159,9 +159,9 @@
     The monastery at Tarbat sits on the long finger of land between two firths, with great carved stones standing round it, taller than two men: crosses on the front, and on the back, strange beasts and mirrors and combs and a crescent with a broken arrow through it, which nobody can explain to you, not even the Picts.
 
     The Picts are not the Irish. They speak their own tongue, and keep their own kings, and fight on horseback. The monks here make books on calfskin and silver for the church, in workshops by the shore. The smell of the tannery carries a long way.
-    [if year >= 839]
+    [if year >= 839 && year <= 842]
 
-    Their king is dead. Last year, or the year before, the Danes caught the men of Fortriu in a great battle in the south, and killed the king, Uuen son of Unuist, and his brother, and more great men than anyone could count. Pictland has no king that everyone agrees on now. A man called Cináed is saying it should be him.
+    Their king is dead. Not long since, the Danes caught the men of Fortriu in a great battle in the south, and killed the king, Uuen son of Unuist, and his brother, and more great men than anyone could count. Pictland has no king that everyone agrees on now. A man called Cináed is saying it should be him.
     [/if]
   choices:
     - id: trade

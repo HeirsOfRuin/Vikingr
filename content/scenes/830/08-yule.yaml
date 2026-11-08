@@ -11,9 +11,10 @@
   text: |
     Jarl Eystein's hall at Yule is so full of smoke and bodies and noise that the walls seem to lean outward. There is a boar on the spit, and ale strong enough to stand a spoon in, and three dogs fighting over something under the high table that may once have been a goose.
 
+    [if man.ulf.alive]
     Ulf has told the story of the summer four times since the boar came in. Each time he is in it more. By the fourth telling he has taken Bangor more or less alone, with you holding his cloak.
-    [if !man.ulf.alive]
-    Ulf isn't here to tell it. Somebody else tells it instead, badly, and leaves out the best parts, and you find you can't listen.
+    [else]
+    Ulf isn't here to tell the story of the summer. Somebody else tells it instead, badly, and leaves out the best parts, and you find you can't listen.
     [/if]
     [break]
     Then the jarl stands, and the hall goes quiet, and the bragarfull comes round.
@@ -37,7 +38,7 @@
       result: |
         "Next summer," you say, "wherever we go, I'll be first over the wall."
 
-        Ketill closes his eyes briefly. Ulf stands up on the bench beside you and swears the same thing, louder, and the hall roars at the pair of you.
+        Ketill closes his eyes briefly. [if man.ulf.alive]Ulf stands up on the bench beside you and swears the same thing, louder, and the hall roars at the pair of you.[else]Somebody down the bench shouts that Ulf would have sworn it louder, and the hall roars as if he had.[/if]
       next: y_volva
     - id: cup
       text: Swear you will drink from an Irish king's own cup.
@@ -52,7 +53,7 @@
       effects: [ { boast: father_silver } ]
       result: |
         [if background == freedman]
-        "My father wore Hrapp's collar for thirty-one winters," you say, "and paid for his freedom in ale. I'll put a pound and a half of silver in his hand, and he'll never owe Hrapp's sons a harvest again."
+        "My father wore Hrapp's collar for thirty winters," you say, "and paid for his freedom in ale. I'll put a pound and a half of silver in his hand, and he'll never owe Hrapp's sons a harvest again."
         [else]
         "My father bought my oar with a cow and his pride," you say. "I'll put a pound and a half of silver in his hand for it."
         [/if]
@@ -168,7 +169,7 @@
         text: |
           "Better a sunburn than what you brought back from Kaupang, Thorgils. The girls there still talk about you." You let it hang. "Not for long, mind. Nothing about you takes long."
 
-          The hall roars. Ulf falls off the bench. Thorgils goes a darker red, which you would not have said was possible.
+          The hall roars. [if man.ulf.alive]Ulf falls off the bench.[else]A man at the far table falls off his bench.[/if] Thorgils goes a darker red, which you would not have said was possible.
         effects: [ { add: { flag.y_score: 1, flag.y_hall: 2 } } ]
         next: y_flyting_2
       failure:
@@ -327,7 +328,7 @@
     "{father}'s boy," he says, loud and ugly. "Your father had two sons, and the second came out the wrong end of the wrong woman. Ask your mother who she was keeping warm the winter Hall was in Ireland."
     [/if]
 
-    The laughter stops as if somebody had cut its throat. Ketill puts his cup down. Ulf has stopped grinning. On the high seat, the jarl leans forward to see what you'll do.
+    The laughter stops as if somebody had cut its throat. Ketill puts his cup down. [if man.ulf.alive]Ulf has stopped grinning.[else]Hallvard has gone very still.[/if] On the high seat, the jarl leans forward to see what you'll do.
   choices:
     - id: finish
       text: Finish it with words. Make the hall laugh at him one last time.
@@ -338,7 +339,7 @@
 
           For a heartbeat nobody moves. Then the jarl laughs, a big bark of a laugh, and the whole hall comes down on Thorgils like a wave. He sits. Somebody throws a crust at him.
 
-          By the time the ale runs out, the hall has a name for you. They are calling you Hvassi: the Sharp. Ulf says it most, and loudest, and he means it.
+          By the time the ale runs out, the hall has a name for you. They are calling you Hvassi: the Sharp. [if man.ulf.alive]Ulf says it most, and loudest, and he means it.[else]Your bench-mates say it most, and loudest, and they mean it.[/if]
         effects: [ { deed: { type: deed, text: Won the Yule flyting against Thorgils Hrappsson, weight: 3 } }, { add: { flag.y_hall: 2 } }, { nickname: Hvassi }, { set: flag.y_won } ]
         next: y_name
       failure:
@@ -374,7 +375,7 @@
 
     "No more?" he says. "Nothing? The great raider, beaten by a farmer with a cup of ale." He sits down, grinning, and the noise rolls on over your head.
 
-    Ulf won't look at you. Bersi is looking at you as if he's working out what you're worth now. Ketill pushes his own cup across the table to you.
+    [if man.ulf.alive]Ulf won't look at you.[else]Hallvard won't look at you.[/if] Bersi is looking at you as if he's working out what you're worth now. Ketill pushes his own cup across the table to you.
   choices:
     - id: last
       text: One more try. Stand up and win the hall back.
@@ -423,8 +424,10 @@
     Yule ends the way it always ends: with the ale gone and the boar a skeleton and the jarl's floor covered in sleeping men and dogs.
     [if nickname]
     By morning everyone in the district knows what they are calling you. Your mother has heard it. Your father pretends he hasn't.
-    [elif flag.i_first]
+    [elif flag.i_first && man.ulf.alive]
     Somewhere in the last night of it, the hall decides what to call you. It comes from Ulf, who has told the story of the gate at Iona so many times that the gate is now three times the size and made of iron. They call you Gate-Breaker.
+    [elif flag.i_first]
+    Somewhere in the last night of it, the hall decides what to call you. It comes from the Raven's benches, where the story of the gate at Iona has been told so many times that the gate is now three times the size and made of iron. They call you Gate-Breaker.
     [elif flag.bg_acclaimed]
     Somewhere in the last night of it, the hall decides what to call you. A boy of sixteen whom a forty-oar ship's crew wanted for their captain, and who stood in her prow instead: they call you Raven, after her, and they don't mean it unkindly.
     [elif fate.asgeir_falls && flag.bg_covered]
@@ -433,8 +436,10 @@
     Somewhere in the last night of it, the hall decides what to call you. Somebody heard about the books at Iona. They call you Book-Burner, and laugh, and Hallvard doesn't.
     [elif flag.i_ship]
     Somewhere in the last night of it, the hall decides what to call you. Thorgils has heard about the rock on the beach at Iona. They call you Boat-Minder. It will take you years to make it sound like anything else.
-    [elif flag.o_hearth]
+    [elif flag.o_hearth && man.ulf.alive]
     Somewhere in the last night of it, the hall decides what to call you. Ulf has told everyone about Harek's hearth. They call you Hearth-Spewer, and Ulf is very pleased with himself.
+    [elif flag.o_hearth]
+    Somewhere in the last night of it, the hall decides what to call you. Bersi has told everyone about Harek's hearth, for the price of a cup each time. They call you Hearth-Spewer.
     [elif flag.s_seasick]
     Somewhere in the last night of it, the hall decides what to call you. Somebody from the Raven remembers the first day out. They call you Green-Gills.
     [elif flag.m_soap]

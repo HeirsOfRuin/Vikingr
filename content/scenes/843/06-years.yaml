@@ -97,11 +97,11 @@
   trigger: hall
   once: true
   weight: 15
-  requires: ["winter == 847", "!service"]
+  requires: ["winter == 847"]
   art: hearth_ormr
   title: A boy who wants a bench
   text: |
-    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the winter to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About your ships, and where they've been, and what you did.
+    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the winter to ask you for a bench[if service] in {ship}[/if]. His father is dead and his brother has the farm, and he has heard about you, he says. [if service]About {ship}, and where she's been, and what you did at her oars.[else]About your ships, and where they've been, and what you did.[/if]
 
     [if flag.era843]You were sixteen yourself, on the beach at Skiringssal, five summers ago. It doesn't feel like five.[else]You were his age yourself, once, with a spear you'd made and nothing else. It doesn't feel as long ago as it was.[/if]
   choices:
@@ -129,7 +129,7 @@
   trigger: hall
   once: true
   weight: 15
-  requires: ["winter == 848"]
+  requires: ["winter == 848", "!service"]
   art: hearth_ormr
   title: The men from Ireland
   text: |

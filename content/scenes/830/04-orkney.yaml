@@ -8,13 +8,19 @@
   art: birsay
   title: The hall at Birsay
   text: |
+    [if background == outlaw]
+    For three weeks you have crossed Harek's causeway at low water with his nets on your shoulder. Tonight you cross it with the Raven's crew, with the weed slippery underfoot and the hall's smoke going straight up in the evening calm, and nobody hands you a gutting-knife at the door.
+
+    Inside it is warm and loud and smells of peat and wet dog and roasting mutton. Harek and Ásgeir greet each other like men who have cheated each other before and enjoyed it. Then Harek sees you among the Raven's men, and his beard moves in what might be a grin. "My net-mender," he says. "Gone up in the world."
+    [else]
     Harek of Birsay keeps his hall on a tidal island, joined to the mainland by a causeway that the sea covers twice a day. You walk across it at low water with the weed slippery underfoot and the hall's smoke going straight up in the evening calm.
 
     Inside it is warm and loud and smells of peat and wet dog and roasting mutton. Harek is a broad red man with a beard like a hedge, and he and Ásgeir greet each other like men who have cheated each other before and enjoyed it.
+    [/if]
     [break]
     There is a lot to do in a hall in one evening, and only one evening.
 
-    An Orkneyman with a neck like a bull is challenging all comers to drink him under the table. In a corner by the fire, a lean man with a harp in oilcloth at his feet is watching the crews come in and not drinking much: a skald, Ketill says, looking for a ship worth making verses about. Harek's daughter is pouring the ale, and has looked at you twice. And along the bench, the old men who have been south are telling each other where the silver is.
+    An Orkneyman with a neck like a bull is challenging all comers to drink him under the table. In a corner by the fire, a lean man with a harp in oilcloth at his feet is watching the crews come in and not drinking much: a skald, Ketill says, looking for a ship worth making verses about. [if background == outlaw]Harek's daughter Ingibjörg is pouring the ale. For three weeks she walked past the boat-shed as if you were one of the nets, and tonight she has looked at you twice.[else]Harek's daughter is pouring the ale, and has looked at you twice.[/if] And along the bench, the old men who have been south are telling each other where the silver is.
   choices:
     - id: drink
       text: Take up the Orkneyman's challenge.
@@ -38,9 +44,11 @@
       check: { skill: lore, attr: wit, difficulty: 4 }
       success:
         text: |
-          His name is Kálfr. He has made verses for two jarls and a king in Ireland, and been paid by one of them. He asks you what you have done. You tell him the truth, which is nothing, yet.
+          His name is Kálfr. He has made verses for two jarls and a king in Ireland, and been paid by one of them. He asks you what you have done. [if background == outlaw]You tell him the truth, which is one man dead at a horse-fight and three winters of being nobody's.
 
-          He likes that. "Everybody else in here has killed a hundred men and slept with the queen of the Franks," he says. "A man who has done nothing has the whole verse in front of him." When the Raven sails, Kálfr is on her, with his harp wrapped in oilcloth under Ketill's bench.
+          He likes that. "Everybody else in here has killed a hundred men and slept with the queen of the Franks," he says. "You've killed one, and you don't brag of it. A man like that has the whole verse in front of him."[else]You tell him the truth, which is nothing, yet.
+
+          He likes that. "Everybody else in here has killed a hundred men and slept with the queen of the Franks," he says. "A man who has done nothing has the whole verse in front of him."[/if] When the Raven sails, Kálfr is on her, with his harp wrapped in oilcloth under Ketill's bench.
         effects: [ { set: flag.skald }, { set: flag.o_kalfr } ]
         next: o_council
       failure:
@@ -54,16 +62,16 @@
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
-          Her name is Ingibjörg, and she was looking at you because you were the only man in the hall who hadn't tried to grab her.
+          [if background == outlaw]Ingibjörg was looking at you, she says, because you were the only man in the hall who hadn't tried to grab her. Three weeks in her father's boat-shed, and you never once tried. She had begun to wonder what was wrong with you.[else]Her name is Ingibjörg, and she was looking at you because you were the only man in the hall who hadn't tried to grab her.[/if]
 
           You talk till the fire burns down. At the end of it she ties a red thread round your wrist, to bring you back to Orkney, she says, and then goes in before her father sees.
 
-          Ulf, who has been watching all night, can't decide whether to be jealous or proud, and manages both.
+          Ulf, who has been watching all night, [if background == outlaw]and has known you half a day, [/if]can't decide whether to be jealous or proud, and manages both.
         effects: [ { set: flag.o_ingibjorg }, { item: { id: red_thread } }, { add: { man.ulf.loyalty: 1 } }, { standing: { place: orkney, n: 1 } } ]
         next: o_council
       failure:
         text: |
-          Her name is Ingibjörg, and she was looking at you because you had something on your face. She tells you so, and wipes it off with her thumb, and goes back to pouring ale, and you sit very still for some time.
+          [if background == outlaw]Ingibjörg was looking at you because you still have scales on your face from her father's fish.[else]Her name is Ingibjörg, and she was looking at you because you had something on your face.[/if] She tells you so, and wipes it off with her thumb, and goes back to pouring ale, and you sit very still for some time.
         next: o_council
     - id: listen
       text: Sit with the old men, and listen.

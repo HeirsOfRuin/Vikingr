@@ -14,7 +14,7 @@
     [if flag.fr_jarl_hakon]
     Jarl Hákon holds his first spring council with the doors open and the ale running, and calls you up to sit at his right hand, where his brother used to sit.
     [elif flag.fr_jarl_eirik]
-    Jarl Eiríkr holds his first spring council with the doors shut. He calls the captains up one at a time. When it's your turn, he looks at you a long while before he says anything at all.
+    Jarl Eiríkr holds his first spring council with the doors shut. He calls the captains up one at a time, and the men with names after them. When it's your turn, he looks at you a long while before he says anything at all.
     [else]
     The jarl's hall is full of captains and news, as it is every spring.
     [/if]
@@ -30,13 +30,13 @@
 
     And the east: Birka, Ladoga, the rivers that go south to the end of the world, and the silver that comes back up them.
     [break]
-    {name}, with [if ships >= 2]ships[else]a ship[/if] of your own and a name men say at the door: where now?
+    {name}, with [if ships >= 2]ships of your own[elif ships >= 1]a ship of your own[elif service]an oar in {captain}'s ship[else]no ship under you yet[/if] and a name men say at the door: where now?
   choices:
     - id: frankia
       text: The Frankish rivers. Where the Danes went, and found nobody watching.
       effects: [ { set: flag.fr_road_frankia }, { know: walcheren }, { know: dorestad }, { add: { crew.morale: 1 } } ]
       result: |
-        The hall bangs the tables. The Franks are rich and fighting each other: every man in the hall knows that's the best kind of neighbour. You'll need more ships than you have, and allies, and luck. You've had all three before.
+        The hall bangs the tables. The Franks are rich and fighting each other: every man in the hall knows that's the best kind of neighbour. [if ships >= 1]You'll need more ships than you have, and allies, and luck. You've had all three before.[else]You'll need a ship of your own first, and allies, and luck. You've had two of the three.[/if]
     - id: ireland
       text: Ireland. Turgeis, and whatever comes after Turgeis.
       effects: [ { set: flag.fr_road_ireland }, { know: armagh }, { know: conaille } ]

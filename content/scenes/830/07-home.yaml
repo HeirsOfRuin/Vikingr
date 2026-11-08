@@ -179,6 +179,7 @@
         "Well," says the jarl. "Men who'll swear to a boy with no ship." He looks at you a moment longer. "Keep them. In two summers you'll need them."
     - id: offer
       text: Give your prow-share to Ásgeir's wife, before anyone asks.
+      visible_if: "fate.asgeir_falls && !flag.bg_covered"
       effects: [ { shares: 1 }, { add: { honour: 1 } }, { set: flag.h_jarl_trust }, { favour: 2 }, { set: flag.h_asgeir_widow } ]
       result: |
         The jarl's eyebrows go up. A whole share of the summer, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
@@ -262,7 +263,7 @@
   art: home_fjord
   title: The captives
   text: |
-    The captives are in Bárð's empty byre, waiting for the trader from Kaupang. They are fed once a day. They sleep in a heap for the warmth, and in the mornings one of them leads the others in prayer, in a language nobody on the farm understands, and the farm dogs sit outside the door and listen.
+    [if background == freedman]The captives are in your father's byre behind the boatyard, waiting for the trader from Kaupang. He has turned the cow out to make room for them, and won't go in himself.[else]The captives are in Bárð's empty byre, waiting for the trader from Kaupang.[/if] They are fed once a day. They sleep in a heap for the warmth, and in the mornings one of them leads the others in prayer, in a language nobody on the farm understands, and the farm dogs sit outside the door and listen.
     [if flag.i_colman_taken && !flag.bg_colman_freed]
     Colmán is one of them. When you look in, he looks back, and says your name, which you never told him.
     [/if]

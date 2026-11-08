@@ -99,7 +99,7 @@
     - id: take
       text: Take the silver, and the count's hall.
       effects: [ { add: { loot: 240 } }, { standing: { place: nantes, n: 3 } }, { deed: { type: battle_won, text: "Took the bridge at Nantes for Count Lambert", weight: 4, witnesses: 400 } } ]
-      result: Your pay and your share of the count's hall, stripped to the walls, come to five pounds all told. And Lambert's thanks, which are worth exactly what you think they are.
+      result: The count's hall, stripped to the walls, and what Lambert still owes you come to five pounds on the heap. And Lambert's thanks, which are worth exactly what you think they are.
 
 - id: e43_island_house
   kind: phase
@@ -130,7 +130,7 @@
   weight: 30
   requires: ["year >= 847", "year <= 848", "!service", "ships >= 1", "place == noirmoutier || place == nantes", "!flag.bx_sworn"]
   art: muster
-  when: Spring, 847
+  when: Spring
   title: Hastein's fleet
   text: |
     Hastein is a leader now. The thin dark young man who won at dice on the monks' island in 843 has forty ships behind him and a name on every beach from the Loire to Dublin, and he has decided what the Loire Northmen will do this year: go south to the Garonne, and take Bordeaux, which shut its gates on the southern fleet and has been sitting behind its Roman walls ever since, getting richer.
