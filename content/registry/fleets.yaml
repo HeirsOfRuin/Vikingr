@@ -40,7 +40,7 @@
   desc: A hundred and twenty ships for the Seine and Paris, under Ragnarr.
   # Annals of St-Bertin 845: up the Seine in March, Paris at Easter (28 March), paid off and gone by early summer.
   course:
-    - { from: [845, 60], at: paris, posture: bound, note: "Ragnarr takes the fleet up the Seine for Paris." }
+    - { from: [845, 74], at: paris, posture: bound, note: "Ragnarr takes the fleet up the Seine for Paris." }
 - id: loire847
   name: Hastein's fleet
   leader: Hastein
@@ -49,7 +49,7 @@
   desc: The Loire Northmen under Hastein, bound south for the Garonne and Bordeaux.
   # Annals of St-Bertin 847-848: the siege of Bordeaux through the winter; the town taken at night in 848.
   course:
-    - { from: [847, 60], at: bordeaux, posture: bound, note: "Hastein takes the fleet south to sit down outside Bordeaux." }
+    - { from: [847, 90], at: bordeaux, posture: bound, note: "Hastein takes the fleet south to sit down outside Bordeaux." }
 - id: greatarmy
   name: the great army
   leader: the sons of Ragnarr

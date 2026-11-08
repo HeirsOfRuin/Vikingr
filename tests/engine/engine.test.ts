@@ -30,7 +30,7 @@ const clear = (s: GameState) => {
 describe('engine', () => {
   it('starts at the spring muster of 830 with the start scene open', () => {
     const s = start();
-    expect(dateOf(s.day)).toMatchObject({ year: 830, month: 2 });
+    expect(dateOf(s.day)).toMatchObject({ year: 830, month: 3 });
     expect(screenOf(s)).toBe('scene');
     expect(s.hero.name).toBe('Ari Hallsson');
     expect(s.men).toHaveLength(4);
@@ -65,7 +65,7 @@ describe('engine', () => {
     expect(screenOf(s)).toBe('hall');
     for (let i = 0; i < 5 && !s.death; i++) s = clear(doFirst(s, (a) => a.t === 'hall' && a.what === 'train'));
     if (!s.death) {
-      expect(dateOf(s.day)).toMatchObject({ year: 831, month: 2 });
+      expect(dateOf(s.day)).toMatchObject({ year: 831, month: 3 });
       expect(screenOf(s)).toBe('muster');
     }
   });

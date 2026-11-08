@@ -53,7 +53,7 @@
     - id: sell
       text: Sell the captives to the man on the barrel. He pays better than the trader at home.
       visible_if: "captives >= 1"
-      effects: [ { sell_captives: 32 }, { set: flag.k_sold_captives }, { add: { man.hallvard.loyalty: -1 } } ]
+      effects: [ { sell_captives: 40 }, { set: flag.k_sold_captives }, { add: { man.hallvard.loyalty: -1 } } ]
       result: |
         The man on the barrel looks at their teeth, and their hands, and the soles of their feet, the way your father looks at a horse. He pays well. That is the worst thing about it: he pays well, and it is easy.
 

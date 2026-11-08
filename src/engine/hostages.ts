@@ -45,7 +45,7 @@ export const HOSTAGE = {
   /** A haggle that works gets this much more. */
   haggle: 1.5,
   /** Selling a party: a thrall's price a head, which is less than any ransom. */
-  sellEach: 24, // CAPTIVE_PRICE in season.ts
+  sellEach: 30, // CAPTIVE_PRICE in season.ts
   /** A fosterling held this many winters can be sent home raised in your hall. */
   fosterWinters: 3,
   /** A surety's people break faith in a year, this often. */

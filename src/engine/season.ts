@@ -126,7 +126,9 @@ export type ShareHow = keyof typeof LEADER_SHARE;
 /** Captives go to the traders before the shares are counted. */
 /** At another man's oar, the share of the plunder that goes to the oars (the rest is the ship's and the captain's). */
 export const SERVICE_OARS_SHARE = 0.75;
-export const CAPTIVE_PRICE = 24; // about half a pound a head (docs/ECONOMY.md)
+/** A captive at the autumn trader's (docs/ECONOMY.md): 30 ørtugar, a little over half a pound; the markets pay more
+ *  (Kaupang 40, a fleet's trader 36, a port 32). Was 24 (Josh, 2026-11-08: captives were only worth it in a stripped place). */
+export const CAPTIVE_PRICE = 30;
 function sellCaptives(state: GameState, lines: string[]): void {
   if (state.captives <= 0) return;
   const price = state.captives * CAPTIVE_PRICE;
@@ -440,7 +442,7 @@ export function winterHere(state: GameState, content?: ContentBundle, rng?: RngC
   return ['You haul the ships up and find a hall that will take you in for the winter, for a price in silver and good behaviour.'];
 }
 
-/** Winter begins. It belongs to the year whose autumn it follows; spring comes on 1 March after it. */
+/** Winter begins. It belongs to the year whose autumn it follows; spring comes on 1 April after it (MUSTER_DOY). */
 export function startWinter(state: GameState, actions: number, content?: ContentBundle, rng?: RngCursor): void {
   const d = dateOf(state.day);
   state.flags._winter = d.doy >= 182 ? d.year : d.year - 1;

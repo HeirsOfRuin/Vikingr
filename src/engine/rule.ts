@@ -4,7 +4,7 @@ import type { ContentBundle } from '../content/schema';
 import type { GameState } from './state';
 import type { RngCursor } from './rng';
 import { dateOf } from './calendar';
-import { livingFame, legendFame, addDeed } from './fame';
+import { livingFame, legendFame, addDeed, LEGEND_SCALE } from './fame';
 import { aliveMen } from './crew';
 import { journal } from './journal';
 import { formatSilver, plural } from './format';
@@ -120,7 +120,7 @@ export function rivalOf(state: GameState, content: ContentBundle, seat: Seat): {
 
 /** A legend's claim: half his fame as men tell it, and his fleet. */
 function legendClaim(state: GameState, content: ContentBundle, id: string, year: number): number {
-  return Math.round(RULE.legendBase + RULE.perFame * legendFame(state, content.rivals[id]!, year));
+  return Math.round(RULE.legendBase + RULE.perFame * (legendFame(state, content.rivals[id]!, year) / LEGEND_SCALE));
 }
 
 /** His claim, part by part: what the thing will weigh. */

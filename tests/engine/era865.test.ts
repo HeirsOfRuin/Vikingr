@@ -1,3 +1,4 @@
+import { MUSTER_DOY } from '../../src/engine/tuning';
 // The Great Army, 865 (docs/FRAME-865.md).
 import { describe, it, expect } from 'vitest';
 import { content } from '../helpers';
@@ -10,7 +11,7 @@ import { RngCursor, seedRng } from '../../src/engine/rng';
 describe('the Great Army, 865', () => {
   it('thirty-five years of the chronicle, then the sons of Ragnarr', () => {
     const s = newGame(content, { background: 'younger_son', seed: 3, name: 'Ari', era: 865 });
-    expect(s.day).toBe(dayOf(865, 59));
+    expect(s.day).toBe(dayOf(865, MUSTER_DOY));
     expect(s.hero.born).toBe(849);
     expect(s.flags.era865).toBe(1);
     expect(s.places.noirmoutier!.norse).toBe(true);

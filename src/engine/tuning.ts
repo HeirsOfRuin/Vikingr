@@ -7,17 +7,23 @@ export const BIRTH_YEAR = 814;
 // ---- calendar (day 0 = 1 January 830, 365-day years) ----
 export const YEAR_DAYS = 365;
 export const MONTH_START = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334] as const;
-export const MUSTER_DOY = 59; // 1 March
+/** Spring at home: the muster, and the first day a ship may leave the home fjord (Josh, 2026-11-08: "the sailing season is
+ *  too long"; it was 1 March). */
+export const MUSTER_DOY = 90; // 1 April
 export const SAILING_DOY = 120; // 1 May: the normal start of the sailing season
 export const LATE_SEASON_DOY = 243; // 1 September: may end the season at home
 export const FORCE_RETURN_DOY = 288; // 15 October: at home on or after this, the season ends
 export const WINTER_DOY = 304; // 1 November
 /** Abroad, he may haul up and winter from 1 October (playtest 5: "should be available in October"). */
 export const WINTER_ABROAD_DOY = 273;
-/** The sea is closed from 1 December to the end of February: no ship puts out (Josh, 2026-10-29). */
-export const SEA_CLOSED_FROM_DOY = 335;
+/** The sea is closed from 1 November to the middle of March: no ship puts out (Josh, 2026-10-29; shortened 2026-11-08,
+ *  "the sailing season is too long": it was 1 December to the end of February). A fleet wintering abroad may put out
+ *  from 15 March (the Seine fleet was at Paris by Easter 845); at home the muster is 1 April. Seven months of sailing
+ *  at most, the late ones stormy (STORM_BY_MONTH). */
+export const SEA_CLOSED_FROM_DOY = 304;
+export const SEA_OPEN_DOY = 74;
 export function seaClosed(doy: number): boolean {
-  return doy >= SEA_CLOSED_FROM_DOY || doy < 59;
+  return doy >= SEA_CLOSED_FROM_DOY || doy < SEA_OPEN_DOY;
 }
 /** Wintering under the ships on a hostile beach: what it costs. */
 export const BEACH_WINTER = { morale: 2, lost: 0.1 } as const;

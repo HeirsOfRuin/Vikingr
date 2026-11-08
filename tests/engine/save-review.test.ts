@@ -15,7 +15,7 @@ import type { GameState } from '../../src/engine/state';
 function captain(): GameState {
   const s = sandboxGame(34);
   s.at = 'home_fjord';
-  s.day = dayOf(834, 59);
+  s.day = dayOf(834, 95);
   s.phase = 'sailing';
   for (const p of ['ribe', 'dorestad', 'walcheren', 'hedeby']) if (!s.known.includes(p)) s.known.push(p);
   return s;

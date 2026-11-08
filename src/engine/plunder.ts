@@ -57,6 +57,35 @@ export function raidMen(state: GameState, content: ContentBundle, allyMen = 0): 
   return state.crew.men + aliveMen(state).length + ownFleetMen(state) + allyMen;
 }
 
+/** What each choice in the plunder rounds is worth, so that each is best somewhere (Josh, 2026-11-08: "captives and goods
+ *  are only worth it when the place has been tested too often"). A round of captives was 2-5 people at half a pound,
+ *  a third of a first grab in a monastery; now 3-6, more where more people live, at the price below: a little over half
+ *  a monastery's first grab, its equal by the third, and about a grab's worth in a town. The stores are once a raid,
+ *  goods for a market and food for the voyage home: the choice when the hold is empty of bread. */
+export const CAPTIVES = { min: 3, spread: 4, popFrom: 0.6, popPer: 50, popMax: 2 } as const;
+export const STORES_TAKE = { lots: 3, spread: 4, foodDays: [6, 10] as const } as const;
+export const GRAB_RATE = { base: 0.14, spread: 0.12 } as const;
+/** The noise each choice makes, against the ALARM_MAX the countryside can take (the hostage's is HOSTAGE.alarm). */
+export const NOISE = { grab: [1.5, 3] as const, captives: 2, arms: 1.5, stores: 1.5, burn: 1 } as const;
+
+/** How many more people live here than in a monastery's handful, as far as his men can reach (1 to 2). */
+export function captivePop(content: ContentBundle, p: PlunderState): number {
+  if (p.strand) return 1;
+  const def = content.places[p.place]?.raid?.defenders ?? 0;
+  const pop = Math.min(CAPTIVES.popMax, Math.max(1, CAPTIVES.popFrom + def / CAPTIVES.popPer));
+  return Math.max(1, pop * Math.min(1, (p.reach ?? 1) * 2));
+}
+
+/** What the next round of each choice should bring, by the rules the round itself uses (shown on the buttons). */
+export function plunderPreview(state: GameState, content: ContentBundle, p: PlunderState): { grab: number; captives: [number, number]; storesFood: number } {
+  const src = p.strand ?? state.places[p.place]!;
+  const reach = p.strand ? 1 : p.reach ?? 1;
+  const share = p.strand ? 1 : p.share ?? 1;
+  const grab = Math.round(src.wealth * (GRAB_RATE.base + GRAB_RATE.spread / 2) * reach * share);
+  const pop = captivePop(content, p);
+  return { grab, captives: [Math.round(CAPTIVES.min * pop), Math.round((CAPTIVES.min + CAPTIVES.spread - 1) * pop)], storesFood: STORES_TAKE.foodDays[0] };
+}
+
 export type PlunderWhat = 'grab' | 'captives' | 'burn' | 'hostage' | 'arms' | 'stores' | 'leave';
 export const ALARM_MAX = 10;
 
@@ -86,11 +115,11 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
       // the shore's own farms are stripped whole; a place, as far as his men can reach, and in a host his crews' part
       const reach = p.strand ? 1 : p.reach ?? 1;
       const share = p.strand ? 1 : p.share ?? 1;
-      const stripped = Math.max(1, Math.round(src.wealth * (0.14 + 0.12 * rng.float()) * reach));
+      const stripped = Math.max(1, Math.round(src.wealth * (GRAB_RATE.base + GRAB_RATE.spread * rng.float()) * reach));
       const take = Math.max(1, Math.round(stripped * share));
       src.wealth -= stripped;
       p.taken += take;
-      p.alarm += 1.5 + rng.float() * 1.5;
+      p.alarm += NOISE.grab[0] + rng.float() * (NOISE.grab[1] - NOISE.grab[0]);
       const things = ['altar plate and a silver-bound book', 'a reliquary and two candlesticks', 'cloth, wax and a chest of coin', 'the abbot\'s cup and a gilded cross', 'hacksilver from a hole under a floor'];
       p.log.push(share < 1
         ? `The host goes through the streets house by house. Your crews' part of this street: ${things[rng.int(things.length)]}. ${formatSilver(take)}.`
@@ -100,9 +129,9 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
       break;
     }
     case 'captives': {
-      const n = 2 + rng.int(4);
+      const n = Math.round((CAPTIVES.min + rng.int(CAPTIVES.spread)) * captivePop(content, p));
       p.captives += n;
-      p.alarm += 2;
+      p.alarm += NOISE.captives;
       p.log.push(`${plural(n, 'person', 'people')} roped at the neck and walked down to the ships. One of them is praying the whole way.`);
       break;
     }
@@ -119,7 +148,7 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
     }
     case 'arms': {
       p.armed = true;
-      p.alarm += 1.5;
+      p.alarm += NOISE.arms;
       // the Franks keep swords and mail; a monastery's dead have none (but the abbot's hall may)
       const rich = ['frankish', 'frisian', 'english'].includes(content.places[p.place]?.people ?? '') ? 1.3 : 0.8;
       const roll = rng.float();
@@ -134,16 +163,19 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
     }
     case 'stores': {
       p.stores = true;
-      p.alarm += 1.5;
+      p.alarm += NOISE.stores;
       const list = STORES[content.places[p.place]?.people ?? ''] ?? STORES_ANY;
       const s = list[rng.int(list.length)]!;
-      const lots = 2 + rng.int(3);
-      p.log.push(`You break open the stores: ${s.what}. ${stowGoods(state, content, s.good, lots)}`);
+      const lots = STORES_TAKE.lots + rng.int(STORES_TAKE.spread);
+      // and the bread, the cheese and the dried fish: food for the voyage home
+      const days = STORES_TAKE.foodDays[0] + rng.int(STORES_TAKE.foodDays[1] - STORES_TAKE.foodDays[0] + 1);
+      state.provisions += Math.round(mouths(state) * days);
+      p.log.push(`You break open the stores: ${s.what}. ${stowGoods(state, content, s.good, lots)} And bread, cheese and dried fish from the kitchens: food for ${days} days.`);
       break;
     }
     case 'burn': {
       p.burned = true;
-      p.alarm += 1;
+      p.alarm += NOISE.burn;
       p.log.push('You put fire to the thatch. The smoke will be seen for a day\'s ride in every direction.');
       break;
     }

@@ -293,7 +293,7 @@
     - id: sell
       text: Sell your captives here, at the fleet's price.
       visible_if: "!service"
-      effects: [ { sell_captives: 30 } ]
+      effects: [ { sell_captives: 36 } ]
       result: The Verdun man buys them all, and pays in good silver by weight, and writes something in his ledger, and leads them away up the beach on a rope. The price is low. The fleet's price is always low, because there's always more on the beach tomorrow.
     - id: hold
       text: Keep them for a better market.

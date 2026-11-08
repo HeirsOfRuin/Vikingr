@@ -5,7 +5,7 @@ import { MUSTER_DOY, WINTER_DOY } from '../../src/engine/tuning';
 describe('calendar', () => {
   it('day 0 is 1 January 830', () => {
     expect(formatDate(0)).toBe('1 January 830');
-    expect(dateOf(dayOf(830, MUSTER_DOY))).toMatchObject({ year: 830, month: 2, dom: 1 });
+    expect(dateOf(dayOf(830, MUSTER_DOY))).toMatchObject({ year: 830, month: 3, dom: 1 });
   });
   it('rolls over years', () => {
     expect(dateOf(365).year).toBe(831);

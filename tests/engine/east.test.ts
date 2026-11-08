@@ -60,9 +60,9 @@ describe('the closed sea', () => {
     expect(t.phase).toBe('winter');
     expect(t.crew.men).toBeLessThan(men);
   });
-  it('in March the sea is open again', () => {
+  it('from the middle of March the sea is open again', () => {
     const s = atTheDoor();
-    s.pending = null; s.day = dayOf(851, 70); s.at = 'birka';
+    s.pending = null; s.day = dayOf(851, 76); s.at = 'birka';
     expect(listActions(s, content).some((o) => o.action.t === 'sail' && o.enabled)).toBe(true);
   });
 });

@@ -1,3 +1,4 @@
+import { MUSTER_DOY } from '../../src/engine/tuning';
 import { describe, it, expect } from 'vitest';
 import { content } from '../helpers';
 import { newGame } from '../../src/engine/index';
@@ -174,7 +175,7 @@ describe('B. the heir', () => {
     expect(p.title).toBe('The years between');
     // the chronicle ran: news of 854 (Horik's death) is in the summary
     expect(p.lines.join(' ')).toMatch(/Horik/);
-    expect(t.day).toBe(dayOf(858, 59));
+    expect(t.day).toBe(dayOf(858, MUSTER_DOY));
     expect(t.hero.name).toMatch(/^Son842 Arisson$/);
     expect(t.oath).toBeUndefined();
     expect((t.holdings ?? []).map((h) => h.place)).toEqual(['skye']);
@@ -195,7 +196,7 @@ describe('B. the heir', () => {
   it('a son already grown takes over at the next spring, with his ships and his crew', () => {
     const s = deathWithSon(832);
     const t = act(content, s, listActions(s, content)[0]!.action);
-    expect(t.day).toBe(dayOf(851, 59));
+    expect(t.day).toBe(dayOf(851, MUSTER_DOY));
     expect(t.ships.length).toBe(2);
     expect(t.crew.men).toBeGreaterThan(0);
   });
@@ -285,7 +286,7 @@ import { playLife } from '../../tools/bot-lib';
 describe("D. Ragnarr's days", () => {
   it('the world has moved on: thirteen years of the chronicle, then the Vestfold arrow', () => {
     const s = newGame(content, { background: 'younger_son', seed: 3, name: 'Ari', era: 843 });
-    expect(s.day).toBe(dayOf(843, 59));
+    expect(s.day).toBe(dayOf(843, MUSTER_DOY));
     expect(s.hero.born).toBe(827);
     expect(s.places.dublin!.norse).toBe(true);
     expect(s.places.dorestad!.wealth).toBeLessThan(content.places.dorestad!.raid!.wealth);
@@ -444,7 +445,7 @@ describe('sailing in a fleet (docs/FRAME-FLEET-843.md §2)', () => {
     s.fleet = { id: 'vestfold', since: dayOf(843, 140) };
     s.day = dayOf(843, 300);
     expect(fleetYear(s, content)).toEqual([]);
-    s.day = dayOf(844, 59);
+    s.day = dayOf(844, MUSTER_DOY);
     expect(fleetYear(s, content).length).toBe(1);
     expect(s.fleet).toBeUndefined();
   });

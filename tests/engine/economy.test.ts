@@ -39,3 +39,17 @@ describe('the spring muster', () => {
     expect(Math.floor(MUSTER_FAME * Math.sqrt(400))).toBe(30);
   });
 });
+
+import { addDeed, REPEAT } from '../../src/engine/fame';
+describe('fame: the everyday deeds grow stale', () => {
+  it('each like raid in a year tells for less; a kept boast does not', () => {
+    const s = sandboxGame(9);
+    const w = [0, 1, 2, 3, 4, 5, 6].map(() => addDeed(s, content, { type: 'raid', mult: 10 }).weight);
+    expect(w[1]).toBeCloseTo(w[0]! * REPEAT.each, 1);
+    expect(w[6]).toBeCloseTo(w[0]! * REPEAT.floor, 1);
+    const b = [0, 1].map(() => addDeed(s, content, { type: 'boast_kept' }).weight);
+    expect(b[1]).toBe(b[0]);
+    s.day += 400;
+    expect(addDeed(s, content, { type: 'raid', mult: 10 }).weight).toBeCloseTo(w[0]!, 1);
+  });
+});

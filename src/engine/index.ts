@@ -42,10 +42,11 @@ import { expeditionBlock, listen, listenable, LISTEN_COST } from './discovery';
 import {
   borrowShip, BUILD_TYPES, winterWork, divideAbroad, feastCost, hallAction, provision, provisionCost, recruit, recruitable, refit, refitCost, serviceShare, shareOut, winterHere,
   type HallWhat, type ShareHow,
+  CAPTIVE_PRICE,
 } from './season';
 import { formatSilver, plural, lowerFirst } from './format';
 import { banter } from './banter';
-import { plunderAction, ALARM_MAX, type PlunderWhat } from './plunder';
+import { plunderAction, plunderPreview, ALARM_MAX, NOISE, type PlunderWhat } from './plunder';
 import { journal } from './journal';
 import { renderText } from './text';
 import { heal } from './hero';
@@ -607,15 +608,19 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
     case 'plunder': {
       const pl = (p as { plunder: import('./state').PlunderState }).plunder;
       const left = ALARM_MAX - pl.alarm;
-      const warn = left <= 3 ? 'The alarm is close to spreading' : undefined;
+      const warn = left <= 3 ? ` The alarm is close to spreading: ${left <= 0 ? 'nothing' : `about ${Math.max(0, Math.round(left))}`} left before the countryside comes.` : '';
+      // what each choice should bring, by the rules the round itself uses (plunder.ts plunderPreview; Josh, 2026-11-08:
+      // "the raiding part feels both under and overwhelming at the same time")
+      const pv = plunderPreview(state, content, pl);
+      const noise = (n: number | readonly [number, number]) => `noise ${typeof n === 'number' ? n : `${n[0]}-${n[1]}`} of ${ALARM_MAX}`;
+      const reachNote = (pl.reach ?? 1) < 0.95 && !pl.strand ? `; too big a place for your men: they reach about ${Math.round((pl.reach ?? 1) * 100)}% of it` : '';
       return [
-        // a limit he can see, and the lever that moves it (plunder.ts REACH)
-        opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, warn ?? ((pl.reach ?? 1) < 0.95 && !pl.strand ? `More silver; more noise. A place this size is too big for your men to strip: they reach about ${Math.round((pl.reach ?? 1) * 100)}% of what more men would` : 'More silver; more noise')),
-        opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, 'Worth silver in Kaupang; slow and loud'),
-        opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', 'Talked about for years; seen for miles'),
-        opt('Plunder', { t: 'plunder', what: 'arms' }, 'Search the dead and the hall for war-gear', !pl.armed, 'You have searched already.', 'A sword, mail or a helmet, for yourself; once a raid'),
-        opt('Plunder', { t: 'plunder', what: 'stores' }, 'Break open the stores', !pl.stores, 'You have emptied them already.', state.service ? 'Goods for your sea-chest; once a raid' : 'Goods for the hold: wine, salt, cloth, hides; once a raid'),
-        ...(!state.service && !pl.strand && kindsAt(content, pl.place).length ? [opt('Plunder', { t: 'plunder', what: 'hostage' }, 'Look for someone worth a ransom', !pl.searched, 'You have looked already.', 'A king\'s kin, an abbot, a lord\'s wife and children; slow and loud')] : []),
+        opt('Plunder', { t: 'plunder', what: 'grab' }, 'Strip the next house', true, undefined, `About ${formatSilver(pv.grab)}${reachNote}; ${noise(NOISE.grab)}.${warn}`),
+        opt('Plunder', { t: 'plunder', what: 'captives' }, 'Take captives for the slave markets', true, undefined, `${pv.captives[0]} to ${pv.captives[1]} people, about ${formatSilver(CAPTIVE_PRICE)} a head to the autumn trader and more at Kaupang; ${noise(NOISE.captives)}`),
+        opt('Plunder', { t: 'plunder', what: 'burn' }, 'Burn it', !pl.burned, 'It is already burning.', `The raid is told a fifth larger; the place is half as rich next time; ${noise(NOISE.burn)}`),
+        opt('Plunder', { t: 'plunder', what: 'arms' }, 'Search the dead and the hall for war-gear', !pl.armed, 'You have searched already.', `A sword, mail or a helmet, for yourself; once a raid; ${noise(NOISE.arms)}`),
+        opt('Plunder', { t: 'plunder', what: 'stores' }, 'Break open the stores', !pl.stores, 'You have emptied them already.', `${state.service ? 'Goods for your sea-chest' : 'Goods for the hold (wine, salt, cloth, hides)'}, and food for ${pv.storesFood} days or more; once a raid; ${noise(NOISE.stores)}`),
+        ...(!state.service && !pl.strand && kindsAt(content, pl.place).length ? [opt('Plunder', { t: 'plunder', what: 'hostage' }, 'Look for someone worth a ransom', !pl.searched, 'You have looked already.', `A king's kin, an abbot, a lord's wife and children, if there is one; once a raid; ${noise(HOSTAGE.alarm)}`)] : []),
         state.service
           ? opt('Plunder', { t: 'plunder', what: 'leave' }, `Head for the ships before ${state.service.captain} blows the horn`, true, undefined, `Carrying ${formatSilver(pl.taken)}`)
           : opt('Plunder', { t: 'plunder', what: 'leave' }, 'Back to the ships, now', true, undefined, `Carrying ${formatSilver(pl.taken)}`),
@@ -753,7 +758,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
   }
 }
 
-/** From 1 December to the end of February no ship puts out (Josh, 2026-10-29): every road off the beach is shut. */
+/** From 1 November to the middle of March no ship puts out (tuning.ts seaClosed): every road off the beach is shut. */
 const SEA_ACTIONS = new Set(['sail', 'course', 'expedition', 'cruise_plan', 'cruise_on', 'passage_home', 'follow', 'harek']);
 /** A fleet bound somewhere, with him in it: he follows it, or leaves it (docs/FRAME-FLEETS-REALMS.md, Part A). */
 function followFleet(out: ActionOption[], state: GameState, content: ContentBundle, doy: number): ActionOption[] {

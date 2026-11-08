@@ -143,11 +143,11 @@
   text: |
     A slaver comes down the beach to look at your captives before the ship's even made fast: a soft-handed, careful man who looks at their teeth and their hands and feels their arms like a farmer at a horse fair, and doesn't look at their faces at all.
 
-    "Half a pound a head," he says. "For the young ones. Less for the others."
+    "Two-thirds of a pound a head," he says. "For the young ones. Less for the others."
   choices:
     - id: sell
       text: Sell them here.
-      effects: [ { sell_captives: 26 } ]
+      effects: [ { sell_captives: 32 } ]
       result: The silver is weighed out. The captives go up the beach on a rope. One of them looks back. Most of them don't.
     - id: keep
       text: Keep them. They'll fetch more at home, or work there.

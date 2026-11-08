@@ -26,7 +26,11 @@ export function addDeed(
   const named = FIGHT_DEEDS.includes(d.type) && !!state.items?.find((x) => x.uid === state.kit?.weapon)?.name;
   // a skald aboard saw it done, and has it in verse before the ship is home (playtest 8)
   const seen = skaldSees(state) ? SKALD.aboardDeed : 1;
-  const weight = Math.round((d.weight ?? def.weight) * (d.mult ?? 1) * (named ? NAMED_FAME : 1) * seen * 10) / 10;
+  // the sixth crew beaten at sea this year is not news the way the first was (Josh, 2026-11-08: the legends could not keep
+  // up; two-thirds of his fame at 22 was raids and skirmishes): each like deed in the last year tells for less
+  const k = REPEATED.includes(d.type) ? state.deeds.filter((x) => x.type === d.type && state.day - x.day < 365).length : 0;
+  const repeat = Math.max(REPEAT.floor, Math.pow(REPEAT.each, k));
+  const weight = Math.round((d.weight ?? def.weight) * (d.mult ?? 1) * (named ? NAMED_FAME : 1) * seen * repeat * 10) / 10;
   const deed: Deed = {
     n: state.deeds.length + 1,
     type: d.type,
@@ -51,6 +55,11 @@ export function addDeed(
   state.deeds.push(deed);
   return deed;
 }
+
+/** The everyday deeds of a raiding life, that grow stale with repeating (see addDeed); a champion killed, a boast kept,
+ *  a hall built and the story's own deeds are always news. */
+export const REPEATED = ['raid', 'sea_fight_won', 'battle_won', 'front_deed'];
+export const REPEAT = { each: 0.75, floor: 0.25 } as const;
 
 /** Deeds a fight's engine writes and a scene may tell again in its own words. */
 const SINGLE_FIGHTS = ['killed_champion', 'duel_won', 'holmgang_won'];
@@ -102,8 +111,18 @@ export function untoldCount(state: GameState): number {
   return state.deeds.filter((d) => d.told === null).length;
 }
 
+/** The legends' curves in rivals.yaml were set against an older, smaller scale of the hero's fame; told as men tell them
+ *  now, they are half as large again (Josh, 2026-11-08: "the other Vikings in the leaderboard couldn't keep up"; at 22
+ *  he was ahead of every king of the century). Measured: a typical raider at 26 stands about fifth, the best second
+ *  behind Horik. A legend's claim to a seat (rule.ts) is reckoned on the unscaled curve, as it was tuned. */
+export const LEGEND_SCALE = 1.5;
+
 /** A rival's living fame in a year: linear between the curve's points, zero before he is grown and after he is dead. */
 export function rivalFame(r: Rival, year: number): number {
+  return LEGEND_SCALE * curveFame(r, year);
+}
+
+function curveFame(r: Rival, year: number): number {
   if (year >= r.died || year < r.born + 16) return 0;
   const c = r.curve;
   if (year <= c[0]![0]) return c[0]![1] * Math.max(0, (year - (r.born + 16)) / Math.max(1, c[0]![0] - (r.born + 16)));

@@ -33,12 +33,12 @@ describe('the skald', () => {
 
   it('aboard and away from home, the deeds he sees weigh a quarter more', () => {
     const s = lord();
-    const home = addDeed(s, content, { type: 'raid' });
+    const home = addDeed(s, content, { type: 'boast_kept' });
     s.at = 'lindisfarne';
-    const away = addDeed(s, content, { type: 'raid' });
+    const away = addDeed(s, content, { type: 'boast_kept' });
     expect(away.weight).toBe(home.weight);
     skaldOf(s)!.aboard = true;
-    const seen = addDeed(s, content, { type: 'raid' });
+    const seen = addDeed(s, content, { type: 'boast_kept' });
     expect(seen.weight).toBeCloseTo(home.weight * SKALD.aboardDeed, 1);
   });
 
