@@ -523,7 +523,7 @@
   choices:
     - id: on
       text: North, with what's left.
-      effects: [ { days_foraged: 15 }, { lose_ship: wreck }, { add: { crew.men: -3, crew.morale: -2 } }, { lose_cargo: 2 } ]
+      effects: [ { days_foraged: 15 }, { lose_ship: burned }, { add: { crew.men: -3, crew.morale: -2 } }, { lose_cargo: 2 } ]
       next: mh_pamplona
 
 - id: mh_pamplona

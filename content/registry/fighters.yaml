@@ -206,7 +206,7 @@
   weapon: 3
   habits: { strike: 2, guard: 2, feint: 3 }
   guile: 2
-  desc: The jarl's son who lost the thing in 834 and went to Ireland to find a jarldom of his own. He has been finding it ever since.
+  desc: The jarl's son who lost the Thing in 834 and went to Ireland to find a jarldom of his own. He has been finding it ever since.
 - id: ru_eirik
   name: Eiríkr Eysteinsson
   attrs: { str: 5, agi: 2, end: 5, wit: 3, pre: 3 }

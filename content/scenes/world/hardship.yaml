@@ -27,7 +27,7 @@
       result: |
         You open the doors and stand by them while the grain goes out a sack at a time, and you make a point of knowing every name. It costs you a pound of silver to fill the storehouse up again, at the price grain is this winter, which is a robber's price.
 
-        At the spring thing, men you barely know come up to grip your hand. Nobody says why. Everybody knows why.
+        At the spring Thing, men you barely know come up to grip your hand. Nobody says why. Everybody knows why.
     - id: sell
       text: Sell your grain to them. At this winter's price.
       visible_if: ["base != father"]
@@ -163,16 +163,16 @@
   cooldown_days: 700
   requires: ["year >= 832", "place == home_fjord", "phase == muster", "!service", "envy >= 4"]
   art: muster
-  title: The suit at the thing
+  title: The suit at the Thing
   text: |
-    At the spring thing, when the law-speaker has finished reciting the third part of the law and men are starting to drift toward the ale, a farmer called Þorbjörn Hallsson stands up on the mound and names you.
+    At the spring Thing, when the law-speaker has finished reciting the third part of the law and men are starting to drift toward the ale, a farmer called Þorbjörn Hallsson stands up on the mound and names you.
 
     He names a killing: a man called Grímr, his wife's brother, who rowed with you [if year >= 834]four summers back[else]two summers back[/if] and died in a brawl on a strand in the west. Þorbjörn says you struck the blow. Six men stand up behind him and say they'll swear to it.
     [break]
-    You don't remember Grímr. That's not a defence. The men behind Þorbjörn are the men whose sons sail with you, and don't sail with them. Nobody at the thing thinks this is about Grímr.
+    You don't remember Grímr. That's not a defence. The men behind Þorbjörn are the men whose sons sail with you, and don't sail with them. Nobody at the Thing thinks this is about Grímr.
   choices:
     - id: pay
-      text: Pay the wergild, in front of the thing, and be done with it.
+      text: Pay the wergild, in front of the Thing, and be done with it.
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { envy: -1.5 } ]
       result: |
@@ -183,7 +183,7 @@
       success:
         text: |
           You bring up twelve men who were on that strand, and each of them swears on the ring at the hof that he saw who struck the blow, and it wasn't you. By the eighth, Þorbjörn's six have gone very quiet. By the twelfth, the law-speaker is looking at Þorbjörn the way a man looks at a dog that's been at the sheep.
-        effects: [ { envy: -2 }, { deed: { type: deed, text: "Beat a false suit at the spring thing", weight: 2, witnesses: 200 } } ]
+        effects: [ { envy: -2 }, { deed: { type: deed, text: "Beat a false suit at the spring Thing", weight: 2, witnesses: 200 } } ]
       failure:
         text: |
           Your oath-helpers stumble. One of them can't remember which strand it was. One was drunk. The law-speaker finds for Þorbjörn, and adds half again to the wergild for the trouble, and you pay it in front of the whole district.
@@ -221,7 +221,7 @@
       danger: true
       effects: [ { lose_hoard: 0.5 }, { add: { thralls: -2 } }, { envy: -2 }, { battle: { foe: rival_crew, men: 18, terrain: field, win: ha_farm_raid_won, lose: ha_farm_raid_lost } } ]
     - id: law
-      text: Take it to the thing, with witnesses.
+      text: Take it to the Thing, with witnesses.
       check: { skill: speech, attr: wit, difficulty: 6 }
       success:
         text: |
@@ -250,7 +250,7 @@
       text: Take back what's yours, and a little more.
       effects: [ { recover_hoard: 1 }, { add: { silver: 24 } }, { deed: { type: deed, text: "Took back what the Bjarnarsons stole, over the ridge", weight: 3, witnesses: 60 } } ]
       result: |
-        You dig it out of their floor yourself, with their women watching from the door. Some of it is still in your own bags. Old Bjarni sits in the yard with a broken arm and watches you load it, and says nothing, and you say nothing back. There'll be a reckoning at the thing for this, one way or another. But nobody will dig in your floor again for a while.
+        You dig it out of their floor yourself, with their women watching from the door. Some of it is still in your own bags. Old Bjarni sits in the yard with a broken arm and watches you load it, and says nothing, and you say nothing back. There'll be a reckoning at the Thing for this, one way or another. But nobody will dig in your floor again for a while.
 
 - id: ha_farm_raid_lost
   kind: spine
@@ -262,7 +262,7 @@
       text: Carry the dead home.
       effects: [ { add: { honour: -1 } } ]
       result: |
-        The Bjarnarsons sail before the spring thing, for the west, with your silver and your thralls and the story of how they beat {name} on his own side of the ridge. You'll hear that story again. You can be sure of it.
+        The Bjarnarsons sail before the spring Thing, for the west, with your silver and your thralls and the story of how they beat {name} on his own side of the ridge. You'll hear that story again. You can be sure of it.
 
 - id: ha_jarl
   kind: phase
@@ -283,7 +283,7 @@
       text: Offer him your best ship, as a gift. Crew and all.
       effects: [ { lose_ship: give }, { favour: 2 }, { envy: -3 } ]
       result: |
-        He takes it the way a jarl takes a gift: graciously, and as if it was his already. Your ship goes into his boat-house with his men at her oars. At the spring thing he calls you his friend, in front of everyone, and the men who were starting to whisper about you go back to whispering about each other.
+        He takes it the way a jarl takes a gift: graciously, and as if it was his already. Your ship goes into his boat-house with his men at her oars. At the spring Thing he calls you his friend, in front of everyone, and the men who were starting to whisper about you go back to whispering about each other.
     - id: silver
       text: Offer him five pounds, for his hall.
       requires: ["silver >= 240"]

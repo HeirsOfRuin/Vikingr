@@ -238,7 +238,7 @@ ar_bell: { description: "Took the bell-shrine of Patrick", saga: true }
 ar_spared_bell: { description: "Left the old monk his bell at Armagh", saga: true }
 ar_burned: { description: "Burned the church of Patrick at Armagh", saga: true }
 ar_beaten: { description: "Was beaten off Patrick's hill", saga: true }
-fr_backs_hakon: { description: "Promised Hákon his voice at the thing" }
+fr_backs_hakon: { description: "Promised Hákon his voice at the Thing" }
 fr_backs_eirik: { description: "Told Eiríkr what his brother was saying" }
 fr_neutral: { description: "Stood with neither of the jarl's sons", saga: true }
 fr_dorestad_sworn: { description: "Sworn to sail for Dorestad in 834" }
@@ -276,7 +276,7 @@ f_father_close: { description: "Told his father about the strakes", saga: true }
 f_paid_due: { description: "Paid his father's harvest-due to Hrapp", saga: true }
 f_building: { description: "Building a karvi with his father, winter 831" }
 f_due_paid: { description: "Paid Hrapp's patron's due on the new ship", saga: true }
-f_due_refused: { description: "Refused Hrapp's due on the new ship at the thing", saga: true }
+f_due_refused: { description: "Refused Hrapp's due on the new ship at the Thing", saga: true }
 f_due_thorgils: { description: "Gave Thorgils the new ship's first share", saga: true }
 i_colman_irish: { description: "Spoke to Colmán in Irish at Iona", saga: true }
 c_interpreter: { description: "Spoke for the ship at Conaille's gate, in Irish", saga: true }

@@ -235,7 +235,7 @@
     [break]
     And then the Thing.
 
-    Every free man in the district, on the thing-field below the mound, with their weapons, in the snow. Eiríkr stands on one side of the law-rock and Hákon on the other, and the law-speaker asks the question: who will the district have?
+    Every free man in the district, on the Thing-field below the mound, with their weapons, in the snow. Eiríkr stands on one side of the law-rock and Hákon on the other, and the law-speaker asks the question: who will the district have?
     [if flag.fr_backs_hakon]
     Hákon catches your eye across the field. You promised him your voice.
     [elif flag.fr_backs_eirik]
@@ -250,7 +250,7 @@
           You speak for him: for a jarl like a summer, a jarl who'll look outward, west and south, to where the silver is. You've been where the silver is; they all know it. When you finish, men are shouting Hákon's name before the law-speaker can ask again.
 
           Hákon Eysteinsson is jarl. He takes you by both hands on the law-rock, in front of everyone. Eiríkr walks off the field without a word and takes ship for Denmark within the month.
-        effects: [ { set: flag.fr_jarl_hakon }, { set: flag.fr_eystein_dead }, { favour: 4 }, { deed: { type: deed, text: "Spoke Hákon Eysteinsson into the high seat at the thing", weight: 4, witnesses: 400 } } ]
+        effects: [ { set: flag.fr_jarl_hakon }, { set: flag.fr_eystein_dead }, { favour: 4 }, { deed: { type: deed, text: "Spoke Hákon Eysteinsson into the high seat at the Thing", weight: 4, witnesses: 400 } } ]
       failure:
         text: |
           You speak for him, and it isn't enough. Eiríkr has the older men, and the older men have the votes. When the law-speaker asks again, it's Eiríkr's name they shout.
@@ -275,5 +275,5 @@
         [if flag.fr_backs_hakon]
         Hákon never speaks to you again. He takes ship for Ireland within the month.
         [else]
-        Hákon takes ship for Ireland within the month, to find a jarldom of his own. Eiríkr watches you on the thing-field and says nothing, and goes on watching.
+        Hákon takes ship for Ireland within the month, to find a jarldom of his own. Eiríkr watches you on the Thing-field and says nothing, and goes on watching.
         [/if]

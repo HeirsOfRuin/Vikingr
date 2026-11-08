@@ -271,7 +271,7 @@
     - id: fight
       text: Run out the oars, and take her.
       danger: true
-      effects: [ { battle: { foe: frankish_levy, men: 22, terrain: ship } } ]
+      effects: [ { battle: { foe: frankish_levy, men: 16, ratio: 0.7, terrain: ship } } ]
       result: She sees you coming, and doesn't run. Franks don't, much.
     - id: avoid
       text: Stand out to sea, and give the coast a wide berth.

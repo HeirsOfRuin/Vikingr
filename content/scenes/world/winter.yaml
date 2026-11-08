@@ -185,7 +185,7 @@
     - id: sell
       text: Take his silver, and give him his freedom.
       effects: [ { add: { thralls: -1, silver: 24, honour: 1 } } ]
-      result: You take him to the thing at midsummer, and say it in front of witnesses, and he's a freedman. He stays on the farm afterwards, for wages, and works no differently, except that now he whistles.
+      result: You take him to the Thing at midsummer, and say it in front of witnesses, and he's a freedman. He stays on the farm afterwards, for wages, and works no differently, except that now he whistles.
     - id: gift
       text: Give him his freedom, and let him keep his silver.
       effects: [ { add: { thralls: -1, honour: 1, hamingja: 1 } }, { deed: { type: deed, text: "Freed a thrall for nothing", weight: 1 } } ]
@@ -286,7 +286,7 @@
   text: |
     Old Svertingr from the head of the fjord dies at midwinter, at eighty, in his bed, which would have annoyed him; he always said he'd go at sea. He leaves two sons and one farm, and by the funeral ale the sons have stopped speaking to each other, and by the next morning one of them has an axe.
 
-    Somebody has to settle it before the thing at midsummer, or somebody will settle it with the axe. They come to you, both of them, because you have a ship and a name and no stake in it.
+    Somebody has to settle it before the Thing at midsummer, or somebody will settle it with the axe. They come to you, both of them, because you have a ship and a name and no stake in it.
   choices:
     - id: split
       text: Split the land down the stream, and make them swear to it.
@@ -317,7 +317,7 @@
   art: home_fjord
   title: The horse-fight
   text: |
-    There's a horse-fight at the thing-field, the big one before Yule: stallions set on each other over a mare in season, the owners behind them with goads, half the district round the ring betting, drinking, and shouting.
+    There's a horse-fight at the Thing-field, the big one before Yule: stallions set on each other over a mare in season, the owners behind them with goads, half the district round the ring betting, drinking, and shouting.
 
     A red stallion from up the valley has won four times this winter, and his owner hasn't stopped talking about it.
   choices:
@@ -337,7 +337,7 @@
       check: { skill: weapons, attr: agi, difficulty: 5 }
       success:
         text: You're in the ring with the horses, shouting, goading, ducking hooves, and the red stallion goes down. The crowd carries you out of the ring on its shoulders. The red horse's owner shoves you, and gets knocked down for it, and the whole district agrees he had it coming.
-        effects: [ { add: { flag.y_hall: 1 } }, { deed: { type: deed, text: "Goaded the winning horse at the thing-field", weight: 1, witnesses: 100 } } ]
+        effects: [ { add: { flag.y_hall: 1 } }, { deed: { type: deed, text: "Goaded the winning horse at the Thing-field", weight: 1, witnesses: 100 } } ]
       failure:
         text: A hoof takes you in the chest, and the next thing you know you're lying in the snow outside the ring with your ribs on fire and the whole district laughing.
         effects: [ { injury: cracked_ribs } ]

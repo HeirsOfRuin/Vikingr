@@ -15,7 +15,7 @@
   text: |
     Harek is in his mound on the headland, with his ship and his sword and two of his horses, and the high seat at Birsay is empty, with his cloak still over the back of it.
 
-    The islands have come to the thing below the mound to choose. Every farmer from Unst to South Ronaldsay, and every captain with a ship on the beach.
+    The islands have come to the Thing below the mound to choose. Every farmer from Unst to South Ronaldsay, and every captain with a ship on the beach.
     [if flag.wife_ingibjorg]
     Ingibjörg stands beside you, his daughter, with her chin up, and the farmers look from her to you and back.
     [/if]
@@ -48,7 +48,7 @@
       requires: ["silver >= 480"]
       effects: [ { add: { silver: -480, honour: -1 } }, { rule: orkney } ]
       next: ru_orkney_won
-      result: Ten pounds of silver goes round the farms in the dark, in cloth bags, to the men whose sons and neighbours will vote as they do. In the morning the thing shouts your name. Sigurðr knows exactly why.
+      result: Ten pounds of silver goes round the farms in the dark, in cloth bags, to the men whose sons and neighbours will vote as they do. In the morning the Thing shouts your name. Sigurðr knows exactly why.
     - id: sword
       text: Challenge Sigurðr to the holmgang, for the seat.
       danger: true
@@ -56,7 +56,7 @@
       result: The thing goes quiet. Then the law-speaker nods. It's been done before, in the old days. The cloak is pegged out on the shingle below the mound.
     - id: wait
       text: Let Sigurðr sit in it for now. There's time.
-      result: Sigurðr takes the seat for the year, with the islands' leave, as a steward. Next year the thing will sit again, if anyone asks it to.
+      result: Sigurðr takes the seat for the year, with the islands' leave, as a steward. Next year the Thing will sit again, if anyone asks it to.
 
 - id: ru_orkney_sword
   kind: spine
@@ -232,7 +232,7 @@
   art: yule_hall
   title: The empty seat at home
   text: |
-    {jarl} is dead. He went in the winter, coughing, in his own bed, which he would have hated. He's in the mound now, with his ship, and the district has come to the thing-field below it in the spring mud to choose who sits in his seat.
+    {jarl} is dead. He went in the winter, coughing, in his own bed, which he would have hated. He's in the mound now, with his ship, and the district has come to the Thing-field below it in the spring mud to choose who sits in his seat.
 
     His son Eysteinn, twenty and furious in his father's mail, stands on one side of the law-rock. Half the district stands with him, because a jarl's son is the law. The other half is looking at you.
     [break]

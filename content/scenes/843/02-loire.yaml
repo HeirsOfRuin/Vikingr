@@ -215,7 +215,7 @@
         text: Two other men from your ship say the same. The thing judges it a fair fight, and the Vestfolders go back to their fires with murder in their faces. Your shipmate thanks you that night. You find you don't want his thanks.
         effects: [ { add: { honour: -1, crew.morale: 1 } } ]
       failure:
-        text: A Vestfolder who was at the fire calls you a liar to your face in front of the thing, and the leaders believe him. Your shipmate pays a double man-price, and you pay a fine for lying at a thing, and the whole beach knows it.
+        text: A Vestfolder who was at the fire calls you a liar to your face in front of the Thing, and the leaders believe him. Your shipmate pays a double man-price, and you pay a fine for lying at a thing, and the whole beach knows it.
         effects: [ { add: { honour: -2, silver: -24 } } ]
     - id: silent
       text: Say you didn't see. It's not your quarrel.

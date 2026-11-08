@@ -38,7 +38,7 @@
   when: Spring, 865
   title: The sons of Ragnarr
   text: |
-    [if background == outlaw]You broke a man's skull at the spring thing over a horse, and the thing put you out of Hordaland for three winters. You are on the beach at Kormt with your sea-chest, outside the district's law, looking for a ship that doesn't ask.[else]You are sixteen, and the ship-talk has been about England all winter.[/if]
+    [if background == outlaw]You broke a man's skull at the spring Thing over a horse, and the Thing put you out of Hordaland for three winters. You are on the beach at Kormt with your sea-chest, outside the district's law, looking for a ship that doesn't ask.[else]You are sixteen, and the ship-talk has been about England all winter.[/if]
 
     The story comes up the coast with the Danish traders, and gets better at every landing. Ragnarr, the one who took Paris, went to England in his old age with two ships, and the king of the Northumbrians, Ælla, took him and threw him into a pit of snakes. He sang in the pit, they say, until the snakes stopped him. Now his sons are gathering ships to answer for it: Ívarr, and Hálfdan, and Ubbi. Not a fleet, the Danes say. An army.
     [break]

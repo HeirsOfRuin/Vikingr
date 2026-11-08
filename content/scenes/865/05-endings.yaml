@@ -2,7 +2,7 @@
 # ploughing and providing for themselves"; in 877 he went to Ireland after Dublin and was killed at Strangford
 # Lough (AU). South: Guthrum slipped past Alfred to Wareham in 876 and to Exeter; in 877 the Danish fleet was
 # wrecked in a storm off Swanage, 120 ships; at Twelfth Night 878 he took Chippenham and drove Alfred into the
-# marshes at Athelney; in May Alfred beat him at Edington, and Guthrum and thirty of his best men were baptized
+# marshes at Athelney; in May Alfred beat him at Edington, and Guthrum and thirty of his best men were baptised
 # at Aller, with Alfred standing godfather, and given great gifts.
 
 - id: e76_plough
@@ -173,7 +173,7 @@
     - id: baptism
       text: Go into the water at Aller with Guthrum.
       visible_if: "!service"
-      effects: [ { add: { silver: 96, honour: -1 } }, { set: flag.ga_baptised }, { fleet_end: true }, { deed: { type: deed, text: "Was baptized at Aller with Guthrum, with the king of Wessex for godfather", weight: 3, witnesses: 300 } } ]
+      effects: [ { add: { silver: 96, honour: -1 } }, { set: flag.ga_baptised }, { fleet_end: true }, { deed: { type: deed, text: "Was baptised at Aller with Guthrum, with the king of Wessex for godfather", weight: 3, witnesses: 300 } } ]
       result: |
         The water is cold and the priest's hand is heavy on your head. Then a white cloth for eight days, and a feast, and gifts from the king's own hand, a sword-belt and two pounds of silver, given with a look that weighs you very exactly. Guthrum goes to East Anglia and rules it as a Christian king, more or less. A great many Danes are more or less Christian after Aller.
     - id: refuse

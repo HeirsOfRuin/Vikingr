@@ -124,15 +124,15 @@
       text: Take baptism, and make a treaty with the West Saxon king.
       visible_if: "!flag.ru_baptised"
       effects: [ { set: flag.ru_baptised }, { standing: { people: english, n: 2 } } ]
-      result: You stand in a cold river while a bishop pours water over your head, with an English king beside you as your godfather, and come out with a Christian name you will never use. The East Angles' thegns watch it done. The next time the thing sits, they will count it.
+      result: You stand in a cold river while a bishop pours water over your head, with an English king beside you as your godfather, and come out with a Christian name you will never use. The East Angles' thegns watch it done. The next time the Thing sits, they will count it.
     - id: thing_strong
-      text: Ask the thing at the ford for the kingship.
+      text: Ask the Thing at the ford for the kingship.
       visible_if: "claim.eastangles >= 20"
       check: { skill: speech, attr: pre, difficulty: 5 }
       success: { text: "The army shouts for you, and then, slowly, the English thegns do too, because a king the army chose is better than the army without one.", effects: [ { rule: eastangles } ] }
       failure: { text: "The thing goes to {rival_eastangles}. The East Angles look relieved, and you'd like to know why.", effects: [ { set: flag.ru_eastangles_lost } ] }
     - id: thing_even
-      text: Ask the thing at the ford for the kingship.
+      text: Ask the Thing at the ford for the kingship.
       visible_if: "claim.eastangles >= 0 && claim.eastangles < 20"
       check: { skill: speech, attr: pre, difficulty: 7 }
       success: { text: "It takes two days. On the second the English thegns come over to you one by one, without looking at each other. King of the East Angles.", effects: [ { rule: eastangles } ] }
@@ -240,16 +240,16 @@
   art: town_rise
   title: The five boroughs
   text: |
-    The jarls of the other boroughs, Lincoln and Stamford and Leicester and Derby, send to ask whether you will meet them each spring, at a thing of your own, to settle quarrels between your people and theirs without killing each other. Their law will be Danish law. Their people are English, mostly. It will be something new.
+    The jarls of the other boroughs, Lincoln and Stamford and Leicester and Derby, send to ask whether you will meet them each spring, at a Thing of your own, to settle quarrels between your people and theirs without killing each other. Their law will be Danish law. Their people are English, mostly. It will be something new.
   choices:
     - id: yes
-      text: Go to the thing, and help make the law.
+      text: Go to the Thing, and help make the law.
       effects: [ { add: { honour: 1, skill.speech: 1 } } ]
       result: The first thing argues for three days about what a man owes for a stolen pig. By the end of it there is a law about pigs, Danish and English both. The English farmers come to it. Some of them start calling themselves by Danish names.
     - id: no
       text: Snotingaham needs no one else's law.
       effects: [ { add: { crew.morale: 1 } } ]
-      result: The other four meet without you. Their quarrels are settled at the thing; yours are settled at the ford, with axes, and cost more.
+      result: The other four meet without you. Their quarrels are settled at the Thing; yours are settled at the ford, with axes, and cost more.
 
 # ---- the Loire ----
 - id: ru_loire
@@ -335,7 +335,7 @@
   text: |
     The Gall-Gáedil, the Irish call them, the foreign Gaels: men of the islands who are half Norse and half Irish and speak both badly. They have no king who can hold them all, from Man to Lewis. Every few years somebody tries.
 
-    The island chiefs meet on Tynwald hill, in the middle of Man, where the thing has met since before anyone remembers.
+    The island chiefs meet on Tynwald hill, in the middle of Man, where the Thing has met since before anyone remembers.
     [break]
     {claim_isles}
   choices:
