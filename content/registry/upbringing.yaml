@@ -4,7 +4,7 @@
 - id: farm
   when: always
   label: Raised on the farm
-  desc: His mother kept the place, and he kept it with her. He knows a bargain, a boat and a byre, and he can hold his own at a Thing.
+  desc: His mother kept the place, and he kept it with her. He knows a bargain, a boat and a byre, and he can hold his own at a thing.
   skills: { craft: 2, trade: 2, speech: 1, seamanship: 1, weapons: 1 }
 - id: sword
   when: always

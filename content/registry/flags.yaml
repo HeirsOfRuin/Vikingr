@@ -97,8 +97,8 @@ y_asked_death: { description: "Asked the völva how he will die" }
 y_paid_volva: { description: "Paid the völva", saga: true }
 thorgils_paid: { description: "Paid the Hrappssons for Thorgils's leg", saga: true }
 thorgils_feud: { description: "Refused the Hrappssons: a feud" }
-thorgils_thing_won: { description: "The Thing said the cloak settled it", saga: true }
-thorgils_thing_lost: { description: "The Thing made him pay the Hrappssons", saga: true }
+thorgils_thing_won: { description: "The thing said the cloak settled it", saga: true }
+thorgils_thing_lost: { description: "The thing made him pay the Hrappssons", saga: true }
 father_paid: { description: "Put a pound and a half in his father's hand", saga: true }
 # the dead
 mourned_ketill: { description: "Said the words over Ketill", saga: true }
@@ -189,7 +189,7 @@ brother_refused: { description: "Refused to pay the farm's debt", saga: true }
 hrapp_fought: { description: "Fought Grímr Hrappsson on the cloak" }
 hrapp_ended: { description: "The Hrappsson feud is ended" }
 hrapp_outlawed: { description: "Grímr Hrappsson outlawed for the burning" }
-hrapp_unpunished: { description: "The Thing let the Hrappssons go" }
+hrapp_unpunished: { description: "The thing let the Hrappssons go" }
 hrapp_paid: { description: "Paid the Hrappssons to end it" }
 # ---- the world: discovery and expeditions (content/scenes/world) ----
 ex_double_share: { description: "Promised a double share to keep an expedition going", saga: true }
@@ -238,7 +238,7 @@ ar_bell: { description: "Took the bell-shrine of Patrick", saga: true }
 ar_spared_bell: { description: "Left the old monk his bell at Armagh", saga: true }
 ar_burned: { description: "Burned the church of Patrick at Armagh", saga: true }
 ar_beaten: { description: "Was beaten off Patrick's hill", saga: true }
-fr_backs_hakon: { description: "Promised Hákon his voice at the Thing" }
+fr_backs_hakon: { description: "Promised Hákon his voice at the thing" }
 fr_backs_eirik: { description: "Told Eiríkr what his brother was saying" }
 fr_neutral: { description: "Stood with neither of the jarl's sons", saga: true }
 fr_dorestad_sworn: { description: "Sworn to sail for Dorestad in 834" }
@@ -276,7 +276,7 @@ f_father_close: { description: "Told his father about the strakes", saga: true }
 f_paid_due: { description: "Paid his father's harvest-due to Hrapp", saga: true }
 f_building: { description: "Building a karvi with his father, winter 831" }
 f_due_paid: { description: "Paid Hrapp's patron's due on the new ship", saga: true }
-f_due_refused: { description: "Refused Hrapp's due on the new ship at the Thing", saga: true }
+f_due_refused: { description: "Refused Hrapp's due on the new ship at the thing", saga: true }
 f_due_thorgils: { description: "Gave Thorgils the new ship's first share", saga: true }
 i_colman_irish: { description: "Spoke to Colmán in Irish at Iona", saga: true }
 c_interpreter: { description: "Spoke for the ship at Conaille's gate, in Irish", saga: true }
