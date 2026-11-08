@@ -143,7 +143,7 @@
   guile: 2
   leader: "the mormaer"
   doctrine: { missiles: 2, flank: 2, hold: 2, push: 1 }
-  desc: "A mormaer's warband out of the hills: horsemen, spearmen with square shields, and a great deal of noise. The Picts have beaten bigger armies than yours."
+  desc: "A mormaer's war-band out of the hills: horsemen, spearmen with square shields, and a great deal of noise. The Picts have beaten bigger armies than yours."
 - id: strathclyde_men
   name: The men of Alt Clut
   quality: 2
@@ -202,7 +202,7 @@
   guile: 3
   leader: "a chief in a felt cap"
   doctrine: { missiles: 4, give: 2, flank: 2 }
-  desc: Horse-archers from the grasslands, who the Greeks call Turks and the Slavs call Ugri. They never stand to be hit. They shoot, and ride off, and shoot again, and wait at the fords for men carrying ships.
+  desc: Horse-archers from the grasslands, whom the Greeks call Turks and the Slavs call Ugri. They never stand to be hit. They shoot, and ride off, and shoot again, and wait at the fords for men carrying ships.
 # The Middle Sea, 859-861 (docs/FRAME-MED.md).
 - id: galician_levy
   name: Count Pedro's men

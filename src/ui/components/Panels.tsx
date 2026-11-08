@@ -174,10 +174,10 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
           </dl>
         ) : (
         <dl class="kv">
-          <dt>Men</dt><dd>{state.crew.men}, and {aliveMen(state).length} sworn men <span class="muted">(the ships carry {capacity(state, content)})</span></dd>
+          <dt>Men</dt><dd>{state.crew.men}, and {plural(aliveMen(state).length, 'sworn man', 'sworn men')} <span class="muted">(the ships carry {capacity(state, content)})</span></dd>
           <dt>Quality</dt><dd>{qualityWord(state.crew.quality)}</dd>
           <dt>Mood</dt><dd>{moraleWord(state.crew.morale)}</dd>
-          <dt>Food</dt><dd>{days} days</dd>
+          <dt>Food</dt><dd>{plural(days, 'day')}</dd>
           <dt>Silver</dt><dd>{formatSilver(state.silver)}</dd>
           <dt>Plunder to share</dt><dd>{formatSilver(state.loot)}</dd>
         </dl>
@@ -199,7 +199,7 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
                   ))}
                 </div>}
               </>
-            ) : <p class="muted small">Dead, {m.diedOn !== null ? formatDate(m.diedOn) : ''}.</p>}
+            ) : <p class="muted small">Dead{m.diedOn !== null ? `, ${formatDate(m.diedOn)}` : ''}.</p>}
           </div>
         );
       }) : <p class="empty">No one has sworn to you.</p>}
@@ -239,11 +239,11 @@ export function HomePanel({ content, state, onAct }: { content: ContentBundle; s
       <div class="card">
         <dl class="kv">
           <dt>Household</dt><dd>{b.wife ? `${b.wife}, your wife, keeps the place.` : state.flags.betrothed ? 'Betrothed; the wedding is at the winter nights.' : 'No wife yet.'}{state.family?.mother ? ` Your mother, ${state.family.mother}, lives with you.` : ''}</dd>
-          <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> — captives you keep instead of selling</span>}</dd>
+          <dt>Thralls</dt><dd>{b.thralls} of {def.thralls} the land can use{b.thralls ? '' : <span class="muted"> (captives you keep instead of selling)</span>}</dd>
           <dt>Each winter</dt><dd>{formatSilver(winterYield(state)) || 'nothing'}{b.wife ? <span class="muted"> (a quarter more, for her running of it)</span> : null}</dd>
           <dt>Arm-rings</dt><dd>{ringWords(state) === 'none' ? <span class="muted">None. The smith can make a silver one; gold comes from plunder, or from a lord's hand.</span> : ringWords(state)}</dd>
-          <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small"> — safe from the sea, not from men who know where to dig</span></dd>
-          {bill.total > 0 && <><dt>Winter's keep</dt><dd>{formatSilver(bill.total)}<span class="muted small"> — the men's meat and Yule gifts {formatSilver(bill.men + bill.sworn)}, the ships' tar and rope {formatSilver(bill.ships)}; it comes off the heap at the autumn share-out</span></dd></>}
+          <dt>Hoard</dt><dd>{formatSilver(b.hoard)}<span class="muted small">, safe from the sea, not from men who know where to dig</span></dd>
+          {bill.total > 0 && <><dt>Winter's keep</dt><dd>{formatSilver(bill.total)}<span class="muted small">: the men's meat and Yule gifts {formatSilver(bill.men + bill.sworn)}, the ships' tar and rope {formatSilver(bill.ships)}; it comes off the heap at the autumn share-out</span></dd></>}
           <dt>The district</dt><dd>{envyWords(envy)}</dd>
         </dl>
         <p class="muted small">{next}</p>
@@ -310,7 +310,7 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
           {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
         </dl>
       ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
-      {state.rule ? <p class="small">You are {ruleTitle(state, content)}, since {formatDate(state.rule.since)}: {formatSilver(ruleTribute(state).silver)} in tribute and {plural(ruleTribute(state).men, 'man', 'men')} more at the muster every year. You were last seen there the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {state.rule.seat === 'lordship' ? 'its people will stop calling you lord' : `${rivalOf(state, content, state.rule.seat).name} takes it`}.</p>
+      {state.rule ? <p class="small">You are {ruleTitle(state, content)}, since {formatDate(state.rule.since)}: {formatSilver(ruleTribute(state).silver)} in tribute and {plural(ruleTribute(state).men, 'man', 'men')} more at the muster every year. You were last seen there in the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {state.rule.seat === 'lordship' ? 'its people will stop calling you lord' : `${rivalOf(state, content, state.rule.seat).name} takes it`}.</p>
         : !open.length ? <p class="muted small">No seat is open to you. A seat opens when its lord dies or its rival falters, and only to a man with a great name and a tie to the place: a lord's favour, land there, kin by marriage. A holding of your own, kept {LORDSHIP.winters} winters, can be raised into a lordship: go there.</p>
         : open.map((s) => <p key={s} class="small">{SEAT_DEF[s].title.charAt(0).toUpperCase() + SEAT_DEF[s].title.slice(1)}: the seat is open, at {content.places[SEAT_DEF[s].place]!.name}. {claimWords(state, content, s)}</p>)}
     </div>

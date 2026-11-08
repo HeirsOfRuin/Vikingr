@@ -58,7 +58,7 @@
       visible_if: "!service"
       requires: ["silver >= 36"]
       effects: [ { add: { silver: -36, honour: -1 } }, { goods: { id: grain, lots: 6 } } ]
-      result: You buy half the ship's hold, and stack the sacks in your store-house under guard, and turn the people at the door away. In the spring grain is still dear from Frisia to the Loire. Nobody who came to your door that winter will forget it, either.
+      result: You buy half the ship's hold, and stack the sacks in your store-house under guard, and turn the people at the door away. In the spring grain is still dear from Frisia to the Loire. The families you turned away remember whose door it was.
     - id: share
       text: Share your own bread with the family at the door, and leave the rest to the rich.
       effects: [ { add: { honour: 1, hamingja: 1 } } ]
@@ -82,7 +82,7 @@
     - id: laugh
       text: Laugh at it. Three brothers who've been at each other's throats for ten years.
       effects: [ { add: { crew.morale: 1 } } ]
-      result: The men laugh with you. By midsummer, it turns out, you were right; the Danes are raiding Frisia again by harvest, and the kings are quarrelling about something else.
+      result: The men laugh with you. You were right, as it turns out. The Danes are raiding Frisia again by harvest, and the kings are quarrelling about something else.
     - id: west
       text: Think of the west, where no king of the Franks can reach. Ireland, and the Scots' islands.
       effects: [ { know: dublin }, { add: { skill.lore: 1 } } ]
@@ -101,7 +101,7 @@
   art: hearth_ormr
   title: A boy who wants a bench
   text: |
-    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the winter to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About Nantes, and the south, and what you did.
+    He's sixteen, or says he is, with his first beard coming in and a spear he made himself, and he has walked two days through the winter to ask you for a bench. His father is dead and his brother has the farm, and he has heard about you, he says. About your ships, and where they've been, and what you did.
 
     [if flag.era843]You were sixteen yourself, on the beach at Skiringssal, five summers ago. It doesn't feel like five.[else]You were his age yourself, once, with a spear you'd made and nothing else. It doesn't feel as long ago as it was.[/if]
   choices:
@@ -110,7 +110,7 @@
       visible_if: "!service"
       effects: [ { add: { crew.men: 1, crew.morale: 1 } }, { deed: { type: deed, text: "Gave a fatherless boy his first bench", weight: 1, witnesses: 40 } } ]
       result: |
-        You give him a bench, and a shield to go with his spear, and he looks at you the way you once looked at Ölvir. Your men tease him all winter. In the spring he's still there, and they've stopped.
+        You give him a bench, and a shield to go with his spear, and he looks at you the way you once looked at the first captain who gave you a bench. Your men tease him all winter. In the spring he's still there, and they've stopped.
     - id: captain
       text: Take him to {captain}, and speak for him.
       visible_if: service
@@ -176,7 +176,7 @@
       result: |
         Her father weighs out the silver with shaking hands, and then holds his daughter on the shingle as if he will never let go, and says something to you in Frankish that the Breton won't translate. Aude looks back once from the boat. In the summer a cask of good wine comes over from the mainland with the priest, with no message, addressed to you.
     - id: free
-      text: Give her back to him and keep your silver in your purse. Tell him to keep his.
+      text: Give her back to him, and tell him to keep his silver.
       effects: [ { add: { honour: 2, hamingja: 1 } }, { set: flag.e43_aude_home }, { journal: "Gave Aude back to her father without a ransom." } ]
       result: |
         He doesn't understand, and then he does, and he goes down on his knees on the shingle, which embarrasses everyone. The men on the beach think you are mad. The priest tells the story all along the Loire. For years afterwards, Franks who would spit at any other Northman will sell you bread.
@@ -195,7 +195,7 @@
   art: hearth_ormr
   title: Aude
   text: |
-    Four winters on, Aude runs your household better than anyone you could have hired: she keeps the stores, she haggles with traders in three languages, she can count silver faster than you, and the men are a little afraid of her. She is a grown woman now, nineteen or twenty, and other men have noticed it, and one of your crew has asked you, awkwardly, what her price would be.
+    Four winters on, Aude runs your household better than anyone you could have hired: she keeps the stores, she haggles with traders in three languages, she can count silver faster than you, and the men are a little afraid of her. She is a grown woman now, eighteen or so, and other men have noticed it, and one of your crew has asked you, awkwardly, what her price would be.
 
     She is still yours, by law. She has never once asked you for anything. Tonight she sits down across the fire from you, uninvited, and waits for you to say what she is going to be.
   choices:
@@ -212,4 +212,4 @@
         The freeing-ale, the witnesses, a pound of silver in her lap. She looks at it, and at you, and says nothing for a while. In the spring she marries a Frisian merchant who trades on the Loire, and runs his warehouses better than he does. Whenever your ship is in the river, there is wine at a fair price, and a word of warning if the count's men are about.
     - id: stay
       text: Tell her nothing will change.
-      result: She nods, once, as if that was the answer she expected, and gets up and goes back to her work. Nothing changes. Something has.
+      result: She nods, once, as if that was the answer she expected, and gets up and goes back to her work. Nothing changes, except that she never sits down across the fire from you again.

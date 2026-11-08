@@ -16,7 +16,7 @@
   text: |
     He is waiting on the jetty when you tie up, as if he had known which ship was yours before you came round the point. A Dane, by the cut of his beard, with a gilt-hilted sword and a red cloak and three men behind him who are trying to look bored.
 
-    "{name}," he says. He says it the way a man says the name of a horse he means to buy. "Hrafn Ketilsson. I sail with King Horik's ships. I've killed four men whose names were bigger than mine, and now mine is bigger than theirs." He smiles. It doesn't reach his eyes. "Yours is going round the markets this year. I'd like it."
+    "{name}," he says. He says it the way a man says the name of a horse he means to buy. "Hrafn Ketilsson. I sail with King Horik's ships. I've killed four men whose names were bigger than mine, and now mine is bigger than theirs." He smiles, and keeps his eyes on your sword-hand. "Yours is going round the markets this year. I'd like it."
     [break]
     He wants a holmgang, on the strand, in the morning, before the whole market. The traders are already laying bets.
   choices:
@@ -28,7 +28,7 @@
       text: Tell him your name is not for sale.
       effects: [ { add: { honour: -1 } } ]
       result: |
-        "Everything is for sale," says Hrafn, "in Hedeby." He bows, very low, and walks off up the jetty. By evening the story in the market is that {name} was offered the cloak and found an errand elsewhere. It isn't true, quite. It'll do.
+        "Everything is for sale," says Hrafn, "in a place like this." He bows, very low, and walks off up the jetty. By evening the story in the market is that {name} was offered the cloak and found an errand elsewhere. It isn't true, quite. It'll do.
 
 - id: ch_hrafn_won
   kind: spine
@@ -85,7 +85,7 @@
   text: |
     A boy runs down the beach with a hazel rod, the sign of a herald, and behind him comes a man walking alone. Not big. Light on his feet, with a small bright shield and a spear and a long knife, and a gold torc round his neck that would buy your ship.
 
-    The boy speaks Norse, badly. "This is Cú Mara," he says, "the king's champion. The king has heard of {name}. The king says the Gall talk too much about you. The king says, let the champion settle it, as the old kings did, one man before the two hosts, and let the gods choose."
+    The boy speaks Norse, badly. "This is Cú Mara," he says, "the king's champion. The king has heard of {name}. The king says the Gaill talk too much about you. The king says, let the champion settle it, as the old kings did, one man before the two hosts, and let God choose."
     [break]
     Cú Mara says nothing at all. He looks at you the way a man looks at the weather.
   choices:
@@ -154,7 +154,7 @@
       requires: ["silver >= 200"]
       effects: [ { add: { silver: -200 } }, { add: { hamingja: 1 } } ]
       result: |
-        You count it out on the high table, two hundred ørtugar, and the hall watches every one. Þorvaldr weighs it, and nods, and puts it in a bag, and grips your hand across the table, and his hand is shaking. "That's done, then," he says. It is, and some of the hall thinks less of you for it, and some more.
+        You count it out on the high table, four pounds of hacksilver and forty coins, and the hall watches every piece. Þorvaldr weighs it, and nods, and puts it in a bag, and grips your hand across the table, and his hand is shaking. "That's done, then," he says. It is, and some of the hall thinks less of you for it, and some more.
     - id: refuse
       text: Tell him his brother came to your beach with a spear, and got what he came for.
       effects: [ { add: { honour: -1 } } ]
@@ -187,7 +187,7 @@
     - id: done
       text: Pay what the law says, and let it be over.
       effects: [ { add: { honour: -1 } } ]
-      result: It is over. That is somehow the worst of it.
+      result: It is over. He walks home through the slush, and you never see him again.
 
 # ---- Ögmundr Wolf-coat: a berserkr ----
 - id: ch_wolfcoat
@@ -214,7 +214,7 @@
       text: Have six men put spears into him before he reaches you.
       effects: [ { add: { honour: -2 } }, { add: { crew.men: -1 } } ]
       result: |
-        It takes four spears to put him down, and before the last one he has killed one of your men with his hands. The beach is very quiet afterward. Nobody calls it a killing to be proud of. Nobody calls it anything at all, in front of you.
+        It takes four spears to put him down, and before the last one he has killed one of your men with his hands. The beach is very quiet afterwards. Nobody calls it a killing to be proud of. Nobody calls it anything at all, in front of you.
 
 - id: ch_wolfcoat_won
   kind: spine
@@ -257,7 +257,7 @@
   text: |
     An old man is sitting on an upturned boat at the top of the beach, watching your ship come in. Grey to the roots of his hair, half his teeth gone, a sword across his knees in a scabbard so old the leather has gone black.
 
-    "Grjótgarðr," he says, when you come up the beach. Your steersman stops walking. "They tell me you're the best of them now. They told me that about the last eleven, too." He looks at you a long time, the way a man looks at a horse's teeth. "I'm old. I don't have long. I'd like to know, before I go, whether it's true."
+    "Grjótgarðr," he says, when you come up the beach. Your steersman stops walking. "They tell me you're the best of them now. They told me that about the last eleven, too." He looks you over, the way a man looks at a horse's teeth. "I'm old. I don't have long. I'd like to know, before I go, whether it's true."
     [break]
     He wants the holmgang. To the death, he says, or it isn't worth either of your time.
   choices:

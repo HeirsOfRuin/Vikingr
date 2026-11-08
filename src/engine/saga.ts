@@ -6,9 +6,9 @@ import { aliveMen } from './crew';
 import { capitalise, ordinal } from './format';
 import { lastingFame, legendTable, livingFame } from './fame';
 
-/** A deed's text as the start of a sentence. */
+/** A deed's text as the start of a sentence (a kept boast's words end in their own full stop: drop it). */
 export function deedLine(text: string): string {
-  return capitalise(text.trim());
+  return capitalise(text.trim().replace(/\.$/, ''));
 }
 
 export function epitaph(state: GameState, content: ContentBundle): string[] {

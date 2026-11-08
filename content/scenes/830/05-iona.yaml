@@ -40,7 +40,7 @@
         The ship leaps under you. On the island, the bell is still ringing.
       next: i_landing
     - id: north
-      text: Point out the low ground. Land behind the ridge and come at them from the side they aren't watching.
+      text: Point out the low ground. Land behind the ridge, where nobody is watching.
       check: { skill: speech, attr: wit, difficulty: 4 }
       next: i_landing
       success:
@@ -134,7 +134,7 @@
   text: |
     The man in the gateway is down. You are standing over him, breathing like a bellows, and you can't remember the last part.
 
-    Your hands are shaking. Your sword arm is wet to the elbow and none of it is yours. There is a smell you have never smelled before and will never forget, copper and opened guts and the dung of a frightened man.
+    Your hands are shaking. Your sword arm is wet to the elbow and none of it is yours. There is a smell you have never smelled before, copper and opened guts and the dung of a frightened man.
 
     Somebody slaps your back hard enough to knock you forward a step. Ulf, laughing like a madman. "First through! First through, you mad bastard!"
 
@@ -209,7 +209,7 @@
 
           Steinarr. He takes the box and holds it up for the church to see. "The boy's started his own share," he says.
 
-          Ásgeir says nothing at all. He doesn't need to. Your share of Iona is half what it would have been, and every man in the ship knows why.
+          Ásgeir says nothing at all. Your share of Iona is half what it would have been, and every man in the ship knows why.
         effects: [ { set: flag.i_caught_stealing }, { shares: 0.5 }, { add: { honour: -2 } } ]
 
 - id: i_colman
@@ -268,7 +268,7 @@
       result: |
         You gather up an armful and throw them on the hearth. They are calfskin, and they don't burn well. They curl and blacken and stink, and the paint on them bubbles: a red bird, a blue man with a gold ring round his head.
 
-        The monk makes a sound you will hear again, some nights, for years. Then Steinarr hits him, and he stops making it.
+        The monk makes a sound like a hare in a snare. Then Steinarr hits him, and he stops making it.
       next: i_after
     - id: ask
       text: Ask him what the words say.

@@ -19,9 +19,9 @@
 
     "Dorestad!" he shouts, before he's even ashore. "Thirty Danish ships, and King Horik's own hersirs, and the emperor's sons too busy to notice! Are you coming or are you going to sit here and grow barley?"
     [else]
-    The news comes up the coast with the first Danish trader of the year. King Horik's hersirs are gathering ships at Hedeby and Ribe: thirty of them, some say, forty, others say. Nobody says where they're going. Everybody knows. Dorestad, the richest market in the north, with the emperor's sons at each other's throats and nobody on the walls.
+    The news comes up the coast with the first Danish trader of the year. King Horik's hersirs are gathering ships at Hedeby and Ribe: thirty of them, some say; forty, say others. Nobody says where they're going. Everybody knows. Dorestad, the richest market in the north, with the emperor's sons at each other's throats and nobody on the walls.
 
-    Nobody has asked you. Nobody needs to. A man with a ship can join any fleet that'll have him.
+    Nobody has asked you. A man with a ship doesn't wait to be asked: he can join any fleet that'll have him.
     [/if]
     [break]
     [if favour >= 3]
@@ -31,17 +31,17 @@
     [/if]
   choices:
     - id: sail
-      text: Send the arrow back with your answer. Dorestad, at midsummer.
+      text: Send an arrow back with your answer. Dorestad, at midsummer.
       visible_if: "!service"
       effects: [ { set: flag.fr_dorestad_sworn }, { fleet: danes834 }, { know: ribe }, { know: dorestad }, { add: { crew.morale: 2 } } ]
       result: |
-        You send it back with your own mark cut into the shaft. By the next morning every man in the district knows, and by the end of the week your muster is the biggest it's ever been. Men will row a long way to see Dorestad burn.
+        You cut your own mark into a split arrow and send it south. By the next morning every man in the district knows, and by the end of the week your muster is the biggest it's ever been. Men will row a long way to see Dorestad burn.
     - id: west
       text: Tell them you've your own road this summer.
       effects: [ { set: flag.fr_west } ]
-      result: The messenger shrugs and goes. Dorestad will burn without you. You'll hear about it all winter, from men who were there, and you'll smile, and say nothing.
+      result: Whoever brought the word shrugs and goes. Dorestad will burn without you. You'll hear about it all winter, from men who were there, and you'll smile, and say nothing.
     - id: oar
-      text: Find a place at a Danish oar, since you have no ship of your own.
+      text: Take your oar to Dorestad. You have no ship of your own.
       visible_if: service
       effects: [ { set: flag.fr_dorestad_sworn }, { fleet: danes834 }, { know: dorestad } ]
       result: "{captain} has already decided: you're going. The whole ship is going. Nobody is staying at home this summer."
@@ -83,7 +83,7 @@
       check: { skill: cunning, attr: wit, difficulty: 5 }
       success:
         text: |
-          The ford is knee-deep and unwatched, exactly as he said. You come up out of the old river behind the count's centre as the Danes hit the jetties, and the centre doesn't so much break as evaporate.
+          The ford is knee-deep and unwatched, exactly as he said. You come up out of the old river behind the count's centre as the Danes hit the jetties, and the centre doesn't so much break as melt.
         effects:
           - { deed: { type: front_deed, text: "Took his men over the old ford at Dorestad, and into the count's back", weight: 5, witnesses: 600 } }
           - { host: { title: "Behind the count's line", foe: frisian_levy, terrain: field, men: 20, wings: [ { name: "Ubbi's Danes", men: 100, foe_men: 45 }, { name: "Horik's hersirs", men: 70, foe_men: 40 } ], role: wing, reserve: { us: 0, them: 0 }, raid: true, win: do_after, lose: do_beaten } }
@@ -99,7 +99,7 @@
       result: |
         You watch from the river while the Danes go in. It's over by noon. When you come ashore there's still plenty lying about, and you take your share of it.
 
-        Ubbi sees you come ashore. He doesn't say anything. He doesn't have to.
+        Ubbi sees you come ashore. He looks at your clean shield, and then at his own, and turns his back.
     # at the oar: {captain}'s crew goes up the jetties with the Danes; you go with them, or you mind the ship
     - id: crew
       text: Go up the jetties in {captain}'s crew, beside the Danes.
@@ -164,7 +164,7 @@
         - { captives: 6 }
         - { deed: { type: deed, text: "Was at the burning of Dorestad", weight: 5, witnesses: 800 } }
       result: |
-        There's a church at the end of the long street with its door barred and people inside, praying. The Danes are piling brushwood against the door. You stop them, with your sword out and your men behind you, and let the people out, and take six of the youngest to the ships, and let the rest go into the marshes. The Danes think you're mad, and greedy, in that order. Some of the people you let go will be alive at the end of the year. That's more than would have been.
+        There's a church at the end of the long street with its door barred and people inside, praying. The Danes are piling brushwood against the door. You stop them, with your sword out and your men behind you, and let the people out, and take six of the youngest to the ships, and let the rest go into the marshes. The Danes think you're mad, and greedy, in that order. Some of the people you let go will be alive at the end of the year. That's more than there would have been.
 
 - id: do_beaten
   kind: spine
@@ -216,7 +216,7 @@
       text: Help yourself to what the Danes left, while nobody's watching.
       visible_if: service
       effects: [ { add: { silver: 24, honour: -1 } }, { standing: { place: dorestad, n: -1 } } ]
-      result: A cellar the Danes missed, under a burned warehouse, with a bag of coin hidden in the wall. The townspeople see you come out of it. They say nothing, because there's nothing left to say.
+      result: A cellar the Danes missed, under a burned warehouse, with a bag of coin hidden in the wall. The townspeople see you come out of it. Nobody tries to stop you.
 
 - id: fr_eystein
   kind: phase
@@ -230,11 +230,11 @@
   text: |
     Jarl Eystein dies in the dark of the year, in his bed, with his sons on either side of him and a priest from somewhere in Frankia he'd let stay the winter, whom both his sons pretend not to see.
 
-    They bury him the old way, all the same: in his own ship, the old karvi he lent you once, hauled up the hill on rollers by fifty men, with his sword and his shield and his horse and his dogs and a slave-girl who goes up the gangplank on her own feet, singing, and doesn't come down. The mound takes a week to raise. The whole district stands on it when it's done.
+    They bury him the old way, all the same: in his own ship, hauled up the hill on rollers by fifty men, with his sword and his shield and his horse and his dogs and a slave-girl who goes up the gangplank on her own feet, singing, and doesn't come down. The mound takes a week to raise. The whole district stands on it when it's done.
     [break]
-    And then the thing.
+    And then the Thing.
 
-    Every free man in the district, on the thing-field below the mound, with their weapons, in the snow. Eiríkr stands on one side of the law-rock and Hákon on the other, and the lawspeaker asks the question: who will the district have?
+    Every free man in the district, on the thing-field below the mound, with their weapons, in the snow. Eiríkr stands on one side of the law-rock and Hákon on the other, and the law-speaker asks the question: who will the district have?
     [if flag.fr_backs_hakon]
     Hákon catches your eye across the field. You promised him your voice.
     [elif flag.fr_backs_eirik]
@@ -246,13 +246,13 @@
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
-          You speak for him: for a jarl like a summer, a jarl who'll look outward, west and south, to where the silver is. You've been where the silver is; they all know it. When you finish, men are shouting Hákon's name before the lawspeaker can ask again.
+          You speak for him: for a jarl like a summer, a jarl who'll look outward, west and south, to where the silver is. You've been where the silver is; they all know it. When you finish, men are shouting Hákon's name before the law-speaker can ask again.
 
           Hákon Eysteinsson is jarl. He takes you by both hands on the law-rock, in front of everyone. Eiríkr walks off the field without a word and takes ship for Denmark within the month.
         effects: [ { set: flag.fr_jarl_hakon }, { set: flag.fr_eystein_dead }, { favour: 4 }, { deed: { type: deed, text: "Spoke Hákon Eysteinsson into the high seat at the thing", weight: 4, witnesses: 400 } } ]
       failure:
         text: |
-          You speak for him, and it isn't enough. Eiríkr has the older men, and the older men have the votes. When the lawspeaker asks again, it's Eiríkr's name they shout.
+          You speak for him, and it isn't enough. Eiríkr has the older men, and the older men have the votes. When the law-speaker asks again, it's Eiríkr's name they shout.
 
           Eiríkr Eysteinsson is jarl. He looks at you from the law-rock and doesn't look away. Hákon takes ship for Ireland within the month, with whoever will follow him, and doesn't say goodbye.
         effects: [ { set: flag.fr_jarl_eirik }, { set: flag.fr_eystein_dead }, { favour: -6 } ]

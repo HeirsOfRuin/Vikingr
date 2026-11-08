@@ -108,7 +108,7 @@
         effects: [ { set: flag.b_fought } ]
         next: b_ormr
     - id: trick
-      text: Tell him Gyða's father is coming up the path behind him.
+      text: Tell him Gyða's father is coming down the path behind him.
       check: { skill: cunning, attr: wit, difficulty: 4 }
       success:
         text: |

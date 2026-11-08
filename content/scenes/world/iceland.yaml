@@ -34,7 +34,7 @@
       text: Carry fire round the bounds, from sunrise to sunset.
       check: { skill: seamanship, attr: end, difficulty: 6 }
       success:
-        text: You run the last mile with the torch guttering and your lungs on fire, and light the last beacon as the sun goes into the sea. It is a great deal of land. The men cheer from the shore.
+        text: You run the last stretch with the torch guttering and your lungs on fire, and light the last beacon as the sun goes into the sea. It is a great deal of land. The men cheer from the shore.
         effects: [ { claim_land: true }, { add: { hamingja: 1 } } ]
       failure:
         text: The sun is down before you get round, and you light the last fire in the dark, a little short of where you meant to. It is still more land than your father ever had.
@@ -43,7 +43,7 @@
       text: Throw your high-seat pillars overboard, and settle where they come ashore.
       visible_if: "base == hall"
       effects: [ { claim_land: true }, { add: { hamingja: 2 } } ]
-      result: The pillars drift for three days, and come ashore in a bay with a good beach and a stream, and grass behind it to the hills. Nobody can say the land was badly chosen. The gods chose it.
+      result: The pillars drift for three days, and come ashore in a bay with a good beach and a stream, and grass behind it to the hills. Nobody can say the land was badly chosen. The sea chose it, or the gods did.
 
 - id: is_first_winter
   kind: phase
@@ -65,5 +65,5 @@
         text: In the spring every soul who came is still alive, and the cows are thin but standing, and the first lambs are born in the snow. Men will say of you, in the book of the land-takings, that you came out with your household and lived.
         effects: [ { add: { crew.morale: 2 } } ]
       failure:
-        text: The cold takes two of the old people and a third of the cattle. In the spring you bury them on the hill above the farm, looking at the sea. That is how land becomes yours, here as anywhere.
+        text: The cold takes two of the old people and a third of the cattle. In the spring you bury them on the hill above the farm, looking at the sea. They are the first graves on your land.
         effects: [ { add: { thralls: -1, crew.morale: -1 } } ]

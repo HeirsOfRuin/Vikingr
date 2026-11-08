@@ -77,7 +77,9 @@ export function gatherFleet(state: GameState, content: ContentBundle): string[] 
   state.fleet = { id: 'own', since: state.day, camp: state.at ?? undefined, posture: 'lying', moved: state.day, own: { ships, men: ships * OWN.menPerShip, cohesion: OWN.start, target: a.target, lastAction: state.day } };
   journal(state, `${plural(ships, 'ship')} answered the war-arrow.`);
   state.queue.push({ scene: 'of_answer', day: state.day });
-  return [`${plural(ships, 'ship')} answer your war-arrow, with ${ships * OWN.menPerShip} men in them, and their captains are waiting on the beach for you to tell them where.`];
+  return [ships === 1
+    ? `One ship answers your war-arrow, with ${OWN.menPerShip} men in her, and her captain is waiting on the beach for you to tell him where.`
+    : `${plural(ships, 'ship')} answer your war-arrow, with ${ships * OWN.menPerShip} men in them, and their captains are waiting on the beach for you to tell them where.`];
 }
 
 /** His fleet's men who stand in his line, as cohesion holds them. */

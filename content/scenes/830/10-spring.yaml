@@ -31,7 +31,7 @@
       result: |
         You walk down to the landing and up the gangplank and forward, past the benches, to the prow, and put your sea-chest under the dragon's neck.
 
-        "First ashore," says Bersi, behind you, cheerfully. "First into the wall. First the Irish see. They'll write songs about you. Short ones."
+        "First ashore," says Bersi, behind you, cheerfully. "First into the wall. First the Irish see. They'll make songs about you. Short ones."
 
         "You're in the prow," says Ulf. "You've always been in the prow."
     - id: ask
@@ -41,7 +41,7 @@
         text: |
           The jarl keeps you waiting half a morning, and then hears you out with his chin on his fist.
 
-          "You talk well," he says at last. "So did a lot of men I buried young." He doesn't smile. "No. But I'll remember you came. Two summers at an oar, and men already know your name; come back after the second one, and we'll see whose name it is."
+          "You talk well," he says at last. "So did a lot of men I buried young." He doesn't smile. "No. But I'll remember you came. One summer at an oar, and men already know your name. Come back after the second one, and we'll see whose name it is."
         effects: [ { set: flag.jarl_promise }, { favour: 1 }, { route: [orkney, iona, bangor] } ]
       failure:
         text: |
@@ -84,13 +84,13 @@
         [if background == freedman]
         You put it on the strake between you: a pound and a half, weighed out on the jarl's own scales so there can be no argument.
 
-        He looks at it a long time without touching it. Then he puts down the adze, which you have never seen him do in the middle of a stroke. "Hrapp's harvest," he says. "This autumn I'll be in my own field." That's all. At the next Thing, he stands up when the freedmen are called to their patrons' benches, and sits down on the free men's side instead, and nobody says a word.
+        He looks at it a long time without touching it. Then he puts down the adze, which you have never seen him do in the middle of a stroke. "Hrapp's harvest," he says. "This autumn I'll be in my own field." At the next Thing, he stands up when the freedmen are called to their patrons' benches, and sits down on the free men's side instead, and nobody says a word.
         [else]
         You climb up beside him and hold it out: a pound and a half, weighed out on the jarl's own scales so there can be no argument.
 
         He looks at it a long time without taking it. Then he takes it, and puts it inside his shirt, and goes on mending the roof.
 
-        "The cow," he says, after a while, "was a good cow." That's all. It's enough. At the next Thing, he tells everyone.
+        "The cow," he says, after a while, "was a good cow." At the next Thing, he tells everyone.
         [/if]
     - id: later
       text: Not yet. The summer may need it.

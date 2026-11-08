@@ -10,7 +10,7 @@
   text: |
     The ice goes out again. It always does. You are eighteen.
     [if flag.married_gyda || flag.gyda_eloped]
-    Gyða walks down to the landing with you in the grey before dawn, with her cloak pulled tight and her hand in yours, and doesn't say anything sentimental, because she never does.
+    Gyða walks down to the landing with you in the grey before dawn, with her cloak pulled tight and her hand in yours, and doesn't say anything soft, because she never does.
     [/if]
     [if service]
     {captain} is mustering on the jarl's landing again. Your place is waiting. So, if you go and ask for it, is the jarl.
@@ -18,7 +18,7 @@
     {ship} is waiting on the landing, tarred and ready, and the men are coming down from the farms with their sea-chests to see who's going west this year, and on whose ship. More of them come to yours than came last year.
     [/if]
     [if service && flag.jarl_promise || service && flag.h_jarl_trust || service && flag.asgeir_patron]
-    Two summers ago the jarl said: come back after the second one. This is after the second one.
+    The jarl told you once: come back after the second summer. This is after the second one.
     [/if]
     [break]
     Two years ago you were [if background == freedman]the Raven's bailer, on half a share[else]a second son with a borrowed shield[/if]. Now the district has a name for you, and the name has a story behind it, and the story is still being told.
@@ -29,7 +29,7 @@
     On Skye, a woman with forearms like a smith's is waiting to see whether you come back.
     [/if]
     [if flag.c_ransomed || flag.c_king_kept]
-    In Ireland, a king remembers your face.
+    A king of Conaille, wherever he is this spring, remembers your face.
     [/if]
     [if flag.c_ulaid_feud]
     In Ireland, they are telling the story of the king in his own doorway, and they are not telling it kindly.

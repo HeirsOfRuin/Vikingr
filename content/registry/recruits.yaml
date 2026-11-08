@@ -62,7 +62,7 @@
     - "{he} has kin on both sides of every feud in the Irish Sea, and is owed blood by half of them."
 
 - id: swede
-  names: [Ásmundr, Gautr, Freysteinn, Holmgeirr, Sigvatr, Þorgautr, Vígmundr, Bjôrn, Ingifastr, Halfdan]
+  names: [Ásmundr, Gautr, Freysteinn, Holmgeirr, Sigvatr, Þorgautr, Vígmundr, Bjôrn, Ingifastr, Hálfdan]
   temperaments: [steady, greedy, dour, ambitious]
   weapons: [3, 4]
   loyalty: [3, 5]

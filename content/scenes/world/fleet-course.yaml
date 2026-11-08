@@ -24,7 +24,7 @@
       text: Make him pay half, or watch you burn it.
       check: { skill: trade, attr: pre, difficulty: 5 }
       success:
-        text: You have a man bring a torch to the bales. The merchant looks at the torch for a long moment and pays half. "You'll do well in trade," he says, not as a compliment.
+        text: You have a man bring a torch to the bales. The merchant looks at the torch, and at the bales, and pays half. "You'll do well in trade," he says, not as a compliment.
         effects: [ { add: { silver: 54 } } ]
       failure:
         text: He looks at the torch, and at you, and shrugs, and rows away to the next ship. In the end you sell the cloth to a Dane for drink.

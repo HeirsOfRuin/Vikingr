@@ -22,7 +22,7 @@
 
         When you sit back up, half the ship is cheering. Ulf leans over his own side and joins you, and the cheering gets louder.
 
-        "Green-gills," says Bersi, chewing. "Both of you." It is, you will find, a name that sticks to a man.
+        "Green-gills," says Bersi, chewing. "Both of you." It is the kind of name that sticks to a man.
     - id: hold
       text: Hold it in. Nobody needs to know.
       check: { skill: seamanship, attr: end, difficulty: 4 }
@@ -30,13 +30,13 @@
         text: |
           You swallow, and breathe through your nose, and fix your eyes on the horizon the way Ketill told you, and keep rowing.
 
-          By evening it passes. Nobody noticed, except Ketill, who noticed everything, and who passes you a strip of dried fish without a word.
+          By evening it passes. Nobody notices, except Ketill, who notices everything, and who passes you a strip of dried fish without a word.
         effects: [ { add: { skill.seamanship: 1 } } ]
       failure:
         text: |
-          You hold it in past Stad and halfway to Shetland. Then you don't, and there is no time to reach the side, and Bersi is sitting downwind.
+          You hold it in past Stad and halfway to Hjaltland. Then you don't, and there is no time to reach the side, and Bersi is sitting downwind.
 
-          Bersi says nothing at all. He gets up, very slowly, and goes and washes himself in the sea, and comes back, and looks at you. The whole ship is silent. Then the whole ship is laughing, and it doesn't stop until Shetland.
+          Bersi says nothing at all. He gets up, very slowly, and goes and washes himself in the sea, and comes back, and looks at you. The whole ship is silent. Then the whole ship is laughing, and it doesn't stop until Hjaltland.
         effects: [ { set: flag.s_seasick }, { add: { man.bersi.loyalty: -1, man.ulf.loyalty: 1 } } ]
     - id: charm
       text: Ask Hallvard if he has a charm against it.
@@ -193,9 +193,9 @@
       check: { skill: speech, attr: wit, difficulty: 4 }
       success:
         text: |
-          You make it up as you go: Bersi, his scales, his dice, and a certain arrangement with a sheep in Shetland that nobody can disprove.
+          You make it up as you go: Bersi, his scales, his dice, and a certain arrangement with a sheep on Hjaltland that nobody can disprove.
 
-          The ship howls. Bersi pretends to be angry, then forgets to pretend. By evening men are singing your verse instead of Ulf's, and Ulf is sulking, and you have learned something about what a ship will remember.
+          The ship howls. Bersi pretends to be angry, then forgets to pretend. By evening men are singing your verse instead of Ulf's, and Ulf is sulking, and a week later they are still singing it.
         effects: [ { add: { crew.morale: 1, skill.speech: 1, man.bersi.loyalty: -1 } } ]
       failure:
         text: |
@@ -230,7 +230,7 @@
         [if omen.asgeir_falls]
         Hallvard doesn't want to tell you. When he does, he whispers it.
 
-        "The All-Father's birds choose. One of them has chosen a man in this ship." He doesn't look at the stern. He doesn't have to.
+        "The All-Father's birds choose. One of them has chosen a man in this ship." He doesn't look at the stern, and neither do you.
         [else]
         Hallvard lets out a breath. "It sat on the oar and not on the man," he says. "It's looking at the ship, not at him. The ship's chosen. The ship's lucky." He sounds as if he is trying to believe it.
         [/if]
@@ -306,7 +306,7 @@
   art: open_sea
   title: Hjaltland
   text: |
-    Shetland comes up out of the sea low and brown and treeless, and smelling of peat smoke and sheep. There are Norse farms on it now, where the old people used to live, and the farmers come down to the shore to see who you are before they decide whether to be pleased.
+    Hjaltland comes up out of the sea low and brown and treeless, and smelling of peat smoke and sheep. There are Norse farms on it now, where the old people used to live, and the farmers come down to the shore to see who you are before they decide whether to be pleased.
 
     You take on water. Ásgeir buys mutton. And Bersi, while the farmers are watching Ásgeir, has his eye on a fat ewe grazing by the stream.
   choices:
@@ -319,7 +319,7 @@
         effects: [ { add: { man.bersi.loyalty: 1, crew.morale: 1 } }, { standing: { place: shetland, n: -1 } } ]
       failure:
         text: |
-          The ewe objects. Loudly. The farmers come running, and Ásgeir has to pay for her twice over, and then he pays you back for it out of your hide, on the oar, all the way to Orkney.
+          The ewe objects. Loudly. The farmers come running, and Ásgeir has to pay for her twice over, out of your share, and then he pays you back for it out of your hide, on the oar, all the way to Orkney.
         effects: [ { add: { man.bersi.loyalty: 1, silver: -3 } } ]
     - id: stop
       text: Tell Bersi to leave it.
@@ -329,4 +329,4 @@
 
         "These are our people," you say.
 
-        "They're Shetlanders," says Bersi, as if that settles it, and sulks till Orkney.
+        "They're Hjaltlanders," says Bersi, as if that settles it, and sulks till Orkney.

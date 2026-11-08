@@ -85,7 +85,7 @@
 
         "She'll come over to you on my knarr before the winter nights," he says. "With her mother's loom, and her chest, and two of my men to see she gets there. If she doesn't like it, she'll come back on the same knarr." Behind him Ingibjörg has stopped pretending to mend.
     - id: argue
-      text: Tell him a man's name is made at sea, not in Birsay, and he'll hear it soon enough.
+      text: Tell him a name is made at sea, not in Birsay. He'll hear yours soon enough.
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
         text: |
@@ -159,7 +159,7 @@
       text: Tell her you might come back. A man needs somewhere to stop rowing.
       effects: [ { set: flag.sk_land_offer } ]
       result: |
-        She looks at you a long moment. "Then come back," she says. "With the ship. And we'll see." She goes back to the dung.
+        She looks you up and down. "Then come back," she says. "With the ship. And we'll see." She goes back to the dung.
 
 - id: g_thorunn_ask
   kind: place
@@ -216,7 +216,7 @@
     [if base == father]
     The silver from her valley buys the old Ketilsstead at the head of the fjord, with a bad roof and a good field. She is on the roof herself the morning after the wedding, with a mallet.
     [else]
-    The silver from her valley goes into the farm. The ewes go into the byre. Your thralls go into a state of fear, and stay there.
+    The silver from her valley goes into the farm. The ewes go into the byre, and the morning after the wedding she is up on its roof with a mallet, because it leaks. Your thralls go into a state of fear, and stay there.
     [/if]
   choices:
     - id: wed
@@ -302,7 +302,7 @@
       text: Tell her you're nobody's hired fist.
       effects: [ { set: flag.asta_refused } ]
       result: |
-        "No," she says. "You're not cheap enough." She picks up the hammer again. That's the end of it.
+        "No," she says. "You're not cheap enough." She picks up the hammer, and doesn't put it down for you again.
 
 - id: g_asta_won
   kind: spine
@@ -319,7 +319,7 @@
     - id: done
       text: It is.
       effects: [ { set: flag.betrothed }, { set: flag.asta_betrothed }, { standing: { place: kaupang, n: 1 } }, { deed: { type: deed, text: "Beat a debt out of Ívarr the Dane on the beach at Kaupang", weight: 2 } } ]
-      result: She'll come north before the winter nights, she says, when the booth is let. "And Ívarr's other pound and a half is a wedding present. Collect them on the way."
+      result: She'll come north before the winter nights, she says, when the booth is let. "And Ívarr's other pound and a half is a wedding present. Collect it on the way."
 
 - id: g_asta_lost
   kind: spine

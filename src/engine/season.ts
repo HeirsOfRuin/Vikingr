@@ -65,14 +65,16 @@ export function recruit(state: GameState, content: ContentBundle): string[] {
   state.day += 5;
   learn(state, 'speech', 2);
   journal(state, `${plural(n, 'man', 'men')} signed on.`);
-  const lines = paid ? [`${plural(paid, 'man', 'men')} take your sign-on gift and put their sea-chests aboard. ${formatSilver(paid * SIGN_ON_GIFT)}.`] : [];
+  const lines = paid ? [`${paid === 1 ? 'One man takes your sign-on gift and puts his sea-chest aboard' : `${plural(paid, 'man', 'men')} take your sign-on gift and put their sea-chests aboard`}. ${formatSilver(paid * SIGN_ON_GIFT)}.`] : [];
   if (promised) {
     state.flags.promised = dateOf(state.day).year;
     // they bring their own sea-chests and a sack of meal each, as men answering a levy do
     state.provisions += promised * PROMISE_FOOD;
     state.crew.morale -= 1;
     clampMorale(state);
-    lines.push(`${plural(promised, 'man', 'men')} sign on with nothing in hand but your word that the summer will pay. They're the ones nobody else would take, and they know it, and so do you.`);
+    lines.push(promised === 1
+      ? 'One man signs on with nothing in hand but your word that the summer will pay. He is the one nobody else would take, and he knows it, and so do you.'
+      : `${plural(promised, 'man', 'men')} sign on with nothing in hand but your word that the summer will pay. They're the ones nobody else would take, and they know it, and so do you.`);
   }
   return lines;
 }
@@ -239,7 +241,7 @@ function divideHeap(state: GameState, content: ContentBundle, how: ShareHow, lin
   }
   if (how === 'mean') state.honour = Math.max(-10, state.honour - 1);
   lines.push(pot > 0
-    ? `Of the ${formatSilver(pot)} left, you keep ${formatSilver(keep)}, a ${how === 'generous' ? 'generous' : how === 'mean' ? 'mean' : 'fair'} captain's part (${Math.round(LEADER_SHARE[how] * 100)}%). ${heads ? `The other ${plural(heads, 'man', 'men')} take about ${formatSilver(each)} each.` : 'There is nobody else to share it with.'}`
+    ? `Of the ${formatSilver(pot)} left, you keep ${formatSilver(keep)}, a ${how === 'generous' ? 'generous' : how === 'mean' ? 'mean' : 'fair'} captain's part (${Math.round(LEADER_SHARE[how] * 100)}%). ${heads ? (heads === 1 ? `The one other man takes about ${formatSilver(each)}.` : `The other ${plural(heads, 'man', 'men')} take about ${formatSilver(each)} each.`) : 'There is nobody else to share it with.'}`
     : 'There is nothing to share. The men go home with what they left with.');
   clampMorale(state);
   journal(state, `The share-out: you kept ${formatSilver(keep)}.`);
@@ -317,7 +319,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
     case 'skald': {
       const d = composeVerse(state);
       const who = skaldOf(state)?.name ?? 'The skald';
-      lines.push(d ? `${who} makes a verse of it: ${d.text}. It will outlive you.` : `${who} has nothing worth a verse yet. He says so.`);
+      lines.push(d ? `${who} makes a verse of it: ${d.text.replace(/\.$/, '')}. It will outlive you.` : `${who} has nothing worth a verse yet. He says so.`);
       break;
     }
     case 'build': {
@@ -380,7 +382,7 @@ export function hallAction(state: GameState, content: ContentBundle, rng: RngCur
       if (!rebuilt) addDeed(state, content, { type: 'deed', text: 'Built a hall of his own', weight: 5, witnesses: state.crew.men + 30 });
       journal(state, rebuilt ? 'Rebuilt the hall.' : 'Built a hall.');
       if (rebuilt) lines.push(`All winter the carpenters work on the burned posts, and raise the hall again on the old stones, carving the beasts back where they were. ${formatSilver(Math.round(HALL_PRICE / 2))}.`, 'It smells of new oak and old smoke. At the first feast in it, the hall is as full as it ever was.');
-      else lines.push(framed ? `All winter the carpenters work on the frame you raised last year: the roof like an upturned ship, the posts carved with beasts biting their own tails, the high seat. ${formatSilver(Math.round(HALL_PRICE / 2))}.` : `All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They say your name at the door. That is what a hall is for.');
+      else lines.push(framed ? `All winter the carpenters work on the frame you raised last year: the roof like an upturned ship, the posts carved with beasts biting their own tails, the high seat. ${formatSilver(Math.round(HALL_PRICE / 2))}.` : `All winter the carpenters work on it: oak posts carved with beasts biting their own tails, a roof like an upturned ship, a high seat. ${formatSilver(HALL_PRICE)}.`, 'At the first feast in it, men you have never met come to the door and ask to be let in. They already know your name.');
       break;
     }
     case 'work': {
@@ -428,7 +430,7 @@ export function winterHere(state: GameState, content?: ContentBundle, rng?: RngC
     const lost = Math.round(state.crew.men * BEACH_WINTER.lost);
     state.crew.men -= lost;
     state.crew.morale = Math.max(0, state.crew.morale - BEACH_WINTER.morale);
-    return [`Nobody at ${content!.places[state.at!]!.name} will give you a roof, and the sea is closed. You haul the ships up the beach and turn them over, and the men live under the hulls all winter, with a ditch round them and a fire that never goes out.${lost ? ` ${plural(lost, 'man', 'men')} don't see the spring.` : ''}`];
+    return [`Nobody at ${content!.places[state.at!]!.name} will give you a roof, and the sea is closed. You haul the ships up the beach and turn them over, and the men live under the hulls all winter, with a ditch round them and a fire that never goes out.${lost ? ` ${plural(lost, 'man', 'men')} ${lost === 1 ? "doesn't" : "don't"} see the spring.` : ''}`];
   }
   startWinter(state, own || seat ? HALL_ACTIONS : 2, content, rng);
   if (own && content && state.rule && seatPlace(state, state.rule.seat) === state.at) return [`You winter in your own high seat at ${content.places[state.at!]!.name}, and your people see you there, which is the point.`];

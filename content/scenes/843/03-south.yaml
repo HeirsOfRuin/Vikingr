@@ -82,7 +82,7 @@
     - id: ships
       text: Keep your men in the ships. This is a fight for cattle, not silver.
       effects: [ { add: { honour: -1 } } ]
-      result: You lie off and watch. Ramiro's men come down the beach with torches and burn the ships that grounded, and the fleet pulls off with seventy fewer men than it had in the morning. The leaders say the Hart was slow to land. You say nothing.
+      result: You lie off and watch. Ramiro's men come down the beach with torches and burn the ships that grounded, and the fleet pulls off with seventy fewer men than it had in the morning. The leaders say your ship was slow to land, and they say it where you can hear.
       next: sf_lisbon
 
 - id: sf_asturias_won
@@ -104,7 +104,7 @@
   art: bangor_field
   title: Fire on the water
   text: |
-    Ramiro's men drive you back into the sea. You get the Hart off the beach with half your men hanging over the side, and lie off in the bay and watch the Asturians fire the ships that were too slow, and the men in them.
+    Ramiro's men drive you back into the sea. You get your ship off the beach with half your men hanging over the side, and lie off in the bay and watch the Asturians fire the ships that were too slow, and the men in them.
 
     The fleet goes south that night, a dozen ships short, and nobody sings.
   choices:
@@ -206,7 +206,7 @@
   text: |
     The wall holds long enough. The horsemen ride at it, and wheel away, and ride at it again, and shoot their arrows over it, and it holds, and behind it the ships get off the bank and out into the river. Then you go back to the river yourselves, step by step, with the wall still up, and the last men wade out to the ships with arrows in their shields.
 
-    Behind you, on the plain, the emir's men are hanging the captives they took from the palm trees by the river. There are a great many of them.
+    Behind you, on the plain, the emir's men are hanging their captives from the palm trees by the river. There are a great many of them.
     [if flag.e43_hroi]Hrói comes down the river in his little karvi with half his men gone and his silk cloak torn, and looks across at you, and doesn't wave.[/if]
   choices:
     - id: on

@@ -76,7 +76,7 @@
   text: |
     The fleet lies along the island's beach from one end to the other, and still there are ships coming in: Loire men, Danes off the Seine, Irish Northmen, a crew of Swedes who have been everywhere and seem to have liked none of it. Somebody counts sixty-two and stops.
 
-    Hastein holds his council on the monks' old threshing-floor. He is grey now, and broad, and he laughs at everything, which makes the young captains nervous, because they can't tell what he's laughing at. Björn stands behind him, a head taller than anyone on the island, and says nothing, and watches everyone.
+    Hastein holds his council on the monks' old threshing-floor. He is going grey now, and broad, and he laughs at everything, which makes the young captains nervous, because they can't tell what he's laughing at. Björn stands behind him, a head taller than anyone on the island, and says nothing, and watches everyone.
     [break]
     [if flag.sf_went]"You," Hastein says, finding you in the crowd. "You were at Ishbiliya, with the fleet of forty-four. You've seen the strait." The captains turn to look at you. Fifteen years ago there was nobody alive who had seen it.[/if][if !flag.sf_went]"We go south," Hastein says, "past the Moors, through the strait, and east, until we find something worth the trouble. Two winters, maybe three. Who's coming?"[/if]
 
@@ -92,7 +92,7 @@
     - id: stay
       text: Stay on the Loire. Two winters is a long time to be gone.
       result: |
-        You watch them go out past the island at the turn of the tide, sixty-two sails in a line that takes all morning to pass the point, and then the sea is empty, and the Loire is very quiet. The men who stayed don't talk about it. They don't need to; everyone knows what they're thinking.
+        You watch them go out past the island at the turn of the tide, sixty-two sails in a line that takes all morning to pass the point, and then the sea is empty, and the Loire is very quiet. The men who stayed don't talk about it. They spend a good deal of that summer looking at the point.
 
 # ---- 859: the coasts of Spain ----
 - id: mh_galicia
@@ -162,7 +162,7 @@
   when: Summer, 859
   title: The Green Island
   text: |
-    South along the long coast of the Moors' country, the fleet loses two ships off the Algarve to the emir's galleys, with their gold and their captives in them, and learns that this sea has a navy. Then the strait: a gap between two continents, with a mountain on each side and a current that pulls the whole fleet through it like a hand.
+    South along the long coast of the Moors' country, the fleet loses two ships off the Algarve to the emir's galleys, with their gold and their captives in them, and learns that this sea has a navy. Then the strait: a gap between two lands, with a mountain on each side and a current that pulls the whole fleet through it like a hand.
 
     Inside, on the north shore, a town on a green island: al-Jazira al-Khadra, the pilot says. Walls, a harbour, white houses, and over all of it the dome of the great mosque, the one they call the mosque of the banners, with the sun on it.
     [break]
@@ -174,7 +174,7 @@
       result: |
         The doors are oak, bound with bronze, and they take a long time to break. Inside it is cool and dim and very large, a forest of pillars striped red and white, mats on the floor, lamps of brass on chains. There is less silver than the men hoped and more than they can carry. Then somebody brings fire.
 
-        From the ships that night you can see it burning, the dome falling in at last with a noise like surf. Years later a Moor in a port will tell you, with a look you don't forget, that they rebuilt it, and made its new doors from the timbers of your fleet's wrecked ships.
+        From the ships that night you can see it burning, the dome falling in at last with a noise like surf. Years later a Moor in a port will tell you, looking you hard in the face, that they rebuilt it, and made its new doors from the timbers of your fleet's wrecked ships.
       next: mh_nekor
     - id: town
       text: Keep to the merchants' quarter, where the silver is.
@@ -185,7 +185,7 @@
         effects: [ { days_foraged: 15 }, { add: { loot: 380 } }, { goods: { id: silk, lots: 2 } } ]
         next: mh_nekor
       failure:
-        text: The merchants' quarter has a wall of its own and men on it, the governor's men, with bows. You lose men in a street too narrow to raise a shield in, and come back to the ships with what the others missed, which is not much.
+        text: The merchants' quarter has a wall of its own and men on it, the governor's men, with bows, and the street up to it is too narrow to raise a shield in.
         effects: [ { days_foraged: 15 }, { battle: { foe: andalusi_town, terrain: rampart, men: 20, ratio: 0.7, raid: true, win: mh_nekor, lose: mh_nekor } } ]
     - id: ships
       text: Keep your men in the ships and the harbour.
@@ -206,7 +206,7 @@
     On the ninth day a boat comes over from Spain under a white cloth: a man from the emir at Córdoba, with silver, to buy back the women of Nekor's ruling house. The emir is no friend to this ruler. He is buying them anyway.
   choices:
     - id: sell
-      text: Sell him back every captive you hold, and the rest at his price.
+      text: Sell him back every captive you hold, at his price.
       effects: [ { add: { silver: 96, hamingja: 1 } } ]
       result: The emir's man pays in good silver, weighed on his own scales, which are honest. Your captives walk up the beach to their own people. One of the old men stops at the top of the shingle and looks back at you, for a while, as if he were learning your face.
       next: mh_balearics
@@ -260,7 +260,7 @@
   text: |
     North-east, along a coast of salt lagoons and pink birds standing in the shallows on one leg, to the mouth of a great river that comes out of Frankia in a dozen arms through the marshes. Between the arms, an island of reeds and wild horses and nothing else: the Camargue.
 
-    "Here," Hastein says. The fleet hauls up on the island, sixty ships less the ones that are gone, and digs a ditch, and builds huts of reeds and driftwood, and settles down to wait for spring in a country where nobody knows its name.
+    "Here," Hastein says. The fleet hauls up on the island, sixty ships less the ones that are gone, and digs a ditch, and builds huts of reeds and driftwood, and settles down to wait for spring in a country where nobody knows their names.
   choices:
     - id: winter
       text: Dig in for the winter.
@@ -391,7 +391,7 @@
 
     Hastein lets them talk. Then he stands up and says that east of here there is a country called Italy, and in it a city called Rome, where the Pope sits on more gold than every king in Frankia together, and he for one has not come all this way to look at marshes.
     [break]
-    Björn says nothing. He doesn't need to; everyone can see he's going.
+    Björn doesn't speak. His sea-chest is already down on the beach by his ship.
   choices:
     - id: on
       text: Go east with Hastein.
@@ -426,7 +426,7 @@
         effects: [ { days_foraged: 40 }, { add: { loot: 420 } }, { deed: { type: deed, text: "Carried Hastein's coffin into Luna, and held the doors", weight: 6, witnesses: 2000 } } ]
         next: mh_winter2
       failure:
-        text: A townsman sees the edge of a sword under a mourner's cloak, and shouts, and the bishop's men are on you in the nave before Hastein has got the lid off. You fight your way back to the doors over the benches, and the fleet comes up through the gate behind you, and the city falls anyway, but you are bleeding when it does.
+        text: A townsman sees the edge of a sword under a mourner's cloak, and shouts, and the bishop's men are on you in the nave before Hastein has got the lid off. You have to fight your way back to the doors over the benches, and hold them, bleeding, until the fleet comes up through the gate.
         effects: [ { days_foraged: 40 }, { battle: { foe: luna_guard, terrain: rampart, men: 12, ratio: 0.5, win: mh_winter2, lose: mh_winter2 } } ]
     - id: gate
       text: Wait at the gate with the fleet, and go in when it opens.

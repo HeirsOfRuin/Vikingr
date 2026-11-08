@@ -10,7 +10,7 @@
   art: bangor_field
   title: The lough
   text: |
-    Belfast Lough opens in front of you like a mouth: wide and grey and quiet, with low green hills on both sides and the smoke of farms going up into a still evening.
+    The lough opens in front of you like a mouth: wide and grey and quiet, with low green hills on both sides and the smoke of farms going up into a still evening.
 
     Bangor is on the south shore, near the mouth. You can see the abbey from the water: a ring of earth bank, a lot of roofs inside it, a round bell-tower of stone. Smoke from a dozen cooking fires. Cattle on the slope above.
 
@@ -96,7 +96,7 @@
 
     "Shields," he says. "Wall."
     [break]
-    Forty men lock shields on the wet grass. It makes a sound you will hear for the rest of your life: a clatter, then a knock, then nothing at all.
+    Forty men lock shields on the wet grass. It makes a sound you feel in your teeth: a clatter, then a knock, then nothing at all.
 
     Then the Irish start throwing.
 
@@ -157,7 +157,7 @@
     [elif fate.asgeir_falls]
     Ásgeir is down under the banner, and alive, because you were there. The javelin that was meant for his ribs went into your shield instead. The one after it took him through the thigh, and the big man in the gilded helmet took two fingers off his sword hand before you put him down.
 
-    He will live, Ketill says, binding the leg. He will not stand in a wall again. Ásgeir lies on his back on the grass and looks at the sky and says nothing at all, and that is worse than anything he could say.
+    He will live, Ketill says, binding the leg. He will not stand in a wall again. Ásgeir lies on his back on the grass and looks at the sky, and doesn't make a sound, not even when Ketill pulls the knot tight.
     [else]
     Ásgeir walks back down from the bank with blood to the elbows and his helmet under his arm, laughing. He has a cut over one eye and he has lost a boot. He looks ten years younger.
 
@@ -206,7 +206,7 @@
       result: |
         Ketill gets up off the grass slowly, an old man's way, and wipes his axe on his trousers, and looks round the circle.
 
-        "I rowed with this boy's father," he says. "I've rowed with Ásgeir eleven summers. I watched this one all the way from the jarl's landing to here." He jerks his head at you. "He'll do. He'll do better than some." He doesn't look at Steinarr. He doesn't need to.
+        "I rowed with this boy's father," he says. "I've rowed with Ásgeir eleven summers. I watched this one all the way from the jarl's landing to here." He jerks his head at you. "He'll do. He'll do better than some." He doesn't look at Steinarr once.
 
         It is enough. Ketill has never asked the ship for anything before.
       next: b_oaths
@@ -372,7 +372,7 @@
         text: |
           You turn. A spear-butt takes you in the face and the strand comes up and hits you, and somebody is dragging you through the surf by your hair. It is Ulf. He doesn't let go until you're over the side.
 
-          "You're welcome," he says, and is sick in the bilge.
+          "That's one you owe me," he says, and is sick in the bilge.
         effects:
           - { injury: broken_nose }
           - { add: { man.ulf.loyalty: 1 } }
@@ -389,16 +389,16 @@
       result: |
         You run. Everybody runs. You reach the ship and go over the side and get an oar in your hands, and pull, and the strand falls away behind you with men on it, Irish and not, and the javelins fall short in the water.
 
-        Nobody talks about it afterwards. Nobody needs to.
+        Nobody talks about it afterwards, then or ever.
 
 - id: b_leave
   kind: spine
   art: bangor_field
   title: Leaving the lough
   text: |
-    You row out of Belfast Lough on the evening tide with the Raven low in the water.
+    You row out of the lough on the evening tide with the Raven low in the water.
     [if flag.bg_acclaimed]
-    Steinarr is at the steering-oar and you are in the prow, where the men put you. They row facing the stern, as men do, but when they want to know where the ship is going they look past Steinarr to you, and he knows it.
+    Steinarr is at the steering-oar and you are in the prow, where the men put you. They row facing the stern, as men do, but when they want to know where the ship is going they look over their shoulders to you, and Steinarr knows it.
     [elif flag.bg_steinarr]
     Steinarr is at the steering-oar. Ásgeir is wrapped in his cloak under the stern-deck, going home to be buried in the hill above the fjord. The men row quietly.
     [else]

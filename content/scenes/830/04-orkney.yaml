@@ -14,7 +14,7 @@
     [break]
     There is a lot to do in a hall in one evening, and only one evening.
 
-    An Orkneyman with a neck like a bull is challenging all comers to drink him under the table. In a corner by the fire, a lean man with ink-stained fingers is watching the crews come in and not drinking much: a skald, Ketill says, looking for a ship worth making verses about. Harek's daughter is pouring the ale, and has looked at you twice. And along the bench, the old men who have been south are telling each other where the silver is.
+    An Orkneyman with a neck like a bull is challenging all comers to drink him under the table. In a corner by the fire, a lean man with a harp in oilcloth at his feet is watching the crews come in and not drinking much: a skald, Ketill says, looking for a ship worth making verses about. Harek's daughter is pouring the ale, and has looked at you twice. And along the bench, the old men who have been south are telling each other where the silver is.
   choices:
     - id: drink
       text: Take up the Orkneyman's challenge.
@@ -69,7 +69,7 @@
       text: Sit with the old men, and listen.
       effects: [ { set: flag.o_listened }, { know: bangor }, { add: { skill.lore: 1 } } ]
       result: |
-        You listen. Iona is picked over: the monks have been robbed so often they keep nothing in the house worth stealing, but there is always something, and the monks don't fight. Bangor, on its lough across in Ireland, is rich and fat and hasn't been touched in years, and the reason it hasn't been touched is the king of the Ulaid, who keeps his levy close, and who once nailed a Norseman to the abbey door by his hands.
+        You listen. Iona is picked over: the monks have been robbed so often they keep nothing in the house worth stealing, but there is always something, and the monks don't fight. Bangor, on its lough across in Ireland, is rich and fat and hasn't been touched in years, and the reason it hasn't been touched is the king of the Ulaid, who keeps his levy close, and who once nailed a Northman to the abbey door by his hands.
 
         "But the silver," says one old man, with his eyes closed. "The silver."
       next: o_council

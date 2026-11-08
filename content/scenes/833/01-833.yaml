@@ -22,12 +22,12 @@
     [/if]
   choices:
     - id: frisia
-      text: Say you'll go and look at the Frisian coast, and see what the emperor's sons have left lying about.
+      text: Offer to go and see what the emperor's sons have left lying about in Frisia.
       effects: [ { set: flag.fr_frisia }, { know: ribe }, { know: walcheren }, { know: dorestad }, { favour: 1 } ]
       result: |
         The jarl nods. Hákon raises his cup to you across the hall. Eiríkr doesn't. "Look carefully," he says. "The Danes have been looking at it for years, and they're better at looking than we are."
     - id: west
-      text: Say you'll go west. Armagh is the richest church in Ireland, and Ireland has no emperor to lose.
+      text: Say you'll go west, to Armagh. Ireland has no emperor to lose.
       effects: [ { set: flag.fr_west }, { know: conaille }, { know: armagh } ]
       result: |
         "Armagh," says the jarl, and the hall goes quiet, because everyone knows the name. Saint Patrick's own house: the church every other church in Ireland pays tithe to. "It's been plundered three times in one summer, and it's still rich. It always comes back." He looks at you a long moment. "So do its kings."
@@ -59,13 +59,13 @@
       result: |
         He counts it twice, and draws Dorestad for you in the wet sand with a stick: the river, the jetties, the long street, the churches, the count's hall on its mound, the ford. Then he scuffs it out with his foot, carefully, and goes.
 
-        You remember all of it. You'll be dreaming of it.
+        You remember all of it. That night you dream of it.
     - id: threaten
-      text: Tell him he'll tell you for nothing, or you'll ask the count what he thinks of men who sell his town.
+      text: Tell him he'll talk for nothing, or the count hears who's selling his town.
       check: { skill: cunning, attr: pre, difficulty: 5 }
       success:
         text: |
-          He stops smiling. For a long moment he weighs you, and then he draws it anyway, very fast, in the sand, without a word, and goes off up the beach without looking back. He won't sell to you again. He won't need to.
+          He stops smiling. For a long moment he weighs you, and then he draws it anyway, very fast, in the sand, without a word, and goes off up the beach without looking back. He won't sell to you again, and he'll tell every Frisian on the coast why.
         effects: [ { set: flag.fr_dorestad_ways }, { add: { honour: -1 } } ]
       failure:
         text: |
@@ -107,13 +107,13 @@
   text: |
     Armagh stands on its hill above a country of little green hills and little brown lakes: a ring of earth, and inside it a town of churches, round towers, workshops and schools, and the great stone church of Patrick at the top, white in the morning sun.
 
-    It's not a monastery the way Iona was a monastery. It's a city of God, with its own king's household to keep it, and the bells are already going from every tower, and down the slope toward you, in good order, comes the hosting of the Airgialla: horsemen on the wings, javelin-men in the centre, and behind them, monks, singing.
+    Iona was a monastery. This is a city of God, with its own king's household to keep it, and the bells are already going from every tower, and down the slope toward you, in good order, comes the hosting of the Airgialla: horsemen on the wings, javelin-men in the centre, and behind them, monks, singing.
     [if partner]
     {ally}'s men are already forming on your flank, without being asked, the way men do who've done this before.
     [/if]
   choices:
     - id: host
-      text: Form the line. Your men in the centre, your partner's on the flank, and go up the hill.
+      text: Form the line, your partner's men on the flank, and go up the hill.
       visible_if: partner
       danger: true
       effects:
@@ -179,7 +179,7 @@
   kind: spine
   title: Patrick's hill
   text: |
-    The hosting of the Airgialla is better than any Irish levy you've met: javelins in the face, horse on the flanks, and a king's household at the centre that doesn't give an inch. In the end it's your line that goes back down Patrick's hill, step by step, and into the boats, with the monks still singing behind it.
+    The hosting of the Airgialla is better than any Irish levy you've met. Their javelins come in thick as sleet, their horse rides round your ends, and the king's household at the centre doesn't give an inch. In the end your line goes back down Patrick's hill a step at a time, and into the boats, with the monks still singing behind it.
   choices:
     - id: away
       text: Row back down the river.
@@ -205,10 +205,10 @@
 
     The hall goes very quiet. Later, when Eiríkr's gone out to piss, Hákon slides along the bench to you.
 
-    "My father won't see the spring," he says, very low. "When he dies, the thing will choose between my brother and me. My brother will be a jarl like a winter. I'd rather be one like a summer. I need men who'll stand up at the thing and say so." He looks at you. "I'd remember them."
+    "My father won't see the spring," he says, very low. "When he dies, the Thing will choose between my brother and me. My brother will be a jarl like a winter. I'd rather be one like a summer. I need men who'll stand up at the Thing and say so." He looks at you. "I'd remember them."
   choices:
     - id: hakon
-      text: Tell Hákon he'll have your voice at the thing.
+      text: Tell Hákon he'll have your voice at the Thing.
       effects: [ { set: flag.fr_backs_hakon } ]
       result: He grips your hand under the table, hard, and slides back along the bench before his brother comes back in. Eiríkr comes back in. He looks at the two of you, and then away. He knows. Everyone will know.
     - id: eirik

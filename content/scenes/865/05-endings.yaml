@@ -166,7 +166,7 @@
   text: |
     It ends the way Ashdown ended, only this time there is nowhere to go. The Danish wall goes back, and then breaks, and the army runs to its camp, and Alfred sits down outside the ditch and waits. Two weeks of it. The army eats its horses. Then Guthrum asks for terms.
 
-    The terms are strange. Hostages, and an oath, and an army that leaves Wessex and never comes back; that much everyone expected. But Alfred wants something else as well. He wants Guthrum baptized, and thirty of his best men with him, with Alfred himself standing godfather. The king's priests will put the white cloth on them at a place called Aller, and the king will give them gifts.
+    The terms are strange. Hostages, and an oath, and an army that leaves Wessex and never comes back; that much everyone expected. But Alfred wants something else as well. He wants Guthrum baptised, and thirty of his best men with him, with Alfred himself standing godfather. The king's priests will put the white cloth on them at a place called Aller, and the king will give them gifts.
     [break]
     Guthrum names his thirty. Your name is among them.
   choices:
@@ -176,6 +176,6 @@
       result: |
         The water is cold and the priest's hand is heavy on your head. Then a white cloth for eight days, and a feast, and gifts from the king's own hand, a sword-belt and two pounds of silver, given with a look that weighs you very exactly. Guthrum goes to East Anglia and rules it as a Christian king, more or less. A great many Danes are more or less Christian after Aller.
     - id: refuse
-      text: Refuse. Take your men and go to the Thames, where a new army is gathering.
+      text: Refuse, and go to the Thames, where a new army is gathering.
       effects: [ { add: { hamingja: 1 } }, { fleet_end: true }, { route: [london] }, { set: flag.ga_refused_aller } ]
       result: Guthrum looks at you, says nothing, and names another man in your place. That summer a new army comes into the Thames from the east and winters at Fulham, looking at Frankia across the sea. They're glad of a ship that has seen Edington. They are going to the Franks, who still pay.

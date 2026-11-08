@@ -19,7 +19,7 @@ function Fighter({ s, you }: { s: DuelSide; you?: boolean }) {
       Breath {Math.max(0, s.stamina)}/{s.staminaMax}
       <Bar value={s.stamina} max={s.staminaMax} kind="gold" />
       {s.shields > 0
-        ? <>Shields <span class="shields">{'◆'.repeat(s.shields)}</span> <span class="muted">({s.integrity} blows left in this one)</span></>
+        ? <>Shields <span class="shields">{'◆'.repeat(s.shields)}</span> <span class="muted">({plural(s.integrity, 'blow')} left in this one)</span></>
         : <span class="muted">No shield left</span>}
     </div>
   );

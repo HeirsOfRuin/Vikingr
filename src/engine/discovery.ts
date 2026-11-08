@@ -8,7 +8,7 @@ import { journal } from './journal';
 import { effAttr } from './hero';
 import { mouths } from './crew';
 import { EXPEDITION } from './tuning';
-import { formatSilver } from './format';
+import { formatSilver, plural } from './format';
 
 /** A round of ale for the old men at the fire. */
 export const LISTEN_COST = 2;
@@ -48,7 +48,7 @@ export function listen(state: GameState, content: ContentBundle, rng: RngCursor,
   out.push(!p.active
     ? 'It is a long way beyond anywhere you could take a ship this year. But it is on your map now, faint, where he said it would be.'
     : from
-      ? `He tells you the way, too: from ${from}, ${road!.days} days, ${road!.kind === 'open' ? 'over open sea' : road!.kind === 'river' ? 'up the river and over the portage' : 'along the coast'}. It is on your map now.`
+      ? `He tells you the way, too: from ${from}, ${plural(road!.days, 'day')}, ${road!.kind === 'open' ? 'over open sea' : road!.kind === 'river' ? 'up the river and over the portage' : road!.kind === 'land' ? 'by road' : 'along the coast'}. It is on your map now.`
       : 'Nobody you know has the way there; it would take an expedition to find it. It is on your map now, faint, where he said it would be.');
   if (news) out.push(news);
   return out;

@@ -30,10 +30,10 @@
       visible_if: "rings.gold >= 1"
       effects: [ { swear_cand: gold } ]
       result: |
-        He looks at the gold ring a long while before he takes it, as if it might be a joke. Then he swears, loud enough to wake the hall, and the men who wake up and see what's on his arm don't go back to sleep for a while.
+        He looks at the gold ring, and then at you, as if it might be a joke. Then he swears, loud enough to wake the hall, and the men who wake up and see what's on his arm don't go back to sleep for a while.
     - id: wait
       text: Tell him to earn it another summer.
-      result: '"Another summer, then," he says. He doesn''t argue. He goes back to his place in the straw, and you hear him lying awake for a long while, working out how.'
+      result: '"Another summer, then," he says. He doesn''t argue. He goes back to his place in the straw, and you hear him lying awake in the dark, working out how.'
 
 - id: hi_heir
   kind: queued
@@ -53,7 +53,7 @@
       text: Take his oath, on a silver ring, where the dead man's kin can see it.
       requires: ["rings.silver >= 1"]
       effects: [ { swear_cand: silver } ]
-      result: He swears it at the water's edge, with the dead man's kin watching from the crowd. Afterwards one of them comes over, and grips his arm, and says nothing. That's enough.
+      result: He swears it at the water's edge, with the dead man's kin watching from the crowd. Afterwards one of them comes over and grips his arm, hard, and goes back to the others. From that family, it's a speech.
     - id: gold
       text: Give him gold. The dead man would have liked that.
       visible_if: "rings.gold >= 1"
@@ -91,7 +91,7 @@
       effects: [ { cand_crew: true } ]
       result: He shrugs. "An oar's a start," he says, and throws his sea-chest into your ship like a man moving into a house.
     - id: no
-      text: You have enough mouths.
+      text: Tell him you have enough mouths.
       result: He nods, as if he'd expected it, and goes back to his boat to wait for the next ship.
 
 - id: hi_port_dane
@@ -120,7 +120,7 @@
       effects: [ { cand_crew: true } ]
       result: '"Fair," he says, which from the look on his face it isn''t, quite. But he comes aboard.'
     - id: no
-      text: Danes who leave their king's table in a hurry are trouble you don't need.
+      text: Tell him Danes who leave their king's table in a hurry are trouble.
       result: He laughs, without much humour. "Everybody says that," he says, "until they need a man who's been to Dorestad."
 
 - id: hi_port_gall
@@ -143,13 +143,13 @@
       text: Give him a silver ring, and take his oath.
       requires: ["rings.silver >= 1"]
       effects: [ { swear_cand: silver } ]
-      result: He swears in both tongues, one after the other, to be sure. Hallvard watches the cross and the hammer on his chest knock against each other while he does it, and doesn't say anything, which for Hallvard is a great deal.
+      result: He swears in both tongues, one after the other, to be sure. Your most god-fearing oarsman watches the cross and the hammer on his chest knock against each other while he does it, and for once keeps his opinion of the omens to himself, which for him is a great deal.
     - id: oar
       text: An oar, and his knowledge of the rivers. The ring can wait.
       effects: [ { cand_crew: true } ]
       result: '"The rivers are free," he says. "The ring, you''ll pay for later." He comes aboard with a bag of dried fish and a harp with two strings missing.'
     - id: no
-      text: A man with kin on both sides of every feud is a man who'll be on one side of yours.
+      text: Tell him a man with kin on both sides of every feud is half an enemy.
       result: He spreads his hands. "Everybody's on one side of everything here," he says. "At least I tell you which."
 
 - id: hi_beaten
@@ -233,7 +233,7 @@
       result: He takes the oar like it's a sword. He'll have blisters by the first evening and won't mention them.
     - id: no
       text: Send him home to grow.
-      result: He goes, after a long look back. You think of yourself at sixteen, on the Raven's bench, and are not sure you did him a kindness.
+      result: He goes, after a long look back. You think of yourself at his age, on your first bench, and are not sure you did him a kindness.
 
 - id: hi_freed
   kind: pool

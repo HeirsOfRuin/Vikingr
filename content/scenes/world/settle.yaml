@@ -26,7 +26,7 @@
     - id: on
       text: Bury your dead inside the wall.
       effects: [ { add: { crew.morale: 1 } }, { deed: { type: deed, text: "Held the fort that was his home against the whole countryside", weight: 6 } } ]
-      result: You bury them inside the stockade, where the families can see them, so the land has your dead in it as well as theirs. That is how land becomes yours.
+      result: You bury them inside the stockade, where the families can see them, so the land has your dead in it as well as theirs.
 
 - id: st_fort_lost
   kind: queued

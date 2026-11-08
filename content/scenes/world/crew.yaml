@@ -53,7 +53,7 @@
       danger: true
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
-        text: He looks at you a long time, and then laughs, and says he was only talking. The young men laugh too, a little late. It's over, and everyone at the fire knows who ended it.
+        text: He looks at you across the fire, and then laughs, and says he was only talking. The young men laugh too, a little late. It's over, and everyone at the fire knows who ended it.
         effects: [ { crewman: { loyalty: 1 } }, { add: { crew.morale: 1 } } ]
       failure:
         text: He says it to your face, all of it, calmly, and some of it is true. In the spring he takes his chest off the ship, and two of the young men take theirs after him.
@@ -66,7 +66,7 @@
     - id: ignore
       text: Let him talk. Talk is wind.
       effects: [ { crewman: { loyalty: -1 } }, { add: { crew.morale: -1 } } ]
-      result: The talk goes on all winter, a little louder each week. It isn't wind. It's weather.
+      result: The talk goes on all winter, a little louder each week, and by Yule it is less like wind and more like weather.
 
 # ---- greedy ----
 - id: cr_skim
@@ -169,7 +169,7 @@
     - id: burn
       text: Burn him on the beach, with his weapons, the way he'd want.
       effects: [ { add: { crew.morale: -1 } } ]
-      result: The smoke goes up over the port all morning. The people come out to watch. Nobody says anything to you. Nobody needs to.
+      result: The smoke goes up over the port all morning. The people come out to watch, and keep well back from your men. The local man is nowhere to be seen.
 
 # ---- pious ----
 - id: cr_omen
@@ -225,10 +225,10 @@
       text: Sail on. A blue sky is a blue sky.
       check: { skill: seamanship, attr: wit, difficulty: 6 }
       success:
-        text: The storm comes in at midnight, as he said, and you meet it with the sail down and the men ready, because he said it, and you ride it out. In the morning {man} says nothing at all. He doesn't need to.
+        text: The storm comes in at midnight, as he said, and you meet it with the sail down and the men ready, because he said it, and you ride it out. In the morning {man} doesn't mention it, and makes sure you see him not mentioning it.
         effects: [ { crewman: { loyalty: -1 } } ]
       failure:
-        text: The storm comes in at midnight, as he said, and catches you with the sail up. You lose the yard and nearly the mast, and two men are hurt. {man} bails beside you all night and never once says he told you so. Everyone else says it for him.
+        text: The storm comes in at midnight, as he said, and catches you with the sail up. You lose the yard and nearly the mast, and two men are hurt, one of them too badly to row again. {man} bails beside you all night and never once says he told you so. Everyone else says it for him.
         effects: [ { crewman: { loyalty: -1 } }, { add: { crew.morale: -2, crew.men: -1 } } ]
 
 # ---- steady ----

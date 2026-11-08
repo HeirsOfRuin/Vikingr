@@ -57,12 +57,12 @@
   text: |
     One of the fleet is falling behind: a small karvi with a patched sail, her crew bailing, her steersman waving a cloak from the stern. A sprung plank, or a cracked keel. The fleet isn't waiting. Fleets don't.
 
-    [if service]{captain} watches her, chewing his beard, and says nothing.[/if]
+    [if service]{captain} watches her go, chewing his beard, and doesn't give the order.[/if]
   choices:
     - id: tow
       text: Drop back, put a line aboard her, and tow her to the next landfall.
       visible_if: "!service"
-      effects: [ { days: 1 }, { add: { crew.morale: -1, honour: 1 } }, { deed: { type: deed, text: "Dropped back from the fleet to tow a sinking ship home", weight: 2, witnesses: 60 } } ]
+      effects: [ { days: 2 }, { add: { crew.morale: -1, honour: 1 } }, { deed: { type: deed, text: "Dropped back from the fleet to tow a sinking ship home", weight: 2, witnesses: 60 } } ]
       result: Two days of hard rowing with another ship on your tail, and the men cursing you for every stroke of it. Her captain gives you his hand at the landfall in front of the whole fleet, and a cask of Frankish wine, and his word that his ship is yours if you ever need her. Men remember that sort of thing longer than they remember a raid.
     - id: leave
       text: Leave her. She knew the sea when she put out on it.
@@ -181,7 +181,7 @@
       check: { skill: craft, attr: end, difficulty: 4 }
       success:
         text: A morning's digging, and there are two pools and two lines and nothing to fight about. The fleet uses your pool for the rest of the stay, and calls it after you.
-        effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Dug a well for the fleet", weight: 1, witnesses: 200 } } ]
+        effects: [ { add: { honour: 1 } }, { deed: { type: deed, text: "Dug the fleet a second water-hole, and ended the quarrel over the first", weight: 1, witnesses: 200 } } ]
       failure:
         text: The ground is all stones. By the time you give up, the fight's over anyway.
 
@@ -194,7 +194,7 @@
   art: yule_hall
   title: Dice by the fire
   text: |
-    Every night on the beach there's dice at every fire, and men going from fire to fire looking for a game they can win. A Dane from another ship, big and friendly and missing two fingers, has been winning at yours all evening, and he wants to play you.
+    Every night on the beach there are dice at every fire, and men going from fire to fire looking for a game they can win. A Dane from another ship, big and friendly and missing two fingers, has been winning at yours all evening, and he wants to play you.
   choices:
     - id: play
       text: Play him, for a quarter-pound a throw.
@@ -229,7 +229,7 @@
       text: Haul off the beach and lie at anchor till it passes.
       visible_if: "!service"
       effects: [ { days: 4 }, { add: { crew.morale: -1 } } ]
-      result: Four days at anchor, on water from the ship's casks and nothing else, away from the stink. You lose one man. Ships that stayed on the beach lose six and seven.
+      result: Four days at anchor, on water from the ship's casks and nothing else, away from the stink. The three who had it get up again, and nobody else goes down. Ships that stayed on the beach lose six and seven.
     - id: stay
       text: Stay with the fleet. Flux is the gods' business.
       visible_if: "!service"
@@ -240,10 +240,10 @@
       visible_if: service
       check: { skill: lore, attr: end, difficulty: 5 }
       success:
-        text: You boil the water the way your grandmother did, and make them drink it, and sit up with them, and two of the three live. They don't forget it. Nor does {captain}.
+        text: You boil the water the way your grandmother did, and make them drink it, and sit up with them, and all three live. They don't forget it. Nor does {captain}.
         effects: [ { add: { crew.morale: 1 } } ]
       failure:
-        text: You sit up with them, and boil the water, and get it yourself. A week in the dunes, sicker than you've ever been, and one of the men you nursed is in a grave beside you when you can stand.
+        text: You sit up with them, and boil the water, and get it yourself. A week in the dunes, sicker than you've ever been, and when you can stand there are two new graves beside you, both of them men you nursed.
         effects: [ { injury: flux }, { add: { crew.men: -2 } } ]
     - id: away
       text: Keep away from the sick, and from the beach, and pray.
@@ -365,13 +365,13 @@
       visible_if: "!service"
       check: { skill: cunning, attr: pre, difficulty: 5 }
       success:
-        text: Nobody weighs it twice. You keep half the tenth, and the leader's steward writes your name in the paid column.
+        text: Nobody weighs it twice. You keep half the tenth, and the leader's steward cuts your notch on his tally with everyone else's.
         effects: [ { add: { loot: -20 } } ]
       failure:
         text: The leader's steward weighs it twice, in front of everybody, and tells the beach what it comes to. You pay the rest, and a fine on top, and every crew in the fleet knows your name for the wrong reason.
         effects: [ { add: { loot: -60, honour: -1 } } ]
     - id: tell
-      text: "Tell {captain}: a tenth for the leader buys a place near him at the next fight, and a better share."
+      text: "Tell {captain} the tenth buys a place near the leader, and a better share."
       visible_if: service
       check: { skill: speech, attr: wit, difficulty: 5 }
       success:
@@ -416,13 +416,13 @@
   art: yule_hall
   title: The fleet's skald
   text: |
-    {fleet_leader} has a skald with him: an Icelander, they say, though there's no such place, a sour old man with a beautiful voice, who sits at the leader's fire making the poem of the voyage, verse by verse, and changing it every night according to who's paid him.
+    {fleet_leader} has a skald with him: a Hálogalander from so far north the summer has no night, a sour old man with a beautiful voice, who sits at the leader's fire making the poem of the voyage, verse by verse, and changing it every night according to who's paid him.
   choices:
     - id: pay
       text: Give him a silver ring for a line about you.
       requires: ["rings.silver >= 1"]
       effects: [ { ring: { metal: silver, n: -1 } }, { deed: { type: deed, text: "Was named in the fleet's poem", weight: 4, witnesses: 400 } } ]
-      result: He takes the ring, and listens to what you did, and says nothing. That night at the leader's fire your name is in the poem, in a line about a sword and a gate and the sea-wolf's teeth. It's not exactly what you did. It's better.
+      result: He takes the ring, and listens to what you did, and says nothing. That night at the leader's fire your name is in the poem, in a line about a sword and a gate and the sea-wolf's teeth. It isn't quite what happened, and you like it better.
     - id: deed
       text: Tell him what you did, and let him decide whether it's worth a line.
       check: { skill: speech, attr: pre, difficulty: 6 }
@@ -430,7 +430,7 @@
         text: He listens with his eyes shut. Then he puts you in the poem for nothing, because, he says, it's a good story, and the leader's story is boring.
         effects: [ { deed: { type: deed, text: "Was named in the fleet's poem, for nothing", weight: 4, witnesses: 400 } } ]
       failure:
-        text: He listens with his eyes shut, and then opens them and says, "No." That's all.
+        text: He listens with his eyes shut, and then opens them, says, "No," and shuts them again.
     - id: leave
       text: Leave the poem to the men who pay for it.
       result: You leave it. The poem gets longer every night, and has more and more of the leader in it, and less and less of anybody else.

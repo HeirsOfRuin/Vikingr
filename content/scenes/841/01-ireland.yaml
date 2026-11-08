@@ -25,7 +25,7 @@
     [if fate.asgeir_falls && !flag.bg_covered]
     A Dane called Ásgeir, no kin of the man you buried after Bangor, is gathering ships to go up the Seine to Rouen. Every man at the muster has noticed the name. Some of them think it's a sign.
     [elif fate.asgeir_falls]
-    Ásgeir Kolsson is going to the Seine. Ásgeir, with his ruined leg and his white beard, who hasn't stood in a shield-wall since Bangor. He's gathering ships for one last summer, he says, because he means to see Rouen burn before he dies, and he'd like you at his steering-oar's side when it does.
+    Ásgeir Kolsson is going to the Seine. Ásgeir, with his ruined leg and his white beard, who hasn't stood in a shield-wall since Bangor. He's gathering ships for one last summer, he says, because he means to see Rouen burn before he dies, and he'd like you beside his steering-oar when it does.
     [else]
     Ásgeir Kolsson is going to the Seine. Ásgeir, grey now, the first man whose oar you pulled, gathering ships for Rouen, because the emperor is dead and his sons are fighting each other and nobody, he says, will be watching the river. He's asked for you by name.
     [/if]
@@ -147,7 +147,7 @@
     Among the prisoners dragged back to the fort is a young man in a good cloak who keeps telling everyone, in Irish, who his father is, until somebody who speaks Irish tells him to stop.
   choices:
     - id: hostage
-      text: Keep the king's son. Leinster will pay to have him back, or keep the peace to keep him alive.
+      text: Keep the king's son. Leinster will pay for him, or keep the peace for him.
       effects: [ { take_hostage: { kind: king_son, place: dublin, who: "{name}, a son of the king of Leinster", kin: "the king of Leinster" } }, { add: { loot: 150 } }, { captives: 6 }, { deed: { type: battle_won, text: "Held the ship-fort at Duibhlinn against the hosting of Leinster", weight: 5, witnesses: 300 } } ]
       result: |
         He's seventeen, and furious, and frightened, and trying very hard to be only furious. You give him a place by your own fire and a guard on the door. By Yule he's teaching your men to swear in Irish.
@@ -167,7 +167,7 @@
       text: Row for the open sea, and count who's with you.
       effects: [ { longphort_lost: dublin }, { add: { crew.men: -6, crew.morale: -2 } }, { clear: flag.ir_fort_member } ]
       result: |
-        The smoke stands over the Liffey all the next day. The Irish will boast about this for a generation. But there will be other forts, the captains say, while they bind their wounds on the beach at Rechru. Nobody believes it yet. Ireland is too good to leave.
+        The smoke stands over the Liffey all the next day. The Irish will boast about this for a generation. But there will be other forts, the captains say, while they bind their wounds on the beach at Rechru. Nobody believes them yet. But nobody is going home, either: Ireland is too good to leave.
 
 - id: ir_winter
   kind: pool
@@ -186,7 +186,7 @@
     - id: market
       text: Run the slave market at the gate. It's what the fort is for.
       effects: [ { add: { silver: 240, honour: -1 } }, { standing: { people: gael, n: -1 } } ]
-      result: The trade is brisk and ugly and very profitable. The ships that leave in the spring for Kaupang go low in the water, and every man in them is a man you sold.
+      result: The trade is brisk and ugly and very profitable. The ships that leave in the spring for Kaupang go low in the water, and every captive in them is one you sold.
     - id: kin
       text: Drink with the Irish brothers-in-law, and learn which kings are at war.
       effects: [ { add: { skill.lore: 1, skill.speech: 1 } }, { standing: { place: dublin, n: 2 } } ]
@@ -194,7 +194,7 @@
     - id: men
       text: Hire the young men of the fort for your own benches.
       effects: [ { recruit: 8 } ]
-      result: The fort is full of young men with nothing to do till spring. Eight of them sign on with you. Two are half Irish, and fight like it.
+      result: The fort is full of young men with nothing to do till spring. Eight of them take a place on your benches. Two are half Irish, and fight like it.
 
 - id: ir_845
   kind: place
@@ -216,7 +216,7 @@
       result: |
         The Luimnech men are glad to be rid of him: a holy man is bad luck in a ship, they say, and he prays all night. Forannán is old and thin and very calm. He looks at you a long while, and then blesses you, which is not what you expected, and then asks for his breakfast.
     - id: drink
-      text: Drink to Turgeis. He was a bastard, but he was our bastard.
+      text: Drink to Turgeis. Whatever else he was, he was one of ours.
       effects: [ { add: { crew.morale: 1 } } ]
       result: Your men drink to him, and the Irish in the harbour drink to Máel Sechnaill, and for one evening everybody is drunk on the same beach and nobody fights, which in Ireland is a kind of miracle.
     - id: go

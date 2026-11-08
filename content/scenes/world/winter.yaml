@@ -85,7 +85,7 @@
 
     A son. Alive, and loud, and his mother alive too.
     [break]
-    He is laid on the floor at your feet, as is the custom, and the whole house waits. If you pick him up, he's yours: named, and fed, and an heir. Then you have to name him.
+    He is laid on the floor at your feet, as is the custom, and the whole house waits. If you pick him up, he's yours: kept, and fed, and an heir. Then you have to name him.
   choices:
     - id: father
       text: Name him for your father.
@@ -131,7 +131,7 @@
     - id: promise
       text: Promise her a farm of your own by next winter.
       effects: [ { boast: yule_farm } ]
-      result: She looks at you a long time. "I'll hold you to that," she says, "harder than any jarl's hall." She will.
+      result: She studies you across the fire. "I'll hold you to that," she says, "harder than any jarl's hall." She will.
     - id: patience
       text: Ask her for patience.
       check: { skill: speech, attr: pre, difficulty: 5 }
@@ -284,7 +284,7 @@
   art: home_fjord
   title: An old man's land
   text: |
-    Old Svertingr from the head of the fjord dies at midwinter, at eighty, in his bed, which annoys him; he always said he'd go at sea. He leaves two sons and one farm, and by the funeral ale the sons have stopped speaking to each other, and by the next morning one of them has an axe.
+    Old Svertingr from the head of the fjord dies at midwinter, at eighty, in his bed, which would have annoyed him; he always said he'd go at sea. He leaves two sons and one farm, and by the funeral ale the sons have stopped speaking to each other, and by the next morning one of them has an axe.
 
     Somebody has to settle it before the thing at midsummer, or somebody will settle it with the axe. They come to you, both of them, because you have a ship and a name and no stake in it.
   choices:

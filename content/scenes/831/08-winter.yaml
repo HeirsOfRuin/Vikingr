@@ -90,9 +90,9 @@
       text: Tell Bárð you won't be putting silver on his scales.
       effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_declined }, { add: { honour: -1 } } ]
       result: |
-        Bárð looks at you for a long moment, and then at his daughter, and then puts the scales away without a word.
+        Bárð looks at you, and then at his daughter, and then puts the scales away without a word.
 
-        Gyða doesn't cry. She walks you to the door, very straight, and says, "Well. Now I know." She's married by spring to a man from the next valley. She's civil to you at the thing, and never more than civil, and that's the end of it.
+        Gyða doesn't cry. She walks you to the door, very straight, and says, "Well. Now I know." She's married by spring to a man from the next valley. She's civil to you at the Thing, and never more than civil, and that's the end of it.
     - id: plead
       text: Ask Bárð for one more summer.
       check: { skill: speech, attr: pre, difficulty: 5 }
@@ -131,7 +131,7 @@
     - id: here
       text: Here we are.
       effects: [ { deed: { type: deed, text: Married Gyða Bárðardóttir at the winter nights, weight: 2 } }, { add: { hamingja: 1 } }, { wife: Gyða } ]
-      result: She leans her head on your shoulder, and for the first time since you were sixteen you aren't thinking about the sea at all.
+      result: She leans her head on your shoulder, and for the first time since you were sixteen winters old you aren't thinking about the sea at all.
 
 - id: w1_eloped
   kind: phase
@@ -141,7 +141,7 @@
   art: home_fjord
   title: Bárð's cows
   text: |
-    Gyða has been in your father's house a year now, and runs it, mostly, though your mother would deny it under torture.
+    Gyða has been in your father's house since the spring, and runs it, mostly, though your mother would deny it under torture.
 
     Bárð still hasn't forgiven anybody. He sends his cows to graze on your father's side of the stream, every day, and waits to see what you'll do about it.
   choices:
@@ -176,11 +176,11 @@
 
     You go out to the stone in the morning. Hallbjörn is waiting beside it, with an axe on his shoulder.
     [if flag.married_gyda || flag.gyda_eloped]
-    "She was meant for me," he says, "before you went west." It isn't about the stone. It never was.
+    "She was meant for me," he says, "before you went west." He doesn't once look at the stone.
     [elif flag.gyda_lost]
-    "She chose me," he says. "Get used to it." It isn't about the stone. It never was.
+    "She chose me," he says. "Get used to it." He doesn't once look at the stone.
     [else]
-    "The farm is mine," he says. "All of it. Every stone." It isn't about the stone. It never was.
+    "The farm is mine," he says. "All of it. Every stone." He doesn't once look at the stone.
     [/if]
   choices:
     - id: fight
@@ -206,7 +206,7 @@
         effects: [ { set: flag.brother_father_ruled } ]
       failure:
         text: |
-          Your father comes out, and looks at the two of you, and at the stone, and his face falls in on itself like an old man's. "Sort it out," he says. "I won't have to watch it." He goes back inside.
+          Your father comes out, and looks at the two of you, and at the stone, and his face falls in on itself, and all at once he is an old man. "Sort it out," he says. "I won't stand here and watch it." He goes back inside.
 
           Neither of you moves the stone. Neither of you speaks to the other again that winter.
         effects: [ { set: flag.brother_estranged } ]
@@ -223,7 +223,7 @@
     - id: go
       text: Go in after him.
       effects: [ { set: flag.brother_beaten }, { add: { honour: 1 } } ]
-      result: He won't look at you at supper. Gyða, if she's there, puts more meat on your plate than his. Nobody says anything about it. Nobody needs to.
+      result: He won't look at you at supper. Gyða, if she's there, puts more meat on your plate than his, and lets him see her do it.
 
 - id: w1_brother_lost
   kind: spine
@@ -258,7 +258,7 @@
       result: |
         You count it out on the bench between you by the light of the fire's last coals. Hallbjörn watches you do it without a word.
 
-        When it's done he puts his hand on your shoulder, the first time he has touched you since you were twelve and he was hitting you, and leaves it there.
+        When it's done he puts his hand on your shoulder, the first time he has touched you since you were twelve winters old and he was hitting you, and leaves it there.
     - id: half
       text: Pay half, and tell him to find the rest himself.
       requires: ["silver >= 24"]
@@ -280,7 +280,7 @@
     You wake to the dogs, and then to the smell, and then to your mother screaming.
 
     [if background == freedman]
-    The boatyard is on fire. The new keel is on the stocks under its shelter, and somebody has stacked brushwood against the shelter and set it alight, and your father is already in there in his shirt, beating at the flames with a wet sail. You get him out. You get most of the keel out. The shelter is gone, and the season's seasoned oak with it.
+    The boatyard is on fire. The new keel is on the stocks under its shelter, and somebody has stacked brushwood against the shelter and set it alight, and your father is already in there in his shirt, beating at the flames with a wet sail. You get him out. You get most of the keel out. The shelter is gone, and the winter's stock of seasoned oak with it.
     [/if]
     [if background != freedman]
     The byre is on fire. Somebody has stacked brushwood against the gable end and set it alight, and the cows are bellowing inside, and by the time you get the door open and the beasts out, the roof is gone.
@@ -303,7 +303,7 @@
         text: |
           You take it to the spring Thing with the tracks remembered, and three witnesses, and the stick, which you found in the ditch. The law-speaker hears it. The Hrappssons are fined a sum that will take them ten years to pay, and Grímr is outlawed for three.
 
-          It isn't revenge. It's better: it's the law, and everybody saw it.
+          On the way home Ketill says it's better than blood. "Blood washes off," he says. "This is the law, and the whole district saw it."
         effects: [ { set: flag.hrapp_outlawed }, { add: { honour: 1, skill.lore: 1 } } ]
       failure:
         text: |
@@ -325,14 +325,14 @@
   art: holmgang
   title: The cloak
   text: |
-    Grímr Hrappsson is dead on his own yard, on his own cloak, with his brothers watching from the door.
+    Grímr Hrappsson is dead in his own yard, on his own cloak, with his brothers watching from the door.
 
     Nobody moves. The snow comes down on the dead man. Then Thorgils, on his stick, comes down from the doorway, and looks at his brother, and looks at you, and says, "That's enough. That's all of it now," and it is.
   choices:
     - id: go
       text: Go home.
       effects: [ { set: flag.hrapp_ended }, { deed: { type: holmgang_won, text: Killed Grímr Hrappsson on the cloak for the fire set at his father's door } } ]
-      result: Nobody follows you. Behind you, the Hrappssons' women start the keening. You will hear it, some nights, for years.
+      result: Nobody follows you. Behind you, the Hrappssons' women start the keening. It follows you most of the way home.
 
 - id: w1_hrapp_lost
   kind: spine
@@ -370,7 +370,7 @@
     [elif boast.own_ship == 1]
     Yours: you swore to stand at your own steering-oar within two winters. One of them is gone. "A year left," says the jarl's man, and somebody at the back says "Plenty," and somebody else says "Not for him," and the hall laughs, not unkindly.
     [elif boast.own_ship >= 3]
-    Yours: you swore to stand at your own steering-oar. You haven't. The hall goes quiet in the way that is worse than laughing.
+    Yours: you swore to stand at your own steering-oar. You haven't. Nobody laughs, and you would rather they did.
     [/if]
     [if boast.irish_cup == 2]
     You swore to drink from an Irish king's cup. You drank from Máel Brigte's, in his own hall. The hall roars.
@@ -387,7 +387,7 @@
     Then the horn is in your hands again.
   choices:
     - id: dorestad
-      text: Swear that before three summers are out you will see Dorestad, the richest market of the Franks, and take something from it.
+      text: Swear to see Dorestad, the Franks' richest market, within three summers, and take something from it.
       effects: [ { boast: dorestad }, { add: { flag.y_hall: 2 } } ]
       result: |
         The name goes round the hall like a struck bell. Dorestad: nobody here has seen it. Everybody has heard of it.

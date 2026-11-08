@@ -86,7 +86,7 @@
       visible_if: "!service"
       requires: ["silver >= 6"]
       effects: [ { add: { silver: -6, skill.seamanship: 1 } }, { progress: 1 } ]
-      result: He takes you through channels you'd never have dared, singing, and drinks a cask of your ale doing it, and leaves you a day ahead of where you'd have been and a good deal wiser about the Danish islands.
+      result: He takes you through channels you'd never have dared, singing, and drinks a cask of your ale doing it, and leaves you a day ahead of where you'd have been and a good deal wiser about these waters.
     - id: no
       text: Thank him, and put him back in his boat.
       visible_if: "!service"
@@ -96,7 +96,7 @@
       text: "{captain} takes him on. Sit by the steering-oar, and keep his cup full, and listen."
       visible_if: service
       effects: [ { add: { skill.seamanship: 1 } }, { progress: 1 } ]
-      result: He takes you through channels you'd never have dared, singing, and between the songs he tells you every bank and rock and channel from here to Jutland, because you keep his cup full and nobody else listens. You remember most of it.
+      result: He takes you through channels you'd never have dared, singing, and between the songs he tells you every bank and rock and channel in these waters, because you keep his cup full and nobody else listens. You remember most of it.
     - id: oar
       text: Leave him to {captain}, and keep rowing.
       visible_if: service
@@ -121,7 +121,7 @@
       text: Lie off and watch them go by.
       visible_if: "!service"
       effects: [ { add: { skill.lore: 1 } }, { set: flag.rg_saw_turgeis } ]
-      result: It takes them half the afternoon to go by. Sixty ships, Hallvard says, counting on his fingers. Eighty. Somebody else says a hundred. You'll be telling it at Yule, and it'll be two hundred by then.
+      result: It takes them half the afternoon to go by. Sixty ships, your steersman says, counting on his fingers. Eighty. Somebody else says a hundred. You'll be telling it at Yule, and it'll be two hundred by then.
     - id: hail
       text: Close and hail them, and find out what they want with Ireland.
       visible_if: "!service"
@@ -161,7 +161,7 @@
       text: Throw them a cask of water and some dried fish.
       visible_if: "!service"
       effects: [ { add: { provisions: -10, hamingja: 1 } } ]
-      result: They bless you, all six of them, solemnly, with their hands raised, and then go on rowing into nothing. Whatever their god is, he's had his eye on you now.
+      result: They bless you, all six of them, solemnly, with their hands raised, and then go on rowing into nothing. Whatever their god is, they've told him about you now.
     - id: take
       text: Take them aboard. Monks sell.
       visible_if: "!service"
@@ -253,7 +253,7 @@
   cooldown_days: 200
   requires: ["year >= 832", "bound.people == english || bound.people == frankish", "!service", "!fleet"]
   art: open_sea
-  title: The coastguard
+  title: The guard-ship
   text: |
     The Narrow Sea is full of ships, and one of them isn't a trader. She comes out of a river mouth on the Frankish side under oars, long and low, with a cross on her sail and mailed men along her sides. The old emperor set guard-ships on these coasts, your steersman says, and the new one has kept a few of them.
 
@@ -292,7 +292,7 @@
     - id: take
       text: Take the nearest three, and their salt.
       effects: [ { add: { loot: 50 } }, { standing: { people: frankish, n: -1 } } ]
-      result: It's barely a fight. The boys jump over the side and swim for the shore, and you take the boats and the salt and leave the boats on the sand, empty. Salt sells well in the north. Every winter, every farm, every barrel of herring.
+      result: It's barely a fight. The boys jump over the side and swim for the shore, and you take the salt and leave the boats on the sand, empty. Salt sells well in the north. Every winter, every farm, every barrel of herring.
     - id: let
       text: Let them go. They're not worth the trouble.
       result: They don't believe it. They keep looking back at you all the way up the river, waiting for the trick.

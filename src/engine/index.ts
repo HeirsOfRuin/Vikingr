@@ -397,7 +397,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           const f = ok ? choiceFight(c) : null;
           const reck = f && content.fighters[f.foe] ? reckonWords(duelOdds(state, content, f.foe, f.kind, f.lethal), f.lethal) : undefined;
           const band = c.check ? checkBand(state, content, c.check) : undefined;
-          return opt('', { t: 'choose', id: c.id }, renderText(c.text, state, content), ok, ok ? undefined : `Requires ${unmetLabel(c.requires!, state, content)}`, reck && band ? `${band}. ${reck}` : reck ?? band);
+          return opt('', { t: 'choose', id: c.id }, renderText(c.text, state, content), ok, ok ? undefined : `Requires ${unmetLabel(c.requires!, state, content)}.`, reck && band ? `${band}. ${reck}` : reck ?? band);
         });
     }
     case 'duel': {
@@ -655,7 +655,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       if (state.ships.length) {
         for (const r of routes(state, content, at)) {
           const short = state.provisions < mouths(state) * r.days;
-          out.push(opt('Sail', { t: 'sail', to: r.to }, `Sail to ${content.places[r.to]!.name}`, true, undefined, `About ${r.days} days, ${r.leg.kind === 'open' ? 'open sea' : r.leg.kind}${short ? '. Not enough food' : ''}`));
+          out.push(opt('Sail', { t: 'sail', to: r.to }, `Sail to ${content.places[r.to]!.name}`, true, undefined, `About ${plural(r.days, 'day')}, ${r.leg.kind === 'open' ? 'open sea' : r.leg.kind}${short ? '. Not enough food' : ''}`));
         }
       } else if (at !== homeOf(state) && !exiled(state)) out.push(opt('Sail', { t: 'passage_home' }, state.silver >= 12 ? 'Take passage home on a trader' : 'Work your passage home on a trader', true, undefined, state.silver >= 12 ? formatSilver(12) : 'No silver: a month at another man\'s oar'));
       // an outlaw castaway can't go home: a trader takes him west, to the one hall that will have him
@@ -706,7 +706,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           }
           const hire = hireable(state, content, at);
           if (canHire(state, content, at) > 0) out.push(opt('Here', { t: 'hire' }, hire > 0 ? `Hire ${plural(hire, 'man', 'men')} here` : 'Hire men here', hire > 0, 'No benches free, or no silver for the gift.', `${formatSilver(hire * SIGN_ON_GIFT)}`));
-          out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them; and they will remember' : 'Food for the crew; the locals will remember'));
+          out.push(opt('Here', { t: 'forage' }, 'Take cattle and water from the shore', true, undefined, tier === 'unfriendly' ? 'They will likely fight for them, and they will remember' : 'Food for the crew; the locals will remember'));
           // the shore between the ports (playtest 10)
           const hc = harryCoast(state, content, at);
           if (hc) { const hb = harryBlock(state, content); out.push(opt('Raid', { t: 'harry' }, 'Harry the shore along the coast', !hb, hb ?? undefined, `A day along the shore for farms, hamlets, churches; the coast is ${alarmWord(harried(state, hc))}`)); }
@@ -1241,7 +1241,7 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       ps.hired = (ps.hired ?? 0) + n;
       state.day += 1;
       journal(state, `${plural(n, 'man', 'men')} signed on at ${content.places[state.at!]!.name}.`);
-      report('Hiring', [`${plural(n, 'young man', 'young men')} come down to the shore with sea-chests on their shoulders and take your sign-on gift. ${formatSilver(n * SIGN_ON_GIFT)}.`]);
+      report('Hiring', [`${n === 1 ? 'A young man comes down to the shore with his sea-chest on his shoulder and takes your sign-on gift' : `${plural(n, 'young man', 'young men')} come down to the shore with sea-chests on their shoulders and take your sign-on gift`}. ${formatSilver(n * SIGN_ON_GIFT)}.`]);
       break;
     }
     case 'land': {
@@ -1414,13 +1414,13 @@ function settle(state: GameState, content: ContentBundle, rng: RngCursor): void 
   for (const b of state.boasts) {
     if (!goalMet(state, content, b)) continue;
     keepBoast(state, content, b);
-    state.pending = { t: 'report', title: 'A boast kept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'It is done. Men will say so at Yule, and for a long time after.'] };
+    state.pending = { t: 'report', title: 'A boast kept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'It is done. Men will say so at Yule, and for years after.'] };
     return;
   }
   for (const b of state.boasts) {
     if (b.state !== 'open' || b.due > state.day) continue;
     breakBoast(state, content, b);
-    state.pending = { t: 'report', title: 'A boast unkept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'The year has turned, and it is not done. Men remember a boast longer than a deed.'] };
+    state.pending = { t: 'report', title: 'A boast unkept', lines: [`You swore it over the cup: ${content.boasts[b.id]?.text}`, 'The time is past, and it is not done. Men remember a boast longer than a deed.'] };
     return;
   }
   // what the road or the coast held, told after the scene that broke in on it

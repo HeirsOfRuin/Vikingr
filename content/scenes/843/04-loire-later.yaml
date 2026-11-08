@@ -67,7 +67,7 @@
 
     [if flag.e43_aude_home]Aude's father, the cloth-merchant, is in Lambert's hall too, selling him cloth on credit he will never see again. He knows you at once, and takes you aside, and tells you which of the count's men at the bridge drink, and which of them are honest.[/if]
 
-    "The Franks have a count at Nantes again," he says, "who is not me. He has two hundred men and a river bridge. I'll pay a pound of silver for every ship that comes up the river with me, and what's in the count's hall besides. You know the road." He smiles his bad smile. "I showed it to you."
+    "The Franks have a count at Nantes again," Lambert says, "who is not me. He has two hundred men and a river bridge. I'll pay a pound of silver for every ship that comes up the river with me, and what's in the count's hall besides. You know the road." He smiles his bad smile. "I showed it to you."
   choices:
     - id: go
       text: Go up the river with Lambert's Bretons.
@@ -78,7 +78,7 @@
       danger: true
       check: { skill: trade, attr: pre, difficulty: 6 }
       success:
-        text: Lambert looks at you a long time. "You've learned," he says, and agrees. You go up the river at the head of his Bretons with a better bargain than any captain in the Loire.
+        text: Lambert looks at you as if he'd found your hand in his purse. "You've learned," he says, and agrees. You go up the river at the head of his Bretons with a better bargain than any captain in the Loire.
         effects: [ { add: { silver: 96 } }, { host: { title: "The bridge at Nantes", foe: frankish_levy, terrain: ford, men: 30, ratio: 1.0, wings: [ { name: "Lambert's Bretons", men: 120, quality: 0.9, foe_men: 110 } ], role: wing, win: e43_lambert_won } } ]
       failure:
         text: "\"I'll find someone cheaper,\" Lambert says. He does. The other captain comes back down the river in a month with a ship full of the count's furniture."
@@ -99,7 +99,7 @@
     - id: take
       text: Take the silver, and the count's hall.
       effects: [ { add: { loot: 240 } }, { standing: { place: nantes, n: 3 } }, { deed: { type: battle_won, text: "Took the bridge at Nantes for Count Lambert", weight: 4, witnesses: 400 } } ]
-      result: Five pounds for the ship, and the count's hall stripped to the walls, and Lambert's thanks, which are worth exactly what you think they are.
+      result: Your pay and your share of the count's hall, stripped to the walls, come to five pounds all told. And Lambert's thanks, which are worth exactly what you think they are.
 
 - id: e43_island_house
   kind: phase
@@ -262,12 +262,12 @@
     - id: deeds
       text: Shares by deeds. The men who go first get more.
       effects: [ { add: { crew.morale: 1 } }, { position: front } ]
-      result: The young ones like it, and the old ones don't, and Bjarni says nothing at all for a long while. Then he says he'll be going first, then, and grins with no teeth. You'll have to go first yourself, from now on. They'll be watching.
+      result: The young ones like it, and the old ones don't, and Bjarni sucks his gums over it while the fire burns down. Then he says he'll be going first, then, and grins with no teeth. You'll have to go first yourself, from now on. They'll be watching.
     - id: steer
       text: Before shares, a steersman. Ask Bjarni to take the steering-oar.
       check: { skill: speech, attr: pre, difficulty: 4 }
       success:
-        text: Bjarni looks at you a long time, and then at the fire, and nods. "Ölvir never asked me," he says. He steers the Hart for you that summer, and she's never sailed better, and the men take the shares you name without a word.
+        text: Bjarni looks at you, and then at the fire, and nods. "Ölvir never asked me," he says. He steers the Hart for you that summer, and she's never sailed better, and the men take the shares you name without a word.
         effects: [ { add: { crew.morale: 1, skill.seamanship: 1 } } ]
       failure:
         text: Bjarni says he's too old, and means he doesn't know you yet. You steer her yourself. The shares can wait.
@@ -289,7 +289,7 @@
     - id: sell
       text: Sell him back the books you have, at a fair price.
       effects: [ { add: { silver: 36 } }, { standing: { place: noirmoutier, n: 1 } } ]
-      result: He pays in good silver, and checks every page, and weeps over one of them where the kindling-tearing has started. When he goes, he blesses you, which is more than you expected, and you find you don't mind it.
+      result: He pays in good silver, and checks every page, and weeps over one where somebody has started tearing out the pages for kindling. When he goes, he blesses you, which is more than you expected, and you find you don't mind it.
     - id: give
       text: Give them to him. They're no use to you, and he came a long way.
       effects: [ { add: { honour: 1, hamingja: 1 } } ]

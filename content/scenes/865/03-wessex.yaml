@@ -147,4 +147,4 @@
       text: Take your share of the West Saxon silver and sail for home.
       visible_if: "!service"
       effects: [ { add: { silver: 60 } }, { fleet_end: true }, { set: flag.ga_went_home } ]
-      result: You take your share and the Elk's men take theirs, and you go down the Thames on the ebb with half a dozen other ships that have had enough. England is still there behind you. So, mostly, are you.
+      result: You take your share and your men take theirs, and you go down the Thames on the ebb with half a dozen other ships that have had enough. England is still there behind you. So, mostly, are you.

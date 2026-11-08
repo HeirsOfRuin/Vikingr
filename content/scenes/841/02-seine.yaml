@@ -75,7 +75,7 @@
     - id: on
       text: Follow the fleet down to the abbeys, for what's left.
       effects: [ { add: { loot: 60 } }, { queue: { scene: sn_abbeys, days: 2 } } ]
-      result: Ásgeir doesn't say anything about the gate. He doesn't need to. Your share of Rouen is a small one.
+      result: Ásgeir doesn't say anything about the gate. He just hands you your share of Rouen, which is a small one.
 
 - id: sn_abbeys
   kind: queued
@@ -96,7 +96,7 @@
     - id: fontenelle
       text: Stand with Ásgeir at Fontenelle, and take the abbot's six pounds.
       effects: [ { add: { loot: 100 } }, { deed: { type: deed, text: "Took the abbot of Fontenelle's silver to spare his house", weight: 1 } }, { queue: { scene: sn_captives, days: 2 } } ]
-      result: The abbot counts out six pounds of silver on the landing, coin by coin, and writes it down. Ásgeir divides it among the ships there and then, two pounds to the Raven, and the abbey stands. In the abbey's book, you learn later, it says what was paid, and to whom, and on what day. Monks write everything down.
+      result: The abbot counts out six pounds of silver on the landing, coin by coin, and writes it down. Ásgeir divides it among the ships there and then, two pounds to yours, and the abbey stands. In the abbey's book, you learn later, it says what was paid, and to whom, and on what day. Monks write everything down.
 
 - id: sn_captives
   kind: queued
@@ -190,7 +190,7 @@
     It takes all afternoon. The Franks on the far bank don't move.
   choices:
     - id: ropes
-      text: Haul on the ropes with Ragnarr's men. Odin is watching.
+      text: Haul on the ropes with Ragnarr's men. For Odin.
       effects: [ { add: { hamingja: 1, honour: -1 } }, { deed: { type: deed, text: "Hanged the king's men for Odin on the island below Paris", weight: 3, witnesses: 2000 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
       result: |
         You haul. Your men haul with you. When it's done, the river is very quiet, and the Franks on the far bank are gone, back towards Paris, in no order at all. Ragnarr was right. You hate that he was right.
@@ -205,7 +205,7 @@
         text: Ragnarr laughs, and thinks about it, and lets you have a dozen of them, the ones in good cloaks, to sell back. The rest he hangs anyway. You've saved twelve men and made Ragnarr think you're a merchant. Both are worth something.
         effects: [ { captives: 12 }, { add: { honour: 1 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
       failure:
-        text: Ragnarr looks at you for a long moment. "Odin doesn't take silver," he says. His men laugh. The hanging goes on.
+        text: Ragnarr hears you out, smiling. "Odin doesn't take silver," he says. His men laugh. The hanging goes on.
         effects: [ { add: { crew.morale: -1 } }, { queue: { scene: sn_paris_sack, days: 1 } } ]
 
 - id: sn_paris_lost

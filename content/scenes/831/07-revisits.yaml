@@ -18,7 +18,7 @@
 
     "My father has had three men ask for me since you were here," she says. "He's said no to all of them. He says he's waiting for a better offer." She looks at you sideways. "I said I was waiting too. He asked what for. I didn't tell him."
     [if flag.gyda_courting || flag.gyda_eloped]
-    You think of Gyða, and for a long moment you can't find anything to say.
+    You think of Gyða, and for a while you can't find anything to say.
     [/if]
   choices:
     - id: thread
@@ -95,6 +95,6 @@
       text: Tell him you're sorry, and that it doesn't change anything.
       effects: [ { set: flag.colman_betrayed_831 }, { standing: { place: iona, n: -1 } } ]
       result: |
-        He looks at you for a long moment. Then he turns and walks back up the beach, not hurrying, toward the bell-house.
+        He looks at you, and goes on looking. Then he turns and walks back up the beach, not hurrying, toward the bell-house.
 
         The bell starts ringing before you are back in the ship.

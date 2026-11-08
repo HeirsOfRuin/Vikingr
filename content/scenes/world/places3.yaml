@@ -12,9 +12,9 @@
   text: |
     Jarrow sits on a low rise above the Tyne mudflats: a stone church, a long stone hall, a wall, and more monks than you'd expect for a place so plain.
 
-    Forty years ago a crew from the north came up this river and raided it. The monks tell the story to everyone, so they tell it to you, through a fisherman who has some Norse. The raiders' leader was killed in the fighting. Then a storm wrecked their ships at the river mouth, and the men who swam ashore were killed on the beach by the people of the Tyne.
+    In your grandfathers' time a crew from the north came up this river and raided it. The monks tell the story to everyone, so they tell it to you, through a fisherman who has some Norse. The raiders' leader was killed in the fighting. Then a storm wrecked their ships at the river mouth, and the men who swam ashore were killed on the beach by the people of the Tyne.
 
-    The monks don't tell it as a threat. They tell it as a thing God did. That's worse.
+    The monks don't tell it as a threat. They tell it as a thing God did, and could do again.
   choices:
     - id: books
       text: Ask to see the books of the wise man who lived here.
@@ -26,9 +26,9 @@
       effects: [ { set: flag.jarrow_scouted } ]
       result: Not many men, and old ones. The river is shallow at the ebb, and the church is close to the water. You note the tides, the way Bede would have.
     - id: go
-      text: Leave before the weather turns. The story stays with you.
+      text: Leave before the weather turns.
       effects: [ { add: { hamingja: 1 } } ]
-      result: Out on the open sea, with the Tyne behind you, the wind gets up from the north, hard, and blows for two days. You ride it out. You think about the ships on the beach at the river mouth, forty years ago, and are glad you went when you did.
+      result: Out on the open sea, with the Tyne behind you, the wind gets up from the north, hard, and blows for two days. You ride it out. You think about the other ships, the ones on the beach at the river mouth, and are glad you went when you did.
 
 - id: pl_whitby
   kind: place
@@ -193,7 +193,7 @@
   text: |
     Whithorn's church was the first in all this country, the monks say: Saint Ninian built it of white stone, when there was nothing else here but Britons and wolves. It's an English bishop's seat now, which tells you something about who won.
 
-    Pilgrims come by sea, from Man and Ireland and the north. They crowd the landing in their grey cloaks, with their staffs, and look at your ship the way a sheep looks at a wolf that's turned up in the queue at the shearing.
+    Pilgrims come by sea, from Man and Ireland and the north. They crowd the landing in their grey cloaks, with their staffs, and look at your ship the way a sheep looks at a wolf that's turned up in the pen at the shearing.
   choices:
     - id: pilgrims
       text: Sell the pilgrims passage back to Man.
@@ -231,7 +231,7 @@
         text: There's a well on the rock, he says, proudly, that has never failed. Never, you think, is a long time. A well can be stopped. A hall full of men can be thirsty. You don't say it. He doesn't notice you not saying it.
         effects: [ { set: flag.alt_clut_scouted } ]
       failure:
-        text: He looks at you for a long moment and says it's none of your business, and goes back up the rock, and the gate shuts behind him.
+        text: He looks at you hard, and says it's none of your business, and goes back up the rock, and the gate shuts behind him.
         effects: [ { standing: { place: alt_clut, n: -2 } } ]
     - id: go
       text: Look at the rock a while longer, and go.
@@ -267,14 +267,14 @@
       visible_if: "!norse.linn_duachaill"
       effects: [ { add: { skill.lore: 1 } } ]
       result: |
-        You sound it and walk it, and mark it in your head, and when you come back in a few years, you think, somebody else will have built on it. You hope it's you.
+        You sound it and walk it, and mark it in your head, and when you come back in a few years, you think, somebody will have built on it. You hope it's you.
     - id: trade
       text: Trade for cattle and hides.
       effects: [ { add: { skill.trade: 1, provisions: 60 } } ]
       result: The trade is fair, and quick. Ireland, it turns out, has more cattle than people, and both are for sale if you know who to ask.
     - id: go
       text: Go on south.
-      result: You leave it behind. Somebody will build here. It may as well be you, one day.
+      result: You leave it behind. Whoever holds that pool will hold this coast. It may as well be you, one day.
 
 - id: pl_rechru
   kind: place
@@ -287,7 +287,7 @@
   text: |
     Rechru is a small, high, green island off the Ulster coast, with cliffs full of birds and a little bay on the south side, and a church above the bay with a high cross in front of it.
 
-    Thirty-five years ago the first Norse ships to come to Ireland came here, and burned the church, and took the people. The monks have built it all again. They keep a lookout on the cliff now, and a bell.
+    Before you were born, the first Norse ships to come to Ireland came here, and burned the church, and took the people. The monks have built it all again. They keep a lookout on the cliff now, and a bell.
     [if background == freedman]
 
     Your grandmother was eleven when the ships came here. Her brothers went into the water after the boats. You stand on the beach where she stood, and you can hear her voice, dry as heather, telling it the same way every time.
@@ -388,7 +388,7 @@
       check: { skill: seamanship, attr: end, difficulty: 5 }
       success:
         text: |
-          The landing is a single rock with the swell lifting and dropping the boat six feet at a time. You jump. You climb. At the top there are six old men, a garden the size of a cloak, and the whole Atlantic. One of them offers you water from a stone cistern. There is nothing to take. You understand, suddenly, why they're here. You don't share it with your men on the way down.
+          The landing is a single rock with the swell lifting and dropping the boat six feet at a time. You jump. You climb. At the top there are six old men, a garden the size of a cloak, and the whole Atlantic. One of them offers you water from a stone cistern. There is nothing to take. You stay up there longer than you meant to. On the way down you don't tell your men why.
         effects: [ { add: { hamingja: 1, skill.lore: 1 } }, { deed: { type: deed, text: "Climbed the six hundred steps of the Skellig", weight: 1 } }, { set: flag.skellig_climbed } ]
       failure:
         text: The swell at the landing is too much. You try three times and nearly lose the boat on the third, and the monks watch you from the steps, unmoving, until you give up and row back.
@@ -506,13 +506,13 @@
   requires: ["!service", "year != 845"]
   title: Parísborg
   text: |
-    Five days up the Seine, through a country so rich and so flat it seems to have been made on purpose for farming, the river parts round an island, and on the island there is a city: old walls, a cathedral, the count's palace, a bridge on either side. Around it, on both banks, the great abbeys: Saint-Germain, Sainte-Geneviève, and to the north Saint-Denis.
+    Five days up the Seine from Rouen, through a country so rich and so flat it seems to have been made on purpose for farming, the river parts round an island, and on the island there is a city: old walls, a cathedral, the count's palace, a bridge on either side. Around it, on both banks, the great abbeys: Saint-Germain, Sainte-Geneviève, and to the north Saint-Denis.
     [if year >= 846]
 
     It has been burned. Not all of it, but enough. Ragnarr came up the river at Easter in 845 with a hundred and twenty ships, the boatmen tell you, and the king paid him seven thousand pounds of silver to go away. Seven thousand. Your men say it to each other, quietly, like a prayer.
     [/if]
 
-    Nobody has ever brought a ship this far before you. Or nobody has come back to tell of it.
+    Few Northmen have ever brought a ship this far, and not all of those went home.
   choices:
     - id: look
       text: Lie off the island and look, until they send men out.

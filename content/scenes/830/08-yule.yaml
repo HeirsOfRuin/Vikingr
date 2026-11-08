@@ -11,7 +11,7 @@
   text: |
     Jarl Eystein's hall at Yule is so full of smoke and bodies and noise that the walls seem to lean outward. There is a boar on the spit, and ale strong enough to stand a spoon in, and three dogs fighting over something under the high table that may once have been a goose.
 
-    Ulf has told the story of the summer four times since the boar came in. Each time he is in it more. By the fourth telling he took Bangor more or less alone, with you holding his cloak.
+    Ulf has told the story of the summer four times since the boar came in. Each time he is in it more. By the fourth telling he has taken Bangor more or less alone, with you holding his cloak.
     [if !man.ulf.alive]
     Ulf isn't here to tell it. Somebody else tells it instead, badly, and leaves out the best parts, and you find you can't listen.
     [/if]
@@ -131,7 +131,7 @@
       result: |
         You laugh, and a few of the younger men laugh with you. Hallvard doesn't. He looks at you as if you had pissed on the hearth.
 
-        Heiðr doesn't look at you at all. That is worse.
+        Heiðr doesn't look at you at all, then or for the rest of Yule.
       next: y_flyting
     - id: quiet
       text: Say nothing. Remember every word.
@@ -203,7 +203,7 @@
           [if flag.i_ship]
           "Sitting on a rock," says Thorgils. "Minding a boat. We heard." He has done his asking about. The hall howls.
           [elif flag.o_hearth]
-          "Being sick in Harek's hearth," says Thorgils. "We heard. They heard it in Shetland." He has done his asking about. The hall howls.
+          "Being sick in Harek's hearth," says Thorgils. "We heard. They heard it in Hjaltland." He has done his asking about. The hall howls.
           [else]
           "Rowing," says Thorgils. "So was the man in front of you. What's his name? Nobody knows." The hall howls.
           [/if]

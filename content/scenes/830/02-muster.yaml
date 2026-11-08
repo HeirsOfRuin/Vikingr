@@ -19,7 +19,7 @@
     Ketill is the oldest man at the oars, grey all through, with forearms like ship's knees. "I rowed with your father," he says, "the year he went west and came back with nothing but a broken nose. Try to do better."
     [/if]
 
-    Ulf is your own age, near enough, with a grin like a split melon and a sword he can't stop touching. He tells you his whole life before you've got your chest open. It is mostly about girls and fights, and you suspect most of it is lies.
+    Ulf is your own age, near enough, with a grin that splits his face in two and a sword he can't stop touching. He tells you his whole life before you've got your chest open. It is mostly about girls and fights, and you suspect most of it is lies.
 
     Hallvard is thin and quiet and wears a silver hammer on a thong round his neck. He watches the sky while the others talk.
 
@@ -117,7 +117,7 @@
   text: |
     On the last morning half the district comes down to the landing to see the ships go.
     [if flag.b_blessing]
-    Your father is there, with your mother. He doesn't say anything. He doesn't need to: his shield is on your arm.
+    Your father is there, with your mother. He doesn't say anything. He looks at his shield on your arm, and nods.
     [elif flag.b_sword]
     Your father is there. He looks at the sword at your hip, and then at you, and nods once, and that is the end of it.
     [elif background == freedman]

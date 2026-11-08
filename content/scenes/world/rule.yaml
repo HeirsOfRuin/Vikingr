@@ -40,7 +40,7 @@
       text: Stand up at the law-rock anyway, and ask the islands for the seat.
       visible_if: "claim.orkney < 0 && claim.orkney >= -40"
       check: { skill: speech, attr: pre, difficulty: 8 }
-      success: { text: "Nobody expected it, least of all you. Something you say about Harek, about the Scots, about the sea, catches them. The shout goes up for you like a wave going up a beach.", effects: [ { rule: orkney } ], next: ru_orkney_won }
+      success: { text: "Nobody expected it, least of all you. Something you say about Harek and the Scots catches them. The shout goes up for you like a wave going up a beach.", effects: [ { rule: orkney } ], next: ru_orkney_won }
       failure: { text: "They hear you out, politely, the way the islands hear out a stranger, and then choose Sigurðr, the way they were always going to.", effects: [ { set: flag.ru_orkney_lost } ] }
     - id: silver
       text: Buy the votes that matter, the night before.
@@ -53,7 +53,7 @@
       text: Challenge Sigurðr to the holmgang, for the seat.
       danger: true
       effects: [ { fight: { foe: ru_sigurd, kind: holmgang, lethal: true, win: ru_orkney_sword, lose: ru_orkney_beaten } } ]
-      result: The thing goes quiet. Then the lawspeaker nods. It's been done before, in the old days. The cloak is pegged out on the shingle below the mound.
+      result: The thing goes quiet. Then the law-speaker nods. It's been done before, in the old days. The cloak is pegged out on the shingle below the mound.
     - id: wait
       text: Let Sigurðr sit in it for now. There's time.
       result: Sigurðr takes the seat for the year, with the islands' leave, as a steward. Next year the thing will sit again, if anyone asks it to.
@@ -166,7 +166,7 @@
       result: You do it at night, with the gate opened from inside by a captain who has been paid twice. Turgeis's men are in the halls. They don't stay there long.
     - id: wait
       text: Not yet.
-      result: You put to sea again. Dublin will still be there next year, and still without a king, probably. It's that kind of place.
+      result: You put to sea again. Dublin will still be there next year, and still arguing about its king, probably. It's that kind of place.
 
 - id: ru_dublin_turgeis
   kind: spine
@@ -248,8 +248,8 @@
       text: Step up to the law-rock, and ask the district for the seat.
       visible_if: "claim.home >= 0 && claim.home < 20"
       check: { skill: speech, attr: pre, difficulty: 7 }
-      success: { text: "It's close. The lawspeaker counts twice. Then he says your name, and the district roars, and your father, somewhere in the crowd, sits down in the mud.", effects: [ { rule: home } ], next: ru_home_won }
-      failure: { text: "It's close, and the lawspeaker counts twice, and then says Eysteinn's name. You have more friends in the district than you thought. Not enough.", effects: [ { set: flag.ru_home_lost } ] }
+      success: { text: "It's close. The law-speaker counts twice. Then he says your name, and the district roars, and your father, somewhere in the crowd, sits down in the mud.", effects: [ { rule: home } ], next: ru_home_won }
+      failure: { text: "It's close, and the law-speaker counts twice, and then says Eysteinn's name. You have more friends in the district than you thought. Not enough.", effects: [ { set: flag.ru_home_lost } ] }
     - id: thing_weak
       text: Step up to the law-rock anyway.
       visible_if: "claim.home < 0 && claim.home >= -40"
@@ -358,7 +358,7 @@
       result: You come over the dunes at dawn. Rorik's men are Danes, and fight like it.
     - id: wait
       text: Not yet.
-      result: The envoy goes home. He'll be back. The emperor's problem isn't going anywhere.
+      result: The envoy goes home. He'll be back. The emperor's trouble with the Danes will keep.
 
 - id: ru_walcheren_sword
   kind: spine
@@ -507,4 +507,4 @@
     - id: ok
       text: Bury their dead on the dune, where he meant to bury you.
       effects: [ { legend: { id: rorik, fame: -20 } }, { deed: { type: battle_won, text: "Threw Rorik's fleet off the dunes of Walcheren", weight: 8, witnesses: 800 } } ]
-      result: Rorik's fame takes it badly. Yours doesn't.
+      result: Every port on the coast hears it. It does Rorik's name no good, and yours a great deal.

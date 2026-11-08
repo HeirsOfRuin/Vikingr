@@ -60,7 +60,7 @@
   art: muster
   title: The Swedes going east
   text: |
-    Six Swedish ships are loading on the beach for the East road: furs going one way for once, swords and salt and wine for the Finns and the Slavs, and men who have done it before standing about looking as if they know something you don't. They're leaving for Aldeigjuborg on the next fair wind. Their leader, a quiet Uppland man with a silver-mounted knife, says a ship that keeps up can sail with them, and pay for the company in silver at the far end.
+    Six Swedish ships are loading on the beach for the East road: furs going east for once, swords and salt and wine for the Finns and the Slavs, and men who have done it before standing about looking as if they know something you don't. They're leaving for Aldeigjuborg on the next fair wind. Their leader, a quiet Uppland man with a silver-mounted knife, says a ship that keeps up can sail with them, and pay for the company in silver at the far end.
   choices:
     - id: go
       text: Sail east with them.
@@ -68,7 +68,7 @@
       result: The Swedes know the water. Across the eastern sea, among the skerries of the Finnish shore, up the Neva past the rapids, into the great lake, and on the ninth day a river and a town and a smell of smoke and furs.
     - id: no
       text: Wish them luck, and stay.
-      result: They go out on the morning tide, six ships in a line, low in the water. Some of them will come back next year. The Uppland man shrugs. "Next spring, maybe," he says.
+      result: The Uppland man shrugs. "Next spring, maybe," he says. They go out on the morning tide, six ships in a line, low in the water. Some of them will come back next year.
 
 # ---- the door ----
 - id: ea_door
@@ -121,7 +121,7 @@
         text: Eight days of it. By the end your shoulders are raw meat and you could carry an ox. She goes back into the water at the Dnieper's head on a cold morning and floats, and nobody says anything, because nobody has the breath.
         effects: [ { add: { crew.morale: 1 } } ]
       failure:
-        text: Eleven days. On the eighth she slips on a slope and comes back down the rollers and takes a man's legs with her. You leave him with a Slav village, with silver, and don't expect to see him again.
+        text: Eleven days. On the eighth she slips on a slope and comes back down the rollers, and kills one man and takes another's legs. You leave the second with a Slav village, with silver, and don't expect to see him again.
         effects: [ { add: { crew.men: -2, crew.morale: -1 } } ]
       next: ea_d_kiev
     - id: hire
@@ -165,7 +165,7 @@
         text: Seven rapids. You take them slowly, a man's length at a time, and lose a cask and an oar and nobody's life. Below the last one the river opens out again, wide and slow and brown, and everyone sits down in the bottom of the boat and laughs.
         effects: [ { days_foraged: 12 }, { deed: { type: deed, text: "Took a ship down the Dnieper rapids", weight: 2, witnesses: 40 } } ]
       failure:
-        text: At the fourth one the current takes the stern and slams her onto a rock, and three men go into the white water and only one comes out. She's holed. You patch her on the bank with a cloak and pitch and go on, short of men and long of faces.
+        text: At the fourth one the current takes the stern and slams her onto a rock, and four men go into the white water and only one comes out. She's holed. You patch her on the bank with a cloak and pitch and go on, short of men and long of faces.
         effects: [ { days_foraged: 15 }, { add: { crew.men: -3, crew.morale: -1 } }, { lose_cargo: 1 } ]
       next: ea_d_ford
 
@@ -209,7 +209,7 @@
   text: |
     [if year == 860]The emperor is away with his army, fighting the Arabs in the east, and the Rus come up the strait to the walls of Miklagarðr in two hundred ships on a June evening, and the city doesn't believe it until the smoke goes up from the suburbs.
 
-    Outside the walls there are villas, and gardens, and monasteries on the islands in the sea of Marmara, and nobody has thought to defend any of it, because nobody has ever come. The walls themselves are higher than any you've seen, three of them, one behind another, and the Greeks are on them, praying.[else]The city is too big to understand. Walls, three rows of them, higher than a ship's mast, running out of sight. Domes. A church with a roof like a sky. A harbour with a chain across it. More people in one market than in the whole of Norway.
+    Outside the walls there are villas, and gardens, and monasteries on the islands in the Sea of Marmara, and nobody has thought to defend any of it, because nobody has ever come. The walls themselves are higher than any you've seen, three of them, one behind another, and the Greeks are on them, praying.[else]The city is too big to understand. Walls, three rows of them, higher than a ship's mast, running out of sight. Domes. A church with a roof like a sky. A harbour with a chain across it. More people in one market than in the whole of Norway.
 
     The Greeks put foreign merchants in a quarter outside the walls, count them, write their names down, and let them into the city by one gate, fifty at a time, unarmed, with an official to watch them. You've never been watched so carefully by so many people.[/if]
   choices:
@@ -231,7 +231,7 @@
       result: The Greeks pay for furs and wax and slaves in gold and silver and silk, and they write it all down, and tax it, and smile. You come away with silk that would buy a farm in Hordaland, and the feeling of having been very politely robbed, and a story nobody at home will believe.
       next: ea_d_back
     - id: sword
-      text: Spend the summer's silver on a Greek sword and a Greek mail-shirt.
+      text: Spend the summer's silver on a Greek sword.
       visible_if: "year != 860"
       requires: ["silver >= 120"]
       effects: [ { add: { silver: -120 } }, { item: { id: frankish_sword, equip: true } }, { days_foraged: 20 }, { deed: { type: deed, text: "Bought a sword in Miklagarðr", weight: 2, witnesses: 60 } } ]
@@ -335,7 +335,7 @@
     - id: honest
       text: Go to Jurjan, and pay the heathen's tax.
       effects: [ { add: { silver: 300, honour: 1 } }, { goods: { id: silk, lots: 3 } }, { days_foraged: 25 } ]
-      result: The tax-man looks up at that, for the first time all day, and takes the higher rate, and something like respect. You pay more than every other Rus in Jurjan. You're the only one who doesn't have to remember a lie. Three bolts of Jurjan silk go into the hold, rolled in oiled leather.
+      result: The tax-man looks up at that, for the first time all day, and takes the higher rate with something like respect. You pay more than every other Rus in Jurjan. You're the only one who doesn't have to remember a lie. Three bolts of Jurjan silk go into the hold, rolled in oiled leather.
       next: ea_v_back
     - id: shore
       text: Raid the shore of the sea instead, where the emir's men are thin.
@@ -399,16 +399,16 @@
   art: yule_hall
   title: A winter at Itil
   text: |
-    The Khazars' king goes out on the steppe for the winter with his court, like a herdsman following grass, and the city empties and fills with merchants and traders' boats frozen in the channels. There are men here from everywhere: Arabs, Persians, Greeks, Jews from Baghdad, a man from somewhere east of the east who sells silk and doesn't say where it comes from.
+    The Khazars' king goes out on the steppe for the winter with his court, like a herdsman following grass, and the city empties, and fills again with merchants, their boats frozen in the channels. There are men here from everywhere: Arabs, Persians, Greeks, Jews from Baghdad, a man from somewhere east of the east who sells silk and doesn't say where it comes from.
   choices:
     - id: trade
       text: Trade the winter through.
       effects: [ { add: { silver: 80, skill.trade: 1 } } ]
-      result: By spring you've bought and sold your way through half the merchants in Itil, and you know the worth of everything from a Frankish sword to a Chinese silk, and you've been cheated by experts, and once or twice cheated them back.
+      result: By spring you've bought and sold your way through half the merchants in Itil, and you know the worth of everything from a Frankish sword to a bolt of eastern silk, and you've been cheated by experts, and once or twice cheated them back.
     - id: listen
       text: Sit with the Jewish merchants, and hear about the world.
       effects: [ { add: { skill.lore: 2 } } ]
-      result: They have been to places that aren't anywhere you know. Baghdad, and India, and the land the silk comes from. They draw it for you with a stick in the ashes. The world, it turns out, is much bigger than the North, and mostly doesn't know the North is there.
+      result: They have been to places that aren't anywhere you know. Baghdad, and India, and the land the silk comes from. They draw it for you with a stick in the ashes. The world, by their stick, is much bigger than the North, and mostly doesn't know the North is there.
 
 - id: ea_spring
   kind: phase

@@ -126,9 +126,9 @@
   art: home_fjord
   title: The jarl's notice
   text: |
-    Jarl Eystein doesn't send for you. He comes down to the landing himself, the next morning, slowly, a big grey man leaning on a spear-shaft, with half his household behind him, and stands at the Raven's stern and talks to Steinarr, low, while the whole landing pretends not to listen, before he looks at you.
+    Jarl Eystein doesn't send for you. He comes down to the landing himself, the next morning, slowly, a big grey man leaning on a spear-shaft, with half his household behind him, and stands at the Raven's stern and talks to Steinarr, low, while the whole landing pretends not to listen. Then he looks at you.
     [if fate.asgeir_falls && !flag.bg_covered]
-    "Ásgeir Kolsson was my sister's son," he says. "I put him in that stern myself, eleven summers ago. Now I'm told he's lying under a cairn in Ireland, and his men wanted to give my ship to a boy who'd never been further than Karmøy in his life." He doesn't raise his voice. He doesn't need to. "Tell me why they'd want that."
+    "Ásgeir Kolsson was my sister's son," he says. "I put him in that stern myself, eleven summers ago. Now I'm told he's lying under a cairn in Ireland, and his men wanted to give my ship to a boy who'd never been further than Karmøy in his life." He doesn't raise his voice. "Tell me why they'd want that."
     [else]
     Ásgeir is beside him on a litter, with his leg bound and his ruined hand in his lap. "My sister's son tells me his men wanted you at the steering-oar," the jarl says. "On a field in Ireland, bleeding. He tells me you had the sense to say no, or Steinarr had the sense to say it for you." He looks at you. "Which was it?"
     [/if]
@@ -143,7 +143,7 @@
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
-          You tell it the way it happened, not the way it would sound best: the javelin, the banner, the levy breaking, the men shouting, and Steinarr's hand on the steering-oar. You don't make yourself bigger than you were. You don't have to.
+          You tell it the way it happened, not the way it would sound best: the javelin, the banner, the levy breaking, the men shouting, and Steinarr's hand on the steering-oar. You don't make yourself bigger than you were.
 
           When you've finished the jarl is quiet a while. "Nineteen, Ásgeir was, when I gave him a ship," he says at last. "He lost her the first summer, because nobody told him he was a boy." He turns to go, and stops. "Two summers in the prow. Then come and see me. Don't come sooner."
         effects: [ { set: flag.h_jarl_trust }, { favour: 2 }, { deed: { type: deed, text: "Answered to the jarl on the landing for the day at Bangor", weight: 2, witnesses: 80 } } ]
@@ -178,12 +178,12 @@
 
         "Well," says the jarl. "Men who'll swear to a boy with no ship." He looks at you a moment longer. "Keep them. In two summers you'll need them."
     - id: offer
-      text: Give your prow-share to Ásgeir's widow, before anyone asks.
+      text: Give your prow-share to Ásgeir's wife, before anyone asks.
       effects: [ { shares: 1 }, { add: { honour: 1 } }, { set: flag.h_jarl_trust }, { favour: 2 }, { set: flag.h_asgeir_widow } ]
       result: |
         The jarl's eyebrows go up. A whole share of the summer, weighed out on the landing in front of everyone, and carried up the hill to the house where Ásgeir's wife has shut her door.
 
-        "That wasn't yours to give," the jarl says. "It was hers anyway." But something in his face has changed. "Two summers in the prow. Then come and see me."
+        "That wasn't yours to give," the jarl says. "It was hers anyway." But he says it more gently than anything else he has said on the landing. "Two summers in the prow. Then come and see me."
 
 - id: h_gyda
   kind: spine
@@ -230,7 +230,7 @@
       result: |
         You nod. She nods back, a little stiffly, and turns away before you do.
         [if flag.b_gyda_promise]
-        You made her a promise on this shingle in the spring. You both know it. Neither of you says so, which is its own kind of answer.
+        You made her a promise on this shingle in the spring. You both know it, and neither of you says so.
         [/if]
         By the winter nights there's talk of her and a farmer's son from up the valley. You find you can hear it without minding much. Some summers are for the sea.
     - id: wish
@@ -290,7 +290,7 @@
       result: |
         You give them to your father. He looks at them a long time, the way he looks at weather, and then puts them to work: cutting turf, carrying water, mucking out the byre they slept in.
 
-        [if background == younger_son]Hallbjörn likes having them.[else]Your father doesn't like having them, and says so, once, and then teaches the youngest to hold a strake.[/if] Your mother doesn't, and won't say why. In the winter, one of them, the youngest, runs off across the snow toward the sea, and is found three days later, frozen, a mile short of it.
+        [if background == younger_son]Hallbjörn likes having them.[else]Your father doesn't like having them, and says so, once, and then teaches the youngest to hold a strake.[/if] Your mother doesn't, and won't say why. In the winter, one of them, the youngest, runs off across the snow toward the sea, and is found three days later, frozen, a bowshot short of it.
     - id: colman
       text: Keep Colmán. Sell the rest.
       visible_if: "flag.i_colman_taken && !flag.bg_colman_freed"

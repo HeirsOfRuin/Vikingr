@@ -124,7 +124,7 @@ export function settleHere(state: GameState, content: ContentBundle): string[] {
     `The ships go back to ${from} for them, and come back low in the water: ${plural(n, 'soul')}, with their cows and their looms and their seed-corn, and ${state.base.wife ? `${state.base.wife} standing in the bow of the first ship as if she had planned the whole thing` : 'the old women complaining the whole way'}.`,
     sale ? `${BASE[state.base.level].name} in ${from} is sold, for ${formatSilver(sale)}. You build again here, ${state.base.level === 'hall' ? 'a hall with carved posts, as long as the old one' : 'a longhouse'}, with the hoard under the floor and the trophies on the walls.` : `You raise a longhouse here, for ${formatSilver(cost)} in timber and turf, and bury the hoard under its floor.`,
     `The men's wives are here now. They will fight harder for this shore, and none of them will go home at the turn of the year: home is here.`,
-    h.kind === 'fort' ? `The settlers' sons take their turns on the stockade: ${plural(h.garrison ?? 0, 'man', 'men')} hold it now. They will still come for it in the winter. You will be here.` : `${name} is home. The jarl's levy, the district's feasts and the old neighbours stay in Hordaland. That is what leaving means.`,
+    h.kind === 'fort' ? `The settlers' sons take their turns on the stockade: ${plural(h.garrison ?? 0, 'man', 'men')} hold it now. They will still come for it in the winter. You will be here.` : `${name} is home. The jarl's levy, the district's feasts and the old neighbours stay in Hordaland.`,
   ];
   return lines;
 }

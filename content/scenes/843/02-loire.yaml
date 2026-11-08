@@ -23,12 +23,12 @@
       text: Sit up with Hrói, and swap stories till the fire's out.
       effects: [ { set: flag.e43_hroi }, { add: { crew.morale: 1 } } ]
       result: |
-        He talks till the fire's embers, about his father's ship and his uncle's farm and the girl at Skiringssal who said she'd wait, and you talk more than you meant to. By morning you are friends, the way men are friends who are going to the same fight. He goes back to his ship at dawn, shouting your name across the water so the whole fleet hears it.
+        He talks till the fire is embers, about his father's ship and his uncle's farm and the girl at Skiringssal who said she'd wait, and you talk more than you meant to. By morning you are friends, the way men are friends who are going to the same fight. He goes back to his ship at dawn, shouting your name across the water so the whole fleet hears it.
     - id: ships
       text: Walk the beach, and look at every ship in the fleet.
       effects: [ { add: { skill.seamanship: 1 } } ]
       result: |
-        A whole day, from one end of the beach to the other: Vestfold karvis with carved stems, Rogaland ships with new sails, an old Hordaland snekkja with a prow-beast older than your grandfather. The steersmen tell you what they're proud of and what they're afraid of in their ships, and by evening you know more about ships than you did in the boatyard.
+        A whole day, from one end of the beach to the other: Vestfold karvis with carved stems, Rogaland ships with new sails, an old Hordaland snekkja with a prow-beast older than your grandfather. The steersmen tell you what they're proud of and what they're afraid of in their ships, and by evening you know more about ships than you learned in all your years at home.
     - id: old
       text: Find the old men who've been south before, and ask them about the Franks.
       effects: [ { add: { skill.lore: 1 } } ]
@@ -68,7 +68,7 @@
           [if service]You say it at the fire, and it goes from fire to fire, and by morning the captains have it.[else]You say it at the council.[/if] The leaders make Lambert give hostages: two of his horsemen, who sail with the fleet and are told what happens to them if the gate is shut. Lambert gives them without arguing, which is answer enough.
         effects: [ { set: flag.e43_lambert_hostages }, { add: { honour: 1 } } ]
       failure:
-        text: The men around the fire laugh at you. "Of course he'll sell us," says one. "He's a Frank. That's why we'll be quick." It's not much of an answer, but it's the one the fleet goes with.
+        text: The [if service]men around the fire[else]other captains[/if] laugh at you. "Of course he'll sell us," says one. "He's a Frank. That's why we'll be quick." It's not much of an answer, but it's the one the fleet goes with.
     - id: sleep
       text: Sleep. Tomorrow you go up the river.
       effects: [ { add: { hamingja: 1 } } ]
@@ -168,7 +168,7 @@
         text: You go on mending the net, very carefully, with your back to the shingle. When you turn round the boat is gone, and so is the girl, and nobody ever asks you about it. The priest has to beg a lift home. You think about her sometimes, getting to the mainland. You hope she did.
         effects: [ { add: { hamingja: 1 } } ]
       failure:
-        text: She's halfway to the boat when a man from the guard sees her, and shouts, and she's dragged back up the beach. The guard looks at you a long time. He doesn't say anything to the leaders. He doesn't need to; you'll be watched now.
+        text: She's halfway to the boat when a man from the guard sees her, and shouts, and she's dragged back up the beach. The guard looks you up and down, slowly. He doesn't say anything to the leaders. He doesn't need to; you'll be watched now.
         effects: [ { add: { honour: -1 } } ]
     - id: call
       text: Call the guard. She's somebody's silver.
@@ -179,7 +179,7 @@
       requires: ["silver >= 24"]
       effects: [ { add: { silver: -24 } }, { set: flag.e43_aude }, { journal: "Bought Aude of Nantes out of the fleet's captives." } ]
       result: |
-        The leaders' man weighs your silver and writes nothing down; one girl less in the church is one girl less to feed. Her name is Aude. She is a cloth-merchant's daughter from Nantes, and her father is alive, she thinks, if he got out of the city. She sleeps by the fire in the house where your bench-mates sleep, and works for her bread like everyone else, and watches you as if she is trying to work out what you are.
+        The leaders' man weighs your silver and writes nothing down; one girl less in the church is one girl less to feed. Her name is Aude. She is a cloth-merchant's daughter from Nantes, and her father is alive, she thinks, if he got out of the city. She sleeps by the fire in the house where [if service]your bench-mates[else]your crew[/if] sleep, and works for her bread like everyone else, and watches you as if she is trying to work out what you are.
 
         In the spring the priest's boat will come again, with the ransoms.
     - id: shake

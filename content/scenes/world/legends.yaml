@@ -35,7 +35,7 @@
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
         text: |
-          The hall goes quiet. Then Horik laughs, one bark, like a seal. "A free man," he says to the envoy. "Write that down. Tell your emperor the Norwegians are all free men, and see how much good it does him." He waves you away, but he's looking at you differently.
+          The hall goes quiet. Then Horik laughs, one bark, like a seal. "A free man," he says to the envoy. "Write that down. Tell your emperor the Norwegians are all free men, and see how much good it does him." He waves you away, but he watches you all the way to the door.
         effects: [ { lord: { id: horik, fav: 1 } }, { add: { honour: 1 } } ]
       failure:
         text: |
@@ -202,7 +202,7 @@
   art: celtic_monastery
   title: The king's poet
   text: |
-    He comes down to the shore alone, with a harp-case on his back and a staff in his hand, and stands just above the tide-line where a spear would reach him, waiting to see whether you'll throw one. Nobody does. There's something about him.
+    He comes down to the shore alone, with a harp-case on his back and a staff in his hand, and stands just above the tide-line where a spear would reach him, waiting to see whether you'll throw one. Nobody does, and afterwards nobody can say why not.
 
     He's a poet, it turns out, an ollam, a man of the old learning, and in Ireland a poet can walk through a war without a scratch, because nobody wants to be in his next poem. He speaks Norse, badly, with great dignity.
     [break]

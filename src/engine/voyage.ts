@@ -161,7 +161,7 @@ function storm(state: GameState, content: ContentBundle, rng: RngCursor, lines: 
     const drowned = Math.round(aboard * 0.7);
     lostMen += drowned;
     state.ships.splice(i, 1);
-    lines.push(`${capitalise(ship.name)} breaks up. ${drowned ? `${plural(drowned, 'man', 'men')} go down with her.` : 'Her men are hauled aboard the other ships, every one.'}`);
+    lines.push(`${capitalise(ship.name)} breaks up. ${drowned ? `${plural(drowned, 'man', 'men')} ${drowned === 1 ? 'goes' : 'go'} down with her.` : 'Her men are hauled aboard the other ships, every one.'}`);
     journal(state, `${ship.name} was lost in a storm.`);
     if (i === 0) {
       for (const m of aliveMen(state)) {
@@ -251,7 +251,7 @@ function arrive(state: GameState, content: ContentBundle, rng: RngCursor, lines:
     if (!state.known.includes(v.to)) state.known.push(v.to);
     state.rumoured = state.rumoured.filter((r) => r !== v.to);
     addDeed(state, content, { type: 'first_voyage', text: `Sailed uncharted water to ${content.places[v.to]!.name}`, witnesses: state.crew.men });
-    lines.push(`You have found it: ${content.places[v.to]!.name}, where your map was blank. The way is yours now, and anyone you tell.`);
+    lines.push(`You have found it: ${content.places[v.to]!.name}, where your map was blank. The way is yours now, and anyone's you tell.`);
   }
   const heard = hearOfNeighbours(state, content, v.to);
   if (heard.length) lines.push(`They tell you of ${heard.map((id) => content.places[id]!.name).join(' and ')}.`);

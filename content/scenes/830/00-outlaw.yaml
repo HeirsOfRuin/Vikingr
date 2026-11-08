@@ -39,7 +39,7 @@
         text: |
           You go over the rail and stand in front of your father with the axe up, and wait, while Ozurr looks at you and at the four hundred people on the slope and decides. He decides wrong. His sword comes up, and the whole Thing sees it come up, and then you kill him.
 
-          It's very quick. Afterwards, everybody agrees on that, and on the sword. It's the only thing anybody agrees on.
+          It's very quick. Afterwards, everybody agrees on that, and on the sword. They're the only things anybody agrees on.
         effects: [ { set: flag.o_defence }, { add: { honour: 1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson in the horse-ring, after he drew on an unarmed man", weight: 2, witnesses: 400 } } ]
         next: o_thing
       failure:
@@ -48,10 +48,10 @@
         effects: [ { set: flag.o_hot }, { add: { honour: -1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson in the horse-ring at the spring Thing", weight: 2, witnesses: 400 } } ]
         next: o_thing
     - id: meant
-      text: You've hated Ozurr Hrappsson since you were ten. Now you have a reason.
+      text: Go for Ozurr. You've hated him since you were ten, and now you have a reason.
       effects: [ { set: flag.o_meant }, { add: { honour: -1, skill.weapons: 1 } }, { deed: { type: deed, text: "Killed Ozurr Hrappsson at the spring Thing, and meant it", weight: 3, witnesses: 400 } } ]
       result: |
-        He's slow. He was always slow, from the time he used to catch you on the shore path and twist your arm until you said what he wanted. You go over the rail with the axe already swinging, and he's still turning, and that's all.
+        He's slow. He was always slow, from the time he used to catch you on the shore path and twist your arm until you said what he wanted. You go over the rail with the axe already swinging, and he's still turning when it lands.
 
         You look up at the slope afterwards with his blood on your shoes, and you see Hrapp, old Hrapp, standing up at the rail, and you see him see your face, and understand that you meant it.
       next: o_thing
@@ -70,7 +70,7 @@
 
     "Out of Hordaland three winters. After the third, he may come home, and the law will have nothing more to say to him. Before it, any man who finds him in this district may kill him. If the wergild is paid, three pounds for Ozurr, and a pound and a half to me for his peace, he may come home sooner, and Hrapp's house must take it." The jarl looks at Hrapp. "You'll take it, Hrapp. Or you'll answer to me."
 
-    Hrapp looks at you. He doesn't say anything. He doesn't have to.
+    Hrapp doesn't answer the jarl. He looks at you.
   choices:
     - id: accept
       text: Bow your head to the law.
@@ -114,7 +114,7 @@
 
     Your father sits by the fire with his arm in its sling and doesn't say anything until the fire has burned down by half. Then he gets up, and takes his axe down from the wall, the one you killed Ozurr with, cleaned now, and puts it in your hands.
 
-    "It knows the way," he says. And then, after a while: "So do I. I'd have done the same." That's all. He sits back down.
+    "It knows the way," he says. And then, after a while: "So do I. I'd have done the same." He sits back down, and says no more.
     [break]
     After dark there is a knock at the door. It's Ketill, who rowed with your father when they were both young, grey all through now, with forearms like ship's knees. He doesn't come in.
 
@@ -173,13 +173,13 @@
       check: { skill: cunning, attr: wit, difficulty: 5 }
       success:
         text: |
-          You watch him. On the eighth night, off the Orkney skerries, he comes down the ship toward you in the dark with something in his hand, and you're not asleep, and he sees you're not, and goes back.
+          You watch him. On the last night, off the Orkney skerries, he comes down the ship toward you in the dark with something in his hand, and you're not asleep, and he sees you're not, and goes back.
 
           At Birsay he goes ashore with the others and walks off up the beach without telling anybody anything, because you are standing at the top of the beach, watching him, and he understands that you'll keep watching.
         effects: [ { set: flag.o_kolgrimr_cowed }, { add: { skill.cunning: 1 } }, *west ]
       failure:
         text: |
-          You watch him for nine days and sleep on the tenth, for a moment, off the Orkney skerries, and when you wake your sea-chest is open and your mother's lock of hair is in the sea and Kolgrímr is at the bow, singing.
+          You watch him for four days and sleep on the fifth, for a moment, off the Orkney skerries, and when you wake your sea-chest is open and your mother's lock of hair is in the sea and Kolgrímr is at the bow, singing.
 
           At Birsay he's off the ship before it grounds, and by night every man in Harek's hall knows there's a Hordaland outlaw on the beach, with a Hrappsson's blood on his father's axe.
         effects: [ { set: flag.o_kolgrimr_told }, *west ]
@@ -243,7 +243,7 @@
       result: |
         "Can you," says Ásgeir. It isn't a question. He jerks his head at the ship. "Find a bench. Find out who you're rowing next to." He walks off up the beach to Harek's hall without another word, and Steinarr looks at you for a long moment and follows him.
 
-        The man on the bench across from yours is your own age, near enough, with a grin like a split melon. "An outlaw," he says, delighted. "A real one. I'm Ulf. What did you do?"
+        The man on the bench across from yours is your own age, near enough, with a grin that splits his face in two. "An outlaw," he says, delighted. "A real one. I'm Ulf. What did you do?"
     - id: luck
       text: Tell Steinarr that bad luck is a man who doesn't take the oars he's offered.
       check: { skill: speech, attr: wit, difficulty: 4 }
@@ -274,7 +274,7 @@
     Ulf is with him, grinning. "Somebody's got to keep you alive," he says. "Ketill's too old."
     [/if]
     [if man.hallvard.loyalty >= 6]
-    Hallvard is there too. He says the ravens went north this morning, not east. He doesn't say what that means. He doesn't have to.
+    Hallvard is there too. He says the ravens went north this morning, not east. He doesn't say what that means, and nobody asks him.
     [/if]
     [if man.bersi.loyalty >= 6]
     Bersi has stayed. He says Harek pays better than the jarl, which isn't true, and everybody knows it isn't, and nobody says so.
@@ -318,7 +318,7 @@
       result: |
         "In three winters," you say, "I'll walk into Hrapp's hall and put three pounds of silver on his board, and he'll take it, because the jarl will make him." Then you drink.
 
-        Ingibjörg is watching from the end of the hall. It's not a boast that makes the hall roar. It's the kind that makes the old men nod. Harek nods.
+        Ingibjörg is watching from the end of the hall. The hall doesn't roar. The old men nod, and Harek nods with them.
     - id: ship
       text: Swear you will stand at your own steering-oar within two winters.
       effects: [ { boast: own_ship }, { add: { flag.y_hall: 1 } }, *oname ]
@@ -393,7 +393,7 @@
     - id: on
       text: Get up.
       effects: [ { add: { honour: -1 } } ]
-      result: Ketill helps you up the beach. He doesn't say anything. That's worse than anything he could say.
+      result: Ketill helps you up the beach, and doesn't say a word about the ale, all the way to the door.
 
 # Spring 831, abroad: Harek's summer.
 - id: o_spring_831
@@ -409,7 +409,7 @@
 
     You are seventeen. One winter gone, of three.
     [break]
-    Harek has a plan for the summer, and he tells it in his hall with his feet on the board. "Skye first: there's a settler there called Kolbeinn paying silver for men to hold a valley. Then south to Ireland, to a little kingdom called Conaille, whose king has been hanging Norsemen from his gate. Then home by Kaupang, to sell what we take." He looks down the hall at you. "Kaupang's in the Vestfold king's country. Your jarl's law doesn't reach there. Even a wolf's head can buy a mail shirt in Kaupang."
+    Harek has a plan for the summer, and he tells it in his hall with his feet on the board. "Skye first: there's a settler there called Kolbeinn paying silver for men to hold a valley. Then south to Ireland, to a little kingdom called Conaille, whose king has been hanging Northmen from his gate. Then home by Kaupang, to sell what we take." He looks down the hall at you. "Kaupang's in the Vestfold king's country. Your jarl's law doesn't reach there. Even a wolf's head can buy a mail shirt in Kaupang."
   choices:
     - id: prow
       text: Ask Harek for the prow. First ashore, a share and a half.
@@ -445,7 +445,7 @@
 
     He's sitting on a rock above the tideline, alone, with his sword across his knees, waiting. He's the youngest of Hrapp's sons and the best of them, everybody always said: quick where Ozurr was slow, quiet where Thorgils was loud. He has come a long way to sit on this rock.
 
-    "I've been to Orkney," he says, when you come up the beach. "And Skye. And here. I was going to Ireland next." He stands up. "My father's old. He wanted it done before he dies."
+    "I've been to Orkney," he says, when you come up the beach. "And Skye. And here. I'd have gone as far as I had to." He stands up. "My father's old. He wanted it done before he dies."
   choices:
     - id: fight
       text: Fight him. Here, now, on the sand.
@@ -465,7 +465,7 @@
       check: { skill: speech, attr: wit, difficulty: 6 }
       success:
         text: |
-          "In front of the jarl," you say. "In front of the district. Not on a beach in Ireland where nobody will see either of us die." He thinks about that. He's the clever one.
+          "In front of the jarl," you say. "In front of the district. Not on a strange beach where nobody will see either of us die." He thinks about that. He's the clever one.
 
           "In front of the district," he agrees, finally. "When you come home, I'll be on the landing." He goes. You find, afterwards, that your hands are shaking.
         effects: [ { set: flag.o_onund_done }, { set: flag.o_onund_waits } ]
@@ -574,7 +574,7 @@
     [/if]
   choices:
     - id: pay
-      text: Sail home with the wergild and the jarl's price in your sea-chest, and pay it on the landing.
+      text: Sail home with the wergild and the jarl's price, and pay it on the landing.
       requires: [{ any: ["silver >= 216", "flag.o_wergild_paid && silver >= 72"] }]
       effects:
         - { if: flag.o_wergild_paid, then: [ { add: { silver: -72 } } ], else: [ { add: { silver: -216 } } ] }
@@ -585,9 +585,9 @@
       result: |
         You come up the fjord in the last week of the winter, with the ice just out and the water black, and walk up the jarl's landing with your sea-chest on your shoulder and put it down in front of the jarl's steward, and open it, and count it out.
 
-        Hrapp is there. He's very old now. He watches every coin go onto the scales, and when it's done, he nods, once, and turns and walks up the hill without a word. That's peace, in Hordaland. It's what peace looks like.
+        Hrapp is there. He's very old now. He watches every coin go onto the scales, and when it's done, he nods, once, and turns and walks up the hill without a word. That's peace, in Hordaland.
 
-        Your mother is at the back of the crowd. Your father isn't; he died the second winter, Ketill tells you, quietly, on the landing, and you understand why nobody wrote. [if flag.o_ketill_asked]"He knew where you were," Ketill says. "I made sure."[/if]
+        Your mother is at the back of the crowd. Your father isn't; he died the second winter, Ketill tells you, quietly, on the landing, and you understand why nobody sent word. [if flag.o_ketill_asked]"He knew where you were," Ketill says. "I made sure."[/if]
     - id: home
       text: Sail home. The law's done with you. Hrapp's house can do what it likes.
       effects: [ { set: flag.o_hunted }, { exile_end: true }, { add: { honour: 1 } } ]
@@ -596,7 +596,7 @@
 
         Nobody stops you. The law is done with you. Hrapp's sons watch you from the top of the landing, and don't come down, and you know they're counting the days the same way you counted them.
 
-        Your mother is at the back of the crowd. Your father isn't; he died the second winter, Ketill tells you, and you understand why nobody wrote.
+        Your mother is at the back of the crowd. Your father isn't; he died the second winter, Ketill tells you, and you understand why nobody sent word.
     - id: stay
       text: Not yet. One more summer abroad.
       effects: [ { add: { man.ketill.loyalty: -1 } } ]

@@ -23,11 +23,11 @@
       text: Ride north with the army.
       visible_if: flag.ga_rider
       effects: [ { route: [york] }, { camp: york }, { march: york }, { add: { skill.cunning: 1 } } ]
-      result: A week on the old Roman road, through a country that empties ahead of you like a pond with the plug pulled. You see more of England in a week than most Englishmen see in their lives, and none of it sees you, because it has all gone into the woods.
+      result: A week on the old Roman road, through a country that empties ahead of you like a tub with the bung knocked out. You see more of England in a week than most Englishmen see in their lives, and none of it sees you, because it has all gone into the woods.
     - id: ship
-      text: Go round by sea in the Elk.
+      text: Go round by sea[if service] in the Elk[/if].
       effects: [ { route: [york] }, { camp: york } ]
-      result: The Elk goes north with the ships, up the coast and into the Humber, a brown river as wide as a fjord with no mountains to hold it. The horses beat you there. The men who rode never let you forget it.
+      result: You go north [if service]in the Elk [/if]with the ships, up the coast and into the Humber, a brown river as wide as a fjord with no mountains to hold it. The horses beat you there. The men who rode never let you forget it.
 
 - id: e66_york_taken
   kind: place
@@ -93,7 +93,7 @@
     - id: watch
       text: Watch it, all of it. You came for this.
       effects: [ { add: { hamingja: 1, honour: -1 } }, { set: flag.ga_saw_aella } ]
-      result: You watch. You will be asked about it for the rest of your life, by men who weren't there, and you will find that you don't want to tell them. That is the thing nobody warned you about.
+      result: You watch, all of it. That night at the fires the men who were at the back want to hear it, and you find you don't want to tell them.
       next: e67_kolr
     - id: away
       text: Go and see to the wounded.
@@ -108,10 +108,10 @@
   text: |
     Your lane goes. The English come through it over the men who were holding it, and you are carried back into the yard of somebody's house with a spear-cut in your arm and a dead Dane across your legs.
 
-    It doesn't matter, in the end, which is the worst thing about it. The army holds everywhere else, and by noon both the kings of Northumbria are dead in the streets, and York is a Danish town. You were beaten in the only fight you saw, and you are on the winning side.
+    None of it matters, in the end. The army holds everywhere else, and by noon both the kings of Northumbria are dead in the streets, and York is a Danish town. You were beaten in the only fight you saw, and you are on the winning side.
   choices:
     - id: up
-      text: Get up, and find the Elk's men.
+      text: Get up, and find [if service]the Elk's men[else]your men[/if].
       effects: [ { add: { crew.morale: -1 } } ]
       result: You find most of them. Not all.
       next: e67_kolr
@@ -147,7 +147,7 @@
       text: Tell them to sell her, and take a Dane's bench yourself.
       visible_if: service
       effects: [ { add: { silver: 40 } }, { captain: Hrafn }, { route: [nottingham] }, { camp: nottingham } ]
-      result: A Dane called Hrafn buys her for less than she's worth and more than he can afford, and keeps you on at your old bench, at your old share, with forty in your purse from the sale. He steers worse than Kolr. Everyone does.
+      result: A Dane called Hrafn buys her for less than she's worth and more than he can afford, and keeps you on at your old bench, at your old share, with most of a pound in your purse from the sale. He steers worse than Kolr. Everyone does.
     - id: on
       text: Go up the Trent with the army.
       visible_if: "!service"

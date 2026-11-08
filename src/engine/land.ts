@@ -175,7 +175,7 @@ export function holdingsYear(state: GameState, content: ContentBundle, rng: RngC
         continue;
       }
       h.garrison = Math.max(0, G - LAND.winterLoss);
-      lines.push(wintered === h.place ? `The fort at ${name} held through the winter with you in it. Nobody came over the ditch.` : `The fort at ${name} held through the winter. ${plural(LAND.winterLoss, 'man')} of its garrison died of the cold and the flux and the Irish.`.replace('the Irish', content.places[h.place]!.people === 'gael' ? 'the Irish' : 'the neighbours'));
+      lines.push(wintered === h.place ? `The fort at ${name} held through the winter with you in it. Nobody came over the ditch.` : `The fort at ${name} held through the winter. ${plural(LAND.winterLoss, 'man', 'men')} of its garrison died of the cold and the flux and the Irish.`.replace('the Irish', content.places[h.place]!.people === 'gael' ? 'the Irish' : 'the neighbours'));
     }
     const y = holdingYield(h);
     if (y) {

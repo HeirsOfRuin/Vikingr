@@ -101,7 +101,7 @@
     - id: sword
       text: Your name, and a sword.
       effects: [ { add: { crew.morale: 1 } } ]
-      result: The sword comes out looking more like a cross than the moneyer meant, which pleases everyone. Your men carry them as luck-pieces. Some of them will be found in the ground a thousand years from now, though nobody digging will know whose they were.
+      result: The sword comes out looking more like a cross than the moneyer meant, which pleases everyone. Your men carry them as luck-pieces.
 
 # ---- the East Angles ----
 - id: ru_eastangles
@@ -176,7 +176,7 @@
     - id: keep
       text: Keep the treaty, and hang the man who moved the stones.
       effects: [ { add: { honour: 1, crew.morale: -1 } } ]
-      result: You hang him at the stone he moved, with the West Saxon reeve watching. The border is quiet after that. Your men are quieter too, and not in a good way.
+      result: You hang him at the stone he moved, with the West Saxon reeve watching. The border is quiet after that. Your men are quieter too, and drink at their own end of the hall.
     - id: push
       text: Move the stones a mile further, and see what he does.
       effects: [ { add: { crew.morale: 1 } }, { standing: { people: english, n: -2 } } ]
@@ -262,7 +262,7 @@
   art: shore_wait
   title: The Loire Northmen
   text: |
-    The monks' island has been a Norse camp for longer than some of the men on it have been alive. There are houses on it now, and wives, and children who speak Frankish to their mothers and Norse to their fathers, and every summer the crews go up the river and come back. What there isn't, is anyone in charge.
+    The monks' island has been a Norse camp for longer than some of the men on it have been alive. There are houses on it now, and wives, and children who speak Frankish to their mothers and Norse to their fathers, and every summer the crews go up the river and come back. What there isn't is anyone in charge.
 
     The captains meet on the old threshing-floor, where Hastein held his councils.
     [break]
@@ -301,7 +301,7 @@
       text: Take the Breton's silver, and fight his war.
       danger: true
       effects: [ { add: { silver: 96 } }, { standing: { people: frankish, n: -2 } }, { battle: { foe: frankish_levy, terrain: rampart, men: 30, ratio: 0.9 } } ]
-      result: You go up the river with the Bretons to a church at a place called Brissarthe, where Count Robert has your men trapped. He comes to the church door without his helmet on, because it is hot.
+      result: You go up the river with the Bretons, and on the way back Count Robert traps your men in a stone church at a place called Brissarthe. He comes to the church door without his helmet on, because it is hot.
     - id: refuse
       text: Tell him the Loire Northmen fight for themselves.
       effects: [ { add: { honour: 1 } } ]
@@ -483,7 +483,7 @@
     - id: lord
       text: Let them call you their lord.
       effects: [ { rule: lordship } ]
-      result: The old man nods, as if that settles something, and sits down. By the spring they are calling you lord at the door, and their children are calling you it in the fields, and men from other places have started to hear of you.
+      result: The old man nods, as if that settles something, and sits down. By the spring they are calling you lord at the door, and their children are shouting it after you in the fields, and men from other places have started to hear of you.
     - id: no
       text: Tell them your name will do.
       result: The old man shrugs and sits down. They go on calling you by your name. It's a good name. It will have to do.

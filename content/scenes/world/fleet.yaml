@@ -17,7 +17,7 @@
       visible_if: "man.ketill.sworn && !man.ketill.master"
       effects: [ { master: ketill } ]
       result: |
-        Ketill looks at the steering-oar for a long moment, as if it might bite him. "Forty years I've rowed," he says. "Nobody ever asked me to steer." He takes it, finally, in both hands, the way a man picks up a child he's afraid of dropping. He'll be the most careful shipmaster in the north. He'll never lose her.
+        Ketill looks at the steering-oar as if it might bite him. "Forty years I've rowed," he says. "Nobody ever asked me to steer." He takes it, finally, in both hands, the way a man picks up a child he's afraid of dropping. He'll be the most careful shipmaster in the north. He means never to lose her.
     - id: ulf
       text: Give her to Ulf.
       visible_if: "man.ulf.sworn && !man.ulf.master"
@@ -39,7 +39,7 @@
     - id: hired
       text: Leave her with {newmaster}. Hired men don't sulk.
       result: |
-        {newmaster} nods, as if he'd expected nothing else, and goes off to see about her rigging. Your sworn men go back to their own work. Nobody says anything. Some of them think it, though.
+        {newmaster} nods, as if he'd expected nothing else, and goes off to see about her rigging. Your sworn men go back to their own work, and keep what they think behind their teeth.
 
 - id: fl_hired_price
   kind: pool
@@ -106,7 +106,7 @@
       text: Tell him she's yours, and so is he.
       effects: [ { if: "man.ketill.master", then: [ { man: { id: ketill, loyalty: -3 } } ] }, { if: "man.ulf.master", then: [ { man: { id: ulf, loyalty: -3 } } ] }, { if: "man.hallvard.master", then: [ { man: { id: hallvard, loyalty: -3 } } ] }, { if: "man.bersi.master", then: [ { man: { id: bersi, loyalty: -3 } } ] } ]
       result: |
-        He takes it well. That is, he finishes his ale, and says "Well," and goes to bed. He's at his oar in the spring as always. He doesn't sit across from you uninvited again.
+        He takes it well. That is, he finishes his ale, and says "Well," and goes to bed. He's at her steering-oar in the spring as always. He doesn't sit across from you uninvited again.
 
 - id: fl_quarrel
   kind: pool

@@ -56,7 +56,7 @@
       requires: ["silver >= 48"]
       effects: [ { add: { silver: -48 } }, { skald: Óttarr } ]
       result: |
-        "A Norse lord," he says, "pays once a year and expects to be remembered for ever. An Irish king pays every week and expects to be remembered by Thursday. I'll take the Norse terms." He shakes your hand like a man selling a horse.
+        "A Norse lord," he says, "pays once a year and expects to be remembered for ever. An Irish king pays every week, and expects to be remembered for a week. I'll take the Norse terms." He shakes your hand like a man selling a horse.
 
         You can take him to sea, where he will see what you do and make it count for more, or leave him at home to sing your name at the jarl's benches. A skald aboard is a skald in the rout with everyone else.
     - id: no
@@ -140,7 +140,7 @@
   art: hearth_ormr
   title: A drápa for the hall
   text: |
-    {skald} the skald comes to you after the meal, when the hall has gone quiet, and says what he has been working toward all year. Not a verse. A drápa: a long praise-poem with a refrain, the kind that is made for kings and earls, with your deeds in it from the first ship to the last, and your name carved in the refrain so men cannot sing it without you.
+    {skald} the skald comes to you after the meal, when the hall has gone quiet, and says what he has been working toward all year. Not a verse. A drápa: a long praise-poem with a refrain, the kind that is made for kings and jarls, with your deeds in it from the first ship to the last, and your name carved in the refrain so men cannot sing it without you.
 
     It is a winter's work, he says. And a drápa is paid for as a drápa. A lord who orders one and pays for a ditty is remembered for that.
   choices:

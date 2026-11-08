@@ -57,7 +57,7 @@
       requires: ["silver >= 36"]
       effects: [ { add: { silver: -36, hamingja: 1, skill.lore: 1 } }, { standing: { place: uppsala, n: 2 } } ]
       result: |
-        The temple's men do it properly, in the old way, and hang what's left in the trees beside the others. On the walk back to the ship nobody says anything for a long while. Then one of the men says he feels lucky. They all feel lucky. Some of that is the ale.
+        The temple's men do it properly, in the old way, and hang what's left in the trees beside the others. On the walk back to the ship nobody speaks until the river is in sight. Then one of the men says he feels lucky. They all feel lucky. Some of that is the ale.
     - id: mound
       text: Climb the tallest mound at dusk, alone, and sit on the old king's head.
       check: { skill: lore, attr: wit, difficulty: 5 }
@@ -206,14 +206,14 @@
   text: |
     It takes five days: up the Liffey as far as the ships will go, then dragging them overland on rollers with the men cursing, then a lake, then the Shannon, wide and slow and brown, through bog and water-meadow with herons standing in it like old men.
 
-    And then Clonmacnoise, on a ridge above the river, and it isn't a monastery. It's a city. Churches, a dozen of them, little stone ones and big wooden ones. Workshops, and houses, and a great crowd of people. Pilgrims. Students: you hear English spoken, and something that might be Frankish. A road coming in from every side of Ireland.
+    And then Clonmacnoise, on a ridge above the river, and it is less a monastery than a city. Churches, a dozen of them, little stone ones and big wooden ones. Workshops, and houses, and a great crowd of people. Pilgrims. Students: you hear English spoken, and something that might be Frankish. A road coming in from every side of Ireland.
 
     The monks see you, and don't run. A great many armed men come out of the houses instead, and stand in a line on the ridge, and wait.
   choices:
     - id: count
       text: Lie off in the river, and count them, and their gates, and their churches.
       effects: [ { add: { skill.lore: 1 } }, { set: flag.clonmacnoise_scouted } ]
-      result: You count them. The tenants of Clonmacnoise, you learn later, have fought the tenants of other monasteries in pitched battles, and won. They don't look like monks' men. They look like they are waiting for you to try.
+      result: You count them. The tenants of Clonmacnoise, you learn later, have fought the tenants of other monasteries in pitched battles, and won. They don't look like monks' men. They look as if they are waiting for you to try.
     - id: tribute
       text: Send a man up under a green branch. Tell them you'll go away for silver.
       check: { skill: speech, attr: pre, difficulty: 6 }
@@ -235,7 +235,7 @@
   requires: ["!service"]
   title: Eoforwic
   text: |
-    York stands where two rivers meet, behind walls the Romans built and the English have patched with timber. Inside the walls there's the king's hall and the minster and the bishop. Outside, along the river, there's the wic, where the Frisian traders live in their own quarter and the ships tie up in rows.
+    York stands where two rivers meet, behind walls the Romans built and the English have patched with timber. Inside the walls there's the king's hall and the minster and the archbishop. Outside, along the river, there's the wic, where the Frisian traders live in their own quarter and the ships tie up in rows.
     [if year < 840]
 
     King Eanred rules Northumbria, and has for twenty years. He's old now. Everybody is waiting.
@@ -380,7 +380,7 @@
   choices:
     - id: wine
       text: Pay, behave, and buy wine.
-      requires: ["silver >= 12"]
+      requires: ["silver >= 36"]
       effects: [ { add: { silver: -36, skill.trade: 1 } }, { goods: { id: wine, lots: 2 } }, { standing: { place: nantes, n: 2 } } ]
       result: The wine here is better than anything that reaches Hedeby, and cheaper, and the Bretons who sell it are friendlier than the Franks, because they hate the Franks more than they hate you. You learn a great deal about the count from them. None of it is good.
     - id: feast

@@ -25,7 +25,7 @@
       text: Ask him to sail with you this summer. Two ships go further than one.
       requires: ["captain.steinarr.rel >= 3"]
       effects: [ { ally: { id: steinarr, meet: true, felag: true } } ]
-      result: He looks at you a long while. "Félag," he says. "Equal shares by the men. And when we disagree, we talk, and then I'm right." He holds out his hand. It's a hard grip, and an honest one.
+      result: He takes his time over it. "Félag," he says. "Equal shares by the men. And when we disagree, we talk, and then I'm right." He holds out his hand. It's a hard grip, and an honest one.
     - id: cold
       text: Nod to him, and get on with your loading.
       effects: [ { ally: { id: steinarr, meet: true, rel: -1 } } ]
@@ -115,7 +115,7 @@
       text: Offer him a pound and a half to settle it, here, in front of witnesses.
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } }, { ally: { id: onund, meet: true, rel: 5 } }, { set: flag.hrapp_paid } ]
-      result: He looks at the silver a long time. Then he takes it, and spits in the sea, and says the words. It's done. He'll never like you. But it's done.
+      result: He looks at the silver, and at the witnesses. Then he takes it, and spits in the sea, and says the words. It's done. He'll never like you. But it's done.
     - id: holm
       text: Tell him if he wants it settled, there's a cloak on the shore.
       danger: true
@@ -136,7 +136,7 @@
     - id: done
       text: Give his men leave to take him home.
       effects: [ { ally: { id: onund, kill: true } }, { deed: { type: holmgang_won, text: "Killed Önundr Hrappsson on the cloak at Avaldsnes, ending Hrapp's feud" } }, { set: flag.hrapp_ended } ]
-      result: They carry him down to his ship, and row away north, and nobody says anything at all.
+      result: They carry him down to his ship and row away north. Not one of them looks back.
 
 - id: cap_sigtrygg
   kind: place
@@ -192,7 +192,7 @@
       text: Out-brag him, in front of the whole beach.
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
-        text: You tell it bigger, louder and better than he does, and the beach roars, and Eyvindr laughs so hard he has to sit down on a fish crate. He likes you now. Heaven help you.
+        text: You tell it bigger, louder and better than he does, and the beach roars, and Eyvindr laughs so hard he has to sit down on a fish crate. He likes you now. Gods help you.
         effects: [ { ally: { id: eyvindr, meet: true, rel: 4 } }, { add: { flag.y_hall: 1 } } ]
       failure:
         text: You try. He has a better voice and more practice. The beach is his.
@@ -247,7 +247,7 @@
       # the levy fights as one line: the jarl's hird in the centre, the district's ships on the left, his on the right (playtest 5)
       effects: [ { days: 4 }, { host: { title: "The jarl's levy on the island beach", foe: danish_raiders, terrain: beach, men: 34, wings: [ { name: "The jarl's hird", men: 60, quality: 1.5, foe_men: 45 }, { name: "The district's ships", men: 40, quality: 0.8, foe_men: 35 } ], role: wing, win: g_levy_won, lose: g_levy_lost } } ]
     - id: silver
-      text: Send a pound and a half for the jarl's men, and keep your ships for your own summer.
+      text: Send the jarl a pound and a half, and keep your ships for your own summer.
       requires: ["silver >= 72"]
       effects: [ { add: { silver: -72 } } ]
       result: The jarl takes the silver. He doesn't send thanks. A man who sends silver to a levy is a man with something better to do, and everybody knows it.
@@ -311,4 +311,4 @@
       text: Tell him you're another lord's man, and can't hold land from two.
       visible_if: "oath && oath != jarl"
       effects: [ { add: { honour: 1 } }, { favour: -1 } ]
-      result: The hall goes quiet. The jarl looks at the turf in his own hands a long moment, and then gives it to somebody else, a man you've never liked, who kneels very fast.
+      result: The hall goes quiet. The jarl looks down at the turf in his own hands, and then gives it to somebody else, a man you've never liked, who kneels very fast.

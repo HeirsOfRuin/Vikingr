@@ -32,7 +32,7 @@
         text: You shout it, and it carries, and the bench behind you roars, and somebody on the nearest Danish ship shouts something back that is nearly as good. Nobody draws a sword. When the Danes pull away, the ships around you are still saying your line, and somebody tells it at every fire for a week.
         effects: [ { add: { crew.morale: 1 } } ]
       failure:
-        text: You shout it, and it doesn't carry, and the only man who hears it is the steersman, who tells you to sit down before you start a war with the king of the Danes on your own. You sit down.
+        text: You shout it, and it doesn't carry, and the only man who hears it is [if service]the steersman, who tells you to sit down before you start a war with the king of the Danes on your own[else]your steersman, who asks whether you mean to start a war with the king of the Danes on your own[/if]. You sit down.
     - id: count
       text: Count the shields on the Danish ships, and the oars.
       effects: [ { add: { skill.cunning: 1 } } ]
@@ -85,7 +85,7 @@
   text: |
     South of the Danes the land goes flat, and then flatter, until it is hardly land at all: a grey-green line on the edge of the sea, with sandbanks in front of it that come and go with the tide, and here and there a mound with a farm on top of it and cattle standing round the farm, waiting for the water to go down. The Frisians live on their mounds the way gulls live on rocks. The old men say the sea takes a village a year.
 
-    Somewhere behind those sands is the mouth of the Rhine, and up the Rhine is Dorestad, that the Danes burned four years running when you were a boy.
+    Somewhere behind those sands is the mouth of the Rhine, and up the Rhine is Dorestad, that the Danes burned four years running[if service] when you were a boy[/if].
   choices:
     - id: dorestad
       text: Ask the old men about Dorestad.
@@ -103,7 +103,7 @@
     - id: fish
       text: Trade for fish with a Frisian boat that comes out to look at the fleet.
       effects: [ { add: { crew.morale: 1 } } ]
-      result: Two Frisians in a little boat, a man and his son, with a catch of flatfish they are willing to sell to anybody, even sixty-seven ships of Northmen. You give them a ring of bronze for the lot. The bench eats fresh fish that night, and the son waves at the fleet all the way back to his mound.
+      result: Two Frisians in a little boat, a man and his son, with a catch of flatfish they are willing to sell to anybody, even sixty-seven ships of Northmen. You give them a ring of bronze for the lot. [if service]The bench eats[else]Your crew eats[/if] fresh fish that night, and the son waves at the fleet all the way back to his mound.
 
 - id: v43_walcheren
   kind: place
@@ -113,14 +113,14 @@
   weight: 30
   requires: ["year == 843", "fleet.id == vestfold", "!seen.cw_nantes"]
   art: muster
-  title: The baptized king
+  title: The baptised king
   text: |
-    Walcheren belongs to a Dane. His name is Harald, and he was a king in Denmark once, before Horik's family drove him out, and he went to the emperor Louis and was baptized at Ingelheim with the emperor standing godfather, in a white robe, and was given land in Frisia to hold. The emperor's son Lothar has given him this island now, to keep other Danes off it. He keeps it by letting them stop here, for a price.
+    Walcheren belongs to a Dane. His name is Harald, and he was a king in Denmark once, before Horik's family drove him out, and he went to the emperor Louis and was baptised at Ingelheim with the emperor standing godfather, in a white robe, and was given land in Frisia to hold. The emperor's son Lothar has given him this island now, to keep other Danes off it. He keeps it by letting them stop here, for a price.
 
     Harald's men come down to the beach to meet the fleet: Danes in Frankish cloaks, with crosses on cords round their necks and Thor's hammers next to the crosses. Their lord stays in his hall. He is old, they say, and tired of Northmen.
   choices:
     - id: hall
-      text: Go up to the hall with the leaders' men, and see the baptized king.
+      text: Go up to the hall with the leaders' men, and see the baptised king.
       check: { skill: speech, attr: pre, difficulty: 5 }
       success:
         text: |
@@ -162,11 +162,11 @@
         text: The Hart goes through the race with the tide under her and the water standing up in ridges on either side, and you pull till you can't see, and then you're through, into flat water in the lee of a cape, and Ölvir is laughing in the stern. A Rogaland ship behind you loses three oars and a man.
         effects: [ { add: { skill.seamanship: 1, crew.morale: 1 } } ]
       failure:
-        text: The race takes your oar out of your hands and nearly takes you over the side with it. The man behind grabs your belt. You come through bruised and empty-handed, and Ölvir gives you another oar, and says nothing at all.
+        text: The race takes your oar out of your hands and nearly takes you over the side with it. The man behind grabs your belt. You come through bruised and empty-handed, and Ölvir hands you another oar and looks at you until you take it.
     - id: fires
       text: Count the beacons, and work out how fast the news is going.
       effects: [ { add: { skill.cunning: 1 } } ]
-      result: A fire every few miles, each one lit as soon as the last one shows. The news is going south faster than a horse. Every church and every count on this coast will know the fleet is coming before it comes. Lambert's road had better be a good one.
+      result: A fire every few miles, each one lit as soon as the last one shows. The news is going south faster than a horse. Every church and every count on this coast will know the fleet is coming before it comes. The count's road had better be a good one.
     - id: wait
       text: Have the steersman wait for slack water before you go through the race.
       visible_if: "!service"

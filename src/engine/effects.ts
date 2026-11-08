@@ -138,7 +138,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       // a market price, straight into the heap
       if (state.captives > 0) {
         state.loot += state.captives * e.sell_captives;
-        journal(state, `Sold ${state.captives} captives at the market.`);
+        journal(state, `Sold ${state.captives === 1 ? 'a captive' : `${state.captives} captives`} at the market.`);
         state.captives = 0;
       }
     } else if ('recruit' in e) {
@@ -146,7 +146,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
       if (!state.service) {
         const room = Math.max(0, capacity(state, content) - state.crew.men - state.men.filter((m) => m.alive).length);
         const n = Math.min(room, e.recruit);
-        if (n > 0) { addRecruits(state, n); journal(state, `${n} men signed on.`); }
+        if (n > 0) { addRecruits(state, n); journal(state, `${n === 1 ? 'One man' : `${n} men`} signed on.`); }
       }
     } else if ('item' in e) {
       giveItem(state, content, e.item.id, !!e.item.equip);
@@ -231,7 +231,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('crewman' in e) crewmanEffect(state, content, rng, e.crewman);
     else if ('verse' in e) {
       const d = e.verse === 'last' ? [...state.deeds].reverse().find((x) => !x.verse) : composeVerse(state);
-      if (d) { d.verse = true; d.told ??= state.day; (state.notes ??= []).push(`The verse: ${d.text}. It will outlive you.`); }
+      if (d) { d.verse = true; d.told ??= state.day; (state.notes ??= []).push(`The verse: ${d.text.replace(/\.$/, '')}. It will outlive you.`); }
     }
     else if ('claim_land' in e) { if (state.at && !claimBlock(state, content, state.at)) claimLand(state, content, state.at); }
     else if ('lose_home' in e) state.after = { title: 'The settlement', lines: loseHome(state, content) };
@@ -351,7 +351,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     else if ('ring' in e) {
       const n = e.ring.n ?? 1;
       addRings(state, e.ring.metal, n);
-      journal(state, n > 0 ? `You have ${n === 1 ? `a ${e.ring.metal} arm-ring` : `${n} ${e.ring.metal} arm-rings`} more.` : `Gave away ${-n === 1 ? `a ${e.ring.metal} arm-ring` : `${-n} ${e.ring.metal} arm-rings`}.`);
+      journal(state, n > 0 ? `You have ${n === 1 ? `one more ${e.ring.metal} arm-ring` : `${n} more ${e.ring.metal} arm-rings`}.` : `Gave away ${-n === 1 ? `a ${e.ring.metal} arm-ring` : `${-n} ${e.ring.metal} arm-rings`}.`);
     }
     else if ('camp' in e) {
       // the army moves its winter quarters; a captain in it winters where it does

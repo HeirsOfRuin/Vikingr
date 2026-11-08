@@ -17,7 +17,7 @@
       text: Name Jórvík on the arrow.
       visible_if: known.york
       effects: [ { war_arrow: york } ]
-      result: Jórvík. Every captain who hears it will know what it means, and the ones who want it most will come first.
+      result: Jórvík. The captains who want it most will be the first on your beach.
     - id: london
       text: Name Lundenwic on the arrow.
       visible_if: known.london

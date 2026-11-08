@@ -174,7 +174,7 @@ export function resolveRound(b: BattleState, ours: Order, theirs: Order, rng: Rn
   b.us.last = ours;
   b.them.last = theirs;
   const mu = MATCHUP[ours][theirs];
-  b.log.push(`Round ${b.round}: ${ORDER_NAMES[ours].toLowerCase()} against ${ORDER_NAMES[theirs].toLowerCase()}${mu > 0 ? ' — it works' : mu < 0 ? ' — the wrong call' : ''}. They lose ${toThem}, you lose ${toUs}.`);
+  b.log.push(`Round ${b.round}: ${ORDER_NAMES[ours].toLowerCase()} against ${ORDER_NAMES[theirs].toLowerCase()}${mu > 0 ? '. It works' : mu < 0 ? '. The wrong call' : ''}. They lose ${toThem}, you lose ${toUs}.`);
 
   // the hero in the press
   const exposure = INTENSITY[ours].in * Math.min(2, Math.max(0.5, (b.them.men + toThem) / Math.max(1, b.us.men + toUs)));

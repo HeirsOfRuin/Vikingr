@@ -88,7 +88,7 @@
   art: shield_wall
   title: The horsemen
   text: |
-    They come along the shore at a canter before you've got the ship's legs under her: twenty Pictish horsemen with small round shields and long spears, and a mormaer in a red cloak in the middle of them. Somebody told them about the Northman who rode round their country last year and looked at everything.
+    They come along the shore at a canter before you've got the ship's legs under her: twenty Pictish horsemen with small round shields and long spears, and a mormaer in a red cloak in the middle of them. Somebody has told them about the Northman who came last time and looked at everything.
     [if flag.tarbat_scouted]You know where they'll come from, because your guide showed you. You've drawn the ship up where the dunes slow a horse.[else]They come out of the dunes, from the one direction you didn't look.[/if]
   choices:
     - id: wall
@@ -99,7 +99,7 @@
       text: Walk out alone and ask the mormaer what he wants.
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
-        text: He wants to know why you came back. You tell him about the stones. He looks at you a long while and laughs, and says a man who sails across the sea to look at stones is either a fool or a priest, and you don't look like a priest. He sells you a fair price of cattle and rides off.
+        text: He wants to know why you came back. You tell him about the stones. He looks at you a long while and laughs, and says a man who sails across the sea to look at stones is either a fool or a priest, and you don't look like a priest. He sells you cattle at a fair price and rides off.
         effects: [ { add: { provisions: 80 } }, { standing: { place: tarbat, n: 2 } } ]
       failure:
         text: He doesn't want to talk. A spear comes past your ear as you turn to walk back, close enough to feel. You run the last of it. Your men are already pushing the ship off.
@@ -294,7 +294,7 @@
   art: muster
   title: The dead man's heap
   text: |
-    The dead man's kin have been waiting a year for you. The heap you rode for was the third heap, and the third heap, it turns out, was meant for the dead man's sister's son, who fell off his horse a furlong from it because somebody's foreign horse barged him. They want it back. Or its worth. Or the foreigner's head, the youngest suggests.
+    The dead man's kin have been waiting for you to come back. The heap you rode for was the third heap, and the third heap, it turns out, was meant for the dead man's sister's son, who fell off his horse a furlong from it because somebody's foreign horse barged him. They want it back. Or its worth. Or the foreigner's head, the youngest suggests.
   choices:
     - id: pay
       text: Pay them its worth, and drink with them.
@@ -305,7 +305,7 @@
       text: Offer to race him for it again, here and now.
       check: { skill: cunning, attr: agi, difficulty: 6 }
       success:
-        text: You win again, by a neck, and the Este roar, and the sister's son throws his hat on the ground and then laughs. You give him the heap's worth anyway. They talk about you on the amber coast for years.
+        text: You win again, by a neck, and the Este roar, and the sister's son throws his hat on the ground and then laughs. You give him half the heap's worth anyway. They talk about you on the amber coast for years.
         effects: [ { add: { silver: -24 } }, { standing: { place: truso, n: 4 } }, { deed: { type: deed, text: "Raced the Este twice for a dead man's silver, and won both times", weight: 1 } } ]
       failure:
         text: He wins by three lengths, and the Este roar, and you pay up and laugh, and they decide you're all right for a foreigner.
@@ -352,7 +352,7 @@
   art: muster
   title: The abbess sends
   text: |
-    [if flag.sheppey_bread]The reeve meets you on the beach, the same frightened man with the same spear, and this time he's glad to see you.[else]The reeve meets you on the beach, the same frightened man with a better spear. He's not glad to see you. He's desperate.[/if]
+    [if flag.sheppey_bread]The reeve meets you on the beach, the same frightened man with the same spear, and this time he's glad to see you.[else]The reeve meets you on the beach, the same frightened man with a better spear. He isn't glad to see you, but he's desperate enough to come down anyway.[/if]
 
     Danes came in the spring, two ships, and took the minster's cattle and the abbess's nephew and said they'd be back at harvest for the silver. The abbess has sent the reeve to the beach every day since, to watch for any ship that might be better than Danes.
     [if flag.sheppey_robbed]"She says you robbed her once," the reeve says, "honestly, in daylight. She says that's more than the Danes did."[/if]
@@ -391,7 +391,7 @@
   art: sail_home
   title: A winter in the Thames
   text: |
-    There are Danish ships hauled up on the marsh on the far side of the island, and turf houses going up behind a ditch. They mean to winter here, in the mouth of the Thames, in England, instead of going home. Nobody has done it before. In the spring they'll be first up the river, before the English have their boots on.
+    There are Danish ships hauled up on the marsh on the far side of the island, and turf houses going up behind a ditch. They mean to winter here, in the mouth of the Thames, in England, instead of going home. Hardly anybody has done it before. In the spring they'll be first up the river, before the English have their boots on.
 
     Their leader, a shrewd Dane with a missing ear, offers you a place inside the ditch.
   choices:
@@ -442,7 +442,7 @@
   title: Low water on the Tyne
   text: |
     The Tyne is a different river at low water: a channel a ship's width across, between mudflats a man sinks to his knees in. You've misjudged it. The ship grounds a bowshot from the monastery, and the tide's still going out.
-    [if flag.jarrow_scouted]You knew the tides here. You wrote them down. You read them wrong.[/if]
+    [if flag.jarrow_scouted]You knew the tides here. You noted them, the way Bede would have. You read them wrong.[/if]
 
     The Northumbrian reeve has been waiting for exactly this. His men come out along the flats on boards, with spears.
   choices:
@@ -530,7 +530,7 @@
   art: muster
   title: The abbey's toll
   text: |
-    The fair is on again, and the abbey's toll-men remember you from last year: the Northman who came as a trader. This year they want double. Northmen pay double, they say. It's a new rule. The abbot made it after the last time the Northmen came as something other than traders.
+    The fair is on again, and the abbey's toll-men remember you from your last visit: the Northman who came as a trader. This year they want double. Northmen pay double, they say. It's a new rule. The abbot made it after the last time the Northmen came as something other than traders.
   choices:
     - id: pay
       text: Pay double, and trade anyway.
@@ -595,7 +595,7 @@
       effects: [ { add: { honour: 1 } }, { set: flag.is_bounds_shared } ]
       result: You set it together, and drink on it, and his sons help your men with the hay. In ten years the river moves again. By then you're kin by marriage, and nobody cares.
     - id: hold
-      text: Put the stone back where you remember it, and tell him to fight you if he disagrees.
+      text: Put the stone back where you remember it, and dare him to move it.
       check: { skill: speech, attr: pre, difficulty: 6 }
       success:
         text: He looks at you, and at your men, and decides the meadow isn't worth it. He goes home. He doesn't come over again for a year. When he does, he brings a cheese, and doesn't mention the stone.
@@ -620,7 +620,7 @@
     - id: halve
       text: Cut it down the middle, one half each.
       effects: [ { goods: { id: oil, lots: 3 } }, { add: { provisions: 100 } }, { clear: flag.is_feud } ]
-      result: It takes four days and every man and woman on both farms. By the end you all stink the same and nobody can remember who started the feud. The oil lights both halls all winter.
+      result: It takes four days and every man and woman on both farms. By the end you all stink the same, and nobody can remember whose side of the line anyone was on. The oil lights both halls all winter.
     - id: claim
       text: Claim it all. It came ashore on your stretch.
       check: { skill: speech, attr: pre, difficulty: 6 }
@@ -765,7 +765,7 @@
       result: The farmers come in with their rents at Martinmas, as they always have, and pay you instead of the cellarer, and look at the grass on the altar, and say nothing. It's the easiest silver you've ever taken.
     - id: no
       text: Drink their wine, and go back to the river.
-      result: The Danes are good company, and the monks' wine is very good indeed. You leave in the morning with a headache and the feeling of having seen something end.
+      result: The Danes are good company, and the monks' wine is very good indeed. You leave in the morning with a headache, past the Danes' shirts drying between the pillars.
 
 - id: pl4_fontenelle
   kind: place

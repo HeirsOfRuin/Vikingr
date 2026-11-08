@@ -29,7 +29,7 @@
       result: |
         You pour a whole skin over the side, slowly, and say the words loud enough to carry. The sea takes it without comment.
 
-        Hallvard nods, as if a debt had been paid. The men breathe out.
+        Your oldest oarsman nods, as if a debt had been paid. The men breathe out.
     - id: row
       text: Say nothing. Set the stroke, and row.
       result: You set the stroke yourself and hold it until noon. Nobody looks back after that. There's no time.
@@ -43,7 +43,7 @@
   art: open_sea
   title: Short rations
   text: |
-    The wind has been foul for three days, and the voyage that was meant to take three is going to take six, or ten, or nobody knows. Bersi has counted the casks, and then counted them again, and come to you with a face like a funeral.
+    The wind has been foul for three days, and the voyage that was meant to take three is going to take six, or ten, or nobody knows. The man who keeps the stores has counted the casks, and then counted them again, and come to you with a face like a funeral.
   choices:
     - id: halve
       text: Halve the rations. Everyone, you first.
@@ -59,7 +59,7 @@
         effects: [ { add: { provisions: 40 } } ]
       failure:
         text: |
-          You fish all day, and catch one small, furious fish that bites Ulf, and nothing else.
+          You fish all day, and catch one small, furious fish that bites the man who lands it, and nothing else.
         effects: [ { add: { provisions: 4 } } ]
     - id: push
       text: Row harder. The sooner you're there, the sooner you eat.
@@ -86,7 +86,7 @@
         text: |
           You don't shout. You say it once, plainly, and then you look at Thorvald until he picks up his oar. One by one, so do the others.
 
-          It is the first time you have felt what it is to be a captain, rather than to be called one.
+          Your hands only start to shake once the stroke is going again, and you keep them on the steering-oar where nobody can see.
         effects: [ { add: { skill.command: 1, crew.morale: 1 } } ]
       failure:
         text: |
@@ -95,7 +95,7 @@
     - id: promise
       text: Promise every man a double share of whatever you find.
       effects: [ { add: { crew.morale: 2 } }, { set: flag.ex_double_share } ]
-      result: That does it. It is amazing what men will do for a share of nothing. The oars go in again, and Thorvald is singing by noon.
+      result: That does it. Men will row a long way for a double share of nothing. The oars go in again, and Thorvald is singing by noon.
     - id: ketill
       text: Look to Ketill.
       requires: [man.ketill.sworn]
@@ -116,7 +116,7 @@
   text: |
     Toward evening there are birds: puffins, a lot of them, low over the water and all flying the same way with their beaks full of fish. A raft of weed goes past, and a log, white with salt.
 
-    Somewhere in that direction, something has land on it.
+    Somewhere in that direction, there is land.
   choices:
     - id: follow
       text: Follow the birds.
@@ -160,4 +160,4 @@
     - id: leave
       text: Let them pass. You have water to cross.
       effects: [ { add: { hamingja: 1 } } ]
-      result: They pass under and around the ship for half the morning, blowing and rolling, and then go away north. Hallvard watches them all the way. "A good sign," he says. He doesn't say of what.
+      result: They pass under and around the ship for half the morning, blowing and rolling, and then go away north. An old oarsman at the bow watches them all the way. "A good sign," he says. He doesn't say of what.

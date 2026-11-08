@@ -101,7 +101,7 @@
       danger: true
       effects: [ { fight: { foe: beach_brawler, kind: duel, lethal: false } } ]
     - id: watch
-      text: Let them get it out of their systems.
+      text: Let them fight it out.
       effects: [ { add: { crew.morale: 1 } }, { standing: { n: -2 } } ]
       result: They do, eventually. Your men come back aboard bloody and happy. The locals don't come down to the shore again while you're there, not even to sell you fish.
 

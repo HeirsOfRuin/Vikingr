@@ -32,7 +32,7 @@
       text: Give him a silver arm-ring for his brother, and let that be the end of it.
       requires: ["rings.silver >= 1"]
       effects: [ { ring: { metal: silver, n: -1 } } ]
-      result: He weighs it on his palm, and looks at you, and something goes out of him. "He'd have taken the ring," he says, "and laughed." He goes back to his own fire. Nobody calls you a coward. Some of them think it.
+      result: He weighs it on his palm, and looks at you, and his shoulders come down. "He'd have taken the ring," he says, "and laughed." He goes back to his own fire. Nobody calls you a coward. Some of them think it.
 
 - id: e43_camp_duel_won
   kind: spine
@@ -70,7 +70,7 @@
       visible_if: "!service"
       check: { skill: seamanship, attr: agi, difficulty: 5 }
       success:
-        text: You and a dozen men put your backs to the Hart and she goes down the shingle into the water with the fire a ship's length behind her. From the bay you watch the camp fight on the beach. They hold, just. Nobody thanks you for saving your ship instead of theirs.
+        text: You and a dozen men put your backs to your ship and she goes down the shingle into the water with the fire a ship's length behind her. From the bay you watch the camp fight on the beach. They hold, just. Nobody thanks you for saving your ship instead of theirs.
         effects: [ { add: { honour: -1 } } ]
       failure:
         text: The Franks get to her before the tide does. You save her, in the end, with a scorched side and three men hurt, and the fight on the beach is over by the time you've done it.
@@ -79,7 +79,7 @@
       text: Get down behind the monks' wall until it's over.
       visible_if: service
       effects: [ { add: { honour: -2 } } ]
-      result: You stay behind the wall, and the fight goes on without you, and in the morning your bench-mates look at your clean shield and say nothing at all.
+      result: You stay behind the wall, and the fight goes on without you, and in the morning your bench-mates look at your clean shield, and then at each other.
 
 - id: y45_island_won
   kind: spine

@@ -132,7 +132,7 @@
           Gyða has heard all of it through the wall. "Well done," she says. "Shall I tell him you'd like to try for five?"
         effects: [ { set: flag.gyda_price }, { set: flag.gyda_price_high } ]
     - id: release
-      text: Tell her the truth. You won't have a pound and a half, and you won't ask her to wait.
+      text: Tell her the truth. You won't have the silver, and you won't ask her to wait.
       effects: [ { clear: flag.gyda_courting }, { set: flag.gyda_declined }, { add: { honour: 1 } } ]
       result: |
         She hears you out with her arms folded. When you've finished she's quiet a long while.

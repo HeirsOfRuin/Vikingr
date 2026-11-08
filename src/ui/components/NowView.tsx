@@ -10,7 +10,7 @@ import type { GameState } from '../../engine/state';
 import { listActions, screenOf, type Action } from '../../engine/index';
 import type { MapData } from '../../engine/mapgrid';
 import { dateOf, formatDate, seasonName } from '../../engine/calendar';
-import { formatSilver, capitalise, shipOf } from '../../engine/format';
+import { formatSilver, capitalise, plural, shipOf } from '../../engine/format';
 import { lastingFame, livingFame, legendTable } from '../../engine/fame';
 import { mouths } from '../../engine/crew';
 import { LATE_SEASON_DOY } from '../../engine/tuning';
@@ -136,7 +136,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
           <h2>Along the shore</h2>
           <p>A day's rowing along the coast from {anchor}, and the lookout in the bow points: {t.label}. {t.desc}</p>
           <p class="small">The men reckon about {t.men} who might stand and fight. {n === 0 ? 'Nobody on this coast is expecting you.' : n <= 2 ? 'Word of you is going along this coast; they are watching the sea.' : 'This coast is roused: beacons on the headlands, the cattle driven inland, every man with a spear.'}</p>
-          <p class="muted small sans">Food for {Math.floor(state.provisions / Math.max(1, mouths(state)))} days. Raids on this coast this year: {n}.</p>
+          <p class="muted small sans">Food for {plural(Math.floor(state.provisions / Math.max(1, mouths(state))), 'day')}. Raids on this coast this year: {n}.</p>
           <Actions options={options} onAct={onAct} />
         </div>
       </>
@@ -187,13 +187,13 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
     switch (screen) {
       case 'voyage': {
         const v = state.voyage!;
-        return <><h2>At sea</h2><p>Bound for {content.places[v.to]!.name}{svc ? ` in ${svc.captain}'s ship` : ''}. {v.daysAtSea} days out, the wind {v.wind}.{svc ? '' : ` Food for ${food} days.`}</p></>;
+        return <><h2>At sea</h2><p>Bound for {content.places[v.to]!.name}{svc ? ` in ${svc.captain}'s ship` : ''}. {plural(v.daysAtSea, 'day')} out, the wind {v.wind}.{svc ? '' : ` Food for ${plural(food, 'day')}.`}</p></>;
       }
       case 'muster':
         if (svc) return <><h2>{ship}</h2><p>The ice is off the fjord. {svc.captain} has {shipOf(svc.captain, state.ships[0]?.name ?? 'his ship')} down on the jarl's landing, loaded with water, meal, dried fish and spare oars, and he is waiting for the spring storms to blow out. Your sea-chest is under your bench. All that is left is to row.</p><p class="muted small sans">Silver: {formatSilver(state.silver)}.</p></>;
-        return <><h2>The spring muster</h2><p>The ice is off the fjord. Men come down from the farms to see who is going west this year, and on whose ship. Sign them on, fill the ship with food, mend her, and go.</p><p class="muted small sans">{state.musterPool} men in the district would still sign on. Food for {food} days. Silver: {formatSilver(state.silver)}.</p></>;
+        return <><h2>The spring muster</h2><p>The ice is off the fjord. Men come down from the farms to see who is going west this year, and on whose ship. Sign them on, fill the ship with food, mend her, and go.</p><p class="muted small sans">{plural(state.musterPool, 'man', 'men')} in the district would still sign on. Food for {plural(food, 'day')}. Silver: {formatSilver(state.silver)}.</p></>;
       case 'return':
-        if (svc) return <><h2>Home</h2><p>{ship} is hauled up on the jarl's landing, and the men are on the strand round the heap, waiting for {svc.captain} to divide the summer.</p><p class="muted small sans">In the heap: {formatSilver(state.loot)}{state.captives ? `, and ${state.captives} captives for the trader` : ''}. Your shares: {svc.shares}.</p></>;
+        if (svc) return <><h2>Home</h2><p>{ship} is hauled up on the jarl's landing, and the men are on the strand round the heap, waiting for {svc.captain} to divide the summer.</p><p class="muted small sans">In the heap: {formatSilver(state.loot)}{state.captives ? `, and ${plural(state.captives, 'captive')} for the trader` : ''}. Your shares: {svc.shares}.</p></>;
         return <><h2>Home</h2><p>The ships are hauled up and the men want their shares. How you divide the plunder is how they will remember the summer.</p><p class="muted small sans">Plunder: {formatSilver(state.loot)}. {state.flags.owes_jarl ? 'The jarl takes a quarter first, for the loan of the ship. ' : ''}The crew is {moraleWord(state.crew.morale)}.</p></>;
       case 'hall':
         return <><h2>The winter hall</h2><p>{winterLine(state, content)} {state.hallLeft === 1 ? 'One more thing to do before spring.' : `${state.hallLeft} things to do before spring.`}</p><p class="muted small sans">Silver: {formatSilver(state.silver)}. {state.deeds.some((x) => x.told === null) ? 'Some deeds have not been told yet: a feast would tell them.' : 'Every deed has been told.'}</p></>;
@@ -206,7 +206,7 @@ export function NowView({ content, map, state, onAct }: { content: ContentBundle
               const t = tierAt(state, content, place.id);
               return <p class="small sans"><span class={`pill standing-${t}`}>{TIER_NAMES[t]}</span> {TIER_HINTS[t]}</p>;
             })()}
-            <p class="muted small sans">{capitalise(seasonName(state.day))}. {svc ? `You row in ${svc.captain}'s ship. The men are ${moraleWord(state.crew.morale)}.` : `Food for ${food} days. The crew is ${moraleWord(state.crew.morale)}.`} {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === (state.homeAt ?? 'home_fjord') && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
+            <p class="muted small sans">{capitalise(seasonName(state.day))}. {svc ? `You row in ${svc.captain}'s ship. The men are ${moraleWord(state.crew.morale)}.` : `Food for ${plural(food, 'day')}. The crew is ${moraleWord(state.crew.morale)}.`} {state.loot ? `Plunder aboard: ${formatSilver(state.loot)}.` : ''}{state.at === (state.homeAt ?? 'home_fjord') && d.doy < LATE_SEASON_DOY ? ' The summer is still young.' : ''}</p>
           </>
         );
     }

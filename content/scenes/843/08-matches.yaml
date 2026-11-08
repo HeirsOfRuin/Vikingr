@@ -26,7 +26,7 @@
       requires: ["silver >= 96"]
       effects: [ { add: { silver: -96 } }, { set: flag.betrothed }, { set: flag.e43_argantlon_betrothed }, { standing: { place: nantes, n: 1 } }, { journal: "Betrothed to Argantlon, daughter of Iarnhitin, machtiern of Retz." } ]
       result: |
-        The priest makes his cross on your forehead with his thumb and a great deal of Latin, and some of your men laugh, and Iarnhitin looks at them until they stop. You see Argantlon once, at a distance, at the church door: dark, small, and looking at you the way you'd look at a horse you weren't sure of. She'll come to you at the winter, her father says, with her dowry. He shakes your hand on it like a man buying land.
+        The priest makes his cross on your forehead with his thumb and a great deal of Latin, and some of your men laugh, and Iarnhitin looks at them until they stop. You see Argantlon once, at a distance, at the church door: dark, small, and looking at you the way you'd look at a horse you weren't sure of. She'll come to you at the start of the winter, her father says, with her dowry. He shakes your hand on it like a man buying land.
     - id: later
       text: Tell him you'd take her gladly, but you haven't the silver yet. Ask him to hold the match.
       requires: ["silver < 96"]
@@ -108,7 +108,7 @@
       result: The steersman nods, and says the words back to you to be sure he has them, and takes them home to Vestfold.
     - id: no
       text: Send your thanks, and say no.
-      result: The steersman nods, as if he had expected it, and takes your thanks home. You think of the old man on the beach with his son's cloak, and wish you'd said it some other way.
+      result: The steersman nods, as if he had expected it, and takes your thanks home. You think of the old man on the beach, asking for his son's ship, and wish you'd said it some other way.
 
 - id: e43_wed_ragnhild
   kind: phase

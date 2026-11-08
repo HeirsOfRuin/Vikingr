@@ -47,7 +47,7 @@ export function goalProgress(state: GameState, content: ContentBundle, b: Boast)
 }
 
 const KEPT = ['You did. The hall bangs the tables.', 'You did, and every man here knows it. The cups go up.', 'Done, and the hall roars it.'];
-const BROKEN = ['You did not. The hall goes quiet, the way that is worse than laughing.', 'You did not. Somebody says so, loudly, and nobody tells him to shut up.', 'It went undone. Men look at their cups.'];
+const BROKEN = ['You did not. The hall goes quiet. Nobody even laughs.', 'You did not. Somebody says so, loudly, and nobody tells him to shut up.', 'It went undone. Men look at their cups.'];
 const OPEN = ['It is still to come.', 'Not yet. The hall will remember.'];
 
 /** The reckoning at Yule: this year's boasts, kept, broken and still open, as the jarl's man calls them. */

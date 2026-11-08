@@ -7,7 +7,7 @@ owes_jarl: { description: Owes the jarl a share of this season's plunder for the
 b_watched_oars: { description: "As a boy, watched the men unload the ship", saga: true }
 b_watched_swords: { description: "As a boy, watched the swords", saga: true }
 b_heard_stories: { description: "As a boy, listened to the old men's stories", saga: true }
-b_asgeir_coin: { description: "As a boy, Ásgeir gave him a coin at the scales" }
+b_asgeir_coin: { description: "Ásgeir gave him a coin at the scales when he was a boy" }
 b_fought: { description: "Fought Hallbjörn at twelve" }
 b_tricked: { description: "Outwitted Hallbjörn at twelve" }
 b_yielded: { description: "Took Hallbjörn's beating at twelve" }
@@ -238,7 +238,7 @@ ar_bell: { description: "Took the bell-shrine of Patrick", saga: true }
 ar_spared_bell: { description: "Left the old monk his bell at Armagh", saga: true }
 ar_burned: { description: "Burned the church of Patrick at Armagh", saga: true }
 ar_beaten: { description: "Was beaten off Patrick's hill", saga: true }
-fr_backs_hakon: { description: "Promised Hákon his voice at the thing" }
+fr_backs_hakon: { description: "Promised Hákon his voice at the Thing" }
 fr_backs_eirik: { description: "Told Eiríkr what his brother was saying" }
 fr_neutral: { description: "Stood with neither of the jarl's sons", saga: true }
 fr_dorestad_sworn: { description: "Sworn to sail for Dorestad in 834" }
@@ -398,7 +398,7 @@ bx_taken: { description: "Was at the taking of Bordeaux, 848" }
 e43_hroi_back: { description: "Hrói came back from the south, one-eyed" }
 # playtest 9: Aude of Nantes, the captive girl on the monks' island
 e43_aude: { description: "Bought Aude of Nantes out of the captives on Noirmoutier" }
-e43_aude_kept: { description: "Kept Aude in your household instead of taking her father's ransom" }
+e43_aude_kept: { description: "Kept Aude in his household instead of taking her father's ransom" }
 e43_aude_home: { description: "Sent Aude home to Nantes" }
 e43_argantlon_betrothed: { description: "Promised to Argantlon, daughter of the machtiern of Retz" }
 e43_argantlon_owed: { description: "The bride-price for Argantlon is still owed" }
@@ -419,7 +419,7 @@ ga_halfdan: { description: "Went north with Hálfdan after Repton" }
 ga_guthrum: { description: "Went south with Guthrum after Repton" }
 ga_landed: { description: "Was given land in the Vale of York by Hálfdan" }
 ga_sold_claim: { description: "Sold his claim to land in Northumbria to a Dane from Jutland", saga: true }
-ga_baptised: { description: "Was baptized at Aller with Guthrum", saga: true }
+ga_baptised: { description: "Was baptised at Aller with Guthrum", saga: true }
 ga_refused_aller: { description: "Refused the baptism at Aller, and went to the new army on the Thames", saga: true }
 # the thin places (docs/FRAME-PLACES-EAST.md, step 1): what the first landfall left behind
 truso_rode: { description: "Rode for a dead man's silver at Truso, and took a heap" }

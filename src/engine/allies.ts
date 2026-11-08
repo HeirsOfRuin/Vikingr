@@ -140,7 +140,7 @@ export function endFelag(state: GameState, content: ContentBundle): string | nul
     return `The félag with ${name} ends with the summer, and you part friends.`;
   }
   shiftRel(state, content, p.id, -1);
-  return `The félag with ${name} ends with the summer, and nothing to show for it. He doesn't say it was your fault.`;
+  return `The félag with ${name} ends with the summer, with nothing to show for it. He doesn't say it was your fault.`;
 }
 
 // ---- the jarl ----

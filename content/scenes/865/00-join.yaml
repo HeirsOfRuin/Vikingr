@@ -46,7 +46,7 @@
       text: Take your ships to England, to the army.
       danger: true
       effects: [ { set: flag.ga_army }, { set: flag.ga_captain }, { fleet: greatarmy } ]
-      result: He tells you where the army lies this year, and how to find it, and which of the sons of Ragnarr to ask for. You'll be a captain in it, with a voice at its council. The English have a word for it, he says, laughing. Here. It just means army. They have never needed a word for anything worse.
+      result: He tells you where the army lies this year, and how to find it, and which of the sons of Ragnarr to ask for. You'll be a captain in it, with a voice at its council. The English call it the here, he says, laughing. It just means army. They have never needed a word for anything worse.
     - id: no
       text: Wish him luck in England.
       result: He wishes you the same, wherever you're going, and goes on down the strand to the next ship.

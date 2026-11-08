@@ -83,7 +83,7 @@
       text: Go for Thorgils, in front of everyone.
       effects: [ { add: { skill.weapons: 1 } }, { set: flag.f_fought_thorgils }, { set: flag.thorgils_feud } ]
       result: |
-        He's two years older than you and a head taller, and you get two good punches into his soft red face before his brothers pull you off him and Ozurr holds you by the hair while Thorgils hits you back.
+        He's two years older than you and a head taller, and you get two good punches into his soft red face before his brothers pull you off him and Ozurr, the eldest, holds you by the hair while Thorgils hits you back.
 
         Then old Hrapp starts to laugh. He laughs until he chokes, and has to be thumped on the back. "The freedman's whelp bites," he says, when he can. "Good. I paid for the bitch. I like to see the pup bite." Nobody else laughs. Your father takes you home with your nose broken and doesn't say a word all the way, and at the door he stops, and says, "Thank you," and goes in.
       next: f_amma
@@ -93,7 +93,7 @@
       result: |
         You stand still. It's the hardest thing you have ever done, and you are twelve, and you have done some hard things.
 
-        Thorgils looks at you, waiting, and when you don't move he loses interest and goes to find a girl. Your father sees. On the way home, in the long summer twilight, he says, "A man who doesn't move gets to choose when he does." He doesn't say anything else, then or ever, but he never says anything else to anyone that he hasn't thought about for a year.
+        Thorgils looks at you, waiting, and when you don't move he loses interest and goes to find a girl. Your father sees. On the way home, in the long summer twilight, he says, "A man who doesn't move gets to choose when he does." He doesn't say anything else about it, then or ever. He never says anything to anyone that he hasn't thought about for a year.
       next: f_amma
     - id: laugh
       text: Make old Hrapp laugh at his own son.
@@ -123,7 +123,7 @@
     [break]
     She tells it the same way every time. The island was Rechru, off the coast of Ulster. She was eleven. It was the first year the ships came; there had never been ships like that, and the monks were still writing it down when the church was burning. The bell. The smoke. Her brothers going into the water after the boats. A hand on the back of her neck, and the sea, and then Kaupang, and a man weighing her like a sheep.
 
-    "Sixty-odd years," she says. "And you know, I still dream in Irish." She takes your wrist. Her fingers are cold and very strong. "They'll go back there, the ships. They always go back. You'll go with them. I want somebody to say my name the right way, over there. Will you learn it?"
+    "Thirty-odd years," she says. "And you know, I still dream in Irish." She takes your wrist. Her fingers are cold and very strong. "They'll go back there, the ships. They always go back. You'll go with them. I want somebody to say my name the right way, over there. Will you learn it?"
   choices:
     - id: learn
       text: Learn it. All of it.
@@ -139,7 +139,7 @@
       result: |
         She looks at you a long time. Then she takes the little bronze cross off her neck, on its greasy thong, and puts it over yours. "Wear it, then," she says. "It knows the way, even if you don't."
 
-        In the spring she dies, in her sleep, as she said she would. Hallvard, when he sees the cross the next summer, makes a sign against it. Then he asks you, quietly, where you got it.
+        In the spring she dies, in her sleep, as she said she would. Hallvard, when he sees the cross on the Raven, makes a sign against it. Then he asks you, quietly, where you got it.
       next: f_word
     - id: refuse
       text: Tell her you're a Northman, and Northmen don't pray to hanged gods.
@@ -261,7 +261,7 @@
       result: |
         You let them look: the arm-ring, the hacksilver in the pouch, the Irish brooch on your cloak, the scar. Ozurr shrugs. Grímr spits. Thorgils looks longest, and then says, loud, to nobody, "I hear the Irish sell their silver cheap to anyone who speaks their tongue," and walks away up the shingle.
 
-        It's the beginning of something. You both know it.
+        Grímr goes after him. Ozurr stays long enough to look at the arm-ring once more, and then he goes too.
 
 # His road to a ship (docs/FRAME-BEGINNINGS.md): built with his father in the winter of 831, launched in 832.
 - id: f_keel
@@ -314,7 +314,7 @@
       result: |
         You weigh it out on the keel. Ozurr takes it, and nods, and they go. "Cheap," says Grímr, on the way out, loud enough for the boatyard. "Cheaper than his grandmother."
 
-        Your father picks up the adze and goes back to work. That night he says, "You shouldn't have had to." You tell him he shouldn't have either, all those years. He doesn't answer. He doesn't need to.
+        Your father picks up the adze and goes back to work. That night he says, "You shouldn't have had to." You tell him he shouldn't have either, all those years. He doesn't answer, and in the morning he is in the boatyard before you.
     - id: thing
       text: Tell them to bring it to the Thing. Let the law-speaker say what a freedman's son owes.
       check: { skill: speech, attr: wit, difficulty: 6 }

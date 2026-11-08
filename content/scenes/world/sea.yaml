@@ -32,7 +32,7 @@
     - id: pass
       text: Let her go.
       result: |
-        You let her go. The men watch her all afternoon, getting smaller, and nobody says anything to you about it, which says enough.
+        You let her go. The men watch her all afternoon, getting smaller, and talk to each other about wine, loudly, where you can hear.
       effects: [ { add: { crew.morale: -1, honour: 1 } } ]
 
 - id: g_sea_merchant_won
@@ -143,7 +143,7 @@
       text: Offer her survivors a choice. Swear to you, or swim.
       visible_if: "!service"
       effects: [ { add: { crew.men: 5, honour: 1 } }, { queue: { scene: hi_beaten, days: 0 } } ]
-      result: Five of them take your oars, with the water lapping round their knees in the waterlogged bilge. The rest swim for it. Most of them make the shore.
+      result: Five of them take your oars, still wet to the knees from their own ship's bilge. The rest swim for it. Most of them make the shore.
     - id: hostage
       text: Her steersman's son is among the beaten. Take him, to hold against his father.
       visible_if: "!service"
@@ -184,12 +184,12 @@
       result: |
         The chest has hacksilver in it, and a good knife. By the time you come round for the mast, there is nobody on it.
 
-        Nobody aboard says anything. Nobody needs to.
+        The men row on without a word, and none of them will look at the chest.
     - id: leave
       text: Leave the dead to Rán. You're far from land and short of water.
       visible_if: "!service"
       effects: [ { add: { crew.morale: -1 } } ]
-      result: The waving man stops waving when he sees you go by. He doesn't shout. That's worse.
+      result: The waving man stops waving when he sees you go by. He doesn't shout, or curse you. He just watches you go.
     # at the oar: whether the ship turns is {captain}'s to say; what you do about it is yours
     - id: shout
       text: Shout until {captain} brings her round, and go over the side for them yourself.
@@ -201,7 +201,7 @@
         effects: [ { days: 1 }, { add: { hamingja: 1 } }, { deed: { type: man_deed, text: "Went over the side for drowning men, and brought one back", weight: 2 } } ]
       failure:
         text: |
-          "We're short of water," {captain} says, "and they're dead men." He holds his course. You watch the waving man stop waving. He doesn't shout. That's worse.
+          "We're short of water," {captain} says, "and they're dead men." He holds his course. You watch the waving man stop waving. He doesn't shout. He just watches the ship go.
         effects: [ { add: { crew.morale: -1 } } ]
     - id: hook
       text: While the others are watching the mast, hook the sea-chest as it goes by.
@@ -213,13 +213,13 @@
         effects: [ { add: { silver: 24, hamingja: -1 } } ]
       failure:
         text: |
-          {captain} sees. He takes the chest for the ship, and looks at you for a long moment, and says nothing at all. You would rather he had shouted. The men on the benches either side of you move their sea-chests a little further from yours.
+          {captain} sees. He takes the chest for the ship, and looks at you, and says nothing at all. You would rather he had shouted. The men on the benches either side of you move their sea-chests a little further from yours.
         effects: [ { add: { honour: -1, hamingja: -1 } } ]
     - id: quiet
       text: Say nothing. It's not your ship.
       visible_if: service
       result: |
-        {captain} looks at the wreck a long while, and at the water casks, and holds his course. The waving man stops waving when he sees you go by. Nobody on the benches says anything. It's not their ship either.
+        {captain} looks at the wreck, and then at the water casks, and holds his course. The waving man stops waving when he sees you go by. Nobody on the benches says anything. It's not their ship either.
 
 - id: g_sea_overboard
   kind: pool
@@ -230,7 +230,7 @@
   art: storm
   title: Man overboard
   text: |
-    A big sea comes over the bow in the grey of the morning, and when it's gone, so is one of the men from the forward benches. You see his head once, already thirty yards astern, and an arm, and then nothing but the grey water rolling.
+    A big sea comes over the bow in the grey of the morning, and when it's gone, so is one of the men from the forward benches. You see his head once, already a spear's throw astern, and an arm, and then nothing but the grey water rolling.
   choices:
     - id: dive
       text: Strip off and go in after him with a line.
@@ -239,7 +239,7 @@
       check: { skill: seamanship, attr: end, difficulty: 5 }
       success:
         text: |
-          The cold stops your heart for a beat, and then you're swimming. You find him by luck, by his hair, and the men haul the two of you in like a pair of seals. He's sick all over your feet. He'll never forget it, and nor will the men.
+          The cold shuts on your chest like a fist, and then you're swimming. You find him by luck, by his hair, and the men haul the two of you in like a pair of seals. He's sick all over your feet. The men call him your catch for the rest of the voyage.
         effects: [ { deed: { type: man_deed, text: "Went into the sea after a drowning man, and brought him back", weight: 3 } }, { add: { crew.morale: 2 } } ]
       failure:
         text: |
@@ -265,7 +265,7 @@
       check: { skill: speech, attr: pre, difficulty: 4 }
       success:
         text: |
-          {captain} brings her round in a sea that wants to roll her over, and the third line lands across the man's arms. He comes aboard like a landed cod. Later he finds out who shouted, and comes and sits by you, and doesn't say anything, and doesn't need to.
+          {captain} brings her round in a sea that wants to roll her over, and the third line lands across the man's arms. He comes aboard like a landed cod. Later he finds out who shouted, and comes and sits by you at the evening meal, and gives you half his ale.
         effects: [ { add: { crew.morale: 1 } } ]
       failure:
         text: |
@@ -390,7 +390,7 @@
       danger: true
       check: { skill: speech, attr: pre, difficulty: 4 }
       success:
-        text: They take a lot of your goods and a little silver, and go away, and you're left with most of what you had and a story to tell. Their skipper even thanks you.
+        text: They take one lot of your goods, argue over it among themselves, and go away, and you're left with most of what you had and a story to tell. Their skipper even thanks you.
         effects: [ { lose_cargo: 1 } ]
       failure:
         text: They take the offer as a sign of weakness, which it was. They come on anyway.

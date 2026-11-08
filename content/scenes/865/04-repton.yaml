@@ -60,7 +60,7 @@
     [if flag.ga_ivarr_knows]You remember him lifting his cup an inch from the table at Yule in East Anglia, and find that you mind.[elif flag.ga_spoke_for_edmund]You remember his voice in the yard at Thetford, quite gentle, and find that you don't mind at all.[/if]
   choices:
     - id: bury
-      text: Bury the Elk's dead properly, with their weapons, outside the stone house.
+      text: Bury [if service]the Elk's[else]your[/if] dead properly, with their weapons, outside the stone house.
       effects: [ { add: { honour: 1, crew.morale: 1 } } ]
       result: You dig in frozen ground for two days, with the men who are still standing. Each man goes in with his sword and a coin and, for the ones who wore one, the little silver hammer. The monks watch from the church door and say nothing. In spring the grass comes up over all of it, Dane and Mercian king alike.
     - id: nurse
@@ -102,9 +102,9 @@
     - id: guthrum
       text: Go south with Guthrum, for Wessex.
       effects: [ { set: flag.ga_guthrum }, { route: [thetford] }, { camp: thetford }, { march: thetford } ]
-      result: Guthrum is a broad, slow-speaking Dane with a patient face, nothing like the sons of Ragnarr. He looks at you a long time before he says anything. "Good," he says. "Alfred has learned. So must we."
+      result: Guthrum is a broad, slow-speaking Dane with a patient face, nothing like the sons of Ragnarr. He takes his time over you before he says anything. "Good," he says. "Alfred has learned. So must we."
     - id: home
       text: Neither. Take your silver and go home to Hordaland.
       visible_if: "!service"
       effects: [ { fleet_end: true }, { set: flag.ga_went_home } ]
-      result: Nine years. You go down the Trent with the spring flood, and out of the Humber, and north, with a ship full of men who have forgotten what their wives look like. Some of their wives have forgotten too.
+      result: Nine years, for the men who came with the first ships. You go down the Trent with the spring flood, and out of the Humber, and north, with a ship full of men who have forgotten what their wives look like. Some of their wives have forgotten too.

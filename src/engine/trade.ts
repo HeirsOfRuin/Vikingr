@@ -124,7 +124,7 @@ export function stowGoods(state: GameState, content: ContentBundle, good: string
   const what = `${g.name.toLowerCase()} (${fit} ${fit === 1 ? 'lot' : 'lots'}, about ${formatSilver(fit * g.price)} at an ordinary market)`;
   if (fit === lots) return `Into the ${state.service ? 'sea-chest' : 'hold'}: ${what}.`;
   if (fit === 0) return `No room in the ${state.service ? 'sea-chest' : 'hold'} for the ${g.name.toLowerCase()}: it stays on the beach.`;
-  return `Into the ${state.service ? 'sea-chest' : 'hold'}: ${what}. ${lots - fit} more stay on the beach; there's no room.`;
+  return `Into the ${state.service ? 'sea-chest' : 'hold'}: ${what}. ${lots - fit} more ${lots - fit === 1 ? 'stays' : 'stay'} on the beach; there's no room.`;
 }
 
 export function sellLot(state: GameState, content: ContentBundle, at: string, good: string): string {

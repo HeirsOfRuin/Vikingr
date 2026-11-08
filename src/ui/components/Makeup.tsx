@@ -27,7 +27,7 @@ export function Makeup({ title, intro, start, sets, begin, onBegin, onBack }: {
       <h1>{title}</h1>
       <p>{intro}</p>
       <h3>What you were born with</h3>
-      <p class="small sans muted">{left === 0 ? `All ${pool} points spent.` : left > 0 ? `${left} of ${pool} points left to spend.` : `${-left} points too many.`} Each is {MAKEUP.min} to {MAKEUP.max}.</p>
+      <p class="small sans muted">{left === 0 ? `All ${pool} points spent.` : left > 0 ? `${left} of ${pool} points left to spend.` : `${-left} ${left === -1 ? 'point' : 'points'} too many.`} Each is {MAKEUP.min} to {MAKEUP.max}.</p>
       <div class="makeup">
         {ATTRS.map((k) => (
           <div key={k} class="attr-row">

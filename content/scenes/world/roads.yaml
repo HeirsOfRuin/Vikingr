@@ -311,7 +311,7 @@
   art: muster
   title: The stragglers
   text: |
-    An army on the march leaves a tail: the lame, the drunk, the men with too much plunder on their backs to keep up. The local people know about the tail. This morning there are eleven of them dead by the road, and the men who did it can't be far.
+    An army on the march leaves a tail: the lame, the drunk, the men with too much plunder on their backs to keep up. The local people know about the tail. This morning eleven stragglers lie dead by the road, and the men who did it can't be far.
   choices:
     - id: hunt
       text: Go after the men who did it.
@@ -345,4 +345,4 @@
     - id: send
       text: Send them back to their captain.
       effects: [ { add: { honour: 1 } } ]
-      result: They curse you and go back. Their captain sends you a ring for it, in front of everyone, which is the point.
+      result: They curse you and go back. Their captain thanks you for it at the fires that night, loudly, in front of everyone, which is the point.

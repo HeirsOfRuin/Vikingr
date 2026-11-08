@@ -89,7 +89,7 @@ export function moveDesc(d: DuelState, m: BoutMove): string {
     case 'quick': return 'A fast cut. −1 breath';
     case 'guard': return 'Shield up, and wait. +1 breath';
     case 'bash': return 'Drive in behind your shield. −2 breath';
-    case 'back': return d.kind === 'holmgang' ? 'Give ground for breath. +3 breath; a step toward the edge' : 'Give ground for breath. +3 breath';
+    case 'back': return d.kind === 'holmgang' ? 'Give ground for breath. +3 breath; a step towards the edge' : 'Give ground for breath. +3 breath';
   }
 }
 export const BOUT_ADVICE: Record<BoutMove, string> = {
