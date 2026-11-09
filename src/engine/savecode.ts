@@ -23,8 +23,9 @@ function fromBase64Url(text: string): Uint8Array {
   return out;
 }
 
-/** Journal entries kept in a save code; older ones are dropped from the code (the deeds carry the story). */
-export const CODE_FULL_JOURNAL = 200;
+/** Journal entries kept in a save code; older ones are dropped from the code (the deeds carry the story). 60 since
+ *  2026-11-09: a long life's code passed 20,000 characters, the most a chat message carries, and arrived cut. */
+export const CODE_FULL_JOURNAL = 60;
 
 function compact(save: unknown): unknown {
   const s = save as { state?: { journal?: unknown[] } };
