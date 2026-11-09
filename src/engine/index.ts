@@ -23,7 +23,7 @@ import { hearNews, newsWaiting, tickChronicle } from './chronicle';
 import { courseBlock, coursePath, courseTargets, sailCourse } from './course';
 import { AIM_LABEL, BOLD_LABEL, coastTargets, CRUISE, cruiseBlock, cruiseUntil, defaultOrders, endCruise, forecast, LEAD_LABEL, POSITION_WORDS, reckoningWords, runCruise, startCruise } from './cruise';
 import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lords';
-import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding, claimBlock } from './land';
+import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding, claimBlock, unwardFort, wardenLabel, wardFort, wardMen, wardShips, WARDEN } from './land';
 import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
 import { appoint, buyHull, CARGO_UNIT, deadMasters, hullsForSale, sellShip, shipSellPrice, shipsToSell, takeHelm } from './fleet';
@@ -96,6 +96,8 @@ export type Action =
   | { t: 'dig_fort' }
   | { t: 'muster_land' }
   | { t: 'reinforce' }
+  | { t: 'ward_fort'; ship: string }
+  | { t: 'unward_fort' }
   | { t: 'forage' }
   | { t: 'resupply' }
   | { t: 'guest' }
@@ -659,6 +661,16 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
         const why = c ? courseBlock(state, content, c.path[0]!) : null;
         if (c) out.push(opt('Sail', { t: 'course', to: state.course }, `Hold your course for ${content.places[state.course]!.name}`, !why, why ?? undefined, `About ${c.days} days, ${c.path.length === 1 ? 'one leg' : `${c.path.length} legs`}; stops if anything happens`));
       }
+      // one button for the road home, whatever the legs (Josh, 2026-11-09: "a button to sail for home after a certain date")
+      const hm = homeOf(state);
+      if (state.ships.length && at !== hm && state.course !== hm && !exiled(state)) {
+        const c = coursePath(state, content, at, hm);
+        if (c) {
+          const why = courseBlock(state, content, c.path[0]!);
+          const late = doy >= LATE_SEASON_DOY;
+          out.push(opt('Sail', { t: 'course', to: hm }, `Sail for home, to ${content.places[hm]!.name}`, !why, why ?? undefined, `About ${plural(Math.ceil(c.days), 'day')}, ${c.path.length === 1 ? 'one leg' : `${c.path.length} legs`}; stops if anything happens${late ? '. The summer is ending; the sea closes on 1 November' : ''}`));
+        }
+      }
       if (state.ships.length) {
         for (const r of routes(state, content, at)) {
           const short = state.provisions < mouths(state) * r.days;
@@ -726,6 +738,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       }
       if (tier !== 'hostile') out.push(opt('Here', { t: 'rest' }, 'Rest a few days'));
       for (const c of courseTargets(state, content)) {
+        if (c.to === homeOf(state) && !exiled(state)) continue;
         const short = state.provisions < mouths(state) * c.days;
         const why = courseBlock(state, content, coursePath(state, content, at, c.to)!.path[0]!);
         out.push(opt('Course', { t: 'course', to: c.to }, `Set a course for ${content.places[c.to]!.name}`, !why, why ?? undefined, `About ${c.days} days, ${c.legs} legs${short ? '. Not enough food for the whole road' : ''}; stops if anything happens`));
@@ -845,9 +858,16 @@ function landOptions(state: GameState, content: ContentBundle, at: string): Acti
     const why = fortBlock(state, content, at);
     out.push(opt('Land', { t: 'dig_fort' }, 'Dig a ship-fort here, and hold it', !why, why ?? undefined, `Ten days; leave ${plural(garrisonFor(state), 'man', 'men')} to hold it. ${formatSilver(LAND.fort.yield)} a year, if they don't take it back`));
   }
-  if (h && canMuster(state, at)) out.push(opt('Land', { t: 'muster_land' }, 'Call out your people here', true, undefined, `Up to ${plural(LAND[h.kind].men, 'man', 'men')}, and food`));
+  if (h && canMuster(state, at)) out.push(opt('Land', { t: 'muster_land' }, 'Call out your people here', true, undefined, h.warden ? `${plural(LAND[h.kind].men, 'man', 'men')}, food, and any men the fort can spare over ${WARDEN.keep}` : `Up to ${plural(LAND[h.kind].men, 'man', 'men')}, and food`));
   if (h && homeOf(state) !== at) { const why = settleBlock(state, content); out.push(opt('Land', { t: 'settle' }, 'Bring your family and your men\'s families, and settle here', !why, why ?? undefined, settleHint(state, content))); }
   if (h?.kind === 'fort') out.push(opt('Land', { t: 'reinforce' }, 'Leave five more men to hold the fort', state.crew.men > 10, 'You can\'t spare them.', `${plural(h.garrison ?? 0, 'man', 'men')} hold it now. More men, less chance they take it back`));
+  // a ship and her master to hold the fort for him (Josh, 2026-11-09)
+  for (const s of wardShips(state, at)) {
+    const who = s.master!.split(':')[1]!;
+    const name = s.master!.startsWith('man:') ? state.men.find((m) => m.id === who)?.name ?? 'her master' : who;
+    out.push(opt('Land', { t: 'ward_fort', ship: s.id }, `Leave ${s.name} and ${name} to hold the fort`, true, undefined, `${plural(wardMen(state, content, s), 'man', 'men')} of her crew stay. He takes in ${WARDEN.recruits} men a spring, keeps the walls, and the fort's yield grows; he keeps a third of it`));
+  }
+  if (h?.warden) out.push(opt('Land', { t: 'unward_fort' }, `Take ${h.warden.ship.name} back from the fort`, true, undefined, `${wardenLabel(state, h)}, holds it with ${plural(h.garrison ?? 0, 'man', 'men')}; up to ${plural(Math.max(0, (h.garrison ?? 0) - LAND.garrisonMin), 'man', 'men')} of them would come with her`));
   return out;
 }
 
@@ -1080,6 +1100,12 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       break;
     case 'muster_land':
       report('Your people', musterHolding(state, content, state.at!));
+      break;
+    case 'ward_fort':
+      report('The fort', wardFort(state, content, state.at!, action.ship));
+      break;
+    case 'unward_fort':
+      report('The fort', unwardFort(state, content, state.at!));
       break;
     case 'reinforce': {
       const h = holdingAt(state, state.at)!;

@@ -46,10 +46,14 @@ export function baseStanding(content: ContentBundle, id: string): number {
 
 export function standing(state: GameState, content: ContentBundle, id: string): number {
   const n = state.places[id]?.standing ?? baseStanding(content, id);
-  // his lord's ports never treat his man as worse than friendly (docs/FRAME-WORLD.md §C)
-  const floor = standingFloor(state, content, id);
-  return floor === null ? n : Math.max(n, floor);
+  // his lord's ports never treat his man as worse than friendly (docs/FRAME-WORLD.md §C); nor does his own land:
+  // the people in his fort are his men (Josh's save, 839: Mön, his fort and his home, turned hostile over raids in Ulster)
+  const floor = Math.max(standingFloor(state, content, id) ?? -99, (state.holdings ?? []).some((h) => h.place === id) ? HELD_FLOOR : -99);
+  return floor === -99 ? n : Math.max(n, floor);
 }
+
+/** A place he holds land or a fort at is never worse than friendly to him. */
+export const HELD_FLOOR = 2;
 
 export function tierAt(state: GameState, content: ContentBundle, id: string): Tier {
   return tierOf(standing(state, content, id));
@@ -81,7 +85,7 @@ export function shiftStanding(state: GameState, content: ContentBundle, id: stri
   const after = Math.max(STANDING_MIN, Math.min(STANDING_MAX, before + n));
   ps.standing = after;
   const t0 = tierOf(before);
-  const t1 = tierOf(after);
+  const t1 = tierOf(standing(state, content, id));
   if (t0 !== t1 && state.known.includes(id)) journal(state, `${p.name} is ${TIER_NAMES[t1].toLowerCase()} to you now.`);
 }
 

@@ -215,7 +215,7 @@ export function sellItem(state: GameState, content: ContentBundle, uid: string):
 /** A blade or a mail-shirt given to a sworn man, in front of the others: it binds him closer, and he fights better for it. */
 export function giveKitTo(state: GameState, content: ContentBundle, uid: string, manId: string): string {
   const i = state.items.findIndex((x) => x.uid === uid);
-  const m = state.men.find((x) => x.id === manId && x.alive && x.sworn);
+  const m = state.men.find((x) => x.id === manId && x.alive && !x.warden && x.sworn);
   if (i < 0 || !m || Object.values(state.kit).includes(uid)) return '';
   const inst = state.items[i]!;
   const def = content.items[inst.id]!;

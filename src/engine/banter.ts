@@ -8,7 +8,7 @@ import { renderText } from './text';
 /** One line for this moment, or null. Lines already heard this year are skipped while others remain. */
 export function banter(state: GameState, content: ContentBundle, rng: RngCursor, when: BanterLine['when'], chance = 1): string | null {
   if (rng.float() >= chance) return null;
-  const alive = new Set(state.men.filter((m) => m.alive).map((m) => m.id));
+  const alive = new Set(state.men.filter((m) => m.alive && !m.warden).map((m) => m.id));
   // a line for a temperament is said by a living sworn man of it (docs/FRAME-CREW.md); {man} names him
   const speaker = (b: BanterLine) => (typeof b.who === 'string' ? (alive.has(b.who) ? b.who : null) : pickSpeaker(state, rng, b.who.temperament));
   const ok = content.banter.map((b, i) => ({ b, i, who: speaker(b) })).filter(({ b, who }) => b.when === when && who && test(b.requires, state, content));
@@ -34,6 +34,6 @@ export function namesDead(state: GameState, text: string): boolean {
 
 /** A living sworn man of this temperament to say a line, or null. */
 function pickSpeaker(state: GameState, rng: RngCursor, temperament: string): string | null {
-  const men = state.men.filter((m) => m.alive && m.sworn && m.temperament === temperament);
+  const men = state.men.filter((m) => m.alive && !m.warden && m.sworn && m.temperament === temperament);
   return men.length ? men[rng.int(men.length)]!.id : null;
 }

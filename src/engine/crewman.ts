@@ -39,7 +39,7 @@ function hash(s: string): number {
 
 /** A living sworn man of this temperament, the one with the most deeds (the crew's best-known of his kind). */
 export function pickCrewman(state: GameState, temperament: string): SwornMan | undefined {
-  return state.men.filter((m) => m.alive && m.sworn && m.temperament === temperament && !(m.hurtUntil && m.hurtUntil > state.day))
+  return state.men.filter((m) => m.alive && !m.warden && m.sworn && m.temperament === temperament && !(m.hurtUntil && m.hurtUntil > state.day))
     .sort((a, b) => b.deeds - a.deeds || a.name.localeCompare(b.name))[0];
 }
 

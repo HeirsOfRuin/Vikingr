@@ -349,6 +349,8 @@ export const chronEvent = z.object({
   /** He was part of it: the chapter has done its work, and there is no news to hear. */
   unless: condInput.optional(),
   news: z.string(),
+  /** What men say of it in the spring before (src/engine/rumours.ts). Without one, a raid is rumoured by its region. */
+  rumour: z.string().optional(),
 }).strict();
 export type ChronEvent = z.infer<typeof chronEvent>;
 /** A legend who raids his own waters every summer while he lives, by the hero's own rules. */

@@ -4,13 +4,19 @@ import type { GameState, SwornMan } from './state';
 
 export const SHIP_NAMES = ['Grey Goose', 'Wave-Stallion', 'Oak-Heart', 'Storm-Wolf', 'Sea-Raven', 'Gull', 'Black Hart', 'Spray-Horse', 'Iron Beak', 'Long Otter'];
 
+/** The sworn men and bench-mates with him: alive, and not away holding a fort. */
 export function aliveMen(state: GameState): SwornMan[] {
-  return state.men.filter((m) => m.alive);
+  return state.men.filter(withHim);
+}
+
+/** A man in the crew today: alive, and not a fort's warden. */
+export function withHim(m: SwornMan): boolean {
+  return m.alive && !m.warden;
 }
 
 /** Men fit to stand in a fight today. */
 export function fitMen(state: GameState): SwornMan[] {
-  return state.men.filter((m) => m.alive && (m.hurtUntil === null || m.hurtUntil <= state.day));
+  return state.men.filter((m) => withHim(m) && (m.hurtUntil === null || m.hurtUntil <= state.day));
 }
 
 /** Everyone who eats: the crew, the sworn men and the hero. */

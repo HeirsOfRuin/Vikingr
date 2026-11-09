@@ -95,6 +95,8 @@ events:
     # AB 838: a fleet of Danish pirates making for Frisia was almost destroyed by a sudden storm at sea.
     news: |
       A Danish fleet going to Frisia was caught by a storm at sea, and most of it went down. King Horik has sent envoys to the emperor to say the dead men were pirates and nothing to do with him, and to ask for Frisia in the same breath.
+    rumour: >-
+      Horik's Danes are building ships again, they say, for Frisia, and they mean to go late in the summer when the Franks have sent their levies home. Old men who know the sea in August shake their heads.
 
   - id: c839_neagh
     year: 839
@@ -107,6 +109,8 @@ events:
     # AU 839: "A naval force of the foreigners on Loch nEchach, and they plundered the peoples and churches of the north of Ireland therefrom."
     news: |
       From Ireland: a Norse fleet has hauled its ships into Lough Neagh, the great lake in the middle of the north, and is raiding every church and kingdom round it. They mean to winter there. Nobody has done that before.
+    rumour: >-
+      In the Irish Sea they say a Norse fleet means to drag its ships up the Bann into Lough Neagh this summer, and stay there, and eat the north of Ireland from the inside.
 
   - id: c840_louis
     year: 840
@@ -115,6 +119,8 @@ events:
     # Louis the Pious died on 20 June 840; his sons fought over the empire, at Fontenoy in June 841.
     news: |
       The emperor Louis is dead. His three sons are already gathering armies against each other, and the Frankish rivers have nobody watching them but monks.
+    rumour: >-
+      The traders from Frankia say the old emperor Louis is failing, and his three sons are already counting their men. If he dies, nobody will be watching the Frankish rivers.
 
   - id: c840_armagh
     year: 840
@@ -128,6 +134,8 @@ events:
     # AU 840: "Ard Macha was plundered by the heathens of Loch nEchach."
     news: |
       The fleet on Lough Neagh has come out of the lake and burned Armagh again, and carried off its clergy to sell. Turgeis has put a man of his own in the abbot's seat, the Irish say. They say it the way men say a thing they hope is not true.
+    rumour: >-
+      The Irish are saying the fleet on Lough Neagh will come out for Armagh before the winter. They have said it before, and been right.
 
   - id: c841_rouen
     year: 841
@@ -140,6 +148,8 @@ events:
     # AB 841: in May the Northmen under Oscherus came up the Seine, sacked Rouen and burned Jumièges; Fontenelle paid them to go.
     news: |
       From the Seine: a Danish fleet under a man the Franks call Oscherus went up the river in May, burned Rouen and the abbey at Jumièges, and sold the monks back to their brothers at Saint-Denis for twenty-six pounds of silver.
+    rumour: >-
+      A Dane the Franks call Oscherus is gathering ships, men say, and the Seine is the river he talks about in his cups.
 
   - id: c842_london
     year: 842
@@ -151,6 +161,8 @@ events:
     # ASC 842: "Here there was great slaughter in London and in Quentovic and in Rochester." AB 842: Quentovic sacked at dawn.
     news: |
       A Danish fleet came into Quentovic at dawn and left nothing standing but the churches they were paid to spare. Then it crossed to England, and there was great slaughter at London and at Rochester.
+    rumour: >-
+      Danish ships are talking of Quentovic and the English coast across from it: a market at dawn, and London after.
 
   - id: c843_nantes
     year: 843
@@ -164,6 +176,8 @@ events:
     # AB 843 and the Chronicle of Nantes: on St John's Day the Westfaldingi took Nantes and killed Bishop Gunhard in his church. Hastein at their head: later tradition.
     news: |
       From the Loire: a fleet from Vestfold, Norwegians, men from your own side of the sea, came into Nantes on St John's Day, while the whole city was at mass. They killed the bishop at his own altar. Men say a young captain called Hastein was among them.
+    rumour: >-
+      In Vestfold they are fitting out more ships than anyone can remember, for the Loire, men say, and a city on it with a saint's feast in June.
 
   - id: c843_noirmoutier
     year: 843
@@ -183,6 +197,8 @@ events:
     # Ibn al-Qutiyya and the Arab annalists: the Majus sacked Seville in 844; Abd al-Rahman's army beat them at Tablada and hanged the captives from the palm trees.
     news: |
       Ships from the Loire went south past the Basques, past the end of the Franks' country, to the land of the Moors. They took a city called Seville, and held it for six weeks, and then the Moors' king came down on them and hanged their men from the palm trees. The ones who came back are telling it on every beach in Frankia.
+    rumour: >-
+      The Loire Northmen talk of going south this year, past the Basques, to a country of Moors and cities nobody here has seen. Most of them will not go. Some will.
 
   - id: c844_loughree
     year: 844
@@ -204,6 +220,8 @@ events:
     # AB 845: Horik sent six hundred ships up the Elbe; Hamburg was burned, and Bishop Ansgar fled with the relics.
     news: |
       King Horik sent six hundred ships up the Elbe and burned Hamburg: the church, the bishop's books, the new town round it. The bishop, Ansgar, the one who went to Birka, got away with his relics and nothing else.
+    rumour: >-
+      King Horik is gathering ships, the Danes say: hundreds of them, and the Elbe is the river he names. The Saxons' new church at Hamburg is at the end of it.
 
   - id: c845_paris
     year: 845
@@ -217,6 +235,8 @@ events:
     # AB 845: Reginherus came up the Seine with 120 ships and took Paris at Easter; Charles paid him 7,000 pounds to leave.
     news: |
       Ragnarr went up the Seine with a hundred and twenty ships and took Paris at Easter. King Charles paid him seven thousand pounds of silver to go away. Seven thousand. Men keep saying the number to each other, as if it might change.
+    rumour: >-
+      Ragnarr is gathering a fleet, they say on every beach from Vestfold to the Loire: more than a hundred ships, for the Seine, and for Paris at the end of it.
 
   - id: c845_turgeis
     year: 845
@@ -227,6 +247,8 @@ events:
     # AU 845: "Turgéis was taken prisoner by Máel Sechnaill, and drowned in Loch Uair."
     news: |
       Turgeis is dead. Máel Sechnaill of Mide took him, and drowned him in Lough Owel with a stone round his neck. The Irish are singing about it in every hall from Ulster to Munster.
+    rumour: >-
+      The Irish say Máel Sechnaill of Mide has sworn to have Turgeis's head. The Norse in Ireland laugh at that. Not all of them.
 
   - id: c846_ragnar
     year: 846
@@ -236,6 +258,8 @@ events:
     # The Translatio of St-Germain: the Northmen who took Paris were struck by a flux on the way home; the tale of Ragnarr's own death is the Franks'.
     news: |
       The Franks are saying that Ragnarr is dead: that the saint whose church he robbed at Paris sent a flux among his men, and that it took him too. The Danes say he is alive, and laughing about it, at Horik's court. Men say many things about Ragnarr.
+    rumour: >-
+      The Danes say Ragnarr came home rich and sick from Paris, and men are wondering which of those will last.
 
   - id: c848_bordeaux
     year: 848

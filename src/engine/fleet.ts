@@ -107,7 +107,7 @@ export function addShip(state: GameState, content: ContentBundle, ship: Omit<Shi
 /** No two ships in his fleet share a name (Josh's save, 2026-11-08: two knarrs called The Frisian). A second prize
  *  of the same kind is "the other" one, as the crews would say; anything else takes the first free name on the list. */
 export function freeShipName(state: GameState, wanted: string): string {
-  const taken = new Set(state.ships.map((s) => s.name));
+  const taken = new Set([...state.ships, ...(state.holdings ?? []).flatMap((h) => (h.warden ? [h.warden.ship] : []))].map((s) => s.name));
   if (!taken.has(wanted)) return wanted;
   const other = wanted.replace(/^The /, 'The other ');
   if (other !== wanted && !taken.has(other)) return other;
@@ -158,7 +158,7 @@ export function appoint(state: GameState, content: ContentBundle, shipId: string
     ship.master = `hired:${hiredName(state, content)}`;
     return;
   }
-  const m = state.men.find((x) => x.id === who && x.alive && x.sworn);
+  const m = state.men.find((x) => x.id === who && x.alive && !x.warden && x.sworn);
   if (!m) return;
   const old = shipOf(state, who);
   if (old && old !== ship) old.master = `hired:${hiredName(state, content)}`;

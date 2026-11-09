@@ -87,7 +87,7 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   'at.people': (s, c) => (s.at ? c.places[s.at]?.people ?? '' : ''),
   'bound.people': (s, c) => (s.voyage ? c.places[s.voyage.to]?.people ?? '' : ''),
   'cargo.lots': (s) => Object.values(s.cargo ?? {}).reduce((n, c) => n + c.lots, 0),
-  'sworn.free': (s) => s.men.filter((m) => m.alive && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
+  'sworn.free': (s) => s.men.filter((m) => m.alive && !m.warden && m.sworn && !s.ships.some((x) => x.master === `man:${m.id}`)).length,
   'masters.hired': (s) => s.ships.slice(1).filter((x) => x.master?.startsWith('hired:')).length,
   /** Hardship (docs/FRAME-HARDSHIP.md): how far men grudge him, his buried silver, a bad harvest this winter. */
   envy: (s) => s.hard?.envy ?? 0,
@@ -192,8 +192,8 @@ export function getValue(state: GameState, content: ContentBundle, path: string)
     }
     case 'man': {
       const m = state.men.find((x) => x.id === a);
-      if (b === 'present') return !!m && m.alive;
-      if (b === 'sworn') return !!m && m.alive && m.sworn;
+      if (b === 'present') return !!m && m.alive && !m.warden;
+      if (b === 'sworn') return !!m && m.alive && !m.warden && m.sworn;
       if (b === 'master') return !!m && m.alive && state.ships.some((x) => x.master === `man:${m.id}`);
       if (!m) return b === 'alive' ? false : 0;
       if (b === 'alive') return m.alive;

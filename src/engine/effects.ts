@@ -145,7 +145,7 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
     } else if ('recruit' in e) {
       // men who sign on away from home: as many as the ship has benches for
       if (!state.service) {
-        const room = Math.max(0, capacity(state, content) - state.crew.men - state.men.filter((m) => m.alive).length);
+        const room = Math.max(0, capacity(state, content) - state.crew.men - state.men.filter((m) => m.alive && !m.warden).length);
         const n = Math.min(room, e.recruit);
         if (n > 0) { addRecruits(state, n); journal(state, `${n === 1 ? 'One man' : `${n} men`} signed on.`); }
       }
@@ -401,6 +401,6 @@ export function applyEffects(state: GameState, content: ContentBundle, rng: RngC
  * (playtest 9: 17 men against a fixed 34 at the Asturian beach, with sixty ships on the same sand). Never fewer than 6. */
 export function foesFor(state: GameState, men: number, ratio?: number): number {
   if (ratio === undefined) return men;
-  const ours = state.crew.men + state.men.filter((m) => m.alive).length + 1;
+  const ours = state.crew.men + state.men.filter((m) => m.alive && !m.warden).length + 1;
   return Math.max(Math.min(men, 6), Math.round(ours * ratio));
 }

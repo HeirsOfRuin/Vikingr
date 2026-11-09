@@ -95,7 +95,7 @@ const OLD_HAND_EYE = 2;
 /** While he is new to fighting, an old hand shouts advice: a bench-mate, a sworn man, or the captain. */
 export function adviser(state: GameState): string | null {
   if (state.stats.battles + state.stats.duels >= WALL.adviceUntil) return null;
-  return state.men.find((m) => m.alive && !(m.hurtUntil && m.hurtUntil > state.day))?.name ?? state.service?.captain ?? 'An old hand';
+  return state.men.find((m) => m.alive && !m.warden && !(m.hurtUntil && m.hurtUntil > state.day))?.name ?? state.service?.captain ?? 'An old hand';
 }
 
 /** Renown brings harder enemies (docs/FRAME-COMBAT-2.md, revision 3): from 832, a man whose name is known is more

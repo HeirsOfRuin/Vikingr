@@ -24,6 +24,7 @@ import { driftStanding, tierAt } from './standing';
 import { hearNews } from './chronicle';
 import { atLordSeat, lordMen, lordName, lordsYear, lordTenth, secretYear } from './lords';
 import { holdingAt, holdingsYear } from './land';
+import { springRumours } from './rumours';
 import { ruleYear, seatPlace } from './rule';
 import { familyYear, winterBirth } from './family';
 import {
@@ -543,6 +544,10 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   // whatever news never reached him in a port reaches him over the winter (docs/FRAME-WORLD.md §B)
   const news = hearNews(state, true);
   if (news.length) lines.push(`News over the winter: ${news.join(' ')}`);
+  // and what they say about the summer to come (Josh, 2026-11-09)
+  const rumours = state.service ? [] : springRumours(state, content);
+  state.rumours = { year, lines: rumours };
+  if (rumours.length) lines.push(`What the beaches are saying about this summer: ${rumours.join(' ')}`);
   journal(state, `Spring of ${year}.`);
   // spring's scenes open after the chapter card has been read (settle() triggers phase_start)
   return lines;

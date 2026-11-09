@@ -105,6 +105,8 @@ export interface SwornMan {
   /** A man not in the registry, made when he came (docs/FRAME-HIRD-HOSTAGES.md): where from, and what he is like. */
   origin?: string;
   desc?: string;
+  /** Holding a ship-fort for him, with his ship: the place (docs/DESIGN.md, 2026-11-09). Not in the crew while he is there. */
+  warden?: string;
 }
 
 export interface Boast {
@@ -356,6 +358,8 @@ export interface GameState {
   cargo?: Record<string, { lots: number; cost: number }>;
   /** The year's trade news: one good dear or cheap everywhere. */
   tradeNews?: { good: string; mult: number; year: number };
+  /** What the beaches said at the turn of the year about the summer ahead (rumours.ts). */
+  rumours?: { year: number; lines: string[] };
   /** The shipmasters of the north, once anything has passed between them (docs/FRAME-TRADE-ALLIES.md). */
   captains?: Record<string, { rel: number; met: boolean; alive: boolean }>;
   /** The summer's félag: a sworn partner, the year, and the heap shared. */

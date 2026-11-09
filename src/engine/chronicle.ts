@@ -59,7 +59,7 @@ function placeWord(content: ContentBundle, id: string, by: string): string {
 }
 
 /** A legend is about his work this year: alive, and in his years. */
-function active(content: ContentBundle, r: ChronRaider, year: number): boolean {
+export function activeRaider(content: ContentBundle, r: ChronRaider, year: number): boolean {
   if (year < r.from || year > r.to) return false;
   const leg = r.who ? content.rivals[r.who] : undefined;
   return !leg || (year >= leg.born + 16 && year < leg.died);
@@ -92,7 +92,7 @@ export function tickChronicle(state: GameState, content: ContentBundle): void {
       const day = dayOf(y, CHRON.raidFrom + rng.int(CHRON.raidSpan));
       if (day > state.day) continue;
       c.done.push(key);
-      if (!active(content, r, y) || rng.float() >= r.chance) continue;
+      if (!activeRaider(content, r, y) || rng.float() >= r.chance) continue;
       // the richest places draw them, as they draw him; not the one he is standing in, nor a Norse-held one
       const open = r.places.filter((id) => state.places[id] && !state.places[id]!.norse && state.at !== id && (state.places[id]!.wealth > 0));
       if (!open.length) continue;

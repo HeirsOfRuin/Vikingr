@@ -29,7 +29,7 @@ import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
 import type { KitSlot } from '../../engine/state';
 import { lordAlive, lordFav, lordMen, lordName, secretChance, swornTo } from '../../engine/lords';
-import { holdingYield, LAND } from '../../engine/land';
+import { holdingYield, LAND, wardenLabel } from '../../engine/land';
 import { claimWords, LORDSHIP, rivalOf, RULE, ruleTitle, ruleTribute, SEAT_DEF, SEATS, seatOpen, seatStatus } from '../../engine/rule';
 
 const SLOT_NAMES: Record<KitSlot, string> = { weapon: 'In his hand', shield: 'On his arm', helmet: 'On his head', armour: 'On his back' };
@@ -53,12 +53,12 @@ function KitCard({ content, state, onAct }: { content: ContentBundle; state: Gam
           {spare.map((x) => <button key={x.uid} class="choice" style={{ minHeight: 36, padding: '4px 8px' }} onClick={() => onAct?.({ t: 'equip', uid: x.uid })}>Take up {itemName(content, x).replace(/^(A|An|The) /, (m) => m.toLowerCase())}</button>)}
         </div>
       )}
-      {spare.length > 0 && !state.voyage && state.men.some((m) => m.alive && m.sworn) && (
+      {spare.length > 0 && !state.voyage && state.men.some((m) => m.alive && !m.warden && m.sworn) && (
         <div class="small" style={{ marginTop: 8 }}>
           <span class="muted">Give what you don't carry to a man sworn to you (it binds him closer; a blade makes him better with it). Or sell it at the smith or the market.</span>
           {spare.map((x) => (
             <div key={`g${x.uid}`} class="row sans small" style={{ flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
-              {state.men.filter((m) => m.alive && m.sworn).map((m) => (
+              {state.men.filter((m) => m.alive && !m.warden && m.sworn).map((m) => (
                 <button key={m.id} class="choice" style={{ minHeight: 32, padding: '4px 8px' }} onClick={() => onAct?.({ t: 'give_item', uid: x.uid, man: m.id })}>{itemName(content, x).replace(/^(A|An|The) /, (w) => w.toLowerCase())} to {m.name}</button>
               ))}
             </div>
@@ -226,12 +226,12 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
         const def = content.men[m.id];
         return (
           <div class="card" key={m.id}>
-            <b>{m.name}{m.nickname ? ` ${m.nickname}` : ''}</b> <span class="muted small sans">— {m.temperament}{m.alive ? (m.sworn ? `, sworn to you, ${loyaltyWord(m.loyalty)}` : ', a bench-mate; he has not sworn to you') : ''}{m.alive && m.hurtUntil !== null && m.hurtUntil > state.day ? ', hurt' : ''}</span>
+            <b>{m.name}{m.nickname ? ` ${m.nickname}` : ''}</b> <span class="muted small sans">— {m.temperament}{m.alive ? (m.sworn ? `, sworn to you, ${loyaltyWord(m.loyalty)}` : ', a bench-mate; he has not sworn to you') : ''}{m.alive && m.hurtUntil !== null && m.hurtUntil > state.day ? ', hurt' : ''}{m.alive && m.warden ? `, holding the fort at ${content.places[m.warden]?.name ?? m.warden} for you` : ''}</span>
             {m.alive ? (
               <>
                 <Bar value={m.loyalty} max={10} kind="gold" />
                 <p class="small">{m.desc ?? def?.desc}</p>
-                {m.sworn && <div class="row sans small">
+                {m.sworn && !m.warden && <div class="row sans small">
                   {(['front', 'wall', 'rear'] as Position[]).map((p) => (
                     <button key={p} class={`choice${m.slot === p ? ' primary' : ''}`} style={{ minHeight: 36, padding: '4px 8px' }} onClick={() => onAct({ t: 'slot', man: m.id, slot: p })}>{POSITION_NAMES[p]}</button>
                   ))}
@@ -330,6 +330,12 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
   return (
     <div class="card">
       <h3>Lords, land and rule</h3>
+      {state.rumours?.year === dateOf(state.day).year && state.rumours.lines.length ? (
+        <div class="small" style={{ marginBottom: 8 }}>
+          <b class="sans">What the beaches said this spring</b>
+          {state.rumours.lines.map((l, i) => <p key={i} class="small" style={{ margin: '4px 0' }}>{l}</p>)}
+        </div>
+      ) : null}
       {oath ? (
         <p class="small">You are {lordName(state, content, oath.lord)}'s man, since {formatDate(oath.since)}. He takes a tenth of every share-out{lordMen(state) ? `, and sends ${plural(lordMen(state), 'man', 'men')} to your muster` : ''}. His ports treat you as a friend. Raid his friends and he will give you back your oath.</p>
       ) : <p class="small">You are no lord's man. A lord takes an oath at his own hall, once he knows you; he gives men, protection and land, and asks for his call answered and a tenth of what you take.</p>}
@@ -345,7 +351,7 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
       ) : null}
       {holds.length ? (
         <dl class="kv">
-          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
+          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : h.warden ? `a ship-fort, held for you by ${wardenLabel(state, h)} and ${plural(h.garrison ?? 0, 'man', 'men')}; he keeps a third of the yield` : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
         </dl>
       ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
       {state.rule ? <p class="small">You are {ruleTitle(state, content)}, since {formatDate(state.rule.since)}: {formatSilver(ruleTribute(state).silver)} in tribute and {plural(ruleTribute(state).men, 'man', 'men')} more at the muster every year. You were last seen there in the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {state.rule.seat === 'lordship' ? 'its people will stop calling you lord' : `${rivalOf(state, content, state.rule.seat).name} takes it`}.</p>
