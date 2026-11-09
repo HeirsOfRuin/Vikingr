@@ -86,7 +86,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
-          <button class="choice" onClick={() => setStep('load')}><span class="txt">Load a saved life<span class="hint">Paste a save code (it starts VIKR1.)</span></span></button>
+          <button class="choice" onClick={() => setStep('load')}><span class="txt">Load a saved life<span class="hint">Paste a save code (it starts VIKR2 or VIKR1)</span></span></button>
           <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into a chapter part-way through. Not saved.</span></span></button>
         </div>
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
@@ -98,8 +98,8 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
     return (
       <main class="screen">
         <h1>Load a saved life</h1>
-        <p>Paste the text you saved from the menu (Save as text). It starts VIKR1.</p>
-        <textarea id="title-save-code" value={code} placeholder="VIKR1.…" onInput={(e) => setCode((e.target as HTMLTextAreaElement).value)} style={{ width: '100%', minHeight: 160 }} />
+        <p>Paste the text you saved from the menu (Save as text). It starts VIKR2, or VIKR1 for an older one.</p>
+        <textarea id="title-save-code" value={code} placeholder="VIKR2~…" onInput={(e) => setCode((e.target as HTMLTextAreaElement).value)} style={{ width: '100%', minHeight: 160 }} />
         {msg && <p class="small sans">{msg}</p>}
         <div class="choices">
           <button class="choice primary" onClick={async () => {
@@ -169,12 +169,14 @@ function Menu({ content, state, onClose, onLoad, onQuit }: { content: ContentBun
         <h2>Menu</h2>
         <p class="muted small sans">The game saves itself after every choice, on this device.</p>
         <div class="choices">
-          <button class="choice" onClick={async () => { const c = await encodeSaveCode(toSave(state, content)); setCode(c); try { await navigator.clipboard.writeText(c); setMsg('Copied. Keep it somewhere safe.'); } catch { setMsg('Copy the text below.'); } }}><span class="txt">Save as text</span></button>
+          {/* the short code, in CJK characters (tools/kit/savecode.js); the plain one where only plain letters will do */}
+          <button class="choice" onClick={async () => { const c = await encodeSaveCode(toSave(state, content)); setCode(c); try { await navigator.clipboard.writeText(c); setMsg(`Copied: ${c.length} characters. It looks like Chinese; it is your saga, packed tight. Keep it somewhere safe.`); } catch { setMsg('Copy the text below.'); } }}><span class="txt">Save as text</span></button>
+          <button class="choice" onClick={async () => { const c = await encodeSaveCode(toSave(state, content), { plain: true }); setCode(c); try { await navigator.clipboard.writeText(c); setMsg(`Copied: ${c.length} characters, in plain letters, for places that will not take the short code.`); } catch { setMsg('Copy the text below.'); } }}><span class="txt">Save as plain letters (longer)</span></button>
           <button class="choice" onClick={async () => {
             try { const s = fromSave(await decodeSaveCode(code), content); onLoad(s.state); setMsg(s.warnings.join(' ') || 'Loaded.'); }
             catch (e) { setMsg((e as Error).message); }
           }}><span class="txt">Load from the text below</span></button>
-          <textarea id="save-code" value={code} placeholder="Paste a saved life here (it starts VIKR1.)" onInput={(e) => setCode((e.target as HTMLTextAreaElement).value)} />
+          <textarea id="save-code" value={code} placeholder="Paste a saved life here (it starts VIKR2 or VIKR1)" onInput={(e) => setCode((e.target as HTMLTextAreaElement).value)} />
           {msg && <p class="small sans">{msg}</p>}
           <button class="choice" onClick={onQuit}><span class="txt">Back to the title</span></button>
           <button class="choice primary" onClick={onClose}><span class="txt">Close</span></button>

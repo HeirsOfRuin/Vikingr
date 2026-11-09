@@ -76,7 +76,7 @@ describe('engine', () => {
     expect(loaded.state).toEqual(s);
     expect(loaded.warnings).toEqual([]);
     const code = await encodeSaveCode(toSave(s, content));
-    expect(code.startsWith('VIKR1.')).toBe(true);
+    expect(code.startsWith('VIKR2~')).toBe(true);
     expect(fromSave(await decodeSaveCode(code), content).state).toEqual(s);
   });
   it('the same seed and choices give the same life', () => {

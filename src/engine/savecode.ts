@@ -2,7 +2,12 @@
 // deflated JSON. Plain JSON (older saves, exported files) is still accepted.
 // Uses the platform CompressionStream (browsers, Node 18+).
 
+import { packCode, unpackCode } from '../../tools/kit/savecode.js';
+
 export const CODE_PREFIX = 'VIKR1.';
+/** The short code (tools/kit/savecode.js): VIKR2~ in CJK characters, 14 bits each; VIKR2. its plain-letter form.
+ *  Josh, 2026-11-09: "most of the games we make have huge save codes". VIKR1 codes still load. */
+export const SHORT_PREFIX = 'VIKR2';
 
 async function pipe(data: Uint8Array, stream: CompressionStream | DecompressionStream): Promise<Uint8Array> {
   const out = new Response(new Blob([data as Uint8Array<ArrayBuffer>]).stream().pipeThrough(stream));
@@ -34,8 +39,8 @@ function compact(save: unknown): unknown {
   return { ...s, state: { ...s.state, journal: j.slice(-CODE_FULL_JOURNAL) } };
 }
 
-export async function encodeSaveCode(save: unknown): Promise<string> {
-  return encodeCode(CODE_PREFIX, compact(save));
+export async function encodeSaveCode(save: unknown, opts: { plain?: boolean } = {}): Promise<string> {
+  return packCode(SHORT_PREFIX, compact(save), opts);
 }
 
 /** Any JSON as prefix + base64url of its deflated text (save codes, dynasty codes). */
@@ -55,6 +60,7 @@ export async function decodeCode(prefix: string, text: string): Promise<unknown>
 /** Parses a save code or plain save JSON. Throws on anything else. */
 export async function decodeSaveCode(text: string): Promise<unknown> {
   const t = text.trim();
+  if (t.startsWith(SHORT_PREFIX)) return unpackCode(SHORT_PREFIX, t);
   if (t.startsWith(CODE_PREFIX)) {
     let bytes: Uint8Array;
     try {
