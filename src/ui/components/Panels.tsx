@@ -175,6 +175,11 @@ export function CrewPanel({ content, state, onAct }: { content: ContentBundle; s
               {s.name} <span class="muted small">— {content.ships[s.type]?.name}, sound {Math.max(0, s.hull)}%</span>
               <Bar value={s.hull} max={100} kind="sea" />
               {!state.service && <p class="small" style={{ margin: '2px 0' }}>{i === 0 ? 'Your own steering-oar.' : m ? (m.kind === 'sworn' ? `${m.name} has her steering-oar (${MASTER_SHARES.sworn} extra shares).` : `${m.name}, a hired steersman, has her (${MASTER_SHARES.hired} extra shares).`) : 'Nobody at her steering-oar.'}</p>}
+              {i > 0 && inPort && (
+                <div class="row sans small">
+                  <button class="choice" style={{ minHeight: 32, padding: '4px 8px' }} onClick={() => onAct({ t: 'take_helm', ship: s.id })}>Take her steering-oar yourself</button>
+                </div>
+              )}
               {i > 0 && inPort && free.length > 0 && (
                 <div class="row sans small">
                   {free.map((id) => (

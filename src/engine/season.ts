@@ -514,7 +514,7 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
     const t = content.ships[state.building]!;
     const name = SHIP_NAMES[(state.ships.length + state.stats.legs) % SHIP_NAMES.length]!;
     const sh = addShip(state, content, { type: t.id, name, hull: 100 });
-    lines.push(`The new ${t.name.toLowerCase()} is launched. You name her ${sh.name}.`);
+    lines.push(`The new ${t.name.toLowerCase()} is launched. You name her ${sh.name}.${(t.crew ?? 0) > (content.ships[state.ships[0]!.type]?.crew ?? 0) ? ' She is a bigger ship than the one you steer: take her steering-oar yourself in the Crew tab, if you want her.' : ''}`);
     journal(state, `Launched ${sh.name}, a ${t.name.toLowerCase()}.`);
     state.building = null;
   }

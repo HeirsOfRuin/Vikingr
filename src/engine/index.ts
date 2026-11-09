@@ -26,7 +26,7 @@ import { lordAlive, lordName, renounce, swear, swearBlock, swornTo } from './lor
 import { buyBlock, buyLand, canBuyHere, canMuster, digFort, fortBlock, garrisonFor, holdingAt, LAND, musterHolding, claimBlock } from './land';
 import { scoutChance, scoutedOdds, scoutedThisYear, scoutPlace } from './scout';
 import { addRecruits, aliveMen, capacity, clampMorale, moraleWord, mouths, newMan, payShip, purse, SHIP_NAMES } from './crew';
-import { appoint, buyHull, CARGO_UNIT, deadMasters, hullsForSale, sellShip, shipSellPrice, shipsToSell } from './fleet';
+import { appoint, buyHull, CARGO_UNIT, deadMasters, hullsForSale, sellShip, shipSellPrice, shipsToSell, takeHelm } from './fleet';
 import { FAVOUR, favour, favourWord } from './allies';
 import { commitReserve, fightOutHost, fightOutHostWall, hostRound, hostWallRound } from './host';
 import { buyLot, buyPrice, canBuy, sellLot, sellPrice, tradesHere } from './trade';
@@ -152,6 +152,7 @@ export type Action =
   | { t: 'trade_buy'; good: string }
   | { t: 'trade_sell'; good: string }
   | { t: 'appoint'; ship: string; man: string }
+  | { t: 'take_helm'; ship: string }
   | { t: 'follow' }
   | { t: 'take_share' }
   | { t: 'plunder'; what: PlunderWhat };
@@ -878,7 +879,7 @@ function sameAction(a: Action, b: Action): boolean {
  *  looks back can pass `inPlace` and skip the copy, which was 40% of a bot run (the review). */
 export function act(content: ContentBundle, input: GameState, action: Action, opts?: { inPlace?: boolean }): GameState {
   const allowed = listActions(input, content).find((o) => sameAction(o.action, action));
-  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && action.t !== 'give_item' && action.t !== 'rename_child' && action.t !== 'heir_make' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
+  if (action.t !== 'slot' && action.t !== 'equip' && action.t !== 'appoint' && action.t !== 'take_helm' && action.t !== 'give_item' && action.t !== 'rename_child' && action.t !== 'heir_make' && (!allowed || !allowed.enabled)) throw new ActionError(`not available now: ${JSON.stringify(action)}${allowed?.reason ? ' — ' + allowed.reason : ''}`);
   const state = opts?.inPlace ? input : structuredClone(input);
   const rng = new RngCursor(state.rng);
   const report = (title: string, lines: string[], next?: string, art?: { key: string; laughter?: string }) => {
@@ -1136,6 +1137,9 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
     }
     case 'appoint':
       if (!state.voyage && !state.service) appoint(state, content, action.ship, action.man);
+      break;
+    case 'take_helm':
+      takeHelm(state, content, action.ship);
       break;
     case 'buy': {
       const lines = buy(state, content, action.item);

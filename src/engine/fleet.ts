@@ -131,6 +131,25 @@ export function deadMasters(state: GameState, content: ContentBundle): string[] 
   return lines;
 }
 
+/** He takes another of his ships for his own steering-oar (Josh, 2026-11-09: "the great 45 pound ship I just built,
+ *  way better than my old karvi, is given to my men"). The first ship is always his own; the chosen one becomes it, and
+ *  whoever steered her takes his old ship. Her fittings go with her: the shield-rack he fights behind is the one on the
+ *  ship he stands in. Returns the line, or '' when nothing changes. */
+export function takeHelm(state: GameState, content: ContentBundle, shipId: string): string {
+  const i = state.ships.findIndex((s) => s.id === shipId);
+  if (i <= 0 || state.voyage || state.service) return '';
+  const chosen = state.ships[i]!;
+  const old = state.ships[0]!;
+  const m = masterOf(state, chosen);
+  old.master = chosen.master && m ? chosen.master : `hired:${hiredName(state, content)}`;
+  delete chosen.master;
+  state.ships.splice(i, 1);
+  state.ships.unshift(chosen);
+  const who = masterOf(state, old)!;
+  journal(state, `Took the steering-oar of ${chosen.name}; ${who.name} has ${old.name} now.`);
+  return `You take the steering-oar of ${chosen.name} yourself. ${who.kind === 'sworn' ? `${who.name} goes across to ${old.name}, and takes her` : `${who.name}, a hired steersman, takes ${old.name}`}.`;
+}
+
 /** Gives a ship's steering-oar to a sworn man, or back to a hired steersman. */
 export function appoint(state: GameState, content: ContentBundle, shipId: string, who: string): void {
   const ship = state.ships.find((s) => s.id === shipId);

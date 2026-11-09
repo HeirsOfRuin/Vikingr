@@ -67,3 +67,20 @@ describe('selling a ship', () => {
     expect(s.shopNote).toMatch(/no bench now/);
   });
 });
+
+describe('choosing the ship he steers', () => {
+  it('he takes the new ship; her steersman takes his old one; her fittings go with her', () => {
+    let s = sandboxGame(62);
+    s.at = 'home_fjord';
+    s.phase = 'sailing';
+    s.ships.push({ id: 'skeid1', type: 'skeid', name: 'Long Serpent', hull: 100, fittings: ['shield_rack'], master: 'hired:Ljótr' } as GameState['ships'][number]);
+    const old = s.ships[0]!.name;
+    s = act(content, s, { t: 'take_helm', ship: 'skeid1' });
+    expect(s.ships[0]!.name).toBe('Long Serpent');
+    expect(s.ships[0]!.master).toBeUndefined();
+    expect(s.ships[0]!.fittings).toContain('shield_rack');
+    expect(s.ships[1]!.name).toBe(old);
+    expect(s.ships[1]!.master).toBe('hired:Ljótr');
+    expect(s.journal.at(-1)!.text).toMatch(/Took the steering-oar of Long Serpent; Ljótr has/);
+  });
+});
