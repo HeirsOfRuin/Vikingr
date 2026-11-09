@@ -24,9 +24,14 @@ games). Copy it into a game's `src/`, or inline it into a single-file game.
 | Ragnavald, spring 834 | 14,490 | 12,040 | 5,165 | 15,483 |
 | Ragnavald, autumn 836 | 17,121 | 14,573 | 6,250 | 18,738 |
 | Ragnavald, autumn 837 | 19,585 | 16,865 | 7,233 | 21,687 |
+| Ragnavald, spring 838 (4 ships, 163 deeds) | not measured | 17,557 | 7,529 | 22,575 |
 
 The 837 code was cut off at 20,000 characters, the most one Claude-app message carries. The short form of the same save
 is 7,233.
+
+**Confirmed in use (2026-11-09):** Josh pasted the 838 short code into the Claude app. It arrived whole, decoded, and
+re-encoded to the identical text. At 22,575 bytes it is over 20,000 bytes, so the app's limit counts characters, not
+bytes, and the short form is the one to share there.
 
 Tried and not taken: a preset deflate dictionary built from bot saves saved a further 13% but needs a deflate library
 (CompressionStream has no dictionary option), a 32 KB dictionary shipped in every build, and a version for each
