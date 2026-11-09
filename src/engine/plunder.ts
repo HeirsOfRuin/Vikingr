@@ -52,11 +52,6 @@ export function plunderReach(men: number, defenders: number, host = false): numb
   return Math.max(REACH.floor, Math.min(host ? REACH.hostMax : 1, men / (defenders * REACH.perDefender)));
 }
 
-/** The men in his line at a raid: his crew and sworn men, his own fleet's, a félag partner's. */
-export function raidMen(state: GameState, content: ContentBundle, allyMen = 0): number {
-  return state.crew.men + aliveMen(state).length + ownFleetMen(state) + allyMen;
-}
-
 /** What each choice in the plunder rounds is worth, so that each is best somewhere (Josh, 2026-11-08: "captives and goods
  *  are only worth it when the place has been tested too often"). A round of captives was 2-5 people at half a pound,
  *  a third of a first grab in a monastery; now 3-6, more where more people live, at the price below: a little over half
@@ -94,11 +89,14 @@ export function startPlunder(state: GameState, place: string, lines: string[], n
   // a region that has learned comes to the alarm faster (docs/FRAME-HARDSHIP.md)
   const alarm = 2 + (content ? coastPlunderStart(state, content, place) : 0);
   const defenders = content?.places[place]?.raid?.defenders ?? 0;
-  const ours = content ? raidMen(state, content, line?.allyMen ?? 0) : 0;
+  // his crew and a félag partner's (the partner takes his men's part at the share-out); his own fleet's crews and a
+  // host's other wings strip the same streets alongside, each for themselves
+  const ours = state.crew.men + aliveMen(state).length + (line?.allyMen ?? 0);
+  const fleet = state.service ? 0 : ownFleetMen(state);
   const host = line?.hostMen ?? 0;
-  const reach = content ? plunderReach(ours + host, defenders, host > 0) : 1;
-  const share = host > 0 ? ours / Math.max(1, ours + host) : 1;
-  state.pending = { t: 'plunder', plunder: { place, round: 0, alarm, taken: 0, captives: 0, burned: false, log: lines, next, reach, share } };
+  const all = Math.max(1, ours + fleet + host);
+  const reach = content ? plunderReach(all, defenders, host + fleet > 0) : 1;
+  state.pending = { t: 'plunder', plunder: { place, round: 0, alarm, taken: 0, captives: 0, burned: false, log: lines, next, reach, share: ours / all, fleetShare: fleet / all, fleetTaken: 0 } };
 }
 
 export function plunderAction(state: GameState, content: ContentBundle, rng: RngCursor, what: PlunderWhat): void {
@@ -119,6 +117,7 @@ export function plunderAction(state: GameState, content: ContentBundle, rng: Rng
       const take = Math.max(1, Math.round(stripped * share));
       src.wealth -= stripped;
       p.taken += take;
+      if (!p.strand && p.fleetShare) p.fleetTaken = (p.fleetTaken ?? 0) + stripped * p.fleetShare;
       p.alarm += NOISE.grab[0] + rng.float() * (NOISE.grab[1] - NOISE.grab[0]);
       const things = ['altar plate and a silver-bound book', 'a reliquary and two candlesticks', 'cloth, wax and a chest of coin', 'the abbot\'s cup and a gilded cross', 'hacksilver from a hole under a floor'];
       p.log.push(share < 1
@@ -214,7 +213,7 @@ function finish(state: GameState, content: ContentBundle, rng: RngCursor, p: Plu
     if (p.burned) ps.wealth = Math.round(ps.wealth * 0.5);
   }
   // his fleet's crews take their own, and he takes a leader's share of it (docs/FRAME-FLEETS-REALMS.md, Part C)
-  const fl = state.service ? { extra: 0, line: null } : ownFleetPlunder(state, taken);
+  const fl = state.service ? { extra: 0, line: null } : ownFleetPlunder(state, p.fleetTaken ?? 0);
   // the leader's share is his own: it goes in his purse, not the crew's heap
   if (fl.line) { state.silver += fl.extra; earn(state, fl.extra); journal(state, `Took a leader's share from the fleet: ${formatSilver(fl.extra)}.`); lines.push(fl.line); }
   const left = stow(state, content, taken);

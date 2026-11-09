@@ -139,6 +139,9 @@ export interface PlunderState {
    *  host, his crews' part of what the whole line strips. Both 1 when unset (old saves). */
   reach?: number;
   share?: number;
+  /** His own fleet's crews' part of each round, and what they have stripped so far (ownfleet.ts ownFleetPlunder). */
+  fleetShare?: number;
+  fleetTaken?: number;
   /** Someone worth a ransom was looked for (once a raid), and found. */
   searched?: boolean;
   hostage?: string;
@@ -264,6 +267,8 @@ export interface BattleState {
   lost: number;
   /** A félag partner's men in our line: his losses are his own. */
   allyMen?: number;
+  /** Of allyMen, his own fleet's crews (plunder.ts counts them apart: they strip for themselves). */
+  fleetMen?: number;
   /** A host: the other wings of the line (docs/FRAME-HOSTS-FRISIA.md). */
   host?: import('./host').HostState;
   /** The second form of the shield-wall (docs/FRAME-COMBAT-2.md): deployment, shown intent, stamina, ground. */

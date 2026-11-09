@@ -232,6 +232,7 @@ export function startBattle(
     lose: opts.lose,
     killed: 0,
     ...(ally.men ? { allyMen: ally.men } : {}),
+    ...(fleetMen ? { fleetMen } : {}),
     lost: 0,
   };
   // renown: picked men, ready for him
@@ -368,11 +369,14 @@ export function finishBattle(state: GameState, content: ContentBundle, rng: RngC
   // plunder: a raid you command goes on to the plunder rounds; in another man's ship, he divides it
   if (b.context === 'raid' && b.place && won && !state.service) {
     const pl = content.places[b.place]!;
+    // taken this year: a ship-fort may be dug here (land.ts fortBlock; Josh's save, 2026-11-09: only the oarsman's raids
+    // ever set it, so no captain could dig a fort at Dyflinn)
+    state.places[b.place]!.wonOn = state.day;
     lines.unshift(`${pl.name} is yours for the afternoon.`);
     clampMorale(state);
     // the line that took it searches it: a partner's men beside his, and in a host the other wings (plunder.ts REACH)
     const hostMen = b.host ? b.host.wings.reduce((n, w) => n + Math.max(0, w.us.men), 0) : 0;
-    startPlunder(state, b.place, lines, b.win, content, { allyMen: b.allyMen ?? 0, hostMen });
+    startPlunder(state, b.place, lines, b.win, content, { allyMen: Math.max(0, (b.allyMen ?? 0) - (b.fleetMen ?? 0)), hostMen });
     return;
   }
   if (b.context === 'raid' && b.place) {

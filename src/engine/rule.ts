@@ -153,25 +153,53 @@ export function claimMargin(state: GameState, content: ContentBundle, seat: Seat
 
 /** The seat is open to a claim now. */
 export function seatOpen(state: GameState, content: ContentBundle, seat: Seat): boolean {
-  if (state.rule || state.flags[`ru_${seat}_lost`]) return false;
+  return seatStatus(state, content, seat).open;
+}
+
+/** Whether the seat is open, and if not, every reason, each with the way past it (Josh, 2026-11-09: "I still can't take
+ *  Dyflinn or Mön as my own!", and nothing said why). seatOpen reads this, so the words and the rule cannot differ. */
+export function seatStatus(state: GameState, content: ContentBundle, seat: Seat): { open: boolean; why: string[] } {
+  const why: string[] = [];
+  if (state.rule) return { open: false, why: ['You hold a seat already.'] };
+  if (state.flags[`ru_${seat}_lost`]) return { open: false, why: [`It went to ${rivalOf(state, content, seat).name}; it will not be offered to you again.`] };
   const year = dateOf(state.day).year;
   const d = SEAT_DEF[seat];
-  if (livingFame(state) < d.minFame) return false;
-  if (!tied(state, content, seat)) return false;
+  const fame = livingFame(state);
+  if (fame < d.minFame) why.push(`Your name is not great enough yet: ${Math.round(fame)} of ${d.minFame}.`);
+  if (!tied(state, content, seat)) why.push(TIES[seat]);
   switch (seat) {
-    case 'orkney': { const dies = lordDies(state, content, 'harek'); return dies !== null && year >= dies; }
-    case 'dublin': return !!state.places.dublin?.norse && (year >= 845 || !lordAlive(state, content, 'turgeis') || claimMargin(state, content, 'dublin') > 0);
-    case 'home': return year >= jarlDies(state) && !state.flags.outlawed;
-    case 'walcheren': return year >= 841;
-    case 'york': return year >= 867 && (!!state.places.york?.norse || !!state.flags.ga_army);
-    case 'eastangles': return year >= 870;
-    case 'nottingham': return year >= 877;
-    case 'loire': return year >= 845 && !!state.places.noirmoutier?.norse;
-    case 'isles': return year >= 850;
-    case 'frisia': return year >= 850 && year <= 873;
-    case 'lordship': return lordshipReady(state, content);
+    case 'orkney': { const dies = lordDies(state, content, 'harek'); if (!(dies !== null && year >= dies)) why.push('Harek is still jarl: the seat opens when he dies.'); break; }
+    case 'dublin':
+      if (!state.places.dublin?.norse) why.push('Dyflinn is an Irish place until the Norse hold it: take it and dig a ship-fort there, or wait for the Norse fleets to build one.');
+      else if (!(year >= 845 || !lordAlive(state, content, 'turgeis') || claimMargin(state, content, 'dublin') > 0)) why.push('Turgeis calls every foreigner in Ireland his man: your claim must beat his.');
+      break;
+    case 'home': if (!(year >= jarlDies(state))) why.push('The jarl in Hordaland still lives.'); if (state.flags.outlawed) why.push('An outlaw cannot be jarl where he was outlawed.'); break;
+    case 'walcheren': if (year < 841) why.push('The emperor\'s count holds it until the Danes come for it (841).'); break;
+    case 'york': if (!(year >= 867 && (!!state.places.york?.norse || !!state.flags.ga_army))) why.push('Not until the great army takes York (867).'); break;
+    case 'eastangles': if (year < 870) why.push('Not until the great army takes East Anglia (870).'); break;
+    case 'nottingham': if (year < 877) why.push('Not until the army shares out Mercia (877).'); break;
+    case 'loire': if (!(year >= 845 && !!state.places.noirmoutier?.norse)) why.push('Not until the Northmen hold the island at the Loire\'s mouth for good (845).'); break;
+    case 'isles': if (!(year >= 850 || !!holdingAt(state, 'man'))) why.push('The Norse kings of the Isles come about 850; hold land or a ship-fort on Mön and you are one already.'); break;
+    case 'frisia': if (!(year >= 850 && year <= 873)) why.push(year < 850 ? 'Not until the emperor gives Frisia to the Northmen (850).' : 'Frisia is the emperor\'s again.'); break;
+    case 'lordship': if (!lordshipReady(state, content)) why.push(`Hold land ${LORDSHIP.winters} winters, and stand on it.`); break;
   }
+  return { open: why.length === 0, why };
 }
+
+/** What ties a man to each seat, said as the way to get it. */
+const TIES: Record<Seat, string> = {
+  orkney: 'You need a tie to Orkney: Harek\'s oath or his favour, or his daughter for your wife.',
+  dublin: 'You need a tie to Dyflinn: a place among the ship-fort\'s captains, or land or a ship-fort at Dyflinn or Linn Duachaill.',
+  home: 'You need a tie to Hordaland: the jarl\'s favour, or a hall of your own.',
+  walcheren: 'You need a tie to Walcheren: not to be hated there.',
+  york: 'You need a tie to York: to sail with the great army, or land there.',
+  eastangles: 'You need a tie to East Anglia: to sail with the great army, or land there.',
+  nottingham: 'You need a tie to Mercia: to sail with the great army, or land at Snotingaham or Repton.',
+  loire: 'You need a tie to the Loire: land or a fort there, or to have sailed with its fleets.',
+  isles: 'You need a tie to the Isles: land or a ship-fort on Mön, Skye or Iona, or a good name on Mön.',
+  frisia: 'You need a tie to Frisia: land at Dorestad or Walcheren, or a good name at Dorestad.',
+  lordship: '',
+};
 
 /** A holding of his, held long enough, at the place he stands: he can be called its lord. */
 export function lordshipReady(state: GameState, content: ContentBundle): boolean {

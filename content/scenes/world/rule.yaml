@@ -109,12 +109,16 @@
   requires: ["seat.dublin", "!service"]
   title: The kingship of Dublin
   text: |
-    [if year < 845]
+    [if year < 845 && holding.dublin]
+    Your own ship-fort stands on the black pool now: the ditch your men dug, the stockade they hold, the market that has grown up at its gate. The captains who winter behind it have started calling you king when they think you can't hear.
+
+    Turgeis has heard. He sends word from the north that every foreigner in Ireland is his man, and so is the fort at Dyflinn, and so is the man who dug it. The captains want you to answer him from the high seat, with their hands between yours.
+    [elif year < 845]
     Turgeis calls himself king of every foreigner in Ireland, and the fort at Dublin is full of men who would like someone else to be. They come to you at night, in ones and twos, and say so in low voices.
 
     Nobody takes Ireland from Turgeis by talking. They all know that. That's why they're talking to you.
     [else]
-    Turgeis is drowned, and the fort at Dublin has no king, and every captain in it wants to be one. The ditch has doubled, the halls have tripled, there's a mint by the gate striking pennies with nobody's head on them. It needs a king. It's been needing one for years.
+    Turgeis is drowned, and the fort at Dublin has no king, and every captain in it wants to be one. The ditch has doubled, the halls have tripled, there are silver-weighers at the gate with their folding scales and lead weights, and slave-pens all along the pool. It needs a king. It's been needing one for years.
 
     {rival_dublin} has come in from the west with ships and men and a claim, and the captains are already taking sides.
     [/if]
@@ -158,9 +162,15 @@
               then: [ { fight: { foe: ru_eirik, kind: holmgang, lethal: true, win: ru_dublin_sword, lose: ru_dublin_beaten } } ]
               else: [ { fight: { foe: ru_bardr, kind: holmgang, lethal: true, win: ru_dublin_sword, lose: ru_dublin_beaten } } ]
       result: The cloak is pegged out on the strand below the fort, and the whole of Dublin comes down to watch, Norse and Irish both, and the slave-traders shut their pens for the afternoon.
+    - id: fort_king
+      text: Call your captains into the hall, take the high seat, and let Turgeis come.
+      visible_if: "year < 845 && holding.dublin"
+      check: { skill: speech, attr: pre, difficulty: 5 }
+      success: { text: "They put their hands between yours one by one, with the smoke of the hearth in their eyes, and call you king in Dyflinn. Turgeis will have it from a trader within the month.", effects: [ { rule: dublin }, { legend: { id: turgeis, fame: -10 } }, { lord: { id: turgeis, fav: -10 } } ], next: ru_dublin_won }
+      failure: { text: "They will follow you into a fight. They will not follow you into a king's seat against Turgeis, not this year. Ask again when your name is bigger, or his smaller." }
     - id: turgeis
       text: Gather the captains who want him gone, and take Dublin from Turgeis's men.
-      visible_if: "year < 845"
+      visible_if: "year < 845 && !holding.dublin"
       danger: true
       effects: [ { host: { title: "Turgeis's men in the fort", foe: rival_crew, terrain: rampart, men: 50, wings: [ { name: "The captains who came over", men: 90, quality: 1.1, foe_men: 80 } ], role: host, win: ru_dublin_turgeis, lose: ru_dublin_beaten } } ]
       result: You do it at night, with the gate opened from inside by a captain who has been paid twice. Turgeis's men are in the halls. They don't stay there long.
@@ -209,14 +219,14 @@
   kind: spine
   title: King in Dublin
   text: |
-    King in Dublin. The fort, the mint, the slave-market, the ships in the pool, the Irish kings who will hate you and trade with you and marry their daughters to your captains, all at once.
+    King in Dublin. The fort, the scales at the gate, the slave-market, the ships in the pool, the Irish kings who will hate you and trade with you and marry their daughters to your captains, all at once.
 
     The captains drink to you in the great hall. The Irish brothers-in-law drink to you too, more carefully. Out in the pool, a ship with a Danish sail comes in on the tide, looks at the fort, and goes out again without tying up.
   choices:
     - id: coin
-      text: Have the mint strike a penny with your name on it.
-      effects: [ { add: { silver: -24 } }, { deed: { type: deed, text: "Struck a penny with his own name at Dublin", weight: 3, witnesses: 500 } } ]
-      result: The moneyer cuts the die himself, in letters you can't read, and swears they say your name. Every slave sold in Ireland this year will be bought with it.
+      text: Have the silver-weighers' weights stamped with your mark.
+      effects: [ { add: { silver: -24 } }, { deed: { type: deed, text: "Set his own mark on the weights of the Dublin market", weight: 3, witnesses: 500 } } ]
+      result: The smith casts new lead weights for every scale at the gate, each with your mark pressed into it. Every slave and every bale sold in Ireland this year will be weighed against your name.
     - id: ditch
       text: Dig the ditch deeper. The Danes will come.
       effects: [ { add: { crew.morale: -1 } }, { set: flag.ru_dublin_ditch } ]

@@ -30,7 +30,7 @@ import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
 import type { KitSlot } from '../../engine/state';
 import { lordAlive, lordFav, lordMen, lordName, secretChance, swornTo } from '../../engine/lords';
 import { holdingYield, LAND } from '../../engine/land';
-import { claimWords, LORDSHIP, rivalOf, RULE, ruleTitle, ruleTribute, SEAT_DEF, SEATS, seatOpen } from '../../engine/rule';
+import { claimWords, LORDSHIP, rivalOf, RULE, ruleTitle, ruleTribute, SEAT_DEF, SEATS, seatOpen, seatStatus } from '../../engine/rule';
 
 const SLOT_NAMES: Record<KitSlot, string> = { weapon: 'In his hand', shield: 'On his arm', helmet: 'On his head', armour: 'On his back' };
 
@@ -344,8 +344,16 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
         </dl>
       ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
       {state.rule ? <p class="small">You are {ruleTitle(state, content)}, since {formatDate(state.rule.since)}: {formatSilver(ruleTribute(state).silver)} in tribute and {plural(ruleTribute(state).men, 'man', 'men')} more at the muster every year. You were last seen there in the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {state.rule.seat === 'lordship' ? 'its people will stop calling you lord' : `${rivalOf(state, content, state.rule.seat).name} takes it`}.</p>
-        : !open.length ? <p class="muted small">No seat is open to you. A seat opens when its lord dies or its rival falters, and only to a man with a great name and a tie to the place: a lord's favour, land there, kin by marriage. A holding of your own, kept {LORDSHIP.winters} winters, can be raised into a lordship: go there.</p>
-        : open.map((s) => <p key={s} class="small">{SEAT_DEF[s].title.charAt(0).toUpperCase() + SEAT_DEF[s].title.slice(1)}: the seat is open, at {content.places[SEAT_DEF[s].place]!.name}. {claimWords(state, content, s)}</p>)}
+        : (
+          <>
+            {open.map((s) => <p key={s} class="small">{SEAT_DEF[s].title.charAt(0).toUpperCase() + SEAT_DEF[s].title.slice(1)}: the seat is open, at {content.places[SEAT_DEF[s].place]!.name}. Go there to claim it. {claimWords(state, content, s)}</p>)}
+            {/* every seat whose place he knows, and what stands in the way (Josh, 2026-11-09: "I still can't take Dyflinn or Mön") */}
+            {SEATS.filter((s) => !open.includes(s) && state.known.includes(SEAT_DEF[s].place)).map((s) => (
+              <p key={s} class="small muted">{SEAT_DEF[s].title.charAt(0).toUpperCase() + SEAT_DEF[s].title.slice(1)}, at {content.places[SEAT_DEF[s].place]!.name}: {seatStatus(state, content, s).why.join(' ')}</p>
+            ))}
+            <p class="muted small">A holding of your own, kept {LORDSHIP.winters} winters, can be raised into a lordship: go there.</p>
+          </>
+        )}
     </div>
   );
 }

@@ -29,9 +29,10 @@ export const OWN = {
   lost: -2,
   /** Below this, a captain goes home at each week's reckoning. */
   leaveBelow: 2.5,
-  /** Plunder: the other crews take this much again per ship; he keeps this share of theirs as leader. */
-  perShipLoot: 0.15,
-  leaderShare: 0.4,
+  /** Plunder: the other crews strip the same town alongside his (plunder.ts), and he keeps a captain's share of their part
+   *  as the man who called them. Was: they took 15% of his take again per ship, out of nothing, and he kept 40% of that
+   *  (Josh's save, 2026-11-09: eight ships put half as much again as every raid's heap straight into his purse). */
+  leaderShare: 0.3,
   /** Tribute from a town that sees the fleet: this share of its wealth, scaled by how far the fleet outnumbers its men. */
   tribute: 0.3,
 } as const;
@@ -106,10 +107,10 @@ export function ownFleetFought(state: GameState, won: boolean, allyLost: number)
 }
 
 /** Plunder taken with the fleet: the other crews take theirs, and he takes a leader's share of it. Returns his extra. */
-export function ownFleetPlunder(state: GameState, taken: number): { extra: number; line: string | null } {
+export function ownFleetPlunder(state: GameState, theirs: number): { extra: number; line: string | null } {
   const f = ownFleet(state);
-  if (!f || taken <= 0) return { extra: 0, line: null };
-  const theirs = Math.round(taken * f.ships * OWN.perShipLoot);
+  theirs = Math.round(theirs);
+  if (!f || theirs <= 0) return { extra: 0, line: null };
   const extra = Math.round(theirs * OWN.leaderShare);
   f.lastAction = state.day;
   shiftCohesion(state, 0.5);
