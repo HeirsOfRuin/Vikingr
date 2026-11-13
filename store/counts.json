@@ -1,0 +1,18 @@
+{
+ "scenes": 642,
+ "scenesPlaceholder": 6,
+ "sceneWords": 67577,
+ "choices": 1559,
+ "places": 56,
+ "eras": [
+  830,
+  843,
+  865
+ ],
+ "backgrounds": 3,
+ "upbringings": 6,
+ "rivals": 13,
+ "lords": 7,
+ "ships": 5,
+ "art": 23
+}
