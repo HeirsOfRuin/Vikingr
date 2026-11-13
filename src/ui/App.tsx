@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { Component, type ComponentChildren } from 'preact';
 import { pastChronicle } from '../engine/chronicle';
 import type { Attr, ContentBundle } from '../content/schema';
 import type { GameState } from '../engine/state';
@@ -9,7 +10,8 @@ import { encodeSaveCode, decodeSaveCode } from '../engine/savecode';
 import { dateOf, dayOf, MONTHS } from '../engine/calendar';
 import { formatSilverShort } from '../engine/format';
 import { livingFame, untoldCount } from '../engine/fame';
-import { saveGame, loadGame, clearSave } from './storage';
+import { saveGame, loadGame, clearSave, storageWorks } from './storage';
+import { About, HowToPlay } from './components/Help';
 import { NowView } from './components/NowView';
 import { MapView } from './components/MapView';
 import { HeroPanel, CrewPanel, SagaPanel, HomePanel } from './components/Panels';
@@ -69,8 +71,8 @@ function shortDate(day: number): string {
   return `${d.dom} ${MONTHS[d.month]!.slice(0, 3)} ${d.year}`;
 }
 
-function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onLoad: (s: GameState) => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843 | 865) => void; onPreview: (scene: string, name: string) => void }) {
-  const [step, setStep] = useState<'title' | 'new' | 'make' | 'preview' | 'load'>(start);
+function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }: { content: ContentBundle; hasSave: boolean; start: 'title' | 'preview'; onContinue: () => void; onLoad: (s: GameState, warnings: string[]) => void; onNew: (bg: string, name: string, attrs: Record<Attr, number>, set: string, era: 830 | 843 | 865) => void; onPreview: (scene: string, name: string) => void }) {
+  const [step, setStep] = useState<'title' | 'new' | 'make' | 'preview' | 'load' | 'help' | 'about'>(start);
   const [code, setCode] = useState('');
   const [msg, setMsg] = useState('');
   const [bg, setBg] = useState('younger_son');
@@ -87,12 +89,18 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
           <button class="choice" onClick={() => setStep('load')}><span class="txt">Load a saved life<span class="hint">Paste a save code (it starts VIKR2 or VIKR1)</span></span></button>
-          <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into a chapter part-way through. Not saved.</span></span></button>
+          <button class="choice" onClick={() => setStep('help')}><span class="txt">How to play</span></button>
+          {/* playtest jumps: the author's builds only, never a player's (the release audit, 2026-11-13) */}
+          {!__RELEASE__ && <button class="choice" onClick={() => setStep('preview')}><span class="txt">Play from a chapter<span class="hint">For playtesting: jump into a chapter part-way through. Not saved.</span></span></button>}
         </div>
+        {!storageWorks() && <p class="note">This browser is not keeping anything here: a life is lost when you close the page. Save it as text from the menu to keep it.</p>}
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
+        <p class="note small sans"><button class="linkbtn" onClick={() => setStep('about')}>About, credits and privacy</button> · version {__VERSION__}</p>
       </div>
     );
   }
+  if (step === 'help') return <HowToPlay onBack={() => setStep('title')} />;
+  if (step === 'about') return <About onBack={() => setStep('title')} />;
   if (step === 'load') {
     // playtest 9: "no way to load games from save text" — the menu had it, but only once a life was under way
     return (
@@ -103,7 +111,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         {msg && <p class="small sans">{msg}</p>}
         <div class="choices">
           <button class="choice primary" onClick={async () => {
-            try { const s = fromSave(await decodeSaveCode(code), content); if (s.warnings.length) setMsg(s.warnings.join(' ')); onLoad(s.state); }
+            try { const s = fromSave(await decodeSaveCode(code), content); onLoad(s.state, s.warnings); }
             catch (e) { setMsg((e as Error).message || 'That is not a save code.'); }
           }}><span class="txt">Load</span></button>
           <button class="choice" onClick={() => { setMsg(''); setStep('title'); }}><span class="txt">Back</span></button>
@@ -111,7 +119,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
       </main>
     );
   }
-  if (step === 'preview') {
+  if (step === 'preview' && !__RELEASE__) {
     return (
       <main class="screen">
         <h1>Chapters</h1>
@@ -159,15 +167,15 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
   );
 }
 
-function Menu({ content, state, onClose, onLoad, onQuit }: { content: ContentBundle; state: GameState; onClose: () => void; onLoad: (s: GameState) => void; onQuit: () => void }) {
+function Menu({ content, state, onClose, onLoad, onQuit, onHelp, onAbout }: { content: ContentBundle; state: GameState; onClose: () => void; onLoad: (s: GameState) => void; onQuit: () => void; onHelp: () => void; onAbout: () => void }) {
   const [code, setCode] = useState('');
   const [msg, setMsg] = useState('');
-  const debug = new URLSearchParams(location.search).has('debug');
+  const debug = !__RELEASE__ && new URLSearchParams(location.search).has('debug');
   return (
     <div class="menu" onClick={onClose}>
       <div class="sheet" onClick={(e) => e.stopPropagation()}>
         <h2>Menu</h2>
-        <p class="muted small sans">The game saves itself after every choice, on this device.</p>
+        <p class="muted small sans">{storageWorks() ? 'The game saves itself after every choice, in this browser on this device.' : 'This browser is not keeping anything here: when you close the page, this life is gone. Save it as text to keep it.'}</p>
         <div class="choices">
           {/* the short code, in CJK characters (tools/kit/savecode.js); the plain one where only plain letters will do */}
           <button class="choice" onClick={async () => { const c = await encodeSaveCode(toSave(state, content)); setCode(c); try { await navigator.clipboard.writeText(c); setMsg(`Copied: ${c.length} characters. It looks like Chinese; it is your saga, packed tight. Keep it somewhere safe.`); } catch { setMsg('Copy the text below.'); } }}><span class="txt">Save as text</span></button>
@@ -178,6 +186,8 @@ function Menu({ content, state, onClose, onLoad, onQuit }: { content: ContentBun
           }}><span class="txt">Load from the text below</span></button>
           <textarea id="save-code" value={code} placeholder="Paste a saved life here (it starts VIKR2 or VIKR1)" onInput={(e) => setCode((e.target as HTMLTextAreaElement).value)} />
           {msg && <p class="small sans">{msg}</p>}
+          <button class="choice" onClick={onHelp}><span class="txt">How to play</span></button>
+          <button class="choice" onClick={onAbout}><span class="txt">About, credits and privacy</span></button>
           <button class="choice" onClick={onQuit}><span class="txt">Back to the title</span></button>
           <button class="choice primary" onClick={onClose}><span class="txt">Close</span></button>
         </div>
@@ -185,6 +195,27 @@ function Menu({ content, state, onClose, onLoad, onQuit }: { content: ContentBun
       </div>
     </div>
   );
+}
+
+/** A screen that throws shows this instead of a dead page, with the life still safe to take away (release audit). */
+class Guard extends Component<{ onSave: () => Promise<string>; onTitle: () => void; children: ComponentChildren }, { err: string | null; code: string }> {
+  override state = { err: null as string | null, code: '' };
+  override componentDidCatch(e: unknown) { this.setState({ err: (e as Error)?.message ?? String(e) }); }
+  override render() {
+    if (!this.state.err) return this.props.children;
+    return (
+      <div class="screen">
+        <h2>Something broke</h2>
+        <p>This screen could not be drawn. Your life is not lost: save it as text, and load it again from the title.</p>
+        <p class="small sans muted">{this.state.err}</p>
+        <div class="choices">
+          <button class="choice primary" onClick={async () => { const c = await this.props.onSave(); this.setState({ code: c }); try { await navigator.clipboard.writeText(c); } catch { /* copy it by hand */ } }}><span class="txt">Save as text</span></button>
+          {this.state.code && <textarea readOnly value={this.state.code} style={{ width: '100%', minHeight: 120 }} />}
+          <button class="choice" onClick={() => { this.setState({ err: null, code: '' }); this.props.onTitle(); }}><span class="txt">Back to the title</span></button>
+        </div>
+      </div>
+    );
+  }
 }
 
 export function App({ content, map }: { content: ContentBundle; map: MapData }) {
@@ -195,6 +226,8 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
   const [menu, setMenu] = useState(false);
   const [error, setError] = useState('');
   const [titleStep, setTitleStep] = useState<'title' | 'preview'>('title');
+  const [notice, setNotice] = useState('');
+  const [sheet, setSheet] = useState<'help' | 'about' | null>(null);
 
   // chapter jumps never overwrite a real save
   useEffect(() => { if (state && !preview) saveGame(state, content); }, [state]);
@@ -209,9 +242,9 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
           content={content}
           hasSave={hasSave}
           start={titleStep}
-          onContinue={() => { const l = loadGame(content); if (l) setState(l.state); }}
-          onLoad={(s) => { setPreview(null); setState(s); setTab('now'); }}
-          onNew={(bg, name, attrs, skillSet, era) => { setPreview(null); setState(newGame(content, { background: bg, seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name, attrs, skillSet, era })); setTab('now'); }}
+          onContinue={() => { const l = loadGame(content); if (l) { setState(l.state); setNotice(l.warnings.join(' ')); } }}
+          onLoad={(s, warnings) => { setPreview(null); setState(s); setNotice(warnings.join(' ')); setTab('now'); }}
+          onNew={(bg, name, attrs, skillSet, era) => { setPreview(null); setNotice(''); setState(newGame(content, { background: bg, seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name, attrs, skillSet, era })); setTab('now'); }}
           onPreview={(scene, name) => {
             const c = CHAPTERS.find((x) => x.scene === scene)!;
             const s = newGame(content, { background: 'younger_son', seed: (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, name });
@@ -246,28 +279,32 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
   const busy = !['place', 'hall', 'muster', 'return'].includes(screen);
   const untold = untoldCount(state);
   const where = state.at ? content.places[state.at]?.name : state.voyage ? `Bound for ${content.places[state.voyage.to]?.name}` : '';
+  // a remembered scene (the boyhood, 822) carries its own date: the bar shows that, not today's (release audit)
+  const sceneWhen = state.pending?.t === 'scene' ? content.scenes[state.pending.id]?.when : undefined;
+  const when = sceneWhen && !sceneWhen.includes(String(dateOf(state.day).year)) ? sceneWhen : shortDate(state.day);
 
   return (
     <div class="app">
       <header class="topbar">
         <span class="where">{where}</span>
-        <span class="stat">{shortDate(state.day)}</span>
-        <span class="stat silver">{formatSilverShort(state.silver)}</span>
-        <span class="stat">Fame {Math.round(livingFame(state))}{untold ? <span class="untold"> +{untold}</span> : ''}</span>
+        <span class="stat" title="The date">{when}</span>
+        <span class="stat silver" title="Your silver: lb pounds, c coins">{formatSilverShort(state.silver)}</span>
+        <span class="stat" title={untold ? `Fame; +${untold}: deeds not yet told, which count when they are told at a feast or round the winter fires` : 'Fame: what men say of you'}>Fame {Math.round(livingFame(state))}{untold ? <span class="untold"> +{untold}</span> : ''}</span>
         <button class="iconbtn" aria-label="Menu" onClick={() => setMenu(true)}><i /><i /><i /></button>
       </header>
       <main>
         {error && <p class="card small sans">{error}</p>}
-        {preview && <p class="note small sans">Playtest chapter: not saved.</p>}
-        {(
-          <>
+        {notice && <p class="card small sans" onClick={() => setNotice('')}>{notice} <span class="muted">(tap to close)</span></p>}
+        {!__RELEASE__ && preview && <p class="note small sans">Playtest chapter: not saved.</p>}
+        {sheet === 'help' ? <HowToPlay onBack={() => setSheet(null)} /> : sheet === 'about' ? <About onBack={() => setSheet(null)} /> : (
+          <Guard key={tab} onSave={() => encodeSaveCode(toSave(state, content))} onTitle={() => toTitle()}>
             {tab === 'now' && <NowView content={content} map={map} state={state} onAct={onAct} />}
             {tab === 'map' && <div class="screen"><h2>The known world</h2><MapView content={content} map={map} state={state} onAct={onAct} /></div>}
             {tab === 'hero' && <div class="screen"><HeroPanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'crew' && <div class="screen"><CrewPanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'home' && <div class="screen"><HomePanel content={content} state={state} onAct={onAct} /></div>}
             {tab === 'saga' && <div class="screen"><SagaPanel content={content} state={state} /></div>}
-          </>
+          </Guard>
         )}
         {state.death && tab === 'now' && (
           <div class="choices"><button class="choice primary" onClick={() => { if (!preview) clearSave(); toTitle(preview ? 'preview' : 'title'); }}><span class="txt">{preview ? 'Back to the chapters' : 'Begin another life'}</span></button></div>
@@ -275,14 +312,14 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
       </main>
       <nav class="tabs">
         {TABS.map((t) => (
-          <button key={t.id} class={tab === t.id ? 'on' : ''} onClick={() => setTab(t.id)}>
+          <button key={t.id} class={tab === t.id && !sheet ? 'on' : ''} onClick={() => { setSheet(null); setTab(t.id); }}>
             <PixelIcon name={t.id} on={tab === t.id} />
             {t.label}
             {t.id === 'now' && tab !== 'now' && busy && <span class="dot" />}
           </button>
         ))}
       </nav>
-      {menu && <Menu content={content} state={state} onClose={() => setMenu(false)} onLoad={(s) => { setPreview(null); setState(s); setMenu(false); }} onQuit={() => { setMenu(false); toTitle(preview ? 'preview' : 'title'); }} />}
+      {menu && <Menu content={content} state={state} onClose={() => setMenu(false)} onLoad={(s) => { setPreview(null); setState(s); setMenu(false); }} onQuit={() => { setMenu(false); setSheet(null); toTitle(preview ? 'preview' : 'title'); }} onHelp={() => { setMenu(false); setSheet('help'); }} onAbout={() => { setMenu(false); setSheet('about'); }} />}
     </div>
   );
 }

@@ -1,12 +1,14 @@
 {
   "name": "vikingr",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "npm run content && vite",
-    "build": "npm run content && tsc --noEmit && vite build",
-    "build:pwa": "npm run content && tsc --noEmit && VITE_PWA=1 vite build",
+    "build": "npm run content && tsc --noEmit && VITE_RELEASE=1 vite build",
+    "build:dev": "npm run content && tsc --noEmit && vite build",
+    "build:itch": "npm run content && tsc --noEmit && VITE_RELEASE=1 vite build && tsx tools/make-itch.ts",
+    "build:pwa": "npm run content && tsc --noEmit && VITE_RELEASE=1 VITE_PWA=1 vite build",
     "preview": "vite preview",
     "content": "tsx tools/build-content.ts",
     "map": "tsx tools/build-map.ts",

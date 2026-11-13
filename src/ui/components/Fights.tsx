@@ -32,7 +32,7 @@ function BoutView({ content, d, options, onAct }: { content: ContentBundle; d: D
   const holm = d.kind === 'holmgang';
   return (
     <div>
-      <h2>{holm ? 'The holmgang' : 'Single combat'}{d.lethal && <span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span>}</h2>
+      <h2>{holm ? 'The holmgang' : 'Single combat'}{d.lethal && <span class="pill lethal" style={{ marginLeft: 10, verticalAlign: "middle" }}>Lethal</span>}</h2>
       {foe && <p class="muted small">{foe.desc}</p>}
       <div class="fighters">
         <Fighter s={d.hero} you />
@@ -66,7 +66,7 @@ function DuelBody({ content, d, options, onAct }: { content: ContentBundle; d: D
   const likely = [...DUEL_MOVES].sort((a, b) => fc[b] - fc[a]).slice(0, 2);
   return (
     <div>
-      <h2>{d.kind === 'holmgang' ? 'The holmgang' : 'Single combat'}{d.lethal && <span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span>}</h2>
+      <h2>{d.kind === 'holmgang' ? 'The holmgang' : 'Single combat'}{d.lethal && <span class="pill lethal" style={{ marginLeft: 10, verticalAlign: "middle" }}>Lethal</span>}</h2>
       {foe && <p class="muted small">{foe.desc}</p>}
       <div class="fighters">
         <Fighter s={d.hero} you />
@@ -103,7 +103,7 @@ function WallView({ content, b, options, onAct }: { content: ContentBundle; b: B
   const groundWord = w.ground === 0 ? 'the lines are where they met' : w.ground > 0 ? `you have pushed them back ${w.ground} step${w.ground === 1 ? '' : 's'} (at 3 they break)` : `they have pushed you back ${-w.ground} step${w.ground === -1 ? '' : 's'} (at 3 your line breaks)`;
   return (
     <div>
-      <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span></h2>
+      <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="pill lethal" style={{ marginLeft: 10, verticalAlign: "middle" }}>Lethal</span></h2>
       {foe && <p class="muted small">{foe.desc}</p>}
       {b.host && <HostCard b={b} />}
       {w.phase === 'deploy' ? (
@@ -205,7 +205,7 @@ function FightBody({ content, b, options, onAct }: { content: ContentBundle; b: 
   const foe = content.foes[b.foeId];
   return (
     <div>
-      <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="tag lethal" style={{ marginLeft: 10 }}>Lethal</span></h2>
+      <h2>{b.host ? b.host.title : 'The shield-wall'}<span class="pill lethal" style={{ marginLeft: 10, verticalAlign: "middle" }}>Lethal</span></h2>
       {foe && <p class="muted small">{foe.desc}</p>}
       {b.host && <HostCard b={b} />}
       <div class="walls">

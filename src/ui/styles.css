@@ -200,3 +200,6 @@ textarea { min-height: 120px; font-family: var(--f-ui); font-size: 0.8rem; }
 .linkish { background: none; border: 0; color: var(--ochre); text-decoration: underline; font-family: var(--f-ui); font-size: 0.85rem; margin-left: 6px; padding: 6px 4px; cursor: pointer; }
 .rename { display: inline-flex; gap: 4px; align-items: center; margin-left: 6px; }
 .rename input { width: 9em; min-height: 40px; padding: 4px 8px; }
+
+/* a text link that is a button (title: About) */
+.linkbtn { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }

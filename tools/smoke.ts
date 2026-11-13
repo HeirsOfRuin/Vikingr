@@ -1,6 +1,6 @@
 // Browser smoke test against dist/ at phone size: the younger son's year 830 played from the boyhood
 // scenes to the spring of 831, then every tab and a reload. Screenshots go to smoke-out/. Fails on console errors or a step that cannot be found.
-// Usage: npm run build && npm run smoke
+// Usage: npm run build:dev && npm run smoke (the dev build: the chapter jumps are not in a release build)
 import { chromium, type Page } from 'playwright';
 import { createServer } from 'node:http';
 import { readFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -11,7 +11,7 @@ const OUT = join(import.meta.dirname, '..', 'smoke-out');
 const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
 
 if (!existsSync(join(DIST, 'index.html'))) {
-  console.error('smoke: build first (npm run build)');
+  console.error('smoke: build first (npm run build:dev)');
   process.exit(1);
 }
 mkdirSync(OUT, { recursive: true });

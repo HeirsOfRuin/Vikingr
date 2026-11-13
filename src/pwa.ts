@@ -2,8 +2,6 @@
 // service worker under this build's id, so each deploy installs a new worker;
 // when it takes control, the page reloads once into the new version. Also
 // checks for an update whenever the app comes back to the foreground.
-declare const __PWA__: boolean;
-declare const __BUILD_ID__: string;
 
 export function registerPwa(): void {
   if (!__PWA__ || !('serviceWorker' in navigator) || window.top !== window) return;
