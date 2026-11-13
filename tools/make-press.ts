@@ -207,7 +207,8 @@ async function shots(taken: Taken): Promise<string[]> {
   const srv = await serve();
   const base = `http://localhost:${srv.port}/`;
   const browser = await launch();
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, reducedMotion: 'reduce' });
+  // a phone: touch, so a place on the map opens to a tap (a mouse click on one goes to the map's pointer capture instead)
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
@@ -248,24 +249,33 @@ async function shots(taken: Taken): Promise<string[]> {
     await page.locator('nav.tabs button', { hasText: 'Map' }).click();
     await settle(page);
     // one step closer, and a tap on a place one leg away: its story card and the course to it
-    await page.getByRole('button', { name: 'Zoom in' }).click();
+    await page.getByRole('button', { name: 'Zoom in' }).tap();
     await page.waitForTimeout(700);
-    const legs = listActions(taken.mid, content).filter((o) => o.enabled && o.action.t === 'sail').map((o) => content.places[(o.action as { to: string }).to]!);
+    const legs = listActions(taken.mid, content).filter((o) => o.enabled && (o.action.t === 'sail' || o.action.t === 'course')).map((o) => content.places[(o.action as { to: string }).to]!);
     const box = (await page.locator('.mapbox').boundingBox())!;
     let tapped = '';
-    for (const pl of legs.filter((x) => x.raid).concat(legs)) {
+    // a place he has not been to keeps the card short (no list of visits); a place to raid says more about the game
+    const been = (name: string) => taken.mid!.journal.some((j) => j.text.includes(name));
+    const order = [...legs].sort((a, b) => Number(been(a.name)) - Number(been(b.name)) || Number(!a.raid) - Number(!b.raid));
+    for (const pl of order) {
       const t = page.locator('.mapbox svg text', { hasText: new RegExp(`^${pl.name}$`) }).first();
       const r = await t.boundingBox().catch(() => null);
-      if (process.env.PRESS_DEBUG) console.log('map label', pl.name, JSON.stringify(r), JSON.stringify(box));
       if (!r || r.x < box.x + 8 || r.x + r.width > box.x + box.width - 60 || r.y < box.y + 8 || r.y + r.height > box.y + box.height - 8) continue;
       // a label standing clear of the others, so the tap is plainly on it
       const crowded = await page.locator('.mapbox svg text').evaluateAll((els, me) => els.some((e) => { const q = e.getBoundingClientRect(); return e.textContent !== me.name && q.right > me.x - 4 && q.left < me.x + me.w + 4 && q.bottom > me.y - 4 && q.top < me.y + me.h + 4; }), { name: pl.name, x: r.x, y: r.y, w: r.width, h: r.height });
-      if (process.env.PRESS_DEBUG) console.log('  crowded', crowded);
       if (crowded) continue;
-      await t.click();
+      await t.tap();
       await page.waitForTimeout(200);
       if (await page.locator('.placeinfo h2').count()) { tapped = pl.name; break; }
     }
+    // as much of the card as fits above the tab bar, never scrolling the map's own top edge (and its buttons) away
+    await page.evaluate((bar) => {
+      const c = document.querySelector('.placeinfo'), m = document.querySelector('.mapbox'), top = document.querySelector('.topbar');
+      if (!c || !m || !top) return;
+      const want = c.getBoundingClientRect().bottom + scrollY - bar + 12;
+      const most = m.getBoundingClientRect().top + scrollY - top.getBoundingClientRect().height - 8;
+      scrollTo(0, Math.max(0, Math.min(want, most)));
+    }, tabBar);
     console.log(`press: map, ${tapped ? `tapped ${tapped}` : `no clear label to tap among ${legs.map((x) => x.name).join(', ') || 'no legs'}`}`);
     await settle(page);
     problems.push(...(await audit(page, 'map')));
