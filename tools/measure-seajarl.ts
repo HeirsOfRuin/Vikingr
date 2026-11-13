@@ -12,7 +12,7 @@ const arg = (k: string, d: number) => Number(process.argv[process.argv.indexOf(k
 const runs = arg('--runs', 100);
 const years = arg('--years', 20);
 BOT_OPTS.ambitious = !process.argv.includes('--plain');
-let hall = 0, three = 0, named = 0, warded = 0, fortsLost = 0, wardTurned = 0, apart = 0, steps = 0;
+let hall = 0, three = 0, named = 0, warded = 0, fortsLost = 0, wardTurned = 0, apart = 0, steps = 0, wards = 0, wardDied = 0;
 const namedAt: number[] = [];
 for (let i = 0; i < runs; i++) {
   let s: GameState = newGame(content, { background: 'younger_son', seed: 9100 + i, name: 'Bot' });
@@ -38,9 +38,11 @@ for (let i = 0; i < runs; i++) {
   if (nm) { named++; namedAt.push(dateOf(nm.day).year - start); }
   fortsLost += (j.match(/Lost the ship-fort/g) ?? []).length;
   wardTurned += (j.match(/kept the fort at .* for himself/g) ?? []).length;
+  wards += (j.match(/^Left .* to hold the fort at/gm) ?? []).length;
+  wardDied += (j.match(/died holding the fort at/g) ?? []).length;
   if (/sea-jarldom came apart/.test(j)) apart++;
 }
 const med = (xs: number[]) => { const t = [...xs].sort((a, b) => a - b); return t.length ? t[Math.floor(t.length / 2)] : '-'; };
 console.log(`raider${BOT_OPTS.ambitious ? ' (ambitious)' : ''}: ${runs} lives × ${years} years, ${Math.round(steps / runs)} steps a life`);
 console.log(`  ever a hall: ${hall}; ever 3+ holdings: ${three}; named sea-jarl: ${named} (median year ${med(namedAt)} of the life); came apart: ${apart}`);
-console.log(`  ever left a warden: ${warded}; wardens who kept a fort: ${wardTurned}; forts lost (journal, last 60 lines only): ${fortsLost}`);
+console.log(`  lives that left a warden: ${warded}; wardens left: ${wards}; who kept a fort for himself: ${wardTurned}; who died holding one: ${wardDied}; forts lost: ${fortsLost}`);

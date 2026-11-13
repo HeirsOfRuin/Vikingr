@@ -872,7 +872,7 @@ function landOptions(state: GameState, content: ContentBundle, at: string): Acti
   for (const s of wardShips(state, at)) {
     const who = s.master!.split(':')[1]!;
     const name = s.master!.startsWith('man:') ? state.men.find((m) => m.id === who)?.name ?? 'her master' : who;
-    out.push(opt('Land', { t: 'ward_fort', ship: s.id }, `Leave ${s.name} and ${name} to hold the fort`, true, undefined, `${plural(wardMen(state, content, s), 'man', 'men')} of her crew stay. He takes in ${WARDEN.recruits} men a spring, keeps the walls, and the fort's yield grows; he keeps a third of it`));
+    out.push(opt('Land', { t: 'ward_fort', ship: s.id }, `Leave ${s.name} and ${name} to hold the fort`, true, undefined, `${plural(wardMen(state, content, s), 'man', 'men')} of her crew stay. He takes in ${WARDEN.recruits} men a spring, keeps the walls, and the fort's yield grows; he keeps a third of it. ${s.master!.startsWith('man:') ? `Sworn to you: he keeps faith while his loyalty holds above ${WARDEN.turnLoyalty}` : `A hired man: about 1 year in ${Math.round(1 / WARDEN.hiredTurn)} he keeps it for himself`}`));
   }
   if (h?.warden) out.push(opt('Land', { t: 'unward_fort' }, `Take ${h.warden.ship.name} back from the fort`, true, undefined, `${wardenLabel(state, h)}, holds it with ${plural(h.garrison ?? 0, 'man', 'men')}; up to ${plural(Math.max(0, (h.garrison ?? 0) - LAND.garrisonMin), 'man', 'men')} of them would come with her`));
   return out;

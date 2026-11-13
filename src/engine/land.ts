@@ -50,7 +50,7 @@ export const WARDEN = {
   /** A sworn warden of this loyalty or less may keep the fort for himself: the chance a year. A hired one: hiredTurn. */
   turnLoyalty: 3,
   turnChance: 0.3,
-  hiredTurn: 0.08,
+  hiredTurn: 0.05,
 } as const;
 
 export const LAND = {

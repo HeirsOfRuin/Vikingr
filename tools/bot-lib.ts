@@ -351,7 +351,7 @@ export class Bot {
     // a hall and three holdings: be named sea-jarl; a raider leaves his last ship with a master at a fort he can't hold
     const sj = pick((a) => a.t === 'sea_jarl');
     if (sj && this.policy !== 'homebody') return sj;
-    if (this.policy === 'raider' && state.ships.length >= 3) { const wd = pick((a) => a.t === 'ward_fort'); if (wd) return wd; }
+    if (this.policy === 'raider' && state.ships.length >= 3) { const wd = pick((a) => a.t === 'ward_fort' && !!state.ships.find((x) => x.id === a.ship)?.master?.startsWith('man:')) ?? (state.ships.length >= 4 ? pick((a) => a.t === 'ward_fort') : undefined); if (wd) return wd; }
     if (this.policy === 'raider' && state.silver > 700) { const b = pick((a) => a.t === 'buy_land'); if (b) return b; }
     if (this.policy === 'reckless' || (this.policy === 'raider' && state.crew.men >= 55)) { const f = pick((a) => a.t === 'dig_fort'); if (f) return f; }
     if (doy >= WINTER_ABROAD_DOY && (holdingAt(state, at) || (state.rule && seatPlace(state, state.rule.seat) === at))) { const w = pick((a) => a.t === 'winter_here'); if (w) return w; }
