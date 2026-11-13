@@ -248,9 +248,18 @@ export function musterHolding(state: GameState, content: ContentBundle, place: s
 
 /** The chance a year that a fort's people take it back, if he does not winter in it. */
 export function fortRisk(state: GameState, content: ContentBundle, h: Holding): number {
-  void state;
   const D = content.places[h.place]!.raid?.defenders ?? 20;
-  return LAND.retake * D / (D + (h.warden ? WARDEN.walls : LAND.walls) * (h.garrison ?? 0));
+  return LAND.retake * D / (D + (h.warden ? WARDEN.walls : LAND.walls) * (h.garrison ?? 0) + LAND.walls * networkSupport(state, h));
+}
+
+/** A sea-jarl's forts stand together (seajarl.ts): a fort's people count this share of the other forts' garrisons. */
+export const FORT_SUPPORT = 0.25;
+
+/** A fort's help from the rest of a sea-jarl's network: the share of the other forts' garrisons that would come. */
+export function networkSupport(state: GameState, h: Holding): number {
+  if (!state.seajarl || h.kind !== 'fort') return 0;
+  const others = (state.holdings ?? []).filter((x) => x !== h && x.kind === 'fort').reduce((n, x) => n + (x.garrison ?? 0), 0);
+  return Math.round(others * FORT_SUPPORT);
 }
 
 /** The turn of the year: what the holdings bring in; and the forts, which their people come back for. */

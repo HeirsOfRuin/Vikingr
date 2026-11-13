@@ -176,7 +176,8 @@ export function landingFoe(content: ContentBundle, id: string): { foe: string; m
 
 /** Food to last RESUPPLY_DAYS (more where an expedition starts), at this port's price. null: they won't sell. */
 export function resupplyCost(state: GameState, content: ContentBundle, id: string): { need: number; cost: number; days: number } | null {
-  const mult = RESUPPLY_PRICE[tierAt(state, content, id)];
+  // a sea-jarl's own harbours feed his ships (seajarl.ts)
+  const mult = state.seajarl && (state.holdings ?? []).some((h) => h.place === id) ? 0 : RESUPPLY_PRICE[tierAt(state, content, id)];
   if (mult === null) return null;
   // a port where an expedition road starts sells enough for the open water (the East road: Birka to Aldeigjuborg)
   const days = content.legs.some((l) => l.expedition && (l.a === id || l.b === id)) ? Math.max(RESUPPLY_DAYS, EXPEDITION.foodDays) : RESUPPLY_DAYS;

@@ -58,6 +58,7 @@ import { livingFame } from './fame';
 import { earn } from './hardship';
 import { landPath, landRoads, march, marchBlock } from './march';
 import { atHome, homeOf, settleBlock, settleHere, settleHint } from './settle';
+import { networkHoldings, proclaimSeaJarl, SEAJARL, seaJarlStatus } from './seajarl';
 
 export type Action =
   | { t: 'choose'; id: string }
@@ -98,6 +99,7 @@ export type Action =
   | { t: 'reinforce' }
   | { t: 'ward_fort'; ship: string }
   | { t: 'unward_fort' }
+  | { t: 'sea_jarl' }
   | { t: 'forage' }
   | { t: 'resupply' }
   | { t: 'guest' }
@@ -711,7 +713,7 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
           else out.push(opt('Here', { t: 'land' }, 'Fight your way ashore for water and cattle', state.crew.men >= 6, 'You have too few men.', `They will meet you on the beach: about ${lf.men} of them${hurtNote(state, content)}`));
         } else {
           const rc = resupplyCost(state, content, at);
-          if (rc) out.push(opt('Here', { t: 'resupply' }, 'Buy food from the locals', rc.need > 0 && purse(state) > 0, rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? `${formatSilver(rc.cost)} for ${rc.days} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}` : undefined));
+          if (rc) out.push(opt('Here', { t: 'resupply' }, rc.cost === 0 && rc.need > 0 ? 'Take on food from your own people' : 'Buy food from the locals', rc.need > 0 && (purse(state) > 0 || rc.cost === 0), rc.need <= 0 ? 'The ships are provisioned.' : 'You have no silver, and nothing in the heap.', rc.need > 0 ? (rc.cost === 0 ? `Free: your own harbour. Food for ${rc.days} days` : `${formatSilver(rc.cost)} for ${rc.days} days${tier === 'wary' ? ', at a wary price' : tier === 'allied' ? ', at a friend\'s price' : ''}`) : undefined));
           if (content.places[at]!.market || norseHeld(state, at)) out.push(...shopOption(state, content));
           out.push(...tradeOption(state, content));
           const year = dateOf(state.day).year;
@@ -752,6 +754,11 @@ export function listActions(state: GameState, content: ContentBundle): ActionOpt
       }
       if (at === homeOf(state)) {
         out.push(...homeActions(state, content));
+        // the sea-jarldom: shown once he is on the way to it, with what is missing (seajarl.ts)
+        if (!state.seajarl && !state.service && networkHoldings(state).length >= 2) {
+          const sj = seaJarlStatus(state, content);
+          out.push(opt('Land', { t: 'sea_jarl' }, 'Call your landholders to your hall, and be named sea-jarl', sj.open, sj.why.join(' '), `${formatSilver(SEAJARL.feast)} and ${SEAJARL.feastDays} days. One muster from every holding, forts that stand together, skatt on the yield, free food in your own harbours; gifts at Yule`));
+        }
         out.push(opt('Season', { t: 'end_season' }, 'Haul up the ships for the winter', doy >= LATE_SEASON_DOY, 'Too early: the summer is not done.'));
       } else if (doy >= WINTER_ABROAD_DOY || doy < MUSTER_DOY) {
         const roof = armyCamp(state) === at || (tier !== 'hostile' && tier !== 'unfriendly');
@@ -1101,6 +1108,9 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
     case 'muster_land':
       report('Your people', musterHolding(state, content, state.at!));
       break;
+    case 'sea_jarl':
+      report('Sea-jarl', proclaimSeaJarl(state, content));
+      break;
     case 'ward_fort':
       report('The fort', wardFort(state, content, state.at!, action.ship));
       break;
@@ -1118,13 +1128,13 @@ export function act(content: ContentBundle, input: GameState, action: Action, op
       const rc = resupplyCost(state, content, state.at!)!;
       // the ship's stores are bought out of the heap, as any captain's would; then out of his own silver
       const pay = Math.min(rc.cost, purse(state));
-      const got = rc.cost ? Math.round((rc.need * pay) / rc.cost) : 0;
+      const got = rc.cost ? Math.round((rc.need * pay) / rc.cost) : rc.need;
       payShip(state, pay);
       state.provisions += got;
       state.day += 1;
       // a paying customer is remembered kindly, up to a point
       if (standing(state, content, state.at!) < baseStanding(content, state.at!) + 3) shiftStanding(state, content, state.at!, 1);
-      report('Trading', [`You buy dried fish, meal, cheese and a cask of sour ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`]);
+      report('Trading', [rc.cost === 0 ? `Your own people bring dried fish, meal, cheese and ale down to the ships, because you are their jarl: food for ${Math.floor(state.provisions / mouths(state))} days.` : `You buy dried fish, meal, cheese and a cask of sour ale: food for ${Math.floor(state.provisions / mouths(state))} days. ${formatSilver(pay)}.`]);
       break;
     }
     case 'shop':

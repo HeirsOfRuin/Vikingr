@@ -25,6 +25,7 @@ import { hearNews } from './chronicle';
 import { atLordSeat, lordMen, lordName, lordsYear, lordTenth, secretYear } from './lords';
 import { holdingAt, holdingsYear } from './land';
 import { springRumours } from './rumours';
+import { seaJarlYear } from './seajarl';
 import { ruleYear, seatPlace } from './rule';
 import { familyYear, winterBirth } from './family';
 import {
@@ -528,6 +529,8 @@ export function yearEnd(state: GameState, content: ContentBundle, rng: RngCursor
   state.musterPool = 4 + Math.floor(MUSTER_FAME * Math.sqrt(Math.max(0, livingFame(state)))) + 2 * effAttr(state, content, 'pre') + BASE[state.base.level].muster + MUSTER_PER_SHIP * Math.max(0, state.ships.length - 1) + (settledAbroad(state) ? settledMuster(state) : favourMuster(state));
   // his lord sends men to his muster
   state.musterPool += lordMen(state);
+  // a sea-jarl's holdings send theirs by ship; skatt in, gifts out (seajarl.ts)
+  hardLines.push(...seaJarlYear(state, content));
   state.musterPool = Math.max(0, state.musterPool);
   const felag = endFelag(state, content);
   if (felag) lines.push(felag);

@@ -360,6 +360,8 @@ export interface GameState {
   tradeNews?: { good: string; mult: number; year: number };
   /** What the beaches said at the turn of the year about the summer ahead (rumours.ts). */
   rumours?: { year: number; lines: string[] };
+  /** Named sea-jarl by his landholders (seajarl.ts). */
+  seajarl?: { since: number };
   /** The shipmasters of the north, once anything has passed between them (docs/FRAME-TRADE-ALLIES.md). */
   captains?: Record<string, { rel: number; met: boolean; alive: boolean }>;
   /** The summer's félag: a sworn partner, the year, and the heap shared. */

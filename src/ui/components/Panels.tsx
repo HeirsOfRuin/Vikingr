@@ -29,7 +29,8 @@ import { Actions } from './Actions';
 import { equipped, gearWord, itemName, NAME_AT } from '../../engine/items';
 import type { KitSlot } from '../../engine/state';
 import { lordAlive, lordFav, lordMen, lordName, secretChance, swornTo } from '../../engine/lords';
-import { holdingYield, LAND, wardenLabel } from '../../engine/land';
+import { fortRisk, holdingYield, LAND, wardenLabel } from '../../engine/land';
+import { networkHoldings, networkMuster, SEAJARL, seaJarlStatus, seaSkatt, yuleGifts } from '../../engine/seajarl';
 import { claimWords, LORDSHIP, rivalOf, RULE, ruleTitle, ruleTribute, SEAT_DEF, SEATS, seatOpen, seatStatus } from '../../engine/rule';
 
 const SLOT_NAMES: Record<KitSlot, string> = { weapon: 'In his hand', shield: 'On his arm', helmet: 'On his head', armour: 'On his back' };
@@ -351,9 +352,15 @@ function WorldCard({ content, state }: { content: ContentBundle; state: GameStat
       ) : null}
       {holds.length ? (
         <dl class="kv">
-          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : h.warden ? `a ship-fort, held for you by ${wardenLabel(state, h)} and ${plural(h.garrison ?? 0, 'man', 'men')}; he keeps a third of the yield` : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
+          {holds.map((h) => [<dt key={`${h.place}t`}>{content.places[h.place]!.name}</dt>, <dd key={`${h.place}d`}>{h.kind === 'grant' ? `held from ${lordName(state, content, h.lord!)}` : h.kind === 'bought' ? 'bought' : h.warden ? `a ship-fort, held for you by ${wardenLabel(state, h)} and ${plural(h.garrison ?? 0, 'man', 'men')}; he keeps a third of the yield` : `a ship-fort, ${plural(h.garrison ?? 0, 'man', 'men')} holding it`}{h.kind === 'fort' ? ` (the chance they take it back in a winter you are not there: about ${Math.max(1, Math.round(fortRisk(state, content, h) * 10))} in 10)` : ''}; {formatSilver(holdingYield(h))} a year, {plural(LAND[h.kind].men, 'man', 'men')} each spring. {state.homeAt === h.place ? 'Home: your household and your men\'s families live here.' : 'Winter there as at home; or bring your family and settle it.'}</dd>])}
         </dl>
-      ) : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
+      ) : null}
+      {state.seajarl ? (
+        <p class="small"><b>Sea-jarl</b> since {formatDate(state.seajarl.since)}, of {networkHoldings(state).map((h) => content.places[h.place]!.name).join(', ')}. Each Yule: {formatSilver(seaSkatt(state))} in skatt on top of the yields, {formatSilver(yuleGifts(state))} in gifts to your landholders, and {plural(networkMuster(state), 'man', 'men')} sent to your spring muster by ship. Your forts count a quarter of each other's garrisons; your own harbours feed your ships free. It holds while you keep a hall and land at {SEAJARL.holdings} places besides your home.</p>
+      ) : holds.length && networkHoldings(state).length >= 1 && !state.service ? (
+        <p class="small muted">A sea-jarl: a hall of your own and land or ship-forts at {SEAJARL.holdings} places besides your home, joined into one road by sea. {seaJarlStatus(state, content).why.filter((w) => !/be there|cost/.test(w)).join(' ') || 'You have all it takes: call your landholders to your hall.'}</p>
+      ) : null}
+      {holds.length ? null : <p class="muted small">No land abroad. Lords grant it to men who answer their call; Norse ports sell it to men they trust; a ship-fort takes it, and has to be held.</p>}
       {state.rule ? <p class="small">You are {ruleTitle(state, content)}, since {formatDate(state.rule.since)}: {formatSilver(ruleTribute(state).silver)} in tribute and {plural(ruleTribute(state).men, 'man', 'men')} more at the muster every year. You were last seen there in the winter of {state.rule.seen - 1}. Winter there at least every {RULE.absent} years, or {state.rule.seat === 'lordship' ? 'its people will stop calling you lord' : `${rivalOf(state, content, state.rule.seat).name} takes it`}.</p>
         : (
           <>
