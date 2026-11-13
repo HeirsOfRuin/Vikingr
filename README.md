@@ -2,7 +2,7 @@
 
 A turn-based RPG of one man's life in the 9th century: from nothing, through fame and renown, to sea king and, if he dies well, Valhalla.
 
-**Status:** version 1.0. 642 written scenes over three eras (830, 843, 865), 56 places on a real-coastline map, shield-wall battles and single combat, fleets, trade, lords, land and rule. Design and every decision: `docs/DESIGN.md`. Writing rules: `content/style-guide.md`. Store page draft: `store/ITCH.md`.
+**Status:** version 1.0. 636 written scenes over three eras (830, 843, 865), 56 places on a real-coastline map, shield-wall battles and single combat, fleets, trade, lords, land and rule. Design and every decision: `docs/DESIGN.md`. Writing rules: `content/style-guide.md`. Store page draft: `store/ITCH.md`.
 
 ## Play as an app
 Published to GitHub Pages by `.github/workflows/pages.yml` on every push, once Pages is switched on (one-time setup: Settings > Pages > Build and deployment > Source: GitHub Actions). Then: https://heirsofruin.github.io/Vikingr/

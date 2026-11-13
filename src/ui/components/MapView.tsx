@@ -81,18 +81,27 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
   const legs = content.legs.filter((l) => known.has(l.a) && known.has(l.b));
   const fleet = fleetAt(state, content);
   const reachable = state.at ? [...routes(state, content, state.at).map((r) => r.to), ...landRoads(state, content, state.at).map((r) => r.to)] : [];
-  const visits = (id: string) => state.journal.filter((j) => j.text.includes(content.places[id]!.name)).map((j) => formatDate(j.day));
+  // one date per visit: several journal lines on the same day are one landfall (store-page run, 2026-11-13)
+  const visits = (id: string) => [...new Set(state.journal.filter((j) => j.text.includes(content.places[id]!.name)).map((j) => formatDate(j.day)))];
 
+  // the pointer is captured only once a drag has begun: captured at pointerdown, a mouse click went to the map box and
+  // never reached the zoom buttons or a place (release audit, 2026-11-13: desktop players on itch)
+  const dragged = useRef(false);
   const onDown = (e: PointerEvent) => {
     drag.current = { x: e.clientX, y: e.clientY, c: center, moved: false };
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragged.current = false;
   };
   const onMove = (e: PointerEvent) => {
     const d = drag.current;
     if (!d) return;
     const dx = e.clientX - d.x;
     const dy = e.clientY - d.y;
-    if (Math.abs(dx) + Math.abs(dy) > 4) d.moved = true;
+    if (!d.moved && Math.abs(dx) + Math.abs(dy) > 4) {
+      d.moved = true;
+      dragged.current = true;
+      try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* the pointer is gone */ }
+    }
+    if (!d.moved) return;
     setCenter([d.c[0] - dx / (PX * scale), d.c[1] - dy / (PX * scale)]);
   };
   const onUp = () => { drag.current = null; };
@@ -125,7 +134,7 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
               if (rumoured.has(p.id) && !known.has(p.id)) {
                 // heard of, not charted: a faint dashed ring, and the name in italics
                 return (
-                  <g key={p.id} onClick={() => !drag.current?.moved && setPicked(p.id)} style={{ cursor: 'pointer' }} opacity={0.75}>
+                  <g key={p.id} onClick={() => !dragged.current && setPicked(p.id)} style={{ cursor: 'pointer' }} opacity={0.75}>
                     <circle cx={x * PX} cy={y * PX} r={r * 2.5} fill="transparent" />
                     <circle cx={x * PX} cy={y * PX} r={r} fill="none" stroke="#e6ddc8" stroke-width={1 / scale} stroke-dasharray={`${2 / scale} ${2 / scale}`} />
                     <text x={x * PX + r * 1.6} y={y * PX + label * 0.35} font-size={label} font-style="italic" fill="#b9b2a2" stroke="#111213" stroke-width={label * 0.25} paint-order="stroke" font-family="Georgia, serif">{p.name}?</text>
@@ -133,7 +142,7 @@ export function MapView({ content, map, state, mini, onAct }: Props & { onAct?: 
                 );
               }
               return (
-                <g key={p.id} onClick={() => !drag.current?.moved && setPicked(p.id)} style={{ cursor: 'pointer' }}>
+                <g key={p.id} onClick={() => !dragged.current && setPicked(p.id)} style={{ cursor: 'pointer' }}>
                   <circle cx={x * PX} cy={y * PX} r={r * 2.5} fill="transparent" />
                   <circle cx={x * PX} cy={y * PX} r={r} fill={fill} stroke={p.active && p.kind !== 'home' ? TIER_STROKE[tierAt(state, content, p.id)] : '#111213'} stroke-width={(p.active && p.kind !== 'home' ? 2.2 : 1) / scale} opacity={p.active ? 1 : 0.5} />
                   {reachable.includes(p.id) && <circle cx={x * PX} cy={y * PX} r={r * 1.9} fill="none" stroke="#c8913a" stroke-width={1 / scale} />}

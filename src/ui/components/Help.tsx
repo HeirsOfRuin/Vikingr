@@ -45,6 +45,7 @@ export function About({ onBack }: { onBack: () => void }) {
       <dl class="kv">
         <dt>Fonts</dt><dd>Alegreya, Alegreya Sans and Alegreya SC by Juan Pablo del Peral, Huerta Tipográfica; Noto Sans Runic by Google. All under the SIL Open Font License 1.1 (the licence is in the download, in LICENSES).</dd>
         <dt>Map</dt><dd>Coastlines and rivers from Natural Earth, public domain.</dd>
+        <dt>Pictures</dt><dd>Made for this game: generated source images, cropped and redrawn in the game's own fixed palette.</dd>
         <dt>Sources</dt><dd>The Annals of Ulster, the Annals of St-Bertin, the Anglo-Saxon Chronicle, the Cogad Gáedel re Gallaib, and the Icelandic sagas and Landnámabók, among others; dates and places follow them where they agree.</dd>
       </dl>
       <div class="choices"><button class="choice primary" onClick={onBack}><span class="txt">Back</span></button></div>

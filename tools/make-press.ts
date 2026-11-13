@@ -212,6 +212,8 @@ async function shots(taken: Taken): Promise<string[]> {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  // nothing leaves the page (the store page says so): any request off this server is a problem
+  page.on('request', (r) => { if (!r.url().startsWith(base) && !/^(data|blob):/.test(r.url())) errors.push(`request off the page: ${r.url()}`); });
   const tabBar = 844 - 60;
   try {
     // (a) the story: the first candidate whose choices sit above the tab bar once its pages are read
@@ -251,16 +253,20 @@ async function shots(taken: Taken): Promise<string[]> {
     // one step closer, and a tap on a place one leg away: its story card and the course to it
     await page.getByRole('button', { name: 'Zoom in' }).tap();
     await page.waitForTimeout(700);
-    const legs = listActions(taken.mid, content).filter((o) => o.enabled && (o.action.t === 'sail' || o.action.t === 'course')).map((o) => content.places[(o.action as { to: string }).to]!);
+    const sailable = new Set(listActions(taken.mid, content).filter((o) => o.enabled && (o.action.t === 'sail' || o.action.t === 'course')).map((o) => (o.action as { to: string }).to));
+    const legs = taken.mid.known.filter((id) => id !== taken.mid!.at && content.places[id]?.active).map((id) => content.places[id]!);
     const box = (await page.locator('.mapbox').boundingBox())!;
+    const zoom = await page.locator('.mapzoom').boundingBox();
     let tapped = '';
-    // a place he has not been to keeps the card short (no list of visits); a place to raid says more about the game
-    const been = (name: string) => taken.mid!.journal.some((j) => j.text.includes(name));
-    const order = [...legs].sort((a, b) => Number(been(a.name)) - Number(been(b.name)) || Number(!a.raid) - Number(!b.raid));
+    // a known place the journal names least keeps the card short (its "You were here" line); one he can set a course for shows the
+    // course button; a place to raid says more about the game
+    const been = (name: string) => Math.min(1, taken.mid!.journal.filter((j) => j.text.includes(name)).length / 3); // the card lists journal days naming it
+    const order = [...legs].sort((a, b) => Number(been(a.name)) - Number(been(b.name)) || Number(!sailable.has(a.id)) - Number(!sailable.has(b.id)) || Number(!a.raid) - Number(!b.raid));
     for (const pl of order) {
       const t = page.locator('.mapbox svg text', { hasText: new RegExp(`^${pl.name}$`) }).first();
       const r = await t.boundingBox().catch(() => null);
-      if (!r || r.x < box.x + 8 || r.x + r.width > box.x + box.width - 60 || r.y < box.y + 8 || r.y + r.height > box.y + box.height - 8) continue;
+      if (!r || r.x < box.x + 8 || r.x + r.width > box.x + box.width - 8 || r.y < box.y + 8 || r.y + r.height > box.y + box.height - 8) continue;
+      if (zoom && r.x + r.width > zoom.x - 4 && r.y < zoom.y + zoom.height + 4) continue; // under the zoom buttons
       // a label standing clear of the others, so the tap is plainly on it
       const crowded = await page.locator('.mapbox svg text').evaluateAll((els, me) => els.some((e) => { const q = e.getBoundingClientRect(); return e.textContent !== me.name && q.right > me.x - 4 && q.left < me.x + me.w + 4 && q.bottom > me.y - 4 && q.top < me.y + me.h + 4; }), { name: pl.name, x: r.x, y: r.y, w: r.width, h: r.height });
       if (crowded) continue;
@@ -334,8 +340,7 @@ html,body{margin:0;background:var(--soot)}
 h1{position:absolute;left:0;right:0;top:268px;margin:0;text-align:center;font:700 116px/1 'Alegreya SC',serif;letter-spacing:.12em;padding-left:.12em;color:var(--bone);text-shadow:0 3px 0 var(--soot),0 0 22px rgba(17,18,19,.95)}
 .sub{position:absolute;left:0;right:0;top:394px;text-align:center;font:500 28px/1.1 'Alegreya SC',serif;letter-spacing:.06em;color:var(--ochre)}
 .era{position:absolute;left:0;right:0;top:442px;text-align:center;font:italic 400 23px/1 'Alegreya',serif;color:var(--bone-dim)}
-</style></head><body><div class="c"><div class="pic"></div><h1>VIKINGR</h1><div class="sub">From nothing, to sea king, to Valhalla</div><div class="era">The Viking age, 830 to 870</div><div class="band"></div></div></body></html>`;
-  writeFileSync(join(OUT, 'cover.html'), html);
+</style></head><body><div class="c"><div class="pic"></div><h1>VIKINGR</h1><div class="sub">From nothing, to sea king, to Valhalla</div><div class="era">The Viking age, 830 to 878</div><div class="band"></div></div></body></html>`;
   const browser = await launch();
   try {
     const page = await browser.newPage({ viewport: { width: 630, height: 500 }, deviceScaleFactor: 1 });
@@ -351,16 +356,16 @@ h1{position:absolute;left:0;right:0;top:268px;margin:0;text-align:center;font:70
   } finally {
     await browser.close();
   }
-  console.log('press: wrote store/cover.png, store/cover-315.png (and store/cover.html, its source)');
+  console.log('press: wrote store/cover.png, store/cover-315.png');
 }
 
-// ---- 7. the embed size: the title's buttons on screen, without scrolling, inside an itch-style iframe ----
+// ---- 7. the embed size: the title's buttons (and the About link) on screen, without scrolling, inside an itch-style iframe ----
 async function embed(mid: GameState | null): Promise<void> {
   const srv = await serve();
   const browser = await launch();
   const lines: string[] = [];
   try {
-    for (const [w, h] of [[540, 860], [600, 860], [720, 900], [480, 800]] as const) {
+    for (const [w, h] of [[480, 800], [540, 860], [540, 960], [600, 900], [720, 900]] as const) {
       for (const withSave of [false, true]) {
         const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } });
         await page.goto(`http://localhost:${srv.port}/`);
@@ -370,11 +375,11 @@ async function embed(mid: GameState | null): Promise<void> {
         await frame.locator('.title .choice').first().waitFor({ timeout: 8000 });
         await page.waitForTimeout(500);
         const r = await frame.locator('body').evaluate(() => {
-          const btns = [...document.querySelectorAll('.title .choice')].map((b) => ({ t: (b.querySelector('.txt')?.firstChild?.textContent ?? b.textContent ?? '').trim(), bottom: Math.round(b.getBoundingClientRect().bottom) }));
+          const btns = [...document.querySelectorAll('.title button')].map((b) => ({ t: (b.querySelector('.txt')?.firstChild?.textContent ?? b.textContent ?? '').trim(), bottom: Math.round(b.getBoundingClientRect().bottom) }));
           return { inner: innerHeight, scroll: document.documentElement.scrollHeight, btns };
         });
         const hidden = r.btns.filter((b) => b.bottom > r.inner);
-        lines.push(`${w}x${h} ${withSave ? 'with a save' : 'first visit'}: page ${r.scroll}px tall; ${r.btns.length} title buttons, ${hidden.length ? `below the fold: ${hidden.map((b) => `${b.t} (${b.bottom})`).join(', ')}` : `all visible (last ends at ${Math.max(...r.btns.map((b) => b.bottom))})`}`);
+        lines.push(`${w}x${h} ${withSave ? 'with a save' : 'first visit'}: page ${r.scroll}px tall; ${r.btns.length} title buttons and links, ${hidden.length ? `below the fold: ${hidden.map((b) => `${b.t} (${b.bottom})`).join(', ')}` : `all visible (last ends at ${Math.max(...r.btns.map((b) => b.bottom))})`}`);
         await page.close();
       }
     }
