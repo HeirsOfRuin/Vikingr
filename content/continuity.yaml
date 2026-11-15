@@ -35,3 +35,5 @@ dead_names_ok:
   mourn_ulf: [ulf]
   mourn_hallvard: [hallvard]
   mourn_bersi: [bersi]
+  # the spring of 831: "Tell that to Ulf," when the man who would have answered is dead (10-spring.yaml sp_rejoin bench)
+  "report: The ice goes out": [ulf]
