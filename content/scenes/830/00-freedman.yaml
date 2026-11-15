@@ -6,6 +6,8 @@
   kind: spine
   art: ship_home
   when: Late summer, 823
+  # the boatwright's boy; the trader's boy and the grandmother's grandson have their own (00-raised.yaml)
+  instead: [ { if: "raised == trader", scene: f_scales }, { if: "raised == grandmother", scene: f_door } ]
   title: The boatyard
   text: |
     The ship comes in with her side stove in.
@@ -115,6 +117,8 @@
   kind: spine
   art: hearth_ormr
   when: Winter, 828
+  # the grandmother's grandson; the boatwright's boy and the trader's boy have their own (00-raised.yaml)
+  instead: [ { if: "raised == boatwright", scene: f_faering }, { if: "raised == trader", scene: f_tally } ]
   title: Órlaith
   text: |
     Your grandmother is dying slowly, the way she has done everything since you've known her.
@@ -143,7 +147,7 @@
       next: f_word
     - id: refuse
       text: Tell her you're a Northman, and Northmen don't pray to hanged gods.
-      effects: [ { add: { honour: 1 } }, { set: flag.f_refused_amma } ]
+      effects: [ { add: { honour: 1 } }, { set: flag.f_refused_amma }, { clear: flag.irish } ]
       result: |
         She lets go of your wrist. "So was the man who bought me," she says. "A Northman." She turns her face to the wall.
 
@@ -166,6 +170,13 @@
     "Half a share," you say.
 
     "It's half a share more than I had at your age," says your father. "I had a collar."
+    [if raised == trader]
+    "And Hrapp?" you say. "The tally?"
+
+    "Gizurr can carry his own scales," says your father. "It'll do him good."
+    [elif raised == grandmother]
+    Your grandmother's bed by the fire is empty now. Nobody has moved into it. Your father looks at it when he thinks you're not watching.
+    [/if]
 
     You will be sixteen when the ice goes out. There is the rest of the winter to decide how you mean to go.
   choices:

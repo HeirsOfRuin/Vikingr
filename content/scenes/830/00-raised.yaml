@@ -1,0 +1,517 @@
+# How he was raised (Josh, 2026-11-15: "The background based stories don't always make sense based on the background
+# variance you chose. Each should have their own background specific scenes, not generic for each"). Each of the nine
+# ways a boy can be raised (backgrounds.yaml skill_sets) has scenes of its own in the boyhood, opened in place of the
+# shared ones by `instead` (src/engine/director.ts open). The shared scenes before and after are the background's.
+#
+#   the freedman's son:  boatwright   f_yard (the boatyard)        ... f_faering (his own boat)
+#                        trader       f_scales (Kaupang)           ... f_tally (the steward's tally)
+#                        grandmother  f_door (listening at a door) ... f_amma (her tongue)
+#   the younger son:     sword b_spear, oar b_skerries, table b_table: the winter between his brother and Ormr
+#   the outlaw:          killer o_first, poacher o_weir, talker o_tongue: before the horse-fight
+
+# ---- the freedman's son: the trader's boy ----
+
+- id: f_scales
+  kind: spine
+  art: town_rise
+  when: Late summer, 823
+  title: The scales
+  text: |
+    Hrapp's steward takes you to Kaupang because you can count.
+
+    You are nine. Your father builds boats, and one of his boats takes Hrapp's wool south every summer, with Hrapp's steward Gizurr to sell it. This year, for the first time, you go too, to carry the scales and keep the tally on a stick. "A freedman's boy who can count," Gizurr tells the steersman, "is cheaper than a free one, and less likely to steal." He says it with you standing there, as if you were a dog that had learned to sit.
+    [break]
+    Kaupang is more people than you knew there were in the world. Danes. Swedes. Men from the far north with furs and no Norse to speak of. A slave-pen at the end of the strand, behind wattle, that Gizurr walks you past quickly, without saying why.
+
+    The buyer is a Frisian with a red beard and a voice like a gull. He wants all of Hrapp's wool, and he weighs out his silver on his own scales, and Gizurr nods along. You look at the scales. Then you look at the Frisian's thumb, resting on the edge of the pan as if it had nowhere else to be.
+
+    "Well?" says Gizurr. "Load it."
+  choices:
+    - id: thumb
+      text: Say out loud that his thumb is on the pan.
+      effects: [ { add: { skill.trade: 1 } }, { set: flag.f_thumb } ]
+      result: |
+        The strand goes quiet around you. The Frisian looks at his thumb as if it belonged to somebody else, and then he laughs, a big honking laugh, and takes it off, and weighs again. The pan comes down a good deal further.
+
+        "Who taught you that?" he says.
+
+        "Nobody. I watched."
+
+        He offers Gizurr a pound of silver for you, there on the strand. Gizurr says you're not for sale. "He's free," he says. "More or less." On the way home he tells the steersman twice that he saw the thumb himself, and was only waiting.
+      next: f_ale
+    - id: quiet
+      text: Say nothing now. Tell Gizurr later, where the Frisian can't hear.
+      effects: [ { add: { skill.cunning: 1 } }, { set: flag.f_tally_quiet } ]
+      result: |
+        You tell him at the boat. Gizurr goes back up the strand with a face like thunder and comes back with a handful of coins, and puts most of them in his own purse, and one of them in your hand.
+
+        "For your eyes," he says. "And your mouth. Keep both."
+
+        You keep the coin. You keep your mouth shut too. You learn two things about stewards that day, and only one of them is about the Frisian.
+      next: f_ale
+    - id: pen
+      text: Slip away to the pen at the end of the strand.
+      effects: [ { add: { skill.lore: 1 } }, { set: flag.f_saw_pen } ]
+      result: |
+        They are sitting on the ground behind the wattle, a dozen of them, with ropes on their necks. A trader is weighing a boy your age with his hands, the way you'd weigh a ewe: the arms, the teeth, the backs of the legs. Nobody is crying. That is the worst of it. They have done their crying somewhere else.
+
+        Your grandmother was weighed on this strand. She has told you so a hundred times, and you have never once thought about it until now.
+
+        You are back at the scales before Gizurr misses you. You don't tell him where you went. You don't tell your grandmother either, when you get home, but she looks at you over the fire and knows anyway.
+      next: f_ale
+
+- id: f_tally
+  kind: spine
+  art: town_rise
+  when: Summer, 828
+  title: Gizurr's tally
+  text: |
+    You are fourteen, and you have kept Hrapp's tally five summers, and Gizurr has been stealing from it for four of them.
+
+    Not much. A coin in twenty. A fleece that was there at Hordaland and wasn't at Kaupang. You have notched every one of them on a stick of your own, because you couldn't not, and the stick is under your bed at home, where your grandmother lies dying by the fire, slowly, the way she has done everything. Every evening she asks what things fetched at Kaupang, and laughs at the prices.
+    [break]
+    This summer Hrapp's tally comes up short by more than a coin in twenty, and Hrapp, who cannot count past his fingers but can feel a light purse with his eyes shut, wants to know why. Gizurr says the Frisians are robbers. Gizurr says it was a bad year for wool. Gizurr looks at you.
+
+    "The boy kept the tally," he says. "Ask him."
+
+    Thorgils Hrappsson is at the end of the bench, cleaning his nails with a knife, and he smiles.
+  choices:
+    - id: name
+      text: Fetch your own stick, and lay it in front of Hrapp.
+      effects: [ { add: { skill.speech: 1, honour: 1 } }, { set: flag.f_named_gizurr } ]
+      result: |
+        Hrapp turns the stick over and over in his big red hands, feeling the notches he can't read. Then he looks at Gizurr.
+
+        "Twenty years," he says. "He's stolen from me for twenty years. He steals less than the last one did." He hands you the stick back. "You keep my tally from now. You'll steal too. Steal less than him."
+
+        Gizurr keeps his place, and his purse, and from that day he never says a word to you that he doesn't have to. Thorgils stops smiling. You liked him better smiling.
+      next: f_word
+    - id: straight
+      text: Say the year was bad, and keep the tally straight from now on.
+      effects: [ { add: { skill.trade: 1 } }, { set: flag.f_kept_tally } ]
+      result: |
+        "A bad year," you say. "The Frisians were robbers." Gizurr breathes out.
+
+        Next summer the tally comes out to the coin. Gizurr notices. He doesn't thank you, and he doesn't steal again either, not where you can see, and when Hrapp's wool fetches more than it ever has, he tells Hrapp it was his doing. You let him. You know what it was worth, and so does the Frisian, who winks at you over the scales.
+      next: f_word
+    - id: skim
+      text: Take a cut of your own next summer, the way he does.
+      effects: [ { add: { skill.cunning: 1 } }, { set: flag.f_skimmed } ]
+      result: |
+        It is very easy. That is the first thing you learn. A coin here, a short weight there, and the stick still tallies, because you are the one who cuts it.
+
+        You hide it in the thatch above your bed. Your father finds it in the autumn, mending the roof. He sits on the ridge with it in his hand until the light goes. Then he climbs down and walks up to Hrapp's house and back, and doesn't say where he went. The thatch is empty. He never says a word about it, then or ever.
+      next: f_word
+    - id: own
+      text: Buy a bale of your own with your tally-coin, and sell it dearer.
+      check: { skill: trade, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          Whetstones, from a Telemark man who wants to be rid of them. You carry them to Kaupang in your own sea-bag and sell them to the Frisian, who laughs at you and pays, because he can see you know what they're worth.
+
+          It's half a pound of silver. It's more than your father earned in a year as a thrall. You give some of it to your grandmother, and she holds it up to the firelight, and laughs, and says she was sold for less.
+        effects: [ { add: { skill.trade: 1, silver: 24 } }, { set: flag.f_first_trade } ]
+        next: f_word
+      failure:
+        text: |
+          Whetstones, from a Telemark man who wants to be rid of them, and now you know why: half of them are cracked. The Frisian turns them over one by one and gives you what they're worth, which is very little.
+
+          "Look at the stone," he says, "not the man selling it." It is the best thing anyone teaches you at Kaupang, and it costs you every coin you had.
+        effects: [ { set: flag.f_first_trade } ]
+        next: f_word
+
+# ---- the freedman's son: the Irish grandmother's grandson ----
+
+- id: f_door
+  kind: spine
+  art: hearth_ormr
+  when: Winter, 823
+  title: At the door
+  text: |
+    Your grandmother teaches you three things the winter you are nine: the names of her saints, the words of her tongue, and how to stand at a door.
+
+    "Thirty years I stood at doors," Órlaith says, from her bed by the fire, in the dark, when the others are asleep. "That's how I knew when I was going to be sold, and who to, and for what. A thrall who listens is a thrall who's ready." She takes your wrist in her cold strong fingers. "Hrapp's steward goes up to the hall tonight, about your father. Go and stand where the wall's thin, by the byre end. Don't breathe. Come back and tell me."
+    [break]
+    The night is clear and very cold. The snow squeaks. Hrapp's hall is lit and loud, and the byre end of it smells of cows, and the wall there is wattle and daub, and old, and thin.
+
+    You can hear them. Hrapp, and Gizurr the steward, and a price.
+  choices:
+    - id: listen
+      text: Stand at the wall until your feet go numb. Remember every word.
+      effects: [ { add: { skill.cunning: 1 } }, { set: flag.f_listened }, { set: flag.irish } ]
+      result: |
+        A pound and a half of silver, and the boat he's building now, and a winter's work on Hrapp's own. That's what your father's freedom will cost, when he asks for it, if he ever does. Hrapp says he won't. Gizurr says thralls always do, in the end.
+
+        You run home with your feet like stones and tell her, word for word, and she says the price back to you twice, slowly, as if she was weighing it.
+
+        "Now we know what it costs," she says. "Knowing is half of buying." Three summers later your father brews his freedom-ale, and you never ask her how he knew what to save.
+      next: f_ale
+    - id: words
+      text: Go back in. Ask her for the words instead. Doors are for thralls.
+      effects: [ { add: { skill.speech: 1, skill.lore: 1 } }, { set: flag.f_words_first }, { set: flag.irish } ]
+      result: |
+        She laughs at you in the dark, a dry little laugh like a stick breaking. "Everything is for thralls," she says, "until it isn't."
+
+        But she gives you the words. Bread, water, fire, salt. Sea and ship and the way to the church. You say them back to her until the fire is ash, and in the morning she makes you say them again over the porridge, and your mother tells her to stop filling the boy's head with Irish, and she doesn't stop.
+      next: f_ale
+    - id: saints
+      text: Ask her instead about the saint on her cross.
+      effects: [ { add: { skill.lore: 1, hamingja: 1 } }, { set: flag.f_saints }, { set: flag.irish } ]
+      result: |
+        "Comgall," she says. "Of Bangor, over the water from Rechru. My mother's brother was a monk there." She turns the little bronze cross in her fingers. "They sing at Bangor all day and all night, the monks, in turns, so the singing never stops. A thousand years, they say, it's never stopped."
+
+        She looks at the fire a while.
+
+        "It'll stop one day," she says. "Your kind will stop it. Mind you're not the one."
+      next: f_ale
+
+# ---- the freedman's son: the boatwright's boy ----
+
+- id: f_faering
+  kind: spine
+  art: home_fjord
+  when: Summer, 828
+  title: Your own boat
+  text: |
+    You are fourteen, and you are building a boat of your own.
+
+    A færing: four oars, two strakes a side, out of the offcuts of other men's ships, in the corner of the yard where your father doesn't need the space. He hasn't helped. He hasn't been asked. Once a day he walks past the corner, and stops, and looks, and walks on, and you spend the rest of the day trying to work out what he saw.
+    [break]
+    Your grandmother watches from her bed by the door, wrapped to the chin, dying slowly, the way she has done everything. Her brothers' boats in Ireland, she tells you, were made of hides on a frame of wicker, and floated better than anything you'll ever build. You tell her a hide boat would sink in the first sea off Stad. She tells you she's seen one cross to Scotland. You don't believe her. You don't say so twice.
+
+    In midsummer the færing is done. She sits on the shingle, raw and yellow and smelling of tar, and she's yours.
+  choices:
+    - id: sea
+      text: Row her out to the outer skerries in the first wind. Alone.
+      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.f_faering_sea } ]
+      result: |
+        She goes like a gull. Past the headland the swell picks her up, and she rises to it like a living thing, and then a seam on the steerboard side starts to weep, and then to run, and you bail with your cap all the way home, laughing like a madman.
+
+        Your father looks at the seam, running his thumb along it, end to end and back. "That one's mine," he says at last. "I showed you wrong, at the start of the summer." It's the only time in your life you hear him say it.
+      next: f_word
+    - id: sell
+      text: Sell her to Hrapp's fisherman, for a fair price.
+      effects: [ { add: { skill.trade: 1, silver: 12 } }, { set: flag.f_faering_sold } ]
+      result: |
+        Hrapp's fisherman walks round her twice and knocks on her strakes, the way your father does, which he must have learned from watching your father. He pays sixty coins and a sack of dried cod.
+
+        It's the first boat your family has ever sold for itself. Your father weighs the silver in his palm, and doesn't give it back, and doesn't take it either. "Next one," he says, "make her bigger."
+      next: f_word
+    - id: amma
+      text: Carry your grandmother down, and row her out to the fjord's mouth.
+      effects: [ { add: { hamingja: 1 } }, { set: flag.f_faering_amma }, { item: { id: orlaith_cross } } ]
+      result: |
+        She weighs nothing. You carry her down the shingle in her blankets and sit her in the stern, and row her out on the evening tide to where the fjord opens and you can see the west.
+
+        She says nothing until the sun is on the water. Then she says three names into the wind, men's names, in Irish, and you understand they were her brothers. Then she takes the little bronze cross off her neck, on its greasy thong, and puts it over yours.
+
+        "So it knows the way back," she says. In the spring she dies, in her sleep, as she said she would.
+      next: f_word
+    - id: father
+      text: Ask your father what he saw, every day, when he stopped.
+      effects: [ { add: { skill.craft: 1 } }, { set: flag.f_faering_father } ]
+      result: |
+        He takes a long time to answer, which is how you know he's going to.
+
+        "The third strake," he says. "You bevelled it wrong at the bow. She'll leak there in a sea." He looks at the boat. "And the rest is good. That's what I saw. The rest is good." He walks back to his own work before you can say anything, and you stand there with your mouth open, and then go and fix the third strake.
+      next: f_word
+
+# ---- the younger son: raised to the sword ----
+
+- id: b_spear
+  kind: spine
+  art: muster
+  when: Autumn, 827
+  instead: [ { if: "raised == oar", scene: b_skerries }, { if: "raised == table", scene: b_table } ]
+  title: The spear-wall
+  text: |
+    Your father put a spear in your hand when you were six, and a shield on your arm at ten, and every autumn since, when the harvest is in, he has made you stand.
+
+    This year it's in the stubble of Bárð's field, with the whole district's young men. Your father and his old shipmates have stood the boys in two ranks with shields and blunt spears, and now they walk up and down behind them like men buying cattle. Hallbjörn is in the front rank, of course. He's seventeen.
+
+    "The front rank," your father says, "is where the men stand who are going home."
+    [break]
+    Across the stubble, the grown men are forming up to push: farmers, fishermen, men who went west with Kol and came back. They are bigger than you. They are a lot bigger than you.
+
+    Ormr One-Hand sits on the fence with a horn of ale, enjoying himself. "Shields up, little ones," he shouts. "They're coming to take your cows."
+  choices:
+    - id: front
+      text: Push into the front rank, against the grown men.
+      effects: [ { add: { skill.shield: 1 } }, { set: flag.b_front } ]
+      result: |
+        They put you flat in the stubble twice, shield and all, and you get up twice with your mouth full of earth. The third time you get your shoulder into the shield and your feet planted like your father showed you, and the man in front of you, a fisherman from up the fjord with a beard full of crumbs, pushes, and pushes, and you don't go.
+
+        Your lip is split and your shield arm is black for a week. Your father says nothing at all. Next autumn he puts you in the front rank before you can ask.
+      next: b_ormr
+    - id: second
+      text: Take the second rank, and work the spear over their shoulders.
+      effects: [ { add: { skill.weapons: 1 } }, { set: flag.b_second } ]
+      result: |
+        From the second rank you can see everything: the shields grinding together, the faces red with pushing, the gaps that open for a heartbeat and close again. You find the gaps with the blunt end of your spear, a knee here, a forearm there, a farmer's ear, and the farmer roars and can't see where it came from.
+
+        "The spear goes where the shield isn't," your father says afterwards, and taps you once on the head, which is a lot, from him.
+      next: b_ormr
+    - id: brother
+      text: Stand at Hallbjörn's shoulder, your shield over his.
+      effects: [ { add: { honour: 1 } }, { set: flag.b_beside_brother } ]
+      result: |
+        He doesn't look at you when you come in beside him. But when the push comes he shifts his shield a hand's breadth, so the rims overlap, the way they should, and the two of you hold together while the boys on either side go down like barley.
+
+        "Keep it up," he says, through his teeth, meaning the shield. You keep it up. It's the first thing the two of you have ever done together that wasn't a fight.
+      next: b_ormr
+    - id: call
+      text: Call the step for the boys' ranks, louder than the men call theirs.
+      effects: [ { add: { skill.command: 1 } }, { set: flag.b_called } ]
+      result: |
+        Nobody told you to. You just start shouting it, step and step and push, and your voice cracks halfway, and the boys laugh, and then, because nobody else is calling it, they start stepping to it.
+
+        The men's wall wins anyway. But it takes them longer than it should, and Ormr on the fence laughs until he coughs, and shouts that the jarl had better watch out, there's a new war-leader in the district, and his voice hasn't broken yet.
+      next: b_ormr
+
+# ---- the younger son: raised to the steering-oar ----
+
+- id: b_skerries
+  kind: spine
+  art: open_sea
+  when: Late summer, 827
+  title: The outer skerries
+  text: |
+    Your uncle Vésteinn has taken you to the outer skerries every summer since you were seven, for the ling and the big cod that come up on the banks beyond them, where nobody sane fishes in a færing.
+
+    Vésteinn is your father's younger brother, and the farm went to your father, and so Vésteinn has spent his life on the sea instead, and talks about it as if it were a woman who had treated him badly and whom he would never leave. He has three of his sons in the boat today, and you, and the lines are out, and the fish are coming up two at a time.
+    [break]
+    The sky to the south-west is the colour of a fish's belly. There's no wind yet. There's a long, slow swell coming in under the boat from nowhere, lifting her and setting her down, lifting her and setting her down.
+
+    Vésteinn has his back to it, hauling, with fish slapping round his feet. He hasn't seen it. His sons haven't seen it, because Vésteinn hasn't.
+  choices:
+    - id: weather
+      text: Tell him the wind will come out of the south-west before noon.
+      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.b_read_weather } ]
+      result: |
+        He looks at you. Then he turns and looks at the sky, and at the swell, a long time, and you watch his face change.
+
+        "Lines in," he says. "Now." You're running for the skerries with the oars bending when the wind comes, and it comes all at once, like a door slammed. Two boats from up the fjord, that didn't run, come home the next day with one man fewer between them.
+
+        "Who taught you that?" Vésteinn asks you, on the shingle, with his hands shaking.
+
+        "You did."
+
+        "I never taught anybody anything," he says, and puts his arm round your neck, and squeezes until you can't breathe.
+      next: b_ormr
+    - id: stroke
+      text: Take the stroke oar when it comes, and make his sons pull to you.
+      effects: [ { add: { skill.command: 1 } }, { set: flag.b_stroke } ]
+      result: |
+        It comes all at once, like a door slammed, and Vésteinn is still getting the lines in when you take the stroke oar and start calling. His sons are older than you and they don't like it, and then the first sea comes green over the bow and they stop not liking it and pull.
+
+        You call them through the race between the skerries, stroke and stroke, with your voice gone and your hands gone and the boat full to the thwarts. On the shingle Vésteinn says, "Well," and then nothing else, and then, at supper, in front of everyone, "The boy has a voice for it."
+      next: b_ormr
+    - id: fish
+      text: Keep your line down. There's something big on it.
+      effects: [ { add: { skill.seamanship: 1, provisions: 30 } }, { set: flag.b_halibut } ]
+      result: |
+        It's a halibut, as long as you are and twice as heavy, and it takes the two of you and one of his sons to get it over the gunwale, and by the time it's in, the wind has come.
+
+        You nearly lose the boat for it. You bail the whole way home, with the halibut thrashing in the bilge and Vésteinn swearing and laughing at the same time. On the shingle he looks at the fish, and at you, and at the sea.
+
+        "That's the sea-king's way," he says. "Risk the boat for the fish." It's half praise and half a warning. You take it for praise.
+      next: b_ormr
+
+# ---- the younger son: raised at the jarl's table ----
+
+- id: b_table
+  kind: spine
+  art: yule_hall
+  when: Winter, 827
+  title: The jarl's table
+  text: |
+    Your father sent you to Jarl Eystein's hall at twelve, to be fostered two winters, because the jarl owed him for a horse and because a second son needs friends he can't buy.
+
+    You pour. That's what foster-boys do. You pour, and listen, and learn the old poems from the skald, and the families from the old men, and which of the jarl's sons to stand nearer to. Eiríkr, the elder, broad and dark, never looks at you. Hákon, the younger, quick and fair, pours beside you on feast nights, though he's the jarl's son and needn't, and talks out of the side of his mouth about everyone at the table.
+    [break]
+    Tonight a trader called Sumarliði the Fleece is at the high table, asking for justice. Danes took his ship off Lindesnes, he says, cargo and all: forty fleeces and a chest of whetstones. He wants the jarl to make the Danish king pay. He tells it well.
+
+    He told it at the first cup with forty fleeces. At the third cup it was sixty. And at the first cup he said the Danes came at dawn, and now it was dusk, and they had the sun in their eyes.
+
+    The jarl turns his head, slowly, and looks along the table at you. "Foster-son," he says. "You've been pouring for him. What do you think?"
+  choices:
+    - id: say
+      text: Say what you heard. The fleeces grew, and the dawn turned to dusk.
+      effects: [ { add: { skill.cunning: 1 } }, { set: flag.b_caught_liar } ]
+      result: |
+        You say it. The hall goes very quiet, and Sumarliði the Fleece goes red, then white, and starts to say something about boys, and the jarl lifts one finger, and he stops.
+
+        "He sold the cargo in Ribe," the jarl says, to nobody in particular, "and drank the ship." He doesn't punish the man. He just never hears another word Sumarliði says.
+
+        Afterwards Eiríkr tells you to keep your eyes on your jug. Hákon, pouring beside you, doesn't say anything at all. He just knocks his elbow against yours, once, and grins at his jug.
+      next: b_ormr
+    - id: verse
+      text: Answer with lines from the old poems, and let the jarl take the meaning.
+      check: { skill: lore, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          "The guest who comes to the table," you say, "should keep his wits and his tongue. The fool talks all night, and the more he says, the more he must remember."
+
+          It's old, older than anyone in the hall, and the skald laughs out loud and slaps the bench. The jarl looks at you for a long moment with something in his face you can't read, and then turns to Sumarliði the Fleece, and says, "Well? How many fleeces?" Sumarliði doesn't come to that hall again.
+        effects: [ { add: { skill.lore: 1, honour: 1 } }, { set: flag.b_verse } ]
+        next: b_ormr
+      failure:
+        text: |
+          You start a verse from the old poems and lose it halfway, in front of the whole hall, and stand there with the jug in your hands and your face burning while the skald finishes it for you, kindly, and badly, so that nobody can tell what it meant.
+
+          The jarl doesn't look at you again that night. In the morning he sends for you, and asks what you meant to say, and you tell him, and he nods. "Next time," he says, "say the plain thing. The poems are for men who've already won."
+        effects: [ { set: flag.b_verse } ]
+        next: b_ormr
+    - id: quiet
+      text: Keep your eyes on the jug, as a foster-boy should.
+      effects: [ { add: { skill.speech: 1 } }, { set: flag.b_kept_quiet } ]
+      result: |
+        "I pour, lord," you say. "I don't count."
+
+        The jarl looks at you a moment longer, and turns back to Sumarliði, and gives him nothing, politely, and at some length.
+
+        Later Hákon finds you at the ale-vat. "He was lying," he says. "You knew it. He knew you knew." He fills his own jug. "Next time, tell me, not my father. My father has enough people telling him things." You don't know, yet, what he means. You will.
+      next: b_ormr
+
+# ---- the outlaw: the killer ----
+
+- id: o_first
+  kind: spine
+  art: home_fjord
+  when: Autumn, 828
+  instead: [ { if: "raised == poacher", scene: o_weir }, { if: "raised == talker", scene: o_tongue } ]
+  title: The shieling
+  text: |
+    The horse-fight will not be your first fight. It will only be the first one men saw.
+
+    You are fourteen, and alone at the shieling with your father's sheep, high up the valley where the summer grass is, a day's walk from anyone. The others went down three days ago for the harvest. You stayed to bring the last of the flock, because your father trusts you to, and because you like being alone, which your mother says is not natural in a boy.
+    [break]
+    The man comes at dusk. You hear the sheep before you see him: the whole flock moving at once, the way they do for a dog or a wolf. He has two ewes on a rope already, and he's not from the valley. He's thin and grey and he smells of the bog, and when he sees you he doesn't run.
+
+    He looks at you, and sees a boy, and takes the knife out of his belt.
+
+    You have a stone in your hand. You don't remember picking it up. Behind him the slope runs down, steep, to the bog, and it's nearly dark.
+  choices:
+    - id: low
+      text: Go for him first, low, before the knife comes up.
+      effects: [ { add: { skill.weapons: 1 } }, { set: flag.o_first_low } ]
+      result: |
+        The stone takes him on the knee with a crack you feel in your own teeth. He goes over backwards, and then he's going down the slope, rolling, the knife gone, and then there's the sound of the bog taking him, a long sucking sound, and him shouting, and then him not shouting.
+
+        You stand at the top of the slope in the dark until the cold gets into your teeth. You don't go down. In the morning you walk the sheep home, both ewes too, and when your father asks how it went at the shieling, you say it went well.
+      next: o_horses
+    - id: bog
+      text: Run for the bog path. He doesn't know it. You do.
+      effects: [ { add: { skill.cunning: 1 } }, { set: flag.o_first_bog } ]
+      result: |
+        You run, and he comes after you, because he thinks a boy who runs is a boy who's beaten. You take the bog path in the near-dark, the one with the sunk stones you've known since you were four, and he doesn't know where the stones are.
+
+        You hear him go in behind you. You hear him until the stars come out. You stand on the last stone with your heart going like a drum and you don't go back, and in the end you don't hear him any more. In the morning you walk the sheep home, both ewes too, and tell nobody, and never will.
+      next: o_horses
+    - id: dogs
+      text: Shout for the dogs, and stand your ground until they come.
+      effects: [ { add: { skill.shield: 1 } }, { set: flag.o_first_dogs } ]
+      result: |
+        The dogs come out of the dark like thrown spears, both of them, and he goes down under them with the knife going, and one of the dogs screams and doesn't get up again. Then he's up and running, bleeding from the legs, down the valley into the dark.
+
+        You bury the dog under a cairn at the shieling. The next spring, at the Thing, you see a thin grey man with a limp at the edge of the crowd, watching you. When you look again he's gone. You never tell your father why you buried the dog so far from home.
+      next: o_horses
+
+# ---- the outlaw: the poacher ----
+
+- id: o_weir
+  kind: spine
+  art: home_fjord
+  when: Autumn, 829
+  title: Hrapp's river
+  text: |
+    Hrapp owns the river. He owns the salmon in it and the weir across it and the seals on the skerry at its mouth, and the boat that goes out to the seals, and the dogs that walk the bank at night. He owns most of the valley. What he doesn't own, his sons are working on.
+
+    You have been taking his fish since you were eleven.
+    [break]
+    Not many. A salmon from the trap at the weir when the moon is down. A seal-pup from the skerry in a borrowed boat, once a winter, for the oil. Your father knows and doesn't ask, because Hrapp has been moving his boundary stones up the valley for twenty years, a stride a winter, and your father has never been able to prove it.
+
+    Tonight the moon is down and the trap at the weir is full. You can hear the fish in it from the bank, thrashing. And you can see a lantern on the far bank, moving, which means Ozurr Hrappsson is walking his father's river with a dog.
+  choices:
+    - id: trap
+      text: Empty the trap anyway, in the dark, and be gone before he turns.
+      effects: [ { add: { skill.cunning: 1, provisions: 30 } }, { set: flag.o_weir } ]
+      result: |
+        You lie flat in the cold shallows with the water going into your shirt and work the fish out of the trap one by one, by feel, while the lantern comes down the far bank and the dog whines and Ozurr tells it to shut up. Four salmon. You're up the slope and gone before he gets to the weir.
+
+        In the morning Ozurr beats Hrapp's own fisherman for the empty trap, in front of the whole farm, because somebody has to be beaten for it. You watch from the slope. It's harder to watch than you thought it would be.
+      next: o_horses
+    - id: boat
+      text: Leave the weir. Take Hrapp's boat to the seal skerry instead.
+      effects: [ { add: { skill.seamanship: 1 } }, { set: flag.o_borrowed_boat } ]
+      result: |
+        The boat is at the river mouth where it always is, and you take her out on the ebb with muffled oars, under the lantern's nose, and nobody hears a thing. Two seals on the skerry, asleep. You take one.
+
+        You have her back at the river mouth before first light, wiped down and tied the way Ozurr ties her, with Ozurr's knot, which is a bad knot. Nobody ever knows. That's the part you like best.
+      next: o_horses
+    - id: taunt
+      text: Stand up on your bank with a salmon in your hand, and let him see you.
+      effects: [ { add: { honour: 1 } }, { set: flag.o_ozurr_taunted } ]
+      result: |
+        You stand up. The lantern swings round and finds you, and you hold the salmon up by the tail so he can see it shine.
+
+        Ozurr doesn't shout. That's the frightening thing. He just stands on his bank with the lantern, looking at you across his father's river, while the salmon drips, and then he says, quite quietly, "I'll have you for that." The dog whines.
+
+        You walk home with the salmon over your shoulder, laughing. You stop laughing somewhere on the path. You don't know why.
+      next: o_horses
+
+# ---- the outlaw: the talker ----
+
+- id: o_tongue
+  kind: spine
+  art: muster
+  when: Spring, 829
+  title: Thorgils's goat
+  text: |
+    You have been talking your way out of thrashings since you could talk. This spring you have to do it at the Thing.
+
+    It's a small case, as cases go. Thorgils Hrappsson's best he-goat was found on the roof of the jarl's own guest-house on the second morning of the Thing, eating the thatch, with a garland of birch round its horns and a woman's shift on its back. The jarl was not pleased. Thorgils wants somebody to pay for it, and Thorgils has decided it was you.
+
+    It was you.
+    [break]
+    Now you are standing below the law-mound in front of half the district, and Thorgils is telling it, red-faced, with the goat on a rope beside him as a witness. The law-speaker is trying very hard not to laugh. The jarl is not trying at all.
+
+    Your father stands at the back with his arms folded, and the look on his face says that if the Thing doesn't thrash you, he will.
+  choices:
+    - id: law
+      text: Ask Thorgils, in front of everyone, who saw it done.
+      check: { skill: speech, attr: wit, difficulty: 4 }
+      success:
+        text: |
+          "Who saw me?" you ask. "The law wants two witnesses. Name them."
+
+          Thorgils opens his mouth, and shuts it. Nobody saw you. You made very sure nobody saw you. "The goat saw," somebody shouts from the slope, and the whole Thing goes up in laughter, the law-speaker too, and the case falls apart in the noise.
+
+          Thorgils drags his goat home. Ozurr, his brother, watches you all the way down the slope, and doesn't laugh.
+        effects: [ { add: { skill.speech: 1 } }, { set: flag.o_tongue_law } ]
+        next: o_horses
+      failure:
+        text: |
+          "Who saw me?" you ask. "The law wants two witnesses."
+
+          "I did," says a voice from the slope: Hrapp's fisherman, who was mending nets by the guest-house at dawn and saw everything, garland and shift and all. The law-speaker sighs. Your father thrashes you behind the guest-house, thoroughly, while the goat watches.
+        effects: [ { set: flag.o_tongue_law } ]
+        next: o_horses
+    - id: joke
+      text: Tell the Thing the goat went up on the roof to get away from Thorgils.
+      effects: [ { add: { skill.cunning: 1 } }, { set: flag.o_tongue_joke } ]
+      result: |
+        "I don't know who put it there," you say. "But I know why it stayed. Look who it was getting away from."
+
+        The slope roars. The jarl puts his hand over his face. Thorgils goes for you, there in front of the law-mound, and two of the jarl's men have to hold him, and that's the end of the case, because a man who goes for the accused in front of the law-mound has lost, whatever the goat says.
+
+        Hrapp doesn't laugh. Hrapp remembers.
+      next: o_horses
+    - id: pay
+      text: Own it. Offer a summer's work on Hrapp's hay for the thatch.
+      effects: [ { add: { honour: 1, skill.speech: 1 } }, { set: flag.o_tongue_paid } ]
+      result: |
+        "It was me," you say, and the slope goes quiet with surprise. "I'll mend the jarl's thatch, and I'll cut Hrapp's hay for a summer for the trouble to his goat."
+
+        The jarl nods. It's the right answer, and he's surprised to hear it from you. So you spend the summer in Hrapp's hayfield with Hrapp's sons watching you from the shade, and Ozurr finds a reason to walk past every day and say something, and every day you say something back, a little better. By the end of the summer the haymakers come to listen.
+      next: o_horses

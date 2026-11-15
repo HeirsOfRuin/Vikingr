@@ -154,6 +154,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     if (s.placeholder) placeholders++;
     text(`scene ${s.id}`, s.text);
     cond(`scene ${s.id}`, s.requires);
+    for (const x of s.instead ?? []) { cond(`scene ${s.id} instead`, x.if); sceneRef(`scene ${s.id} instead`, x.scene); if (content.scenes[x.scene]?.kind !== s.kind) errors.push(`scene ${s.id}: instead ${x.scene} must be the same kind`); }
     if ((s.kind === 'place' || s.kind === 'pool' || s.kind === 'phase') && !s.trigger) errors.push(`scene ${s.id}: ${s.kind} scenes need a trigger`);
     if ((s.kind === 'spine' || s.kind === 'queued') && s.trigger) errors.push(`scene ${s.id}: ${s.kind} scenes are opened by links, not triggers`);
     if (s.trigger && s.chance === undefined && !s.once && s.cooldown_days === undefined) errors.push(`scene ${s.id}: a sure-fire triggered scene needs once or cooldown_days, or it fires every time`);
@@ -218,6 +219,7 @@ export function validate(content: ContentBundle, map: MapData, artFiles?: string
     const id = queue.pop()!;
     if (reached.has(id) || !content.scenes[id]) continue;
     reached.add(id);
+    for (const x of content.scenes[id]!.instead ?? []) queue.push(x.scene);
     for (const c of content.scenes[id]!.choices) {
       for (const n of [c.next, c.success?.next, c.failure?.next]) if (n) queue.push(n);
       const flat = (es: Effect[]): Effect[] => es.flatMap((e) => ('if' in e ? [...flat(e.then), ...flat(e.else ?? [])] : [e]));

@@ -37,6 +37,7 @@ const SCALARS: Record<string, (s: GameState, c: ContentBundle) => Value> = {
   /** Standing where he is now (0 at sea): for scenes that fire in any port. */
   'at.standing': (s, c) => (s.at ? standing(s, c, s.at) : 0),
   background: (s) => s.hero.background,
+  raised: (s) => s.hero.raised ?? '',
   ships: (s) => s.ships.length,
   /** One ship, light enough to drag on rollers between the Russian rivers (docs/FRAME-PLACES-EAST.md). */
   'ships.portable': (s) => s.ships.length === 1 && ['faering', 'karvi'].includes(s.ships[0]!.type),
@@ -132,6 +133,7 @@ export function namedValues(content: ContentBundle, path: string): string[] | un
   if (path === 'place') return ['sea', ...Object.keys(content.places)];
   if (path === 'at.kind') return ['sea', 'none', ...PLACE_KINDS];
   if (path === 'background') return Object.keys(content.backgrounds);
+  if (path === 'raised') return ['', ...new Set(Object.values(content.backgrounds).flatMap((b) => b.skill_sets.map((x) => x.id)))];
   if (path === 'base') return ['father', 'farm', 'hall'];
   if (path === 'bound') return ['', ...Object.keys(content.places)];
   if (path === 'home') return Object.keys(content.places);

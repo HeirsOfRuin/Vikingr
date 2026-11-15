@@ -454,3 +454,37 @@ mh_left: { description: "Left Hastein's fleet early, and came home alone", saga:
 mh_warned_luna: { description: "Warned the bishop of Luna", saga: true }
 bx_siege: { description: "Sat down outside Bordeaux with Hastein's fleet" }
 ga_captain: { description: "Joined the great army as a captain with ships of his own, from an earlier life", saga: true }
+# ---- how he was raised (content/scenes/830/00-raised.yaml) ----
+f_thumb: { description: "Caught the Frisian's thumb on the scales at Kaupang, at nine", saga: true }
+f_tally_quiet: { description: "Told Hrapp's steward about the Frisian's thumb, quietly, and kept the coin", saga: true }
+f_saw_pen: { description: "Saw the slave-pen on the strand at Kaupang, where his grandmother was sold", saga: true }
+f_named_gizurr: { description: "Laid his own tally in front of Hrapp, against the steward", saga: true }
+f_kept_tally: { description: "Kept Hrapp's tally straight, and let the steward take the credit", saga: true }
+f_skimmed: { description: "Skimmed Hrapp's tally; his father put it back without a word", saga: true }
+f_first_trade: { description: "Made his first trade of his own at Kaupang", saga: true }
+f_listened: { description: "Listened at Hrapp's wall for his father's freedom-price", saga: true }
+f_words_first: { description: "Asked his grandmother for her words before her doors", saga: true }
+f_saints: { description: "His grandmother told him of Comgall and the singing at Bangor", saga: true }
+f_faering_sea: { description: "Rowed his own færing to the outer skerries, alone", saga: true }
+f_faering_sold: { description: "Sold the first boat he built", saga: true }
+f_faering_amma: { description: "Rowed his grandmother out to see the west, the summer before she died", saga: true }
+f_faering_father: { description: "His father told him what he saw in his first boat", saga: true }
+b_front: { description: "Stood in the front rank of the district's wall at thirteen", saga: true }
+b_second: { description: "Worked the spear from the second rank", saga: true }
+b_beside_brother: { description: "Stood in the wall at Hallbjörn's shoulder", saga: true }
+b_called: { description: "Called the step for the boys' wall", saga: true }
+b_read_weather: { description: "Read the south-wester before his uncle did", saga: true }
+b_stroke: { description: "Took the stroke oar in a blow off the skerries", saga: true }
+b_halibut: { description: "Nearly lost his uncle's boat for a halibut", saga: true }
+b_caught_liar: { description: "Caught a liar at the jarl's table, as a foster-boy", saga: true }
+b_verse: { description: "Answered the liar at the jarl's table with the old poems", saga: true }
+b_kept_quiet: { description: "Kept quiet at the jarl's table; Hákon noticed", saga: true }
+o_first_low: { description: "A thief at the shieling went into the bog, at fourteen", saga: true }
+o_first_bog: { description: "Led a thief into the bog at the shieling, at fourteen", saga: true }
+o_first_dogs: { description: "Set the dogs on a thief at the shieling, at fourteen", saga: true }
+o_weir: { description: "Emptied Hrapp's salmon trap under Ozurr's lantern", saga: true }
+o_borrowed_boat: { description: "Took Hrapp's own boat to the seal skerry and back", saga: true }
+o_ozurr_taunted: { description: "Showed Ozurr his own salmon across his father's river", saga: true }
+o_tongue_law: { description: "Asked for witnesses to Thorgils's goat", saga: true }
+o_tongue_joke: { description: "Made the Thing laugh at Thorgils and his goat", saga: true }
+o_tongue_paid: { description: "Owned the goat, and cut Hrapp's hay for it", saga: true }

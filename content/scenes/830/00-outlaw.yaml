@@ -15,6 +15,15 @@
     Your father's stallion is called Fölski. He is old and grey and has never lost.
     [break]
     Hrapp's stallion is young and black and bought from the Danes, and Ozurr Hrappsson is behind him with the goad. Ozurr is Hrapp's eldest: big, slow, careful with money, not careful with anything else.
+    [if flag.o_ozurr_taunted]
+    He hasn't forgotten the salmon. He looked for you on the slope before the first fight, and found you, and nodded, as if you'd made an arrangement.
+    [elif raised == poacher]
+    He walks his father's river every night now, with a dog and a lantern. He has never caught anyone. He knows somebody's there.
+    [elif raised == talker]
+    He was at the law-mound the day of his brother's goat, and he was the only man on the slope who didn't laugh.
+    [elif flag.o_first_dogs]
+    At the edge of the crowd, behind the boys in the trees, you see a thin grey man with a limp. You don't look again.
+    [/if]
 
     The fight goes badly for the black. Fölski has him by the crest and won't let go. And Ozurr, who can see his silver going, reverses his goad and drives the iron point of it into Fölski's flank, below the ribs, where the slope can't see. Your father sees. Your father hits Ozurr across the face with his open hand, in front of the whole Thing.
 

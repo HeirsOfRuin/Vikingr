@@ -99,14 +99,14 @@
 
           "Take the boat," he says. "You've earned it."
         effects: [ { set: flag.b_fought }, { add: { skill.weapons: 1 } } ]
-        next: b_ormr
+        next: b_spear
       failure:
         text: |
           You swing at him. He catches your wrist without looking, the way he'd catch a thrown apple, and puts you in the fjord.
 
           The water is cold enough to stop your heart. When you come up, spluttering, he's already rowing away in the færing, and he doesn't look back.
         effects: [ { set: flag.b_fought } ]
-        next: b_ormr
+        next: b_spear
     - id: trick
       text: Tell him Gyða's father is coming down the path behind him.
       check: { skill: cunning, attr: wit, difficulty: 4 }
@@ -116,14 +116,14 @@
 
           He stands on the shore shouting. You can't hear all of it. You hear enough to know he'll remember this, and you row out into the fjord laughing so hard you can barely pull.
         effects: [ { set: flag.b_tricked }, { add: { skill.cunning: 1 } } ]
-        next: b_ormr
+        next: b_spear
       failure:
         text: |
           "Gyða's father is coming down the path."
 
           Hallbjörn doesn't even look round. "He's at the Thing in Gula. Nice try, little brother." He gets in the boat and pushes off, and the oar-blade flicks cold water in your face as he goes.
         effects: [ { set: flag.b_tricked } ]
-        next: b_ormr
+        next: b_spear
     - id: yield
       text: Let him have the boat.
       effects: [ { set: flag.b_yielded }, { add: { honour: 1 } } ]
@@ -133,7 +133,7 @@
         It isn't what he expected. He stands there with his foot on the gunwale, looking at you, and then at the boat, and then at the path up to Bárð's farm.
 
         "Tomorrow," he says, after a while. "You can have her tomorrow." It's the first time he has ever given you anything. You both pretend it isn't.
-      next: b_ormr
+      next: b_spear
     - id: father
       text: Go and get your father.
       effects: [ { set: flag.b_told }, { add: { skill.speech: 1 } } ]
@@ -143,7 +143,7 @@
         "The farm is his," he says to you. "The boat is the farm's." Then, to Hallbjörn: "And the sea is nobody's. Let the boy fish."
 
         Hallbjörn lets you fish. He doesn't speak to you for three days, and when he does, he calls you the sea-king, and he doesn't mean it kindly.
-      next: b_ormr
+      next: b_spear
 
 - id: b_ormr
   kind: spine
@@ -162,6 +162,13 @@
     You sit down on the other side of the fire. He looks at you a while, the way he looks at weather.
 
     "You want the true one," he says. "Your brother never asked for the true one."
+    [if raised == table]
+    "They'll have taught you the poems, up at the jarl's. The poems leave this part out."
+    [elif raised == oar]
+    "Vésteinn tells me you read the weather now. Read this."
+    [elif flag.b_front]
+    "Your father tells me you stood in the front rank. Good. Then you'll want to know what it's for."
+    [/if]
 
     He puts the net down.
     [break]

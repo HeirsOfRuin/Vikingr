@@ -209,6 +209,7 @@ export function newGame(content: ContentBundle, opts: NewGameOptions): GameState
       background: bg.id,
       born: BIRTH_YEAR,
       attrs: { ...(opts.attrs ?? bg.attrs) },
+      raised: (bg.skill_sets.find((x) => x.id === opts.skillSet) ?? bg.skill_sets[0]!).id,
       skills,
       xp,
       hp: 0,

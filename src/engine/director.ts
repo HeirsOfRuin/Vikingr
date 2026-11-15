@@ -49,6 +49,12 @@ export function fireQueued(state: GameState, content: ContentBundle): boolean {
 }
 
 export function open(state: GameState, id: string, content?: ContentBundle): void {
+  // a scene with another in its place for this life (the boyhoods: one for each way he was raised)
+  for (let hops = 0; content && hops < 4; hops++) {
+    const alt = content.scenes[id]?.instead?.find((x) => test(x.if, state, content));
+    if (!alt) break;
+    id = alt.scene;
+  }
   state.pending = { t: 'scene', id };
   state.seen[id] = state.day;
   const s = content?.scenes[id];

@@ -67,10 +67,13 @@ describe('the slower rise', () => {
 
 describe("the freedman's son", () => {
   it('starts in the boatyard and comes to the Raven as her bailer, on half a share', () => {
-    let s = newGame(content, { background: 'freedman', seed: 3, name: 'Ari' });
-    expect(s.pending).toEqual({ t: 'scene', id: 'f_yard' });
+    const b = newGame(content, { background: 'freedman', seed: 3, name: 'Ari' });
+    expect(b.pending).toEqual({ t: 'scene', id: 'f_yard' });
+    // the grandmother's grandson starts at her door instead, and learns her tongue
+    let s = newGame(content, { background: 'freedman', seed: 3, name: 'Ari', skillSet: 'grandmother' });
+    expect(s.pending).toEqual({ t: 'scene', id: 'f_door' });
     expect(s.service?.captain).toBe('Ásgeir');
-    s = act(content, s, { t: 'choose', id: 'hold' });
+    s = act(content, s, { t: 'choose', id: 'listen' });
     for (const id of ['still', 'learn', 'take']) {
       while (s.pending && !listActions(s, content).some((o) => o.enabled && o.action.t === 'choose' && o.action.id === id)) s = act(content, s, listActions(s, content).find((o) => o.enabled)!.action);
       s = act(content, s, { t: 'choose', id });
@@ -114,9 +117,9 @@ describe("the freedman's son", () => {
 });
 
 describe('the outlaw', () => {
-  it('starts at the horse-fight, outlawed, working his passage west on a trader', () => {
+  it('starts before the horse-fight, outlawed, working his passage west on a trader', () => {
     const s = newGame(content, { background: 'outlaw', seed: 3, name: 'Ari' });
-    expect(s.pending).toEqual({ t: 'scene', id: 'o_horses' });
+    expect(s.pending).toEqual({ t: 'scene', id: 'o_first' });
     expect(s.flags.outlawed).toBe(1);
     expect(s.men.length).toBe(0);
   });

@@ -14,6 +14,8 @@ export interface Wound {
 export interface Hero {
   name: string;
   background: string;
+  /** How he was raised: the beginning's skill set id (backgrounds.yaml), for the boyhood scenes that differ by it. */
+  raised?: string;
   born: number;
   attrs: Record<Attr, number>;
   skills: Record<Skill, number>;

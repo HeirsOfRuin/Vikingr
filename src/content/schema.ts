@@ -201,6 +201,9 @@ export const scene = z.object({
   kind: z.enum(['spine', 'pool', 'queued', 'place', 'phase']),
   title: z.string(),
   when: z.string().optional(),
+  /** Another scene in this one's place, the first whose condition holds: a beginning's own boyhood for each way he was
+   *  raised (Josh, 2026-11-15: "Each should have their own background specific scenes"). Followed when it opens. */
+  instead: z.array(z.object({ if: condInput, scene: id }).strict()).optional(),
   placeholder: z.boolean().optional(),
   calibration: z.boolean().optional(),
   art: sceneArt.optional(),
