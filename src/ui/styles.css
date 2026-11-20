@@ -203,3 +203,6 @@ textarea { min-height: 120px; font-family: var(--f-ui); font-size: 0.8rem; }
 
 /* a text link that is a button (title: About) */
 .linkbtn { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
+
+/* the demo end screen links to the full game as a choice button */
+a.choice { text-decoration: none; box-sizing: border-box; }

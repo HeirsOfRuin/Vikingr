@@ -9,6 +9,8 @@ const root = join(import.meta.dirname, '..');
 const dist = join(root, 'dist');
 const out = join(root, 'release');
 const version = (JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version: string }).version;
+// --demo: the free demo build (npm run build:itch:demo), zipped as its own file and checked to be the demo
+const demo = process.argv.includes('--demo');
 if (!existsSync(join(dist, 'index.html'))) throw new Error('make-itch: no dist/index.html; run npm run build:itch');
 
 // no service worker on itch
@@ -29,9 +31,11 @@ for (const f of ['alegreya', 'alegreya-sans', 'alegreya-sc', 'noto-sans-runic'])
 // the bundle must not carry the playtest jumps or the debug dump
 const js = readdirSync(join(dist, 'assets')).filter((f) => f.endsWith('.js')).map((f) => readFileSync(join(dist, 'assets', f), 'utf8')).join('\n');
 for (const s of ['Play from a chapter', 'Playtest chapter: not saved']) if (js.includes(s)) throw new Error(`make-itch: the release bundle still has "${s}"`);
+const isDemo = js.includes('The free demo: the first two years');
+if (demo !== isDemo) throw new Error(demo ? 'make-itch --demo: dist/ is not the demo build (npm run build:itch:demo)' : 'make-itch: dist/ is the demo build, not the full game');
 
 mkdirSync(out, { recursive: true });
-const zip = join(out, `vikingr-${version}-itch.zip`);
+const zip = join(out, `vikingr-${version}${demo ? '-demo' : ''}-itch.zip`);
 rmSync(zip, { force: true });
 execFileSync('zip', ['-qr', zip, '.'], { cwd: dist });
 const list = execFileSync('unzip', ['-Z1', zip], { encoding: 'utf8' }).split('\n').filter(Boolean);

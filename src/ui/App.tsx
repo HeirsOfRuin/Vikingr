@@ -18,6 +18,8 @@ import { HeroPanel, CrewPanel, SagaPanel, HomePanel } from './components/Panels'
 import { Knot, PixelIcon } from './components/Ornament';
 import { Makeup } from './components/Makeup';
 import { SceneArt } from './scene/SceneArt';
+import { DemoEnd } from './components/DemoEnd';
+import { demoOver, FULL_GAME_URL } from './demo';
 
 type Tab = 'now' | 'map' | 'hero' | 'crew' | 'home' | 'saga';
 const TABS: { id: Tab; label: string }[] = [
@@ -95,7 +97,8 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         </div>
         {!storageWorks() && <p class="note">This browser is not keeping anything here: a life is lost when you close the page. Save it as text from the menu to keep it.</p>}
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
-        <p class="note small sans"><button class="linkbtn" onClick={() => setStep('about')}>About, credits and privacy</button> · version {__VERSION__}</p>
+        {__DEMO__ && <p class="note small sans">The free demo: the first two years, 830 and 831. <a href={FULL_GAME_URL} target="_blank" rel="noopener">The full game</a> goes on to 878, and takes your saved life with it.</p>}
+        <p class="note small sans"><button class="linkbtn" onClick={() => setStep('about')}>About, credits and privacy</button> · version {__VERSION__}{__DEMO__ ? ' demo' : ''}</p>
       </div>
     );
   }
@@ -146,8 +149,8 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
       <h3>Your days</h3>
       <div class="bgs">
         <button class={`choice bg${era === 830 ? ' on' : ''}`} onClick={() => setEra(830)}><span class="txt">Horik's days, 830<span class="hint">The first great raids. The written story from your boyhood: Orkney, Iona, Bangor, Dorestad.</span></span></button>
-        <button class={`choice bg${era === 843 ? ' on' : ''}`} onClick={() => setEra(843)}><span class="txt">Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.</span></span></button>
-        <button class={`choice bg${era === 865 ? ' on' : ''}`} onClick={() => setEra(865)}><span class="txt">The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.</span></span></button>
+        <button class={`choice bg${era === 843 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(843)}><span class="txt">{__DEMO__ ? 'In the full game: ' : ''}Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.</span></span></button>
+        <button class={`choice bg${era === 865 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(865)}><span class="txt">{__DEMO__ ? 'In the full game: ' : ''}The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.</span></span></button>
       </div>
       <h3 style={{ marginTop: 18 }}>Name</h3>
       <input type="text" id="new-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
@@ -275,6 +278,9 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
       setError((e as Error).message);
     }
   };
+  if (demoOver(state.day) && !state.death && !preview) {
+    return <div class="app"><DemoEnd content={content} state={state} onTitle={() => toTitle()} /></div>;
+  }
   const screen = screenOf(state);
   const busy = !['place', 'hall', 'muster', 'return'].includes(screen);
   const untold = untoldCount(state);

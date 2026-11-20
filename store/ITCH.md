@@ -1,73 +1,106 @@
-# Vikingr: itch.io store page (draft)
+# Vikingr: the itch.io launch kit
 
-## Tagline
+Paid full game with a free demo (the author, 2026-11-20: "it is worth charging some money for it", with "a free
+demo download that lets you play 2 or 3 years"). Everything to upload is built by the commands below; the page
+copy is `store/description.html`; the files in the order to upload them are in the launch kit zip's START-HERE.
 
-A life in the Viking age, 830 to 878, from an oar-bench in another man's ship to a hall, ships and land of your own. A story you choose your way through, and a strategy game about men, silver, ships and names.
+## Files
 
-## Description
+| File | What it is | Built by |
+|---|---|---|
+| `release/vikingr-1.0.0-demo-itch.zip` | The free demo, played on the page: the 830 start only, ends 1 March 832 with a save code | `npm run build:itch:demo` |
+| `release/vikingr-1.0.0-download.zip` | The full game for Windows, macOS and Linux: one HTML file that plays offline, with the fonts' licences | `npm run build:single` |
+| `vikingr.apk` | The full game for Android, signed with the HeirsOfRuin key | GitHub Actions, `android.yml` (`docs/ANDROID.md`) |
+| `release/vikingr-1.0.0-itch.zip` | The full game as a browser zip: only needed for Plan B below | `npm run build:itch` |
 
-Vikingr is one man's life in the age of the great raids. You start with almost nothing, rowing in another captain's ship. What follows is up to you: the monasteries of Iona and Bangor, the trading beaches of Kaupang and Hedeby, the Irish ship-forts, the Frankish rivers, and in time the Great Army in England.
+The demo is the full game with two limits (`src/ui/demo.ts`): only Horik's days (830) can be begun, the later eras
+are shown as the full game's, and on 1 March 832, as the spring muster opens, play stops on an end screen that
+gives the save code and links to this page. The full game loads that code and goes on. Proved 2026-11-20 on three
+bot lives (raider, reckless, homebody) played to February 832: each reached the end screen in the demo, the end
+screen held after a reload, and each code loaded into the full game, which played one of them on to 836.
 
-It is a story, read in short scenes with choices, and a strategy game underneath. You sign on men and keep them fed and paid. You buy and mend ships. You fight in the shield-wall and in single combat, plunder and trade, swear to a lord or refuse to, take land and try to hold it through the winters you are away. Your fame grows when your deeds are told at a feast. When you die, your son can go on with what is left.
+## Pricing
 
-The world follows the annals: the Irish, Frankish and English chronicles, and the sagas written down later. Real men such as Turgeis, Ragnarr and Ívarr come and go on their own dates.
+| Field | Value |
+|---|---|
+| Pricing | Paid, **$5.00**, "Allow people to pay more" on (name your price, $5 minimum) |
+| Launch sale | 20% off for the first 7 days (Edit game > Sales). A sale lists the game on itch's sale pages. |
+| If it does not sell | Drop to "No payments" with donations on, or $0 minimum. Nobody who paid loses anything. |
 
-It is made for a phone and plays in any browser. There is no account, no ads and no analytics. Your life is saved on your own device, and you can copy it out as a short text save code.
+## Uploads: Plan A, one page (try this first)
 
-The 9th century was brutal. Killing, slavery and death are part of this game. They are never glorified.
+1. **Upload 1:** `vikingr-1.0.0-demo-itch.zip`. Tick **"This file will be played in the browser"**, and tick
+   **"This file is a demo"** if the upload form offers it.
+2. **Upload 2:** the download zip. Platforms: Windows, macOS, Linux. Display name: "Vikingr (full game, opens in any browser)".
+3. **Upload 3:** the APK. Platform: Android only. Display name: "Vikingr (Android)".
+4. **Check it as a visitor before going public.** Save as a draft, open the page in a private window while logged
+   out, and confirm the demo plays on the page without paying. Not verified from here: whether itch lets a paid
+   project's browser game be played free. If it asks for payment first, use Plan B.
 
-## Features
+## Uploads: Plan B, two pages (if the demo will not play free on a paid page)
 
-- 636 written scenes, about 67,000 words of story, with over 1,500 choices.
-- 56 places to sail to, from Iceland to Garðaríki and from Hordaland to Aquitaine, across 28 regions.
-- 3 starting eras: Horik's days (830), Ragnarr's days (843) and the Great Army (865).
-- 3 backgrounds (younger son, outlaw, freedman) and 6 upbringings (farm, sword, oar, hall, ship, stories).
-- 13 historical rivals whose fame rises against yours, and 7 lords to serve, defy or betray.
-- Shield-wall battles and single combat, round by round. Plunder, trade, captives and ransom.
-- Land of your own: farms bought abroad, ship-forts taken and garrisoned, lordships, and in the end a sea-jarldom.
-- A family and an heir: when you die, a son can carry the saga on.
-- Pixel art in one fixed palette, animated in code.
-- Made for a phone: one column, thumb-sized buttons, a tab bar at the bottom.
+- **"Vikingr (demo)"**, free (No payments): the demo zip played in the browser. In its description, a line and a
+  link: "The full game: [Vikingr](https://edmodo1.itch.io/vikingr)".
+- **"Vikingr"**, paid as above: the download zip and the APK. Its description links back to the demo page.
+- In `src/ui/demo.ts`, `FULL_GAME_URL` already points at the paid page; if the paid page's address differs,
+  change it and rebuild the demo.
 
-How the counts were taken: `npx tsx tools/make-press.ts --only=counts` loads `content/` through the game's own content loader (`tools/content-loader.ts`, which validates every file against the schema) and writes `store/counts.json`. Scenes, places, backgrounds, upbringings, rivals and lords are the sizes of those collections in the bundle. Words are the whitespace-separated words in all scene texts. Choices are every scene's choice list added up. Regions are the distinct `region` names of the 56 places. Eras are the default 830 start plus the two later starts in `src/engine/era.ts`. Six of the 642 scenes in the bundle are old Phase 1 placeholders (`p1_*`) that need `flag.placeholder_start`, which nothing in the game sets: no player reaches them, so the page counts 636, and the words and choices are rounded down to cover them.
+## Page settings
 
-The lords count includes the home jarl (the jarl, Harek, Kolbeinn, King Horik, Turgeis, Niall Caille, Rorik). "6 lords abroad, and your own jarl" is the stricter wording.
+| Field | Value |
+|---|---|
+| Kind of project | HTML |
+| Embed | **540 x 960** (`npx tsx tools/make-press.ts --only=embed`, results in `store/embed-check.txt`) |
+| Mobile friendly | On, orientation portrait |
+| Fullscreen button | On. Automatically start on page load: on (the game opens on its title screen) |
+| Scrollbars | Enable scrollbars: on (scene text scrolls inside the frame; the tab bar stays at the bottom) |
+| Classification | Games |
+| Release status | Released |
+| Genre | Simulation (the life-simulation and simulation listings send this account most of its visits) |
+| Tags | historical, vikings, medieval, life-simulation, text-based, interactive-fiction, choices-matter, rpg, turn-based, pixel-art |
+| Cover | `store/cover.png` (630 x 500). `cover-315.png` is only for checking it at listing size; do not upload it. |
+| Screenshots | In order: `shot-1-story.png`, `shot-2-map.png`, `shot-3-battle.png`, `shot-4-plunder.png`, `shot-5-lords.png` |
+| Short description | `store/short-description.txt` |
+| Description | `store/description.html`, pasted with the <> (HTML) button |
+| Content | Violence, death and slavery: say so in the description (it does) and in itch's content questionnaire |
+| Community | Comments on, so players can post save codes with bug reports |
 
-## Screenshots (upload in this order)
+## AI disclosure
 
-1. `shot-1-story.png`: a story scene with its picture and three choices (the wedding on the benches, 833).
-2. `shot-2-map.png`: the map of the known world in 842, with sea roads and the Lindisfarne card open.
-3. `shot-3-battle.png`: a shield-wall in round 3 against a rival crew, 49 men a side.
-4. `shot-4-plunder.png`: plundering Bangor with the alarm rising.
-5. `shot-5-lords.png`: the Saga tab's Lords, land and rule card twelve years in: a ship-fort, two farms abroad, a lordship.
+Filled 2026-11-20 with the wording the author's other pages use; the author confirms or edits it. In the upload
+form's "AI generation disclosure", tick **Text**, **Graphics** and **Code**. The page line (last line of the
+description):
 
-Cover: `cover.png` (630 x 500). `cover-315.png` is only there to check how the cover reads at the size itch uses in its grids. Do not upload it.
+> Made with AI assistance. I designed the game, its systems and its world, and directed, edited and play-tested it;
+> the code, the text and the pictures were generated with AI models to that design, and the pictures redrawn in the
+> game's own fixed palette.
 
-## itch.io settings
-
-- **Kind of project:** HTML.
-- **Upload:** run `npm run build:itch` and upload `release/vikingr-1.0.0-itch.zip`. `index.html` is at the root of the zip, there is no service worker, and the font licences are in `LICENSES/`. Tick "This file will be played in the browser".
-- **Pricing:** USD 2.00. Leave "Allow people to pay more" on if you want it.
-- **Embed options:** "Embed in page", viewport **540 x 960** (portrait, 9:16).
-  - Measured with `npx tsx tools/make-press.ts --only=embed`, which loads the built game in an iframe of each size and checks that every title button and the About link is on screen without scrolling. The results are in `store/embed-check.txt`.
-  - 540 x 960: everything is visible, for a first visit and with a saved life (the About link ends at 806 and 864 px).
-  - 540 x 860 also fits, but with a saved life the About link sits 4 px from the bottom edge.
-  - 720 x 900 and 480 x 800 put the About link below the fold when there is a saved life (the life itself is still reachable).
-  - The layout is one column up to 720 px wide, so a wider frame only adds empty margins.
-- **Mobile friendly:** on. **Orientation:** portrait.
-- **Fullscreen button:** on. Turn off "Automatically start on page load" only if you want a click-to-launch cover. Starting on load is fine, because the game opens on its title screen.
-- **Scrollbars:** leave "Enable scrollbars" on. The scene text scrolls inside the frame and the tab bar stays fixed at the bottom.
-- **Genre:** Interactive Fiction, or Strategy. **Tags:** historical, vikings, text-based, choices-matter, medieval, singleplayer, mobile, pixel-art, turn-based, story-rich.
-- **Content warning (description, and the itch "content" questionnaire):** violence, death and slavery.
+The in-game About screen already says the pictures are "generated source images, cropped and redrawn in the game's
+own fixed palette" (`src/ui/components/Help.tsx`).
 
 ## Privacy
 
-No account, no ads, no analytics. Nothing leaves the page: an earlier audit of the build checked this, and `tools/make-press.ts` checks it again on every run, failing if the page requests anything outside its own files. Your life is kept in this browser only.
+No account, no ads, no analytics. Nothing leaves the page: `tools/make-press.ts` fails if the page requests
+anything outside its own files, and the download was opened from disk on 2026-11-20 with every network request
+refused: 4 typefaces loaded from the file, a life loaded and played, no outside requests.
 
 ## Known constraints
 
-Saves live in this browser, on this device. Clearing site data, using a private window, or playing on another device starts you fresh. To move a life between devices, or to keep it safe, open the menu and use **Save as text**. Paste the code into **Load a saved life** on the title screen.
+- Saves live in the browser or app they were made in. To move a life between the demo, the download, the app and
+  another device, use the menu's **Save as text**, then **Load a saved life** on the title screen.
+- The download does not keep saves in Safari when opened from a file; Chrome, Edge and Firefox do.
+- The demo's browser game and the full download keep separate saves: the demo's end screen gives the code.
 
-## AI disclosure (Josh to fill in)
+## Before going public
 
-> **[JOSH: fill in before publishing.]** The scene pictures were made with an image generator and then cropped, reduced to 400 x 160 and redrawn in the game's fixed palette by `tools/art.ts` (notes in `docs/ART.md`). itch.io asks about generative AI on the upload form ("AI generation disclosure"): say which tool made the source images, and whether any of the text or code was AI-assisted. The in-game About screen credits the fonts, map data and sources, but not the pictures yet, so add a line there too.
+- [ ] `npm run check` green on the commit being released
+- [ ] The three files built from that commit (demo zip, download zip, APK from GitHub)
+- [ ] The draft opened logged out in a private window: the demo plays on the page; Plan A or B decided
+- [ ] On a phone: the demo to its end screen (or load a code near the end), copy the code, open the full game, load it
+- [ ] The APK installed on an Android phone, a life begun, a save code loaded
+- [ ] Then Public, and post the launch devlog (`store/devlog-launch.md`)
+
+## After publishing
+
+Watch the comments the first week and ask for a save code with every bug report. Each fix: rebuild the files,
+upload over the old ones (the page stays), and a devlog for anything players would notice.

@@ -44,7 +44,10 @@
     "smoke:865": "tsx tools/smoke-865.ts",
     "check": "npm run typecheck && npm test && npm run validate && npm run lint:style && npm run scan -- --runs=2 --strict && npm run continuity -- --runs=4 --strict && npm run gauntlet -- --fast && npm run bot -- --runs 100 --years 10",
     "build:artifact": "npm run content && tsc --noEmit && VITE_ARTIFACT=1 vite build && tsx tools/build-artifact.ts",
-    "art": "tsx tools/art.ts"
+    "art": "tsx tools/art.ts",
+    "build:demo": "npm run content && tsc --noEmit && VITE_RELEASE=1 VITE_DEMO=1 vite build",
+    "build:itch:demo": "npm run build:demo && tsx tools/make-itch.ts --demo",
+    "build:single": "npm run content && tsc --noEmit && VITE_RELEASE=1 VITE_ARTIFACT=1 vite build && tsx tools/make-single.ts"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
