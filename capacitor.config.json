@@ -1,0 +1,6 @@
+{
+  "appId": "io.github.heirsofruin.vikingr",
+  "appName": "Vikingr",
+  "webDir": "dist-app",
+  "android": { "backgroundColor": "#191b1c" }
+}
