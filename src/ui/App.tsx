@@ -85,6 +85,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         <h1>VIKINGR</h1>
         <Knot />
         <div class="sub">From nothing, to sea king, to Valhalla.</div>
+        {__DEMO__ && <p class="note">The demo: the year 830, from your boyhood to the spring after your first summer at sea. The full game goes on with the same life.</p>}
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
@@ -146,8 +147,8 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
       <h3>Your days</h3>
       <div class="bgs">
         <button class={`choice bg${era === 830 ? ' on' : ''}`} onClick={() => setEra(830)}><span class="txt">Horik's days, 830<span class="hint">The first great raids. The written story from your boyhood: Orkney, Iona, Bangor, Dorestad.</span></span></button>
-        <button class={`choice bg${era === 843 ? ' on' : ''}`} onClick={() => setEra(843)}><span class="txt">Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.</span></span></button>
-        <button class={`choice bg${era === 865 ? ' on' : ''}`} onClick={() => setEra(865)}><span class="txt">The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.</span></span></button>
+        <button class={`choice bg${era === 843 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(843)}><span class="txt">Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.{__DEMO__ ? ' In the full game.' : ''}</span></span></button>
+        <button class={`choice bg${era === 865 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(865)}><span class="txt">The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.{__DEMO__ ? ' In the full game.' : ''}</span></span></button>
       </div>
       <h3 style={{ marginTop: 18 }}>Name</h3>
       <input type="text" id="new-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
@@ -197,6 +198,27 @@ function Menu({ content, state, onClose, onLoad, onQuit, onHelp, onAbout }: { co
   );
 }
 
+/** The end of the demo: the life so far, as a save code the full game loads. */
+function DemoEnd({ content, state, onTitle }: { content: ContentBundle; state: GameState; onTitle: () => void }) {
+  const [code, setCode] = useState('');
+  const [msg, setMsg] = useState('');
+  useEffect(() => { encodeSaveCode(toSave(state, content)).then(setCode); }, []);
+  return (
+    <main class="screen">
+      <h1>The ice goes out</h1>
+      <p>Spring, 831. The demo ends here: one year, from your boyhood to the spring after your first summer at sea.</p>
+      <p>{state.hero.name}'s life goes on in the full game, with everything he has and everything he owes: the next summer, the ships, the lords and the land, and the years down to 878. Copy this code, and paste it into Load a saved life in the full game.</p>
+      <textarea readOnly value={code} style={{ width: '100%', minHeight: 140 }} />
+      {msg && <p class="small sans">{msg}</p>}
+      <div class="choices">
+        <button class="choice primary" onClick={async () => { try { await navigator.clipboard.writeText(code); setMsg(`Copied: ${code.length} characters.`); } catch { setMsg('Select the text above and copy it.'); } }}><span class="txt">Copy the code</span></button>
+        <button class="choice" onClick={onTitle}><span class="txt">Back to the title</span></button>
+      </div>
+      <p class="note small sans">The full game is Vikingr on itch.io. Your life is also kept in this browser.</p>
+    </main>
+  );
+}
+
 /** A screen that throws shows this instead of a dead page, with the life still safe to take away (release audit). */
 class Guard extends Component<{ onSave: () => Promise<string>; onTitle: () => void; children: ComponentChildren }, { err: string | null; code: string }> {
   override state = { err: null as string | null, code: '' };
@@ -234,6 +256,11 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
   useEffect(() => { window.scrollTo(0, 0); }, [state?.pending, tab]);
 
   const toTitle = (step: 'title' | 'preview' = 'title') => { setTitleStep(step); setPreview(null); setState(null); setHasSave(!!loadGame(content)); };
+
+  // the demo ends at the spring of 831, once the year's last words have been read, and hands over the life
+  if (__DEMO__ && state && !state.death && dateOf(state.day).year >= 831 && state.pending?.t !== 'report') {
+    return <div class="app"><DemoEnd content={content} state={state} onTitle={() => toTitle()} /></div>;
+  }
 
   if (!state) {
     return (

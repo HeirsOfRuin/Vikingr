@@ -11,7 +11,7 @@ const version = (JSON.parse(readFileSync(new URL('./package.json', import.meta.u
 export default defineConfig({
   base: './',
   plugins: [preact()],
-  define: { __PWA__: JSON.stringify(process.env.VITE_PWA === '1'), __BUILD_ID__: JSON.stringify(String(Date.now())), __RELEASE__: JSON.stringify(process.env.VITE_RELEASE === '1'), __VERSION__: JSON.stringify(version) },
+  define: { __PWA__: JSON.stringify(process.env.VITE_PWA === '1'), __BUILD_ID__: JSON.stringify(String(Date.now())), __RELEASE__: JSON.stringify(process.env.VITE_RELEASE === '1'), __DEMO__: JSON.stringify(process.env.VITE_DEMO === '1'), __VERSION__: JSON.stringify(version) },
   build: artifact ? { assetsInlineLimit: 100_000_000, outDir: 'dist-artifact-build', cssCodeSplit: false } : {},
   test: { include: ['tests/**/*.test.ts'] },
 } as never);

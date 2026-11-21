@@ -9,6 +9,8 @@ const root = join(import.meta.dirname, '..');
 const dist = join(root, 'dist');
 const out = join(root, 'release');
 const version = (JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version: string }).version;
+// `tsx tools/make-itch.ts demo`: the free demo (VITE_DEMO=1), zipped under its own name
+const demo = process.argv[2] === 'demo';
 if (!existsSync(join(dist, 'index.html'))) throw new Error('make-itch: no dist/index.html; run npm run build:itch');
 
 // no service worker on itch
@@ -31,7 +33,8 @@ const js = readdirSync(join(dist, 'assets')).filter((f) => f.endsWith('.js')).ma
 for (const s of ['Play from a chapter', 'Playtest chapter: not saved']) if (js.includes(s)) throw new Error(`make-itch: the release bundle still has "${s}"`);
 
 mkdirSync(out, { recursive: true });
-const zip = join(out, `vikingr-${version}-itch.zip`);
+const zip = join(out, demo ? `vikingr-${version}-demo-web.zip` : `vikingr-${version}-itch.zip`);
+if (demo !== js.includes('The demo ends here')) throw new Error(demo ? 'make-itch: this is not a demo build (VITE_DEMO=1)' : 'make-itch: this is the demo build, not the full game');
 rmSync(zip, { force: true });
 execFileSync('zip', ['-qr', zip, '.'], { cwd: dist });
 const list = execFileSync('unzip', ['-Z1', zip], { encoding: 'utf8' }).split('\n').filter(Boolean);
