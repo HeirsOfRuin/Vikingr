@@ -18,10 +18,10 @@ The 9th century was brutal. Killing, slavery and death are part of this game. Th
 
 ## Features
 
-- 636 written scenes, about 67,000 words of story, with over 1,500 choices.
+- 646 written scenes, about 69,000 words of story, with over 1,500 choices.
 - 56 places to sail to, from Iceland to Garðaríki and from Hordaland to Aquitaine, across 28 regions.
 - 3 starting eras: Horik's days (830), Ragnarr's days (843) and the Great Army (865).
-- 3 backgrounds (younger son, outlaw, freedman) and 6 upbringings (farm, sword, oar, hall, ship, stories).
+- 3 beginnings (the younger son, the outlaw, the freedman's son), each raised one of three ways, and each of the nine with a boyhood of its own. A son who carries the saga on is raised one of 6 more ways.
 - 13 historical rivals whose fame rises against yours, and 7 lords to serve, defy or betray.
 - Shield-wall battles and single combat, round by round. Plunder, trade, captives and ransom.
 - Land of your own: farms bought abroad, ship-forts taken and garrisoned, lordships, and in the end a sea-jarldom.
@@ -29,7 +29,7 @@ The 9th century was brutal. Killing, slavery and death are part of this game. Th
 - Pixel art in one fixed palette, animated in code.
 - Made for a phone: one column, thumb-sized buttons, a tab bar at the bottom.
 
-How the counts were taken: `npx tsx tools/make-press.ts --only=counts` loads `content/` through the game's own content loader (`tools/content-loader.ts`, which validates every file against the schema) and writes `store/counts.json`. Scenes, places, backgrounds, upbringings, rivals and lords are the sizes of those collections in the bundle. Words are the whitespace-separated words in all scene texts. Choices are every scene's choice list added up. Regions are the distinct `region` names of the 56 places. Eras are the default 830 start plus the two later starts in `src/engine/era.ts`. Six of the 642 scenes in the bundle are old Phase 1 placeholders (`p1_*`) that need `flag.placeholder_start`, which nothing in the game sets: no player reaches them, so the page counts 636, and the words and choices are rounded down to cover them.
+How the counts were taken: `npx tsx tools/make-press.ts --only=counts` loads `content/` through the game's own content loader (`tools/content-loader.ts`, which validates every file against the schema) and writes `store/counts.json`. Scenes, places, backgrounds, upbringings, rivals and lords are the sizes of those collections in the bundle. Words are the whitespace-separated words in all scene texts. Choices are every scene's choice list added up. Regions are the distinct `region` names of the 56 places. Eras are the default 830 start plus the two later starts in `src/engine/era.ts`. Six of the 652 scenes in the bundle are old Phase 1 placeholders (`p1_*`) that need `flag.placeholder_start`, which nothing in the game sets: no player reaches them, so the page counts 646, and the words and choices are rounded down to cover them.
 
 The lords count includes the home jarl (the jarl, Harek, Kolbeinn, King Horik, Turgeis, Niall Caille, Rorik). "6 lords abroad, and your own jarl" is the stricter wording.
 
