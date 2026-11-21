@@ -18,7 +18,9 @@ import { HeroPanel, CrewPanel, SagaPanel, HomePanel } from './components/Panels'
 import { Knot, PixelIcon } from './components/Ornament';
 import { Makeup } from './components/Makeup';
 import { SceneArt } from './scene/SceneArt';
-import { reckoning } from '../engine/saga';
+import { DemoEnd } from './components/DemoEnd';
+import { demoOver, FULL_GAME_URL } from './demo';
+import { RateAsk } from './components/RateAsk';
 
 type Tab = 'now' | 'map' | 'hero' | 'crew' | 'home' | 'saga';
 const TABS: { id: Tab; label: string }[] = [
@@ -86,7 +88,6 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         <h1>VIKINGR</h1>
         <Knot />
         <div class="sub">From nothing, to sea king, to Valhalla.</div>
-        {__DEMO__ && <p class="note">The demo: 830 and 831, from your boyhood to the spring of 832. The full game goes on with the same life.</p>}
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
@@ -97,7 +98,8 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         </div>
         {!storageWorks() && <p class="note">This browser is not keeping anything here: a life is lost when you close the page. Save it as text from the menu to keep it.</p>}
         <p class="note">This game is brutal in the way the 9th century was. Killing, slavery and death are part of it, never glorified.</p>
-        <p class="note small sans"><button class="linkbtn" onClick={() => setStep('about')}>About, credits and privacy</button> · version {__VERSION__}</p>
+        {__DEMO__ && <p class="note small sans">The free demo: the first two years, 830 and 831. <a href={FULL_GAME_URL} target="_blank" rel="noopener">The full game</a> goes on to 878, and takes your saved life with it.</p>}
+        <p class="note small sans"><button class="linkbtn" onClick={() => setStep('about')}>About, credits and privacy</button> · version {__VERSION__}{__DEMO__ ? ' demo' : ''}</p>
       </div>
     );
   }
@@ -148,8 +150,8 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
       <h3>Your days</h3>
       <div class="bgs">
         <button class={`choice bg${era === 830 ? ' on' : ''}`} onClick={() => setEra(830)}><span class="txt">Horik's days, 830<span class="hint">The first great raids. The written story from your boyhood: Orkney, Iona, Bangor, Dorestad.</span></span></button>
-        <button class={`choice bg${era === 843 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(843)}><span class="txt">Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.{__DEMO__ ? ' In the full game.' : ''}</span></span></button>
-        <button class={`choice bg${era === 865 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(865)}><span class="txt">The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.{__DEMO__ ? ' In the full game.' : ''}</span></span></button>
+        <button class={`choice bg${era === 843 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(843)}><span class="txt">{__DEMO__ ? 'In the full game: ' : ''}Ragnarr's days, 843<span class="hint">The world has moved on: the Norse winter in Ireland and on the Loire. The Vestfold fleet for Nantes, Hastein on Noirmoutier, Paris in 845.</span></span></button>
+        <button class={`choice bg${era === 865 ? ' on' : ''}`} disabled={__DEMO__} onClick={() => setEra(865)}><span class="txt">{__DEMO__ ? 'In the full game: ' : ''}The Great Army, 865<span class="hint">The sons of Ragnarr gather an army, not a fleet, for England. East Anglia, York, Wessex; and in the end, land.</span></span></button>
       </div>
       <h3 style={{ marginTop: 18 }}>Name</h3>
       <input type="text" id="new-name" value={name} maxLength={20} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
@@ -199,33 +201,6 @@ function Menu({ content, state, onClose, onLoad, onQuit, onHelp, onAbout }: { co
   );
 }
 
-/** The end of the demo: what men say of him so far, as the death page tells a life, and the life as a save code the
- *  full game loads (Josh, 2026-11-21: "it ends with the rate me page (like in the full build) and the save exporter"). */
-function DemoEnd({ content, state, onTitle }: { content: ContentBundle; state: GameState; onTitle: () => void }) {
-  const [code, setCode] = useState('');
-  const [msg, setMsg] = useState('');
-  useEffect(() => { encodeSaveCode(toSave(state, content)).then(setCode); }, []);
-  const lines = reckoning(state, content);
-  return (
-    <main class="screen prose">
-      <h1>Spring, 832</h1>
-      <p>The demo ends here: two years, from your boyhood to the spring of 832.</p>
-      <h2>What men say of you</h2>
-      {lines.map((l, i, all) => i === all.length - 1 ? <div key={i} class="card sans small">{l} The deeds are in the Saga tab.</div> : <p key={i}>{l}</p>)}
-      <h2>Your life goes on</h2>
-      <p>In the full game {state.hero.name} goes on with everything he has and everything he owes: the next summer, the ships, the lords and the land, and the years down to 878. Copy this code, and paste it into Load a saved life in the full game.</p>
-      <textarea readOnly value={code} style={{ width: '100%', minHeight: 140 }} />
-      {msg && <p class="small sans">{msg}</p>}
-      <div class="choices">
-        <button class="choice primary" onClick={async () => { try { await navigator.clipboard.writeText(code); setMsg(`Copied: ${code.length} characters. Keep it somewhere safe.`); } catch { setMsg('Select the text above and copy it.'); } }}><span class="txt">Copy the code</span></button>
-        <button class="choice" onClick={async () => { const c = await encodeSaveCode(toSave(state, content), { plain: true }); setCode(c); setMsg(`The same life in plain letters: ${c.length} characters, for places that will not take the short code.`); }}><span class="txt">Show it in plain letters (longer)</span></button>
-        <button class="choice" onClick={onTitle}><span class="txt">Back to the title</span></button>
-      </div>
-      <p class="note small sans">The full game is Vikingr on itch.io. If these two years were worth your time, a rating on the itch page helps more than you would think. Your life is also kept in this browser.</p>
-    </main>
-  );
-}
-
 /** A screen that throws shows this instead of a dead page, with the life still safe to take away (release audit). */
 class Guard extends Component<{ onSave: () => Promise<string>; onTitle: () => void; children: ComponentChildren }, { err: string | null; code: string }> {
   override state = { err: null as string | null, code: '' };
@@ -263,11 +238,6 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
   useEffect(() => { window.scrollTo(0, 0); }, [state?.pending, tab]);
 
   const toTitle = (step: 'title' | 'preview' = 'title') => { setTitleStep(step); setPreview(null); setState(null); setHasSave(!!loadGame(content)); };
-
-  // the demo ends at the spring of 832, once the year's last words have been read (Josh, 2026-11-21), and hands over the life
-  if (__DEMO__ && state && !state.death && dateOf(state.day).year >= 832 && state.pending?.t !== 'report') {
-    return <div class="app"><DemoEnd content={content} state={state} onTitle={() => toTitle()} /></div>;
-  }
 
   if (!state) {
     return (
@@ -309,7 +279,17 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
       setError((e as Error).message);
     }
   };
+  if (demoOver(state.day) && !state.death && !preview) {
+    return <div class="app"><DemoEnd content={content} state={state} onTitle={() => toTitle()} /></div>;
+  }
   const screen = screenOf(state);
+  // the rating ask, once each (RateAsk.tsx): the first winter of the saga in the hall, and its first death.
+  // _rate_first holds the day it was first shown, so it stays for that winter and never comes back; -1 is "closed".
+  const firstWinter = screen === 'hall' && !preview && (!state.flags._rate_first || (state.flags._rate_first > 0 && state.day - state.flags._rate_first < 180));
+  const firstEnd = !!state.death && !preview && (!state.flags._rate_end || state.flags._rate_end === state.death.day);
+  const markRate = (k: '_rate_first' | '_rate_end', v: number) => setState((s) => s && { ...s, flags: { ...s.flags, [k]: v } });
+  if (firstWinter && !state.flags._rate_first) queueMicrotask(() => markRate('_rate_first', state.day));
+  if (firstEnd && !state.flags._rate_end) queueMicrotask(() => markRate('_rate_end', state.death!.day));
   const busy = !['place', 'hall', 'muster', 'return'].includes(screen);
   const untold = untoldCount(state);
   const where = state.at ? content.places[state.at]?.name : state.voyage ? `Bound for ${content.places[state.voyage.to]?.name}` : '';
@@ -329,6 +309,9 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
       <main>
         {error && <p class="card small sans">{error}</p>}
         {notice && <p class="card small sans" onClick={() => setNotice('')}>{notice} <span class="muted">(tap to close)</span></p>}
+        {/* rate:first-stop (the first winter's hall) and rate:end (the saga's first death): tools/check-store.mjs */}
+        {tab === 'now' && !sheet && firstWinter && <RateAsk at="first-stop" onClose={() => markRate('_rate_first', -1)} />}
+        {tab === 'now' && !sheet && firstEnd && <RateAsk at="end" onClose={() => markRate('_rate_end', -1)} />}
         {!__RELEASE__ && preview && <p class="note small sans">Playtest chapter: not saved.</p>}
         {sheet === 'help' ? <HowToPlay onBack={() => setSheet(null)} /> : sheet === 'about' ? <About onBack={() => setSheet(null)} /> : (
           <Guard key={tab} onSave={() => encodeSaveCode(toSave(state, content))} onTitle={() => toTitle()}>

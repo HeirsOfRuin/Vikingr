@@ -13,3 +13,4 @@ tools/_*
 *.tmp.*
 gauntlet-out/
 release
+dist-app/
