@@ -9,6 +9,7 @@
     "build:dev": "npm run content && tsc --noEmit && vite build",
     "build:itch": "npm run content && tsc --noEmit && VITE_RELEASE=1 vite build && tsx tools/make-itch.ts",
     "build:pwa": "npm run content && tsc --noEmit && VITE_RELEASE=1 VITE_PWA=1 vite build",
+    "build:pwa:demo": "npm run content && tsc --noEmit && VITE_RELEASE=1 VITE_PWA=1 VITE_DEMO=1 vite build",
     "preview": "vite preview",
     "content": "tsx tools/build-content.ts",
     "map": "tsx tools/build-map.ts",

@@ -29,6 +29,12 @@ import { onRaided } from './standing';
 import { creditWeapon, FITTING, GEAR_MAX, GEAR_QUALITY, hasFitting, heroArmour, heroWeapon, shieldBonus } from './items';
 import { BATTLE, DUEL, ORTUG_PER_MARK, POSITION_FAME } from './tuning';
 
+/** A foe's name inside a sentence: a nameless one ("A lay brother with a spear") is lower case after the first word
+ *  ("Killed a lay brother", "the fight with a farmer's boy"); a man's name stays as it is. */
+export function midName(name: string): string {
+  return /^(A|An|The) /.test(name) ? name.charAt(0).toLowerCase() + name.slice(1) : name;
+}
+
 
 /** What a crew's victory is worth to an oarsman in it: the captain's deed, mostly. */
 export const SERVICE_DEED = 0.5;
@@ -127,7 +133,7 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
   state.stats.duels += 1;
   state.hero.hp = Math.max(0, d.hero.hp);
   // a fight to first blood leaves scars, not cripples
-  for (const h of d.hero.hits) if (h >= 5) addWound(state, content, woundFor(rng, d.lethal && h >= 7), `the fight with ${foe.name}`, rng);
+  for (const h of d.hero.hits) if (h >= 5) addWound(state, content, woundFor(rng, d.lethal && h >= 7), `the fight with ${midName(foe.name)}`, rng);
   const lw = learn(state, 'weapons', 4);
   const ls = learn(state, 'shield', 3);
   let next: string | undefined;
@@ -139,7 +145,8 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
       const type = d.kind === 'holmgang' ? 'holmgang_won' : champion ? 'killed_champion' : 'duel_won';
       const how = d.over === 'foe_yielded' ? 'yielded to you' : d.lethal ? 'died under your blade' : 'went down and stayed down';
       // the saga's voice, not the fight's: "Killed Cú Mara in single combat"
-      const told = d.over === 'foe_yielded' ? `Made ${foe.name} yield${d.kind === 'holmgang' ? ' on the holmgang cloak' : ''}` : d.lethal ? `Killed ${foe.name} in single combat` : `Beat ${foe.name} in single combat`;
+      const who = midName(foe.name);
+      const told = d.over === 'foe_yielded' ? `Made ${who} yield${d.kind === 'holmgang' ? ' on the holmgang cloak' : ''}` : d.lethal ? `Killed ${who} in single combat` : `Beat ${who} in single combat`;
       addDeed(state, content, { type, text: told, witnesses: d.kind === 'holmgang' ? 40 : 10 });
       if (d.over === 'foe_yielded') {
         state.silver += DUEL.holmlausnMarks * ORTUG_PER_MARK;
@@ -163,11 +170,11 @@ export function finishDuel(state: GameState, content: ContentBundle, rng: RngCur
     }
     case 'lost': {
       if (d.lethal && rng.float() < DUEL.lethalDeathChance) {
-        kill(state, 'duel', d.kind === 'holmgang' ? `${state.hero.name} was killed on the holmgang cloak by ${foe.name}, with the whole district watching.` : `${state.hero.name} was killed by ${foe.name}.`);
+        kill(state, 'duel', d.kind === 'holmgang' ? `${state.hero.name} was killed on the holmgang cloak by ${midName(foe.name)}, with the whole district watching.` : `${state.hero.name} was killed by ${midName(foe.name)}.`);
         return;
       }
       state.hero.hp = 1;
-      addWound(state, content, woundFor(rng, d.lethal), `the fight with ${foe.name}`, rng);
+      addWound(state, content, woundFor(rng, d.lethal), `the fight with ${midName(foe.name)}`, rng);
       state.honour = Math.max(-10, state.honour - 1);
       lines.push(`${foe.name} beat you. You live, which is more than he meant.`);
       next = d.lose;

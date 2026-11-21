@@ -1,4 +1,5 @@
-# Builds the installable app and publishes it to GitHub Pages on every push.
+# Builds the FREE DEMO as an installable app and publishes it to GitHub Pages on every push. The public site is the
+# demo only (Josh, 2026-11-21: "make the public pages point at the demo"); the full game is sold on itch.io.
 # One-time setup in the repository: Settings > Pages > Build and deployment >
 # Source: GitHub Actions. The app is then at https://heirsofruin.github.io/Vikingr/
 name: Publish app
@@ -33,7 +34,9 @@ jobs:
       - run: npm test
       - run: npm run validate
       - run: npm run lint:style
-      - run: npm run build:pwa
+      - run: npm run build:pwa:demo
+      # never publish the full game here: the bundle must be the demo's
+      - run: grep -rq "The free demo: the first two years" dist/assets/ || (echo "not a demo build: refusing to publish the full game" && exit 1)
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

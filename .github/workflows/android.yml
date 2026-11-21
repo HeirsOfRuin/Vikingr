@@ -6,9 +6,9 @@
 # APK with a throwaway key, which can never update an installed copy: never publish it.
 name: Android app
 
+# Run by hand only, and the APK kept 3 days: the repository is public, and a run's artifact can be downloaded by any
+# signed-in GitHub user, so a build on every push would leave the paid game lying about (Josh, 2026-11-21).
 on:
-  push:
-    paths: [src/**, content/**, public/**, index.html, package.json, package-lock.json, capacitor.config.json, android/**, tools/make-single.ts, vite.config.ts, .github/workflows/android.yml]
   workflow_dispatch:
 
 permissions:
@@ -63,4 +63,4 @@ jobs:
         with:
           name: vikingr-android
           path: vikingr*.apk
-          retention-days: 30
+          retention-days: 3

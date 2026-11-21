@@ -4,8 +4,8 @@ A turn-based RPG of one man's life in the 9th century: from nothing, through fam
 
 **Status:** version 1.0. 646 written scenes over three eras (830, 843, 865), 56 places on a real-coastline map, shield-wall battles and single combat, fleets, trade, lords, land and rule. Design and every decision: `docs/DESIGN.md`. Writing rules: `content/style-guide.md`. Store page draft: `store/ITCH.md`.
 
-## Play as an app
-Published to GitHub Pages by `.github/workflows/pages.yml` on every push, once Pages is switched on (one-time setup: Settings > Pages > Build and deployment > Source: GitHub Actions). Then: https://heirsofruin.github.io/Vikingr/
+## The free demo online
+The **demo** (830 to the spring of 832) is published to GitHub Pages by `.github/workflows/pages.yml` on every push; the workflow refuses to publish anything that is not the demo build. The full game is sold on itch.io (https://heirs-of-ruin.itch.io/vikingr). Demo: https://heirsofruin.github.io/Vikingr/
 
 - **Phone:** open the link, then Share > Add to Home Screen (iPhone) or the menu > Install app (Android).
 - **Saves** live on the device. Move a life between devices with Menu > Save as text / Load from text.

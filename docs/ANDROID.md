@@ -3,15 +3,16 @@
 The itch.io Android download is the full game's single-file release build (`npm run build:app`: `npm run
 build:single`, then that file copied to `dist-app/index.html`) inside a Capacitor WebView, the same way the
 Imperator and Silk Road apps are made. It plays offline; the app keeps its saves on the phone. GitHub builds it
-(`.github/workflows/android.yml`) on every push that changes the game. Nothing is built on your own machine.
+(`.github/workflows/android.yml`) when you ask it to, not on every push: the repository is public, and any
+signed-in GitHub user can download a run's artifact. Nothing is built on your own machine.
 
 ## Getting the APK
 
-1. On github.com, open the repository's **Actions** tab and choose **Android app**.
-2. Open the newest run with a green tick, scroll to **Artifacts** and download **vikingr-android**.
+1. On github.com, open the repository's **Actions** tab, choose **Android app**, and press **Run workflow**.
+2. When it finishes (a few minutes), open that run, scroll to **Artifacts** and download **vikingr-android**.
 3. Inside the zip: `vikingr.apk` when the signing secrets are set (publish this one), or `vikingr-TEST.apk` when
    they are not (try it on your own phone; never publish it: no later version can install over it).
-4. Upload `vikingr.apk` to itch with only **Android** ticked. Artifacts are kept 30 days.
+4. Upload `vikingr.apk` to itch with only **Android** ticked. Artifacts are kept 3 days: download it the same day.
 
 ## The signing key (once)
 
