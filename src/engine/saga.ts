@@ -44,3 +44,21 @@ export function epitaph(state: GameState, content: ContentBundle): string[] {
 export function remembered(state: GameState, content: ContentBundle): string[] {
   return Object.entries(content.flags).filter(([id, f]) => f.saga && state.flags[id]).map(([, f]) => deedLine(f.description));
 }
+
+/** What men would say of a man still living, at a stopping place (the end of the demo, spring 832): the same reckoning
+ *  as his epitaph, without the grave. */
+export function reckoning(state: GameState, content: ContentBundle): string[] {
+  const lines: string[] = [];
+  const age = ageOn(state.day, state.hero.born);
+  const summers = Math.max(0, Math.min(dateOf(state.day).year - 830, age - 15));
+  lines.push(`${state.hero.nickname ? `${state.hero.name}, called ${state.hero.nickname},` : state.hero.name} is ${age} winters old, and has gone viking ${summers === 1 ? 'one summer' : `${summers} summers`}.`);
+  const best = state.deeds.filter((x) => x.told !== null || x.verse).sort((a, b) => b.weight - a.weight || a.n - b.n).slice(0, 3);
+  lines.push(best.length ? `What men say of him: ${best.map((x) => deedLine(x.text)).join('. ')}.` : 'Nobody tells anything of him yet, at any fire.');
+  const kept = remembered(state, content);
+  if (kept.length) lines.push(`What the saga keeps: ${kept.slice(-4).join('. ')}.`);
+  const sworn = aliveMen(state).filter((m) => m.sworn).map((m) => m.name);
+  if (sworn.length) lines.push(`Sworn to him: ${sworn.length > 1 ? `${sworn.slice(0, -1).join(', ')} and ${sworn[sworn.length - 1]}` : sworn[0]}.`);
+  const rank = legendTable(state, content).findIndex((r) => r.hero) + 1;
+  lines.push(`Fame ${Math.round(livingFame(state))}; lasting fame ${lastingFame(state)}. Among the living legends of his day he stands ${rank === 1 ? 'first' : ordinal(rank)}.`);
+  return lines;
+}

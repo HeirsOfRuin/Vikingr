@@ -18,6 +18,7 @@ import { HeroPanel, CrewPanel, SagaPanel, HomePanel } from './components/Panels'
 import { Knot, PixelIcon } from './components/Ornament';
 import { Makeup } from './components/Makeup';
 import { SceneArt } from './scene/SceneArt';
+import { reckoning } from '../engine/saga';
 
 type Tab = 'now' | 'map' | 'hero' | 'crew' | 'home' | 'saga';
 const TABS: { id: Tab; label: string }[] = [
@@ -85,7 +86,7 @@ function Title({ content, hasSave, start, onContinue, onNew, onPreview, onLoad }
         <h1>VIKINGR</h1>
         <Knot />
         <div class="sub">From nothing, to sea king, to Valhalla.</div>
-        {__DEMO__ && <p class="note">The demo: the year 830, from your boyhood to the spring after your first summer at sea. The full game goes on with the same life.</p>}
+        {__DEMO__ && <p class="note">The demo: 830 and 831, from your boyhood to the spring of 832. The full game goes on with the same life.</p>}
         <div class="choices">
           {hasSave && <button class="choice primary" onClick={onContinue}><span class="txt">Continue your life</span></button>}
           <button class="choice" onClick={() => setStep('new')}><span class="txt">Begin a new life</span></button>
@@ -198,23 +199,29 @@ function Menu({ content, state, onClose, onLoad, onQuit, onHelp, onAbout }: { co
   );
 }
 
-/** The end of the demo: the life so far, as a save code the full game loads. */
+/** The end of the demo: what men say of him so far, as the death page tells a life, and the life as a save code the
+ *  full game loads (Josh, 2026-11-21: "it ends with the rate me page (like in the full build) and the save exporter"). */
 function DemoEnd({ content, state, onTitle }: { content: ContentBundle; state: GameState; onTitle: () => void }) {
   const [code, setCode] = useState('');
   const [msg, setMsg] = useState('');
   useEffect(() => { encodeSaveCode(toSave(state, content)).then(setCode); }, []);
+  const lines = reckoning(state, content);
   return (
-    <main class="screen">
-      <h1>The ice goes out</h1>
-      <p>Spring, 831. The demo ends here: one year, from your boyhood to the spring after your first summer at sea.</p>
-      <p>{state.hero.name}'s life goes on in the full game, with everything he has and everything he owes: the next summer, the ships, the lords and the land, and the years down to 878. Copy this code, and paste it into Load a saved life in the full game.</p>
+    <main class="screen prose">
+      <h1>Spring, 832</h1>
+      <p>The demo ends here: two years, from your boyhood to the spring of 832.</p>
+      <h2>What men say of you</h2>
+      {lines.map((l, i, all) => i === all.length - 1 ? <div key={i} class="card sans small">{l} The deeds are in the Saga tab.</div> : <p key={i}>{l}</p>)}
+      <h2>Your life goes on</h2>
+      <p>In the full game {state.hero.name} goes on with everything he has and everything he owes: the next summer, the ships, the lords and the land, and the years down to 878. Copy this code, and paste it into Load a saved life in the full game.</p>
       <textarea readOnly value={code} style={{ width: '100%', minHeight: 140 }} />
       {msg && <p class="small sans">{msg}</p>}
       <div class="choices">
-        <button class="choice primary" onClick={async () => { try { await navigator.clipboard.writeText(code); setMsg(`Copied: ${code.length} characters.`); } catch { setMsg('Select the text above and copy it.'); } }}><span class="txt">Copy the code</span></button>
+        <button class="choice primary" onClick={async () => { try { await navigator.clipboard.writeText(code); setMsg(`Copied: ${code.length} characters. Keep it somewhere safe.`); } catch { setMsg('Select the text above and copy it.'); } }}><span class="txt">Copy the code</span></button>
+        <button class="choice" onClick={async () => { const c = await encodeSaveCode(toSave(state, content), { plain: true }); setCode(c); setMsg(`The same life in plain letters: ${c.length} characters, for places that will not take the short code.`); }}><span class="txt">Show it in plain letters (longer)</span></button>
         <button class="choice" onClick={onTitle}><span class="txt">Back to the title</span></button>
       </div>
-      <p class="note small sans">The full game is Vikingr on itch.io. Your life is also kept in this browser.</p>
+      <p class="note small sans">The full game is Vikingr on itch.io. If these two years were worth your time, a rating on the itch page helps more than you would think. Your life is also kept in this browser.</p>
     </main>
   );
 }
@@ -257,8 +264,8 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
 
   const toTitle = (step: 'title' | 'preview' = 'title') => { setTitleStep(step); setPreview(null); setState(null); setHasSave(!!loadGame(content)); };
 
-  // the demo ends at the spring of 831, once the year's last words have been read, and hands over the life
-  if (__DEMO__ && state && !state.death && dateOf(state.day).year >= 831 && state.pending?.t !== 'report') {
+  // the demo ends at the spring of 832, once the year's last words have been read (Josh, 2026-11-21), and hands over the life
+  if (__DEMO__ && state && !state.death && dateOf(state.day).year >= 832 && state.pending?.t !== 'report') {
     return <div class="app"><DemoEnd content={content} state={state} onTitle={() => toTitle()} /></div>;
   }
 
