@@ -20,6 +20,7 @@ import { Makeup } from './components/Makeup';
 import { SceneArt } from './scene/SceneArt';
 import { DemoEnd } from './components/DemoEnd';
 import { demoOver, FULL_GAME_URL } from './demo';
+import { RateAsk } from './components/RateAsk';
 
 type Tab = 'now' | 'map' | 'hero' | 'crew' | 'home' | 'saga';
 const TABS: { id: Tab; label: string }[] = [
@@ -282,6 +283,13 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
     return <div class="app"><DemoEnd content={content} state={state} onTitle={() => toTitle()} /></div>;
   }
   const screen = screenOf(state);
+  // the rating ask, once each (RateAsk.tsx): the first winter of the saga in the hall, and its first death.
+  // _rate_first holds the day it was first shown, so it stays for that winter and never comes back; -1 is "closed".
+  const firstWinter = screen === 'hall' && !preview && (!state.flags._rate_first || (state.flags._rate_first > 0 && state.day - state.flags._rate_first < 180));
+  const firstEnd = !!state.death && !preview && (!state.flags._rate_end || state.flags._rate_end === state.death.day);
+  const markRate = (k: '_rate_first' | '_rate_end', v: number) => setState((s) => s && { ...s, flags: { ...s.flags, [k]: v } });
+  if (firstWinter && !state.flags._rate_first) queueMicrotask(() => markRate('_rate_first', state.day));
+  if (firstEnd && !state.flags._rate_end) queueMicrotask(() => markRate('_rate_end', state.death!.day));
   const busy = !['place', 'hall', 'muster', 'return'].includes(screen);
   const untold = untoldCount(state);
   const where = state.at ? content.places[state.at]?.name : state.voyage ? `Bound for ${content.places[state.voyage.to]?.name}` : '';
@@ -301,6 +309,9 @@ export function App({ content, map }: { content: ContentBundle; map: MapData }) 
       <main>
         {error && <p class="card small sans">{error}</p>}
         {notice && <p class="card small sans" onClick={() => setNotice('')}>{notice} <span class="muted">(tap to close)</span></p>}
+        {/* rate:first-stop (the first winter's hall) and rate:end (the saga's first death): tools/check-store.mjs */}
+        {tab === 'now' && !sheet && firstWinter && <RateAsk at="first-stop" onClose={() => markRate('_rate_first', -1)} />}
+        {tab === 'now' && !sheet && firstEnd && <RateAsk at="end" onClose={() => markRate('_rate_end', -1)} />}
         {!__RELEASE__ && preview && <p class="note small sans">Playtest chapter: not saved.</p>}
         {sheet === 'help' ? <HowToPlay onBack={() => setSheet(null)} /> : sheet === 'about' ? <About onBack={() => setSheet(null)} /> : (
           <Guard key={tab} onSave={() => encodeSaveCode(toSave(state, content))} onTitle={() => toTitle()}>

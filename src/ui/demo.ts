@@ -8,7 +8,8 @@ import { dayOf } from '../engine/calendar';
 
 export const DEMO_END_DAY = dayOf(832, 59); // 1 March 832
 
-/** The full game's page: the end screen and the title link to it. Set before the demo is uploaded. */
-export const FULL_GAME_URL = 'https://edmodo1.itch.io/vikingr';
+/** The game's itch page on the account (renamed from edmodo1 to Heirs of Ruin, 2026-11-21): the demo's end screen,
+ *  the title and the rating ask all link here. The one place the address is written. */
+export const FULL_GAME_URL = 'https://heirs-of-ruin.itch.io/vikingr';
 
 export const demoOver = (day: number): boolean => __DEMO__ && day >= DEMO_END_DAY;

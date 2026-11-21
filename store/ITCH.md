@@ -40,7 +40,7 @@ screen held after a reload, and each code loaded into the full game, which playe
 ## Uploads: Plan B, two pages (if the demo will not play free on a paid page)
 
 - **"Vikingr (demo)"**, free (No payments): the demo zip played in the browser. In its description, a line and a
-  link: "The full game: [Vikingr](https://edmodo1.itch.io/vikingr)".
+  link: "The full game: [Vikingr](https://heirs-of-ruin.itch.io/vikingr)".
 - **"Vikingr"**, paid as above: the download zip and the APK. Its description links back to the demo page.
 - In `src/ui/demo.ts`, `FULL_GAME_URL` already points at the paid page; if the paid page's address differs,
   change it and rebuild the demo.
@@ -60,7 +60,7 @@ screen held after a reload, and each code loaded into the full game, which playe
 | Tags | historical, vikings, medieval, life-simulation, text-based, interactive-fiction, choices-matter, rpg, turn-based, pixel-art |
 | Cover | `store/cover.png` (630 x 500). `cover-315.png` is only for checking it at listing size; do not upload it. |
 | Screenshots | In order: `shot-1-story.png`, `shot-2-map.png`, `shot-3-battle.png`, `shot-4-plunder.png`, `shot-5-lords.png` |
-| Short description | `store/short-description.txt` |
+| Short description | `store/short-description.txt`: the verbs, then the arc (The Lists' shape, Game-Workshop `store-page.md`) |
 | Description | `store/description.html`, pasted with the <> (HTML) button |
 | Content | Violence, death and slavery: say so in the description (it does) and in itch's content questionnaire |
 | Community | Comments on, so players can post save codes with bug reports |
@@ -93,6 +93,7 @@ refused: 4 typefaces loaded from the file, a life loaded and played, no outside 
 
 ## Before going public
 
+- [ ] `node tools/check-store.mjs --slug=vikingr` clean (Game-Workshop game-release): links on heirs-of-ruin.itch.io, both rating asks
 - [ ] `npm run check` green on the commit being released
 - [ ] The three files built from that commit (demo zip, download zip, APK from GitHub)
 - [ ] The draft opened logged out in a private window: the demo plays on the page; Plan A or B decided

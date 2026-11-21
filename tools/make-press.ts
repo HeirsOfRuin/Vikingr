@@ -339,8 +339,9 @@ html,body{margin:0;background:var(--soot)}
 .band{position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--rune-red-dark) 0 9px,var(--soot) 9px 13px)}
 h1{position:absolute;left:0;right:0;top:268px;margin:0;text-align:center;font:700 116px/1 'Alegreya SC',serif;letter-spacing:.12em;padding-left:.12em;color:var(--bone);text-shadow:0 3px 0 var(--soot),0 0 22px rgba(17,18,19,.95)}
 .sub{position:absolute;left:0;right:0;top:394px;text-align:center;font:500 28px/1.1 'Alegreya SC',serif;letter-spacing:.06em;color:var(--ochre)}
-.era{position:absolute;left:0;right:0;top:442px;text-align:center;font:italic 400 23px/1 'Alegreya',serif;color:var(--bone-dim)}
-</style></head><body><div class="c"><div class="pic"></div><h1>VIKINGR</h1><div class="sub">From nothing, to sea king, to Valhalla</div><div class="era">The Viking age, 830 to 878</div><div class="band"></div></div></body></html>`;
+/* the verb row (The Lists' cover, Game-Workshop store-page.md): four things you do, readable at 315 x 250 */
+.verbs{position:absolute;left:0;right:0;top:446px;text-align:center;font:700 21px/1 'Alegreya SC',serif;letter-spacing:.24em;padding-left:.24em;color:var(--bone-dim)}
+</style></head><body><div class="c"><div class="pic"></div><h1>VIKINGR</h1><div class="sub">From nothing, to sea king, to Valhalla</div><div class="verbs">Raid · Trade · Swear · Rule</div><div class="band"></div></div></body></html>`;
   const browser = await launch();
   try {
     const page = await browser.newPage({ viewport: { width: 630, height: 500 }, deviceScaleFactor: 1 });
